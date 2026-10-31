@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../l10n/l10n.dart';
 import 'app_check_debug_stub.dart'
     if (dart.library.js_interop) 'app_check_debug_web.dart' as web_debug;
 
@@ -55,7 +56,7 @@ AppCheckPlan appCheckPlan({
       webSiteKey: siteKey.isEmpty ? null : siteKey,
       webDebugToken: debugToken.isEmpty ? null : debugToken,
       problem: web && siteKey.isEmpty
-          ? 'Falta --dart-define=RECAPTCHA_SITE_KEY para App Check en la web.'
+          ? 'Falta --dart-define=RECAPTCHA_SITE_KEY para App Check en la web.' // i18n-ignore: solo desarrollo
           : null,
     );
   }
@@ -65,7 +66,7 @@ AppCheckPlan appCheckPlan({
     apple: AppleProvider.appAttestWithDeviceCheckFallback,
     webSiteKey: siteKey.isEmpty ? null : siteKey,
     problem: web && siteKey.isEmpty
-        ? 'Release web sin --dart-define=RECAPTCHA_SITE_KEY: App Check no se '
+        ? 'Release web sin --dart-define=RECAPTCHA_SITE_KEY: App Check no se ' // i18n-ignore: solo desarrollo
             'activa.'
         : null,
   );
@@ -126,5 +127,4 @@ Future<AppCheckStatus> activateAppCheck({
 }
 
 /// Mensaje cuando el servidor exige App Check y esta app no lo superó.
-const kAppCheckFailedMessage =
-    'No se pudo verificar la app. Actualízala o inténtalo más tarde.';
+String get kAppCheckFailedMessage => L10n.current.errorAppCheckFailed;

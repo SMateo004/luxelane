@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/notification_bloc.dart';
 
 // ---------------------------------------------------------------------------
@@ -54,7 +55,7 @@ class NotificationBell extends StatelessWidget {
                           color: Colors.white,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
-                          fontFamily: 'Montserrat',
+                          fontFamily: 'Montserrat', // i18n-ignore: tipografía
                         ),
                       ),
                     ),
@@ -63,7 +64,7 @@ class NotificationBell extends StatelessWidget {
             ],
           ),
           onPressed: () => _showNotificationSheet(context),
-          tooltip: 'Notificaciones',
+          tooltip: context.l10n.notificationsTitle,
         );
       },
     );
@@ -131,7 +132,8 @@ class _NotificationSheet extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Text('Notificaciones', style: LuxTypography.titleLarge),
+                  Text(context.l10n.notificationsTitle,
+                      style: LuxTypography.titleLarge),
                   const Spacer(),
                   BlocBuilder<NotificationBloc, NotificationState>(
                     builder: (context, state) {
@@ -149,7 +151,7 @@ class _NotificationSheet extends StatelessWidget {
                                 )
                             : null,
                         child: Text(
-                          'Marcar todo como leído',
+                          context.l10n.notificationsMarkAllRead,
                           style: LuxTypography.caption.copyWith(
                             color: LuxColors.sapphire,
                           ),
@@ -172,18 +174,18 @@ class _NotificationSheet extends StatelessWidget {
                       : <AppNotification>[];
 
                   if (notifications.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.notifications_none_rounded,
                             color: LuxColors.inkTertiary,
                             size: 48,
                           ),
-                          SizedBox(height: LuxSpacing.md),
+                          const SizedBox(height: LuxSpacing.md),
                           Text(
-                            'Aún no hay notificaciones',
+                            context.l10n.notificationsEmpty,
                             style: LuxTypography.bodyMedium,
                           ),
                         ],
@@ -252,12 +254,16 @@ class _NotificationTile extends StatelessWidget {
     }
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(AppLocalizations l10n, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Ahora';
-    if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes}m';
-    if (diff.inHours < 24) return 'Hace ${diff.inHours}h';
-    return DateFormat('MMM d').format(dt);
+    if (diff.inMinutes < 1) return l10n.notificationsNow;
+    if (diff.inMinutes < 60) {
+      return l10n.notificationsMinutesAgo(diff.inMinutes);
+    }
+    if (diff.inHours < 24) return l10n.notificationsHoursAgo(diff.inHours);
+    // Día y mes abreviado en el idioma activo («3 nov», «Nov 3»).
+    L10n.ensureDateSymbols();
+    return DateFormat.MMMd(l10n.localeName).format(dt);
   }
 
   @override
@@ -301,7 +307,7 @@ class _NotificationTile extends StatelessWidget {
                     ),
                     const SizedBox(width: LuxSpacing.sm),
                     Text(
-                      _timeAgo(notification.createdAt),
+                      _timeAgo(context.l10n, notification.createdAt),
                       style: LuxTypography.caption,
                     ),
                   ],

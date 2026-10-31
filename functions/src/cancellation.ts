@@ -6,6 +6,7 @@
  * servidor).
  */
 import * as admin from 'firebase-admin';
+import { notice, NoticeType, userLocale } from './i18n';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { docId, parseInput } from './schemas';
@@ -44,10 +45,12 @@ export const cancelSchema = z.strictObject({
 });
 
 /** Aviso en la bandeja del chófer, escrito por el servidor. */
-function notifyDriver(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, driverId: string,
-  bookingId: string, at: admin.firestore.Timestamp, title: string, body: string, type: string): void {
+async function notifyDriver(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, driverId: string,
+  bookingId: string, at: admin.firestore.Timestamp, type: NoticeType): Promise<void> {
+  // Idioma de quien lo recibe (lectura fuera de la transacción: solo el texto).
+  const n = notice(type, await userLocale(db, driverId));
   const ref = db.collection('users').doc(driverId).collection('notifications').doc();
-  tx.set(ref, { id: ref.id, userId: driverId, title, body, type, isRead: false, bookingId, createdAt: at });
+  tx.set(ref, { id: ref.id, userId: driverId, title: n.title, body: n.body, type, locale: n.locale, isRead: false, bookingId, createdAt: at });
 }
 
 export async function cancelBooking(deps: CancelDeps, uid: string | undefined, data: unknown) {
@@ -96,8 +99,7 @@ export async function cancelBooking(deps: CancelDeps, uid: string | undefined, d
     // Libera al chófer: disponible si sigue conectado (como releaseDriver).
     if (driver?.exists) tx.update(driverRef!, { isAvailable: driver.data()?.online !== false });
     if (driverId) {
-      notifyDriver(tx, db, driverId, ref.id, at, 'Reserva cancelada',
-        'El pasajero canceló la reserva. Ya estás disponible.', 'booking_cancelled_by_rider');
+      await notifyDriver(tx, db, driverId, ref.id, at, 'booking_cancelled_by_rider');
     }
     appendEvent(tx, db, ref.id, {
       from: status, to: 'cancelled', actor: { uid, role: 'rider' }, source: 'rider_app',

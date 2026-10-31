@@ -2,7 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import '../../l10n/l10n.dart';
 import '../error/failures.dart';
+import '../error/function_errors.dart' show kTooManyAttemptsMessage;
 import '../models/models.dart';
 
 /// Verificación en dos pasos con app autenticadora (TOTP), obligatoria para
@@ -20,9 +22,11 @@ abstract class MfaChallenge {
 
 /// El inicio de sesión necesita el código de la app autenticadora.
 class MfaRequiredFailure extends Failure {
-  const MfaRequiredFailure(this.challenge)
-      : super('Introduce el código de tu app autenticadora.');
+  const MfaRequiredFailure(this.challenge) : super('');
   final MfaChallenge challenge;
+
+  @override
+  String get message => L10n.current.errorMfaEnterCode;
 }
 
 /// Un alta de TOTP en curso: el secreto se muestra una vez y vence.
@@ -57,7 +61,7 @@ abstract class MfaService {
 }
 
 /// Nombre que verá la persona en su app autenticadora.
-const kTotpIssuer = 'Luxelane';
+const kTotpIssuer = 'Luxelane'; // i18n-ignore: nombre de marca
 
 class FirebaseMfaService implements MfaService {
   FirebaseMfaService(this._auth);
@@ -98,7 +102,11 @@ class FirebaseMfaService implements MfaService {
     final assertion =
         await fb.TotpMultiFactorGenerator.getAssertionForEnrollment(
             e.handle! as fb.TotpSecret, code);
-    await _user.multiFactor.enroll(assertion, displayName: 'App autenticadora');
+    await _user.multiFactor.enroll(
+      assertion,
+      displayName:
+          'App autenticadora', // i18n-ignore: dato guardado en Firebase Auth
+    );
   }
 
   @override
@@ -147,25 +155,18 @@ class FirebaseTotpChallenge implements MfaChallenge {
 String mfaErrorMessage(String code) => switch (code) {
       'invalid-verification-code' ||
       'invalid-code' =>
-        'Código incorrecto. Usa el código actual de tu app autenticadora '
-            '(y revisa que la hora del teléfono sea automática).',
-      'requires-recent-login' =>
-        'Por seguridad, cierra sesión, vuelve a entrar y repite el alta.',
-      'unverified-email' =>
-        'Verifica tu correo antes de activar la verificación en dos pasos.',
-      'network-request-failed' =>
-        'Sin conexión. Revisa tu red e inténtalo de nuevo.',
+        L10n.current.errorMfaWrongCode,
+      'requires-recent-login' => L10n.current.errorMfaRecentLogin,
+      'unverified-email' => L10n.current.errorMfaUnverifiedEmail,
+      'network-request-failed' => L10n.current.errorMfaNoConnection,
       'session-expired' ||
       'totp-challenge-timeout' ||
       'code-expired' =>
-        'El código QR venció. Empieza el alta de nuevo.',
+        L10n.current.errorMfaQrExpired,
       'operation-not-allowed' ||
       'admin-restricted-operation' =>
-        'La verificación en dos pasos aún no está activada. Avisa a central.',
-      'too-many-requests' =>
-        'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
-      'no-totp' =>
-        'Tu cuenta no tiene una app autenticadora registrada. Contacta con '
-            'central.',
-      _ => 'No se pudo completar la verificación. Inténtalo de nuevo.',
+        L10n.current.errorMfaNotEnabled,
+      'too-many-requests' => kTooManyAttemptsMessage,
+      'no-totp' => L10n.current.errorMfaNoTotp,
+      _ => L10n.current.errorMfaFailed,
     };

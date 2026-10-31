@@ -1,0 +1,826 @@
+{
+  "bookingPriceOnRequest": {
+    "description": "Precio de una clase sin tarifa configurada: se cotiza al reservar.",
+    "es": "Cotiza al reservar",
+    "en": "Quoted when you book",
+    "pt": "Cotação ao reservar"
+  },
+  "bookingPriceFrom": {
+    "description": "Precio mínimo de una clase cuando aún no hay ruta («desde Bs 70»).",
+    "es": "desde {price}",
+    "en": "from {price}",
+    "pt": "a partir de {price}",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingPriceChangedTitle": {
+    "description": "Título del diálogo cuando el servidor cambia el precio al reservar.",
+    "es": "El precio cambió",
+    "en": "The price has changed",
+    "pt": "O preço mudou"
+  },
+  "bookingPriceChangedBody": {
+    "description": "Texto del diálogo de precio cambiado, con el precio nuevo y el anterior.",
+    "es": "El precio de este viaje es ahora {newPrice} (antes {previousPrice}). ¿Quieres reservar con el precio nuevo?",
+    "en": "The price of this trip is now {newPrice} (previously {previousPrice}). Do you want to book at the new price?",
+    "pt": "O preço desta viagem agora é {newPrice} (antes {previousPrice}). Deseja reservar com o novo preço?",
+    "placeholders": {
+      "newPrice": {
+        "type": "String"
+      },
+      "previousPrice": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingPriceChangedDecline": {
+    "description": "Botón del diálogo de precio cambiado: no reservar.",
+    "es": "No reservar",
+    "en": "Don't book",
+    "pt": "Não reservar"
+  },
+  "bookingPriceChangedAccept": {
+    "description": "Botón del diálogo de precio cambiado: reservar con el precio nuevo.",
+    "es": "Reservar",
+    "en": "Book",
+    "pt": "Reservar"
+  },
+  "bookingFlightTypeRequired": {
+    "description": "Error: en una recogida en aeropuerto falta el tipo de vuelo.",
+    "es": "Indica si tu vuelo es nacional o internacional.",
+    "en": "Indicate whether your flight is domestic or international.",
+    "pt": "Informe se o seu voo é nacional ou internacional."
+  },
+  "bookingPickupMissing": {
+    "description": "Aviso: se perdió la recogida (recarga de página); hay que volver a indicarla.",
+    "es": "Vuelve a indicar tu recogida para reservar.",
+    "en": "Enter your pickup point again to book.",
+    "pt": "Informe novamente o ponto de embarque para reservar."
+  },
+  "bookingPickupPast": {
+    "description": "Error: la hora de recogida elegida ya pasó.",
+    "es": "La hora de recogida ya pasó. Elige una nueva hora.",
+    "en": "The pickup time has passed. Choose a new time.",
+    "pt": "O horário de embarque já passou. Escolha um novo horário."
+  },
+  "bookingQuoteFailed": {
+    "description": "Error: no se pudo obtener el precio del servidor.",
+    "es": "No pudimos calcular el precio. Inténtalo de nuevo.",
+    "en": "We could not calculate the price. Please try again.",
+    "pt": "Não foi possível calcular o preço. Tente novamente."
+  },
+  "bookingQuoteReady": {
+    "description": "Aviso con el precio del viaje recién calculado; nombra el botón «Continuar al pago».",
+    "es": "El precio de tu viaje es {price}. Pulsa Continuar al pago para seguir.",
+    "en": "The price of your trip is {price}. Tap Continue to payment to proceed.",
+    "pt": "O preço da sua viagem é {price}. Toque em Continuar para o pagamento para seguir.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingHourlyDestination": {
+    "description": "Nombre del destino de una reserva por horas sin destino fijo.",
+    "es": "Servicio por horas",
+    "en": "Hourly service",
+    "pt": "Serviço por hora"
+  },
+  "bookingChooseExperience": {
+    "description": "Título de la elección de clase de vehículo.",
+    "es": "Elige tu experiencia",
+    "en": "Choose your experience",
+    "pt": "Escolha sua experiência"
+  },
+  "bookingPriceBreakdown": {
+    "description": "Título del bloque del precio (web).",
+    "es": "Desglose de precio",
+    "en": "Price breakdown",
+    "pt": "Detalhamento do preço"
+  },
+  "bookingTotal": {
+    "description": "Etiqueta del total con el precio del servidor.",
+    "es": "Total",
+    "en": "Total",
+    "pt": "Total"
+  },
+  "bookingTotalEstimated": {
+    "description": "Etiqueta del total cuando el precio aún es una estimación.",
+    "es": "Total estimado",
+    "en": "Estimated total",
+    "pt": "Total estimado"
+  },
+  "bookingImportantNote": {
+    "description": "Encabezado de las notas bajo el precio (web).",
+    "es": "Nota importante:",
+    "en": "Important note:",
+    "pt": "Observação importante:"
+  },
+  "bookingNoteCapacity": {
+    "description": "Nota: límites de capacidad del vehículo.",
+    "es": "Los límites de capacidad de pasajeros y equipaje deben respetarse por razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.",
+    "en": "Passenger and luggage capacity limits must be respected for safety reasons. If they are exceeded, the chauffeur may decline the service.",
+    "pt": "Os limites de capacidade de passageiros e bagagem devem ser respeitados por motivos de segurança. Se forem excedidos, o motorista poderá recusar o serviço."
+  },
+  "bookingNoteImages": {
+    "description": "Nota: las fotos del vehículo son de referencia.",
+    "es": "Las imágenes del vehículo son solo de referencia. El vehículo real puede variar manteniendo una calidad equivalente o superior.",
+    "en": "Vehicle images are for reference only. The actual vehicle may vary while keeping equivalent or higher quality.",
+    "pt": "As imagens do veículo são apenas ilustrativas. O veículo real pode variar, mantendo qualidade equivalente ou superior."
+  },
+  "bookingNoteExtras": {
+    "description": "Nota: necesidades adicionales y grupos grandes. Business Van no se traduce.",
+    "es": "Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden añadirse en \"Notas de recogida\". Elige Business Van para grupos más grandes o equipaje adicional.",
+    "en": "Additional needs (wheelchair, child seat, extra items) can be added in \"Pickup notes\". Choose Business Van for larger groups or extra luggage.",
+    "pt": "Necessidades adicionais (cadeira de rodas, assento infantil, itens extras) podem ser adicionadas em \"Observações de embarque\". Escolha Business Van para grupos maiores ou bagagem adicional."
+  },
+  "bookingForMe": {
+    "description": "Opción: la reserva es para quien la hace.",
+    "es": "Reservar para mí",
+    "en": "Book for myself",
+    "pt": "Reservar para mim"
+  },
+  "bookingForMeDetail": {
+    "description": "Detalle de «Reservar para mí».",
+    "es": "Reserva con la información de tu cuenta",
+    "en": "Book with your account details",
+    "pt": "Reserve com os dados da sua conta"
+  },
+  "bookingForGuest": {
+    "description": "Opción: la reserva es para otra persona (invitado).",
+    "es": "Reservar para un invitado",
+    "en": "Book for a guest",
+    "pt": "Reservar para um convidado"
+  },
+  "bookingForGuestDetail": {
+    "description": "Detalle de «Reservar para un invitado» sin invitado elegido.",
+    "es": "Seleccionar o añadir un invitado",
+    "en": "Select or add a guest",
+    "pt": "Selecionar ou adicionar um convidado"
+  },
+  "bookingPriceFinal": {
+    "description": "Bajo el precio: es el del servidor.",
+    "es": "Precio final",
+    "en": "Final price",
+    "pt": "Preço final"
+  },
+  "bookingPriceEstimated": {
+    "description": "Bajo el precio: aún es una estimación.",
+    "es": "Precio estimado",
+    "en": "Estimated price",
+    "pt": "Preço estimado"
+  },
+  "bookingPickup": {
+    "description": "Etiqueta del punto de recogida en el resumen.",
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque"
+  },
+  "bookingDuration": {
+    "description": "Etiqueta de la duración (servicio por horas).",
+    "es": "Duración",
+    "en": "Duration",
+    "pt": "Duração"
+  },
+  "bookingHoursAtDisposal": {
+    "description": "Duración de un servicio por horas en el resumen.",
+    "es": "{hours} horas a tu disposición",
+    "en": "{hours} hours at your disposal",
+    "pt": "{hours} horas à sua disposição",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingDestination": {
+    "description": "Etiqueta del destino en el resumen.",
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino"
+  },
+  "bookingBack": {
+    "description": "Botón o tooltip para volver atrás.",
+    "es": "Volver",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "bookingStepOf": {
+    "description": "Título del asistente móvil: paso actual de 3, en mayúsculas.",
+    "es": "PASO {step} DE 3",
+    "en": "STEP {step} OF 3",
+    "pt": "ETAPA {step} DE 3",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingVehicle": {
+    "description": "Paso del asistente y fila del resumen: el vehículo.",
+    "es": "Vehículo",
+    "en": "Vehicle",
+    "pt": "Veículo"
+  },
+  "bookingStepDetails": {
+    "description": "Paso del asistente: detalles del viaje.",
+    "es": "Detalles",
+    "en": "Details",
+    "pt": "Detalhes"
+  },
+  "bookingConfirm": {
+    "description": "Paso del asistente y botón: confirmar.",
+    "es": "Confirmar",
+    "en": "Confirm",
+    "pt": "Confirmar"
+  },
+  "bookingContinue": {
+    "description": "Botón para pasar al siguiente paso.",
+    "es": "Continuar",
+    "en": "Continue",
+    "pt": "Continuar"
+  },
+  "bookingContinueToPayment": {
+    "description": "Botón final: crea la reserva y pasa al pago.",
+    "es": "Continuar al pago",
+    "en": "Continue to payment",
+    "pt": "Continuar para o pagamento"
+  },
+  "bookingTripDetails": {
+    "description": "Encabezado en mayúsculas del paso de detalles.",
+    "es": "DETALLES DEL VIAJE",
+    "en": "TRIP DETAILS",
+    "pt": "DETALHES DA VIAGEM"
+  },
+  "bookingPassengers": {
+    "description": "Etiqueta: número de pasajeros.",
+    "es": "Pasajeros",
+    "en": "Passengers",
+    "pt": "Passageiros"
+  },
+  "bookingLuggage": {
+    "description": "Etiqueta: equipaje.",
+    "es": "Equipaje",
+    "en": "Luggage",
+    "pt": "Bagagem"
+  },
+  "bookingSpecialRequests": {
+    "description": "Campo de notas para el chófer.",
+    "es": "Solicitudes especiales",
+    "en": "Special requests",
+    "pt": "Solicitações especiais"
+  },
+  "bookingSpecialRequestsHint": {
+    "description": "Ejemplo dentro del campo de solicitudes especiales.",
+    "es": "Asiento infantil, letrero de bienvenida…",
+    "en": "Child seat, welcome sign…",
+    "pt": "Assento infantil, placa de boas-vindas…"
+  },
+  "bookingFlightNumberRequired": {
+    "description": "Campo del número de vuelo, obligatorio (recogida en aeropuerto).",
+    "es": "Número de vuelo *",
+    "en": "Flight number *",
+    "pt": "Número do voo *"
+  },
+  "bookingFlightNumber": {
+    "description": "Campo del número de vuelo, opcional.",
+    "es": "Número de vuelo",
+    "en": "Flight number",
+    "pt": "Número do voo"
+  },
+  "bookingFlightNumberHint": {
+    "description": "Ejemplo de número de vuelo (obligatorio).",
+    "es": "ej. OB 760",
+    "en": "e.g. OB 760",
+    "pt": "ex. OB 760"
+  },
+  "bookingFlightNumberHintOptional": {
+    "description": "Ejemplo de número de vuelo (opcional).",
+    "es": "ej. OB 760 (opcional)",
+    "en": "e.g. OB 760 (optional)",
+    "pt": "ex. OB 760 (opcional)"
+  },
+  "bookingSummaryTitle": {
+    "description": "Encabezado en mayúsculas del resumen de la reserva.",
+    "es": "RESUMEN DE RESERVA",
+    "en": "BOOKING SUMMARY",
+    "pt": "RESUMO DA RESERVA"
+  },
+  "bookingSummaryService": {
+    "description": "Fila del resumen: tipo de servicio.",
+    "es": "Servicio",
+    "en": "Service",
+    "pt": "Serviço"
+  },
+  "bookingSummaryFrom": {
+    "description": "Fila del resumen: origen.",
+    "es": "Desde",
+    "en": "From",
+    "pt": "De"
+  },
+  "bookingSummaryTo": {
+    "description": "Fila del resumen: destino.",
+    "es": "Hasta",
+    "en": "To",
+    "pt": "Para"
+  },
+  "bookingSummaryDistance": {
+    "description": "Fila del resumen: distancia.",
+    "es": "Distancia",
+    "en": "Distance",
+    "pt": "Distância"
+  },
+  "bookingHours": {
+    "description": "Número de horas de un servicio por horas.",
+    "es": "{hours} horas",
+    "en": "{hours} hours",
+    "pt": "{hours} horas",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSummaryEstDuration": {
+    "description": "Fila del resumen: duración estimada del trayecto.",
+    "es": "Duración est.",
+    "en": "Est. duration",
+    "pt": "Duração est."
+  },
+  "bookingLuggageItems": {
+    "description": "Fila del resumen: número de bultos de equipaje.",
+    "es": "{count} bultos",
+    "en": "{count} items",
+    "pt": "{count} volumes",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSummaryFlight": {
+    "description": "Fila del resumen: vuelo.",
+    "es": "Vuelo",
+    "en": "Flight",
+    "pt": "Voo"
+  },
+  "bookingSummaryNotes": {
+    "description": "Fila del resumen: notas para el chófer.",
+    "es": "Notas",
+    "en": "Notes",
+    "pt": "Observações"
+  },
+  "bookingTotalFixedPrice": {
+    "description": "Total en mayúsculas con el precio del servidor.",
+    "es": "TOTAL · PRECIO FIJO",
+    "en": "TOTAL · FIXED PRICE",
+    "pt": "TOTAL · PREÇO FIXO"
+  },
+  "bookingTotalEstimatedUpper": {
+    "description": "Total en mayúsculas cuando el precio es una estimación.",
+    "es": "TOTAL ESTIMADO",
+    "en": "ESTIMATED TOTAL",
+    "pt": "TOTAL ESTIMADO"
+  },
+  "bookingPayNextNote": {
+    "description": "Nota antes del botón: el pago va en el paso siguiente. Sin plazos.",
+    "es": "Pagas en el paso siguiente. Buscamos chófer cuando el pago está confirmado.",
+    "en": "You pay in the next step. We look for a chauffeur once the payment is confirmed.",
+    "pt": "Você paga na próxima etapa. Procuramos um motorista quando o pagamento estiver confirmado."
+  },
+  "bookingFlightNote": {
+    "description": "Nota de recogida en aeropuerto.",
+    "es": "Recogida en aeropuerto: indica tu número de vuelo para que tu chófer lo tenga.",
+    "en": "Airport pickup: enter your flight number so your chauffeur has it.",
+    "pt": "Embarque no aeroporto: informe o número do voo para que seu motorista o tenha."
+  },
+  "bookingFlightType": {
+    "description": "Selector obligatorio: vuelo nacional o internacional.",
+    "es": "Tipo de vuelo *",
+    "en": "Flight type *",
+    "pt": "Tipo de voo *"
+  },
+  "bookingConfirmBooking": {
+    "description": "Botón por defecto de la barra de precio.",
+    "es": "Confirmar reserva",
+    "en": "Confirm booking",
+    "pt": "Confirmar reserva"
+  },
+  "bookingPriceEstimatedUpper": {
+    "description": "Barra de precio en mayúsculas: estimación.",
+    "es": "PRECIO ESTIMADO",
+    "en": "ESTIMATED PRICE",
+    "pt": "PREÇO ESTIMADO"
+  },
+  "bookingPriceFinalUpper": {
+    "description": "Barra de precio en mayúsculas: precio del servidor.",
+    "es": "PRECIO FINAL",
+    "en": "FINAL PRICE",
+    "pt": "PREÇO FINAL"
+  },
+  "bookingRetry": {
+    "description": "Botón para volver a pedir el precio.",
+    "es": "Reintentar",
+    "en": "Retry",
+    "pt": "Tentar novamente"
+  },
+  "bookingAuthRegisterTitle": {
+    "description": "Título del diálogo de acceso al reservar: crear cuenta.",
+    "es": "Crear una cuenta",
+    "en": "Create an account",
+    "pt": "Criar uma conta"
+  },
+  "bookingAuthLoginTitle": {
+    "description": "Título del diálogo de acceso al reservar: iniciar sesión.",
+    "es": "Inicia sesión para continuar",
+    "en": "Sign in to continue",
+    "pt": "Entre para continuar"
+  },
+  "bookingAuthRegisterBody": {
+    "description": "Texto del diálogo de acceso: crear cuenta. Luxelane no se traduce.",
+    "es": "Crea tu cuenta de Luxelane para completar la reserva.",
+    "en": "Create your Luxelane account to complete the booking.",
+    "pt": "Crie sua conta Luxelane para concluir a reserva."
+  },
+  "bookingAuthLoginBody": {
+    "description": "Texto del diálogo de acceso: iniciar sesión.",
+    "es": "Inicia sesión para confirmar tu reserva.",
+    "en": "Sign in to confirm your booking.",
+    "pt": "Entre para confirmar sua reserva."
+  },
+  "bookingAuthFullName": {
+    "description": "Campo: nombre completo.",
+    "es": "Nombre completo",
+    "en": "Full name",
+    "pt": "Nome completo"
+  },
+  "bookingAuthFullNameHint": {
+    "description": "Ejemplo del campo de nombre.",
+    "es": "Tu nombre",
+    "en": "Your name",
+    "pt": "Seu nome"
+  },
+  "bookingAuthEmail": {
+    "description": "Campo: correo electrónico.",
+    "es": "Correo electrónico",
+    "en": "Email",
+    "pt": "E-mail"
+  },
+  "bookingAuthEmailHint": {
+    "description": "Ejemplo del campo de correo.",
+    "es": "tu@ejemplo.com",
+    "en": "you@example.com",
+    "pt": "voce@exemplo.com"
+  },
+  "bookingAuthPassword": {
+    "description": "Campo: contraseña.",
+    "es": "Contraseña",
+    "en": "Password",
+    "pt": "Senha"
+  },
+  "bookingAuthRegister": {
+    "description": "Botón: crear cuenta.",
+    "es": "Crear cuenta",
+    "en": "Create account",
+    "pt": "Criar conta"
+  },
+  "bookingAuthLogin": {
+    "description": "Botón: iniciar sesión.",
+    "es": "Iniciar sesión",
+    "en": "Sign in",
+    "pt": "Entrar"
+  },
+  "bookingAuthHaveAccount": {
+    "description": "Enlace para pasar a iniciar sesión.",
+    "es": "¿Ya tienes cuenta? Inicia sesión",
+    "en": "Already have an account? Sign in",
+    "pt": "Já tem uma conta? Entre"
+  },
+  "bookingAuthNoAccount": {
+    "description": "Enlace para pasar a crear cuenta.",
+    "es": "¿No tienes cuenta? Crear una",
+    "en": "Don't have an account? Create one",
+    "pt": "Não tem uma conta? Crie uma"
+  },
+  "bookingGuestTitleMr": {
+    "description": "Tratamiento del invitado (se guarda «Sr.»).",
+    "es": "Sr.",
+    "en": "Mr.",
+    "pt": "Sr."
+  },
+  "bookingGuestTitleMrs": {
+    "description": "Tratamiento del invitado (se guarda «Sra.»).",
+    "es": "Sra.",
+    "en": "Mrs.",
+    "pt": "Sra."
+  },
+  "bookingGuestTitleMiss": {
+    "description": "Tratamiento del invitado (se guarda «Srta.»).",
+    "es": "Srta.",
+    "en": "Ms.",
+    "pt": "Srta."
+  },
+  "bookingGuestTitleDr": {
+    "description": "Tratamiento del invitado (se guarda «Dr.»).",
+    "es": "Dr.",
+    "en": "Dr.",
+    "pt": "Dr."
+  },
+  "bookingGuestTitleProf": {
+    "description": "Tratamiento del invitado (se guarda «Prof.»).",
+    "es": "Prof.",
+    "en": "Prof.",
+    "pt": "Prof."
+  },
+  "bookingGuestAddTitle": {
+    "description": "Título del diálogo para añadir un invitado.",
+    "es": "Añadir nuevo invitado",
+    "en": "Add a new guest",
+    "pt": "Adicionar novo convidado"
+  },
+  "bookingGuestIntro": {
+    "description": "Texto del diálogo del invitado: para qué se usan sus datos.",
+    "es": "Ingresa los datos de la persona que viajará. Compartiremos estos datos con el chófer asignado para coordinar la recogida.",
+    "en": "Enter the details of the person who will travel. We will share these details with the assigned chauffeur to coordinate the pickup.",
+    "pt": "Informe os dados da pessoa que vai viajar. Compartilharemos esses dados com o motorista designado para coordenar o embarque."
+  },
+  "bookingGuestSalutation": {
+    "description": "Campo: tratamiento del invitado (Sr., Sra.…).",
+    "es": "Tratamiento",
+    "en": "Title",
+    "pt": "Tratamento"
+  },
+  "bookingGuestFirstName": {
+    "description": "Campo: nombre del invitado.",
+    "es": "Nombre",
+    "en": "First name",
+    "pt": "Nome"
+  },
+  "bookingGuestFirstNameHint": {
+    "description": "Ejemplo del campo de nombre del invitado.",
+    "es": "Nombre del invitado",
+    "en": "Guest's first name",
+    "pt": "Nome do convidado"
+  },
+  "bookingGuestLastName": {
+    "description": "Campo: apellido del invitado.",
+    "es": "Apellido",
+    "en": "Last name",
+    "pt": "Sobrenome"
+  },
+  "bookingGuestLastNameHint": {
+    "description": "Ejemplo del campo de apellido del invitado.",
+    "es": "Apellido del invitado",
+    "en": "Guest's last name",
+    "pt": "Sobrenome do convidado"
+  },
+  "bookingGuestPhone": {
+    "description": "Campo: móvil del invitado.",
+    "es": "Número de móvil del invitado",
+    "en": "Guest's mobile number",
+    "pt": "Celular do convidado"
+  },
+  "bookingGuestPhoneNote": {
+    "description": "Nota bajo el móvil del invitado.",
+    "es": "El chófer asignado usará este número para coordinar la recogida.",
+    "en": "The assigned chauffeur will use this number to coordinate the pickup.",
+    "pt": "O motorista designado usará este número para coordenar o embarque."
+  },
+  "bookingGuestLanguage": {
+    "description": "Campo: idioma del invitado.",
+    "es": "Idioma del invitado (opcional)",
+    "en": "Guest's language (optional)",
+    "pt": "Idioma do convidado (opcional)"
+  },
+  "bookingGuestLanguageHint": {
+    "description": "Ejemplo del campo de idioma del invitado.",
+    "es": "Ej.: español, inglés",
+    "en": "E.g. Spanish, English",
+    "pt": "Ex.: espanhol, inglês"
+  },
+  "bookingVehiclePassengers": {
+    "description": "Capacidad de pasajeros de la clase.",
+    "es": "{count} pasajeros",
+    "en": "{count} passengers",
+    "pt": "{count} passageiros",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingVehicleBags": {
+    "description": "Capacidad de maletas de la clase.",
+    "es": "{count} maletas",
+    "en": "{count} bags",
+    "pt": "{count} malas",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingVehicleDetailsEyebrow": {
+    "description": "Encabezado en mayúsculas de los detalles de la clase.",
+    "es": "DETALLES",
+    "en": "DETAILS",
+    "pt": "DETALHES"
+  },
+  "bookingLuggageNote": {
+    "description": "Nota bajo las fotos del maletero.",
+    "es": "Medidas estándar de referencia. Si llevas equipaje especial (palos de golf, cochecito, instrumentos), indícalo en las notas de recogida.",
+    "en": "Standard reference sizes. If you carry special luggage (golf clubs, stroller, instruments), mention it in the pickup notes.",
+    "pt": "Medidas padrão de referência. Se você levar bagagem especial (tacos de golfe, carrinho de bebê, instrumentos), informe nas observações de embarque."
+  },
+  "bookingChildSeatNote": {
+    "description": "Nota bajo las fotos de los asientos.",
+    "es": "El asiento infantil se solicita con antelación y está sujeto a disponibilidad. Indica la edad del niño en las notas de recogida.",
+    "en": "A child seat must be requested in advance and is subject to availability. Mention the child's age in the pickup notes.",
+    "pt": "O assento infantil deve ser solicitado com antecedência e está sujeito à disponibilidade. Informe a idade da criança nas observações de embarque."
+  },
+  "bookingCapacityEyebrow": {
+    "description": "Encabezado en mayúsculas de la capacidad.",
+    "es": "CAPACIDAD",
+    "en": "CAPACITY",
+    "pt": "CAPACIDADE"
+  },
+  "bookingCapacityTitle": {
+    "description": "Título de la sección de capacidad.",
+    "es": "¿Cuánto cabe?",
+    "en": "How much fits?",
+    "pt": "Quanto cabe?"
+  },
+  "bookingCapacityDetail": {
+    "description": "Capacidad de la clase: pasajeros y maletas facturadas.",
+    "es": "Hasta {passengers} pasajeros y {bags} maletas facturadas",
+    "en": "Up to {passengers} passengers and {bags} checked bags",
+    "pt": "Até {passengers} passageiros e {bags} malas despachadas",
+    "placeholders": {
+      "passengers": {
+        "type": "int"
+      },
+      "bags": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSeating": {
+    "description": "Pestaña: asientos.",
+    "es": "Asientos",
+    "en": "Seating",
+    "pt": "Assentos"
+  },
+  "bookingNext": {
+    "description": "Tooltip de la flecha del carrusel.",
+    "es": "Siguiente",
+    "en": "Next",
+    "pt": "Próximo"
+  },
+  "bookingRatingSaveError": {
+    "description": "Error al guardar la valoración del viaje.",
+    "es": "No se pudo guardar tu valoración. Inténtalo de nuevo.",
+    "en": "Your rating could not be saved. Please try again.",
+    "pt": "Não foi possível salvar sua avaliação. Tente novamente."
+  },
+  "bookingAcceptTaken": {
+    "description": "Error al aceptar (chófer): otro chófer ya lo aceptó.",
+    "es": "Otro chófer ya aceptó este viaje.",
+    "en": "Another chauffeur has already accepted this trip.",
+    "pt": "Outro motorista já aceitou esta viagem."
+  },
+  "bookingAcceptNotVerified": {
+    "description": "Error al aceptar (chófer): documentos sin verificar. Luxelane no se traduce.",
+    "es": "Tus documentos aún no están verificados por Luxelane.",
+    "en": "Your documents have not yet been verified by Luxelane.",
+    "pt": "Seus documentos ainda não foram verificados pela Luxelane."
+  },
+  "bookingAcceptBusy": {
+    "description": "Error al aceptar (chófer): no está disponible.",
+    "es": "Conéctate y termina tu viaje actual antes de aceptar otro.",
+    "en": "Go online and finish your current trip before accepting another.",
+    "pt": "Fique online e conclua sua viagem atual antes de aceitar outra."
+  },
+  "bookingAcceptUnavailable": {
+    "description": "Error al aceptar (chófer): el viaje ya no está disponible.",
+    "es": "Este viaje ya no está disponible.",
+    "en": "This trip is no longer available.",
+    "pt": "Esta viagem não está mais disponível."
+  },
+  "bookingAcceptConnection": {
+    "description": "Error al aceptar (chófer): sin conexión.",
+    "es": "No se pudo aceptar el viaje. Revisa tu conexión.",
+    "en": "The trip could not be accepted. Check your connection.",
+    "pt": "Não foi possível aceitar a viagem. Verifique sua conexão."
+  },
+  "bookingAcceptFailed": {
+    "description": "Error al aceptar (chófer): otro fallo.",
+    "es": "No se pudo aceptar el viaje. Inténtalo de nuevo.",
+    "en": "The trip could not be accepted. Please try again.",
+    "pt": "Não foi possível aceitar a viagem. Tente novamente."
+  },
+  "bookingConnectionError": {
+    "description": "Error de conexión al cotizar o reservar.",
+    "es": "No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.",
+    "en": "We could not connect. Check your connection and try again.",
+    "pt": "Não foi possível conectar. Verifique sua conexão e tente novamente."
+  },
+  "bookingErrorPricingUnavailable": {
+    "description": "Error del servidor: no hay tarifa para el viaje.",
+    "es": "No pudimos calcular el precio de este viaje ahora. Inténtalo de nuevo en unos minutos.",
+    "en": "We could not calculate the price of this trip right now. Please try again in a few minutes.",
+    "pt": "Não foi possível calcular o preço desta viagem agora. Tente novamente em alguns minutos."
+  },
+  "bookingErrorOutOfArea": {
+    "description": "Error del servidor: destino fuera de la ciudad de la recogida.",
+    "es": "Por ahora solo hacemos viajes dentro de la misma ciudad de la recogida.",
+    "en": "For now we only offer trips within the pickup city.",
+    "pt": "Por enquanto, só fazemos viagens dentro da cidade do embarque."
+  },
+  "bookingErrorClassUnavailable": {
+    "description": "Error del servidor: clase no disponible.",
+    "es": "Esta clase de vehículo no está disponible en este momento. Elige otra.",
+    "en": "This vehicle class is not available at the moment. Choose another.",
+    "pt": "Esta categoria de veículo não está disponível no momento. Escolha outra."
+  },
+  "bookingErrorServiceUnavailable": {
+    "description": "Error del servidor: reservas en pausa por mantenimiento.",
+    "es": "Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.",
+    "en": "Bookings are paused for maintenance. Please try again in a few minutes.",
+    "pt": "As reservas estão pausadas para manutenção. Tente novamente em alguns minutos."
+  },
+  "bookingErrorInvalidHours": {
+    "description": "Error del servidor: horas no enteras.",
+    "es": "Elige un número entero de horas.",
+    "en": "Choose a whole number of hours.",
+    "pt": "Escolha um número inteiro de horas."
+  },
+  "bookingErrorInactiveUser": {
+    "description": "Error del servidor: cuenta sin permiso para reservar.",
+    "es": "Tu cuenta no puede hacer reservas en este momento.",
+    "en": "Your account cannot make bookings at the moment.",
+    "pt": "Sua conta não pode fazer reservas no momento."
+  },
+  "bookingErrorSignIn": {
+    "description": "Error del servidor: sin sesión.",
+    "es": "Inicia sesión para reservar.",
+    "en": "Sign in to book.",
+    "pt": "Entre para reservar."
+  },
+  "bookingErrorPaymentsUnavailable": {
+    "description": "Error del servidor: ningún método de pago activo.",
+    "es": "Ahora mismo no podemos recibir reservas. Inténtalo de nuevo más tarde o contacta con central.",
+    "en": "We cannot take bookings right now. Please try again later or contact our operations team.",
+    "pt": "No momento não podemos receber reservas. Tente novamente mais tarde ou fale com a central."
+  },
+  "bookingErrorInvalidRequest": {
+    "description": "Error del servidor: datos del viaje mal formados.",
+    "es": "No pudimos procesar tu reserva. Revisa los datos del viaje e inténtalo de nuevo.",
+    "en": "We could not process your booking. Check the trip details and try again.",
+    "pt": "Não foi possível processar sua reserva. Verifique os dados da viagem e tente novamente."
+  },
+  "bookingErrorServer": {
+    "description": "Error del servidor: fallo interno, sin culpar a la persona.",
+    "es": "No pudimos completar la reserva por un problema nuestro. Inténtalo de nuevo en unos minutos.",
+    "en": "We could not complete the booking due to an issue on our side. Please try again in a few minutes.",
+    "pt": "Não foi possível concluir a reserva por um problema nosso. Tente novamente em alguns minutos."
+  },
+  "bookingCancelConnectionError": {
+    "description": "Error al cancelar: sin conexión.",
+    "es": "No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.",
+    "en": "The booking could not be cancelled. Check your connection and try again.",
+    "pt": "Não foi possível cancelar. Verifique sua conexão e tente novamente."
+  },
+  "bookingCancelServerError": {
+    "description": "Error al cancelar: fallo del servidor.",
+    "es": "No se pudo cancelar ahora. Inténtalo de nuevo en unos minutos; si sigue, contacta con central.",
+    "en": "The booking could not be cancelled right now. Please try again in a few minutes; if it persists, contact our operations team.",
+    "pt": "Não foi possível cancelar agora. Tente novamente em alguns minutos; se continuar, fale com a central."
+  },
+  "bookingCancelNotCancellable": {
+    "description": "Error al cancelar: el viaje está en curso o terminó.",
+    "es": "Esta reserva ya no se puede cancelar: el viaje está en curso o terminó.",
+    "en": "This booking can no longer be cancelled: the trip is in progress or has ended.",
+    "pt": "Esta reserva não pode mais ser cancelada: a viagem está em andamento ou já terminou."
+  },
+  "bookingNotFound": {
+    "description": "Error al cancelar: la reserva no es de la cuenta o no existe.",
+    "es": "No encontramos esta reserva en tu cuenta.",
+    "en": "We could not find this booking in your account.",
+    "pt": "Não encontramos esta reserva na sua conta."
+  },
+  "bookingVehicleSaveError": {
+    "description": "Error al guardar el color o la foto del vehículo (chófer).",
+    "es": "No pudimos guardar el cambio. Inténtalo de nuevo.",
+    "en": "We could not save the change. Please try again.",
+    "pt": "Não foi possível salvar a alteração. Tente novamente."
+  },
+  "bookingTripsLoadError": {
+    "description": "Error al cargar la lista de viajes del pasajero.",
+    "es": "No pudimos cargar tus viajes. Reintenta.",
+    "en": "We could not load your trips. Please retry.",
+    "pt": "Não foi possível carregar suas viagens. Tente novamente."
+  }
+}

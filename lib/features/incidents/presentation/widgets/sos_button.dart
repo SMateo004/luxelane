@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/widgets/lux_focus.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Botón de ayuda: se activa manteniéndolo pulsado [holdDuration] (con un
 /// anillo que se llena y vibración) para evitar toques accidentales. Con
@@ -19,13 +20,16 @@ class SosButton extends StatefulWidget {
     super.key,
     required this.onActivated,
     this.holdDuration = const Duration(seconds: 2),
-    this.label = 'Ayuda',
+    this.label,
     this.size = 52,
   });
 
   final VoidCallback onActivated;
   final Duration holdDuration;
-  final String label;
+
+  /// Nombre del botón para el lector de pantalla (se anuncia «… SOS»);
+  /// sin él, «Ayuda» en el idioma activo.
+  final String? label;
   final double size;
 
   @override
@@ -87,18 +91,16 @@ class _SosButtonState extends State<SosButton>
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('¿Avisar a central?'),
-        content: const Text(
-          'Central recibirá tu aviso y tu ubicación mientras dure.',
-        ),
+        title: Text(ctx.l10n.incidentConfirmTitle),
+        content: Text(ctx.l10n.incidentConfirmBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(ctx.l10n.incidentConfirmCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Avisar a central'),
+            child: Text(ctx.l10n.incidentConfirmSend),
           ),
         ],
       ),
@@ -111,6 +113,7 @@ class _SosButtonState extends State<SosButton>
     // Con lector de pantalla mantener pulsado es incómodo: un toque pide
     // confirmación.
     final screenReader = MediaQuery.accessibleNavigationOf(context);
+    final t = context.l10n;
     // Con teclado (Tab + Intro) también pide confirmación (E7). Fuera del
     // Semantics con excludeSemantics: dentro, el nodo de foco se perdía y en
     // la web Tab no llegaba al SOS.
@@ -119,9 +122,8 @@ class _SosButtonState extends State<SosButton>
       radius: widget.size / 2,
       child: Semantics(
         button: true,
-        label: '${widget.label} SOS',
-        hint: 'Mantén pulsado dos segundos para avisar a central. Con lector '
-            'de pantalla, toca dos veces y confirma.',
+        label: t.incidentSosSemantics(widget.label ?? t.incidentHelp),
+        hint: t.incidentSosHint,
         onTap: _confirm,
         excludeSemantics: true,
         // Listener y no reconocedores de gestos: un toque largo no compite con
@@ -165,7 +167,7 @@ class _SosButtonState extends State<SosButton>
                         padding: const EdgeInsets.all(8),
                         child: FittedBox(
                           child: Text(
-                            'SOS',
+                            'SOS', // i18n-ignore: nombre propio, no se traduce
                             style: LuxTypography.titleMedium.copyWith(
                               color: LuxColors.error,
                               letterSpacing: 1.2,

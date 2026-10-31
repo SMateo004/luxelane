@@ -1,5 +1,6 @@
 import 'package:flutter/painting.dart';
 
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 
 /// Single source of truth for which classes clients can book and how each one
@@ -95,69 +96,77 @@ abstract class VehicleCatalog {
 
   static List<SeatingOption> seating(VehicleClass vc) {
     final max = vc.capacity;
+    final t = L10n.current;
     return [
-      SeatingOption(max, title: '$max pasajeros', detail: 'Capacidad máxima'),
+      SeatingOption(
+        max,
+        title: t.commonSeatingPassengers(max),
+        detail: t.commonSeatingMaxDetail,
+      ),
       SeatingOption(
         max - 1,
-        title: '${max - 1} pasajeros',
-        detail: 'Más espacio para cada uno',
+        title: t.commonSeatingPassengers(max - 1),
+        detail: t.commonSeatingRoomierDetail,
       ),
       SeatingOption(
         max - 1,
         childSeat: true,
-        title: 'Con asiento infantil',
-        detail: 'Bajo solicitud previa',
+        title: t.commonSeatingChildSeat,
+        detail: t.commonSeatingChildSeatDetail,
       ),
     ];
   }
 
   /// Short, factual lines for the "Detalles" gallery.
-  static List<String> highlights(VehicleClass vc) => switch (vc) {
-        VehicleClass.business => const [
-            'Sedán ejecutivo, discreto y silencioso',
-            'Asientos traseros en cuero para tres',
-            'Maletero para tres maletas facturadas',
-          ],
-        VehicleClass.businessSuv => const [
-            'SUV ejecutiva, posición de manejo elevada',
-            'Cabina amplia para cuatro pasajeros',
-            'Maletero para cuatro maletas facturadas',
-          ],
-        VehicleClass.businessVan => const [
-            'Van ejecutiva para grupos y familias',
-            'Hasta siete pasajeros en tres filas',
-            'Espacio para dos maletas facturadas',
-          ],
-        VehicleClass.firstClass => const [
-            'Sedán insignia, nuestro máximo nivel',
-            'Plazas traseras con apoyabrazos central',
-            'Maletero para dos maletas facturadas',
-          ],
-        VehicleClass.electric => const [
-            'Sedán ejecutivo totalmente eléctrico',
-            'Silencioso y sin emisiones',
-            'Maletero para dos maletas facturadas',
-          ],
-      };
+  static List<String> highlights(VehicleClass vc) {
+    final t = L10n.current;
+    return switch (vc) {
+      VehicleClass.business => [
+          t.commonHighlightBusiness1,
+          t.commonHighlightBusiness2,
+          t.commonHighlightBusiness3,
+        ],
+      VehicleClass.businessSuv => [
+          t.commonHighlightSuv1,
+          t.commonHighlightSuv2,
+          t.commonHighlightSuv3,
+        ],
+      VehicleClass.businessVan => [
+          t.commonHighlightVan1,
+          t.commonHighlightVan2,
+          t.commonHighlightVan3,
+        ],
+      VehicleClass.firstClass => [
+          t.commonHighlightFirst1,
+          t.commonHighlightFirst2,
+          t.commonHighlightTwoCheckedBags,
+        ],
+      VehicleClass.electric => [
+          t.commonHighlightElectric1,
+          t.commonHighlightElectric2,
+          t.commonHighlightTwoCheckedBags,
+        ],
+    };
+  }
 }
 
 enum LuggageSize { cabin, checked, oversize }
 
 extension LuggageSizeX on LuggageSize {
   String get singular => switch (this) {
-        LuggageSize.cabin => 'maleta de mano',
-        LuggageSize.checked => 'maleta facturada',
-        LuggageSize.oversize => 'maleta extra grande',
+        LuggageSize.cabin => L10n.current.commonLuggageCabinOne,
+        LuggageSize.checked => L10n.current.commonLuggageCheckedOne,
+        LuggageSize.oversize => L10n.current.commonLuggageOversizeOne,
       };
   String get plural => switch (this) {
-        LuggageSize.cabin => 'maletas de mano',
-        LuggageSize.checked => 'maletas facturadas',
-        LuggageSize.oversize => 'maletas extra grandes',
+        LuggageSize.cabin => L10n.current.commonLuggageCabinMany,
+        LuggageSize.checked => L10n.current.commonLuggageCheckedMany,
+        LuggageSize.oversize => L10n.current.commonLuggageOversizeMany,
       };
   String get dimensions => switch (this) {
-        LuggageSize.cabin => 'Hasta 55 × 40 × 20 cm',
-        LuggageSize.checked => 'Hasta 75 × 50 × 30 cm',
-        LuggageSize.oversize => 'Más de 80 cm',
+        LuggageSize.cabin => L10n.current.commonLuggageCabinSize,
+        LuggageSize.checked => L10n.current.commonLuggageCheckedSize,
+        LuggageSize.oversize => L10n.current.commonLuggageOversizeSize,
       };
 }
 

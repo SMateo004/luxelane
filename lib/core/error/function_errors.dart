@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import '../../l10n/l10n.dart';
 import '../config/app_check_setup.dart';
 
 /// Los errores de las Cloud Functions llegan solo con un código y un motivo
@@ -14,15 +15,18 @@ import '../config/app_check_setup.dart';
 /// resource-exhausted, not-found e internal. unavailable y
 /// deadline-exceeded los genera el propio SDK cuando no hay red.
 
-const kTooManyAttemptsMessage =
-    'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
-const kSessionExpiredMessage = 'Tu sesión expiró. Vuelve a iniciar sesión.';
-const kMfaRequiredMessage = 'Activa la verificación en dos pasos (Perfil) y '
-    'vuelve a iniciar sesión para continuar.';
-const kReauthRequiredMessage =
-    'Por seguridad, vuelve a iniciar sesión para continuar.';
+String get kTooManyAttemptsMessage => L10n.current.errorTooManyAttempts;
+String get kMfaRequiredMessage => L10n.current.errorMfaRequired;
+String get kReauthRequiredMessage => L10n.current.errorReauthRequired;
+
+/// Siguen siendo `const` porque otros bloques los usan en expresiones const
+/// (`const AuthFailure(kSessionExpiredMessage)`). Son el texto en español; lo
+/// que se muestra sale de L10n.current.errorSessionExpired y
+/// errorNoConnection, y [Failure.message] traduce estos dos al idioma activo.
+const kSessionExpiredMessage =
+    'Tu sesión expiró. Vuelve a iniciar sesión.'; // i18n-ignore: const en español, se muestra con L10n.current.errorSessionExpired
 const kNoConnectionMessage =
-    'Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.';
+    'Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.'; // i18n-ignore: const en español, se muestra con L10n.current.errorNoConnection
 
 /// Volver a identificarse (reauth_required). Aquí la cuenta ya es conocida:
 /// decir que la contraseña no coincide no revela nada.
@@ -30,11 +34,13 @@ String reauthErrorMessage(String code) => switch (code) {
       'wrong-password' ||
       'invalid-credential' ||
       'INVALID_LOGIN_CREDENTIALS' =>
-        'La contraseña no coincide.',
-      'user-mismatch' => 'Usa la misma cuenta con la que entraste.',
+        L10n.current.errorReauthWrongPassword,
+      'user-mismatch' => L10n.current.errorReauthUserMismatch,
       'too-many-requests' => kTooManyAttemptsMessage,
-      'network-request-failed' || 'network_error' => kNoConnectionMessage,
-      _ => 'No pudimos confirmar tu identidad. Inténtalo de nuevo.',
+      'network-request-failed' ||
+      'network_error' =>
+        L10n.current.errorNoConnection,
+      _ => L10n.current.errorReauthFailed,
     };
 
 /// El motivo corto del error, si lo hay.
@@ -53,8 +59,8 @@ String? commonFunctionError(String code, Object? details) {
   if (reason == 'reauth_required') return kReauthRequiredMessage;
   return switch (code) {
     'resource-exhausted' => kTooManyAttemptsMessage,
-    'unauthenticated' => kSessionExpiredMessage,
-    'unavailable' || 'deadline-exceeded' => kNoConnectionMessage,
+    'unauthenticated' => L10n.current.errorSessionExpired,
+    'unavailable' || 'deadline-exceeded' => L10n.current.errorNoConnection,
     _ => null,
   };
 }
@@ -63,11 +69,11 @@ String? commonFunctionError(String code, Object? details) {
 String functionErrorMessage(String code, Object? details) =>
     commonFunctionError(code, details) ??
     switch (code) {
-      'invalid-argument' => 'Revisa los datos e inténtalo de nuevo.',
-      'permission-denied' => 'No tienes permiso para hacer esto.',
-      'failed-precondition' => 'Esto no se puede hacer en este momento.',
-      'not-found' => 'No encontramos el registro.',
-      _ => 'No se pudo completar. Inténtalo de nuevo.',
+      'invalid-argument' => L10n.current.errorInvalidArgument,
+      'permission-denied' => L10n.current.errorPermissionDenied,
+      'failed-precondition' => L10n.current.errorFailedPrecondition,
+      'not-found' => L10n.current.errorNotFound,
+      _ => L10n.current.errorGeneric,
     };
 
 /// Error inesperado (el `catch` final de los repositorios y los streams):
@@ -77,40 +83,34 @@ String unexpectedErrorMessage(Object error) => switch (error) {
       FirebaseFunctionsException(:final code, :final details) =>
         functionErrorMessage(code, details),
       FirebaseException(code: 'permission-denied') =>
-        'No tienes permiso para hacer esto.',
+        L10n.current.errorPermissionDenied,
       FirebaseException(code: 'unavailable' || 'deadline-exceeded') ||
       TimeoutException() =>
-        kNoConnectionMessage,
-      _ => 'No se pudo completar. Inténtalo de nuevo.',
+        L10n.current.errorNoConnection,
+      _ => L10n.current.errorGeneric,
     };
 
 /// deleteAccount: motivos propios y, si no, el mensaje genérico.
 String deleteAccountErrorMessage(String code, Object? details) =>
     switch (functionErrorReason(details)) {
-      'active-bookings' =>
-        'Tienes viajes activos o reservados. Cancélalos o espera a que '
-            'terminen antes de eliminar tu cuenta.',
-      'admin_account' =>
-        'Las cuentas de administración se eliminan desde la consola.',
+      'active-bookings' => L10n.current.errorDeleteActiveBookings,
+      'admin_account' => L10n.current.errorDeleteAdminAccount,
       _ => commonFunctionError(code, details) ??
-          'No pudimos eliminar tu cuenta. Inténtalo de nuevo.',
+          L10n.current.errorDeleteAccountFailed,
     };
 
 /// acceptTerms: si cambió la versión mientras se leía, se vuelve a aceptar.
 String acceptTermsErrorMessage(String code, Object? details) =>
     switch (functionErrorReason(details)) {
-      'terms_outdated' => 'Los términos se acaban de actualizar. Vuelve a '
-          'abrirlos y acéptalos de nuevo.',
+      'terms_outdated' => L10n.current.errorTermsOutdated,
       _ => commonFunctionError(code, details) ??
-          'No pudimos registrar tu aceptación. Inténtalo de nuevo.',
+          L10n.current.errorAcceptTermsFailed,
     };
 
 /// Formulario de empresas (submitBusinessLead).
 String businessLeadErrorMessage(String code, Object? details) => switch (code) {
-      'resource-exhausted' =>
-        'Ya recibimos varias solicitudes desde aquí. Inténtalo más tarde '
-            'o escríbenos.',
-      'invalid-argument' => 'Revisa los datos del formulario.',
+      'resource-exhausted' => L10n.current.errorBusinessLeadTooMany,
+      'invalid-argument' => L10n.current.errorBusinessLeadInvalid,
       _ => commonFunctionError(code, details) ??
-          'No pudimos enviar tu solicitud. Inténtalo de nuevo.',
+          L10n.current.errorBusinessLeadFailed,
     };

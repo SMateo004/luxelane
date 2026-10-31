@@ -1,17 +1,25 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show Locale;
+
+import '../../../l10n/l10n.dart';
 
 /// Enlace de mapa a la última ubicación conocida.
 String mapLink(double lat, double lng) =>
     'https://maps.google.com/?q=${lat.toStringAsFixed(6)},${lng.toStringAsFixed(6)}';
 
-/// Texto del SMS que la persona solo tiene que enviar a central.
-String incidentSmsBody(String bookingShortId, {double? lat, double? lng}) => [
-      'SOS. Reserva #$bookingShortId.',
-      if (lat != null && lng != null)
-        'Ubicación: ${mapLink(lat, lng)}'
-      else
-        'Ubicación no disponible.',
-    ].join(' ');
+/// Texto del SMS que la persona solo tiene que enviar a central. Siempre en
+/// español: lo lee central, que trabaja en español como el panel, sea cual
+/// sea el idioma de la app.
+String incidentSmsBody(String bookingShortId, {double? lat, double? lng}) {
+  final t = lookupAppLocalizations(const Locale('es'));
+  return [
+    t.incidentSmsHeader(bookingShortId),
+    if (lat != null && lng != null)
+      t.incidentSmsLocation(mapLink(lat, lng))
+    else
+      t.incidentSmsNoLocation,
+  ].join(' ');
+}
 
 /// `sms:` prellenado a central. iOS separa el cuerpo con `&`, Android con
 /// `?`.
@@ -37,4 +45,4 @@ String bookingShortId(String id) =>
     (id.length > 6 ? id.substring(0, 6) : id).toUpperCase();
 
 /// Texto si no hay números configurados: nunca se inventa uno.
-const kNoNumbersHelp = 'Contacta con las autoridades locales.';
+String get kNoNumbersHelp => L10n.current.incidentNoNumbersHelp;

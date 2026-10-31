@@ -105,6 +105,36 @@ describe('updatePreferences (perfil)', () => {
   });
 });
 
+describe('updatePreferences: idioma de la cuenta (idiomas, A2)', () => {
+  it('solo el idioma: lo guarda sin tocar las preferencias', async () => {
+    await updatePreferences({ db }, 'ana', { conversation: 'quiet' });
+    expect(await updatePreferences({ db }, 'ana', { locale: 'pt', localeSource: 'system' }))
+      .toEqual({ locale: 'pt', localeSource: 'system' });
+    const u = (await db.doc('users/ana').get()).data()!;
+    expect(u).toMatchObject({ locale: 'pt', localeSource: 'system', tripPreferences: { conversation: 'quiet' } });
+    expect(u.localeUpdatedAt).toBeInstanceOf(admin.firestore.Timestamp);
+  });
+
+  it('el chófer guarda su idioma, pero no preferencias', async () => {
+    await updatePreferences({ db }, 'carlos', { locale: 'en', localeSource: 'user' });
+    expect((await db.doc('users/carlos').get()).data()).toMatchObject({ locale: 'en', localeSource: 'user' });
+    expect((await reason(updatePreferences({ db }, 'carlos', { conversation: 'quiet' }))).reason).toBe('inactive_user');
+  });
+
+  it('idioma fuera de la lista, «system» como idioma o sin su origen: rechazado', async () => {
+    for (const d of [{ locale: 'fr', localeSource: 'user' }, { locale: 'system', localeSource: 'system' },
+      { locale: 'es' }, { localeSource: 'user' }]) {
+      expect((await reason(updatePreferences({ db }, 'ana', d))).reason).toBe('invalid_request');
+    }
+    expect((await db.doc('users/ana').get()).data()!.locale).toBeUndefined();
+  });
+
+  it('cuenta inactiva: rechazado', async () => {
+    expect((await reason(updatePreferences({ db }, 'ina', { locale: 'en', localeSource: 'user' }))).reason)
+      .toBe('inactive_user');
+  });
+});
+
 describe('createBooking: copia por reserva en driverView/preferences', () => {
   it('con preferencias del viaje: copia saneada; en la reserva solo los idiomas', async () => {
     const { bookingId } = await createBooking(deps(), 'ana', trip({ preferences: TRIP_PREFS }));

@@ -6,6 +6,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/incident_bloc.dart';
 import '../help_contacts.dart';
 import 'sos_button.dart';
@@ -31,47 +32,31 @@ class IncidentHelpSheet extends StatelessWidget {
   Future<void> _open(Uri uri) => launch != null ? launch!(uri) : launchUrl(uri);
 
   static (String, String) texts(IncidentState s) {
+    final t = L10n.current;
     if (s.sending) {
-      return ('Avisando a central…', 'No cierres la app.');
+      return (t.incidentSendingTitle, t.incidentSendingBody);
     }
     if (s.offline) {
-      return (
-        'No pudimos avisar a central',
-        'No hay conexión. Llama o envía el mensaje ya preparado.',
-      );
+      return (t.incidentFailedTitle, t.incidentOfflineBody);
     }
     final f = s.failure;
-    if (f != null) return ('No pudimos avisar a central', f.message);
+    if (f != null) return (t.incidentFailedTitle, f.message);
     final i = s.incident;
     // Cancelado por el usuario (aunque central ya lo haya reconocido).
     if (i != null &&
         i.cancelledByReporter &&
         i.status != IncidentStatus.closed) {
-      return (
-        'Aviso cancelado',
-        'Central fue avisada. Ya no compartimos tu ubicación.',
-      );
+      return (t.incidentCancelledTitle, t.incidentCancelledBody);
     }
     return switch (i?.status) {
-      IncidentStatus.open => (
-          'Avisamos a central',
-          'Central fue avisada. Compartimos tu ubicación mientras dure el '
-              'aviso.',
-        ),
-      IncidentStatus.acknowledged => (
-          'Central recibió tu aviso',
-          'Una persona de central lo está atendiendo.',
-        ),
-      IncidentStatus.closed => (
-          'Aviso cerrado',
-          'Central cerró el aviso. Ya no compartimos tu ubicación.',
-        ),
+      IncidentStatus.open => (t.incidentOpenTitle, t.incidentOpenBody),
+      IncidentStatus.acknowledged => (t.incidentAckTitle, t.incidentAckBody),
+      IncidentStatus.closed => (t.incidentClosedTitle, t.incidentClosedBody),
       IncidentStatus.cancelRequested => (
-          'Aviso cancelado',
-          'Central te llamará para verificar que estás bien. Ya no compartimos '
-              'tu ubicación.',
+          t.incidentCancelledTitle,
+          t.incidentCancelRequestedBody,
         ),
-      null => ('Ayuda', 'Mantén pulsado SOS para avisar a central.'),
+      null => (t.incidentHelp, t.incidentIdleBody),
     };
   }
 
@@ -80,19 +65,16 @@ class IncidentHelpSheet extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('¿Fue una falsa alarma?'),
-        content: const Text(
-          'Cancelaremos el aviso. Central lo verá igualmente y queda '
-          'registrado.',
-        ),
+        title: Text(ctx.l10n.incidentFalseAlarmQuestion),
+        content: Text(ctx.l10n.incidentFalseAlarmBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Volver'),
+            child: Text(ctx.l10n.incidentBack),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Cancelar aviso'),
+            child: Text(ctx.l10n.incidentCancelAlert),
           ),
         ],
       ),
@@ -105,6 +87,7 @@ class IncidentHelpSheet extends StatelessWidget {
       BlocBuilder<IncidentBloc, IncidentState>(
         builder: (context, s) {
           final (title, body) = texts(s);
+          final t = context.l10n;
           final phone = dispatchPhone;
           final loc = s.lastLocation;
           final count = s.incident?.count ?? 0;
@@ -135,7 +118,7 @@ class IncidentHelpSheet extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: LuxSpacing.xs),
                           child: Text(
-                            'Aviso enviado $count veces.',
+                            t.incidentSentTimes(count),
                             style: LuxTypography.caption,
                           ),
                         ),
@@ -145,13 +128,13 @@ class IncidentHelpSheet extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.lg),
                 if (s.offline && phone != null) ...[
                   LuxButton(
-                    label: 'Llamar a central',
+                    label: t.incidentCallDispatch,
                     icon: Icons.call_rounded,
                     onPressed: () => _open(telUri(phone)),
                   ),
                   const SizedBox(height: LuxSpacing.sm),
                   LuxOutlinedButton(
-                    label: 'Enviar SMS a central',
+                    label: t.incidentSmsDispatch,
                     icon: Icons.sms_outlined,
                     onPressed: () => _open(
                       incidentSmsUri(
@@ -165,7 +148,7 @@ class IncidentHelpSheet extends StatelessWidget {
                   const SizedBox(height: LuxSpacing.sm),
                 ] else if (phone != null) ...[
                   LuxOutlinedButton(
-                    label: 'Llamar a central',
+                    label: t.incidentCallDispatch,
                     icon: Icons.call_outlined,
                     onPressed: () => _open(telUri(phone)),
                   ),
@@ -173,7 +156,7 @@ class IncidentHelpSheet extends StatelessWidget {
                 ],
                 if (s.failure != null)
                   LuxButton.ghost(
-                    label: 'Reintentar el aviso',
+                    label: t.incidentRetry,
                     onPressed: s.sending
                         ? null
                         : () => context.read<IncidentBloc>().add(
@@ -184,7 +167,7 @@ class IncidentHelpSheet extends StatelessWidget {
                 const LuxDivider(),
                 const SizedBox(height: LuxSpacing.sm),
                 if (emergencyNumbers.isEmpty)
-                  const Text(kNoNumbersHelp, style: LuxTypography.bodyMedium)
+                  Text(t.incidentNoNumbersHelp, style: LuxTypography.bodyMedium)
                 else
                   for (final e in emergencyNumbers.entries)
                     LuxListRow(
@@ -199,14 +182,14 @@ class IncidentHelpSheet extends StatelessWidget {
                     child: Column(
                       children: [
                         SosButton(
-                          label: 'Avisar de nuevo',
+                          label: t.incidentAlertAgain,
                           onActivated: () => context.read<IncidentBloc>().add(
                                 const IncidentRaised(),
                               ),
                         ),
                         const SizedBox(height: LuxSpacing.xs),
-                        const Text(
-                          'Mantén pulsado para avisar de nuevo',
+                        Text(
+                          t.incidentHoldToAlertAgain,
                           style: LuxTypography.caption,
                         ),
                       ],
@@ -214,7 +197,7 @@ class IncidentHelpSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: LuxSpacing.sm),
                   LuxButton.ghost(
-                    label: 'Fue una falsa alarma',
+                    label: t.incidentFalseAlarm,
                     onPressed: () => _confirmCancel(context),
                   ),
                 ],

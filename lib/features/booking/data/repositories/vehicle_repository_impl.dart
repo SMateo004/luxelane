@@ -5,6 +5,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 class VehicleRepositoryImpl implements VehicleRepository {
   VehicleRepositoryImpl({required FirebaseFirestore firestore})
@@ -91,9 +92,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
       });
       return const Right(null);
     } catch (_) {
-      return const Left(
-        ServerFailure('No pudimos guardar el cambio. Inténtalo de nuevo.'),
-      );
+      return Left(ServerFailure(L10n.current.bookingVehicleSaveError));
     }
   }
 }

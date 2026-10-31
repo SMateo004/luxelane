@@ -1,0 +1,688 @@
+{
+  "paymentOurFault": {
+    "description": "Error de pago por un fallo del servidor; no culpa a la persona.",
+    "es": "No pudimos completar el pago por un problema nuestro. Inténtalo de nuevo en unos minutos.",
+    "en": "We could not complete the payment due to an issue on our side. Please try again in a few minutes.",
+    "pt": "Não foi possível concluir o pagamento por um problema nosso. Tente novamente em alguns minutos."
+  },
+  "paymentMethodDisabled": {
+    "description": "Error: el método de pago elegido está desactivado.",
+    "es": "Este método de pago no está disponible ahora. Elige otro o contacta con central.",
+    "en": "This payment method is not available at the moment. Choose another one or contact our operations team.",
+    "pt": "Este método de pagamento não está disponível no momento. Escolha outro ou fale com a central."
+  },
+  "paymentAlreadyPaid": {
+    "description": "Error: la reserva ya está pagada.",
+    "es": "Esta reserva ya está pagada.",
+    "en": "This booking has already been paid.",
+    "pt": "Esta reserva já está paga."
+  },
+  "paymentNotAwaiting": {
+    "description": "Error: la reserva ya no espera un pago.",
+    "es": "Esta reserva ya no admite pagos. Revisa su estado en Mis viajes.",
+    "en": "This booking no longer accepts payments. Check its status in My trips.",
+    "pt": "Esta reserva não aceita mais pagamentos. Confira o status em Minhas viagens."
+  },
+  "paymentBookingNotFound": {
+    "description": "Error: no se encontró la reserva (o no es de la persona).",
+    "es": "No encontramos esta reserva.",
+    "en": "We could not find this booking.",
+    "pt": "Não encontramos esta reserva."
+  },
+  "paymentInvalidOperationNumber": {
+    "description": "Error: el número de operación tiene caracteres no permitidos. Los caracteres finales son literales.",
+    "es": "Revisa el número de operación: usa solo letras, números, espacios y . _ / -",
+    "en": "Check the transaction number: use only letters, numbers, spaces and . _ / -",
+    "pt": "Confira o número da operação: use apenas letras, números, espaços e . _ / -"
+  },
+  "paymentAccountNotEnabled": {
+    "description": "Error del pago con tarjeta: la cuenta no tiene pagos habilitados (en minúscula, va dentro de otro mensaje).",
+    "es": "tu cuenta aún no tiene pagos habilitados",
+    "en": "your account does not have payments enabled yet",
+    "pt": "sua conta ainda não tem pagamentos habilitados"
+  },
+  "paymentServerUnreachable": {
+    "description": "Error del pago con tarjeta: no hubo respuesta del servidor de pagos (en minúscula).",
+    "es": "no se pudo contactar con el servidor de pagos",
+    "en": "the payment server could not be reached",
+    "pt": "não foi possível contatar o servidor de pagamentos"
+  },
+  "paymentCardInUse": {
+    "description": "Error al quitar una tarjeta que paga una reserva pendiente.",
+    "es": "Esta tarjeta paga una reserva pendiente. Cancélala o espera a que termine antes de quitar la tarjeta.",
+    "en": "This card is paying for a pending booking. Cancel the booking or wait until it ends before removing the card.",
+    "pt": "Este cartão paga uma reserva pendente. Cancele a reserva ou aguarde até que termine antes de remover o cartão."
+  },
+  "paymentRemoveCardError": {
+    "description": "Error al quitar una tarjeta guardada.",
+    "es": "No pudimos quitar la tarjeta. Inténtalo de nuevo.",
+    "en": "We could not remove the card. Please try again.",
+    "pt": "Não foi possível remover o cartão. Tente novamente."
+  },
+  "paymentSetDefaultError": {
+    "description": "Error al cambiar la tarjeta predeterminada.",
+    "es": "No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.",
+    "en": "We could not change your default card. Please try again.",
+    "pt": "Não foi possível alterar o cartão padrão. Tente novamente."
+  },
+  "paymentProfileError": {
+    "description": "Error al crear el perfil de pagos de la persona.",
+    "es": "No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.",
+    "en": "We could not set up your payment profile. Please try again.",
+    "pt": "Não foi possível preparar seu perfil de pagamentos. Tente novamente."
+  },
+  "paymentLoadError": {
+    "description": "Error al cargar el estado del pago de una reserva.",
+    "es": "No pudimos cargar el pago de tu reserva. Revisa tu conexión.",
+    "en": "We could not load the payment for your booking. Check your connection.",
+    "pt": "Não foi possível carregar o pagamento da sua reserva. Verifique sua conexão."
+  },
+  "paymentCardUnavailable": {
+    "description": "Error: el pago con tarjeta no se puede usar en este momento.",
+    "es": "El pago con tarjeta no está disponible ahora. Elige otro método.",
+    "en": "Card payment is not available at the moment. Choose another method.",
+    "pt": "O pagamento com cartão não está disponível no momento. Escolha outro método."
+  },
+  "paymentCardFailed": {
+    "description": "Error: el formulario de tarjeta no completó el pago.",
+    "es": "No se pudo completar el pago con tarjeta. Revisa los datos e inténtalo de nuevo.",
+    "en": "The card payment could not be completed. Check the details and try again.",
+    "pt": "Não foi possível concluir o pagamento com cartão. Confira os dados e tente novamente."
+  },
+  "paymentCardIncomplete": {
+    "description": "Aviso al agregar una tarjeta sin todos los datos.",
+    "es": "Ingresa los datos completos de la tarjeta",
+    "en": "Enter all the card details",
+    "pt": "Informe todos os dados do cartão"
+  },
+  "paymentCardAdded": {
+    "description": "Aviso tras guardar una tarjeta nueva.",
+    "es": "Tarjeta agregada exitosamente",
+    "en": "Card added",
+    "pt": "Cartão adicionado"
+  },
+  "paymentAddMethodTitle": {
+    "description": "Título de la pantalla para agregar una tarjeta.",
+    "es": "Agregar método de pago",
+    "en": "Add payment method",
+    "pt": "Adicionar método de pagamento"
+  },
+  "paymentBack": {
+    "description": "Etiqueta del botón de volver en las pantallas de tarjetas.",
+    "es": "Volver",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "paymentCardDetails": {
+    "description": "Encabezado del formulario de la tarjeta.",
+    "es": "Datos de la tarjeta",
+    "en": "Card details",
+    "pt": "Dados do cartão"
+  },
+  "paymentAddCardSecure": {
+    "description": "Nota de seguridad bajo el formulario de tarjeta. Stripe y PCI DSS no se traducen.",
+    "es": "Protegido por Stripe · Cumplimiento PCI DSS",
+    "en": "Protected by Stripe · PCI DSS compliant",
+    "pt": "Protegido pela Stripe · Conformidade PCI DSS"
+  },
+  "paymentAddCard": {
+    "description": "Botón o acción para agregar una tarjeta.",
+    "es": "Agregar tarjeta",
+    "en": "Add card",
+    "pt": "Adicionar cartão"
+  },
+  "paymentBookingTitle": {
+    "description": "Título de la pantalla de pago de una reserva.",
+    "es": "Pago de tu reserva",
+    "en": "Booking payment",
+    "pt": "Pagamento da sua reserva"
+  },
+  "paymentViewTrip": {
+    "description": "Botón para ir al detalle del viaje desde el pago.",
+    "es": "Ver mi viaje",
+    "en": "View my trip",
+    "pt": "Ver minha viagem"
+  },
+  "paymentNoPending": {
+    "description": "Estado vacío: la reserva no tiene pago pendiente.",
+    "es": "Esta reserva no tiene un pago pendiente.",
+    "en": "This booking has no pending payment.",
+    "pt": "Esta reserva não tem pagamento pendente."
+  },
+  "paymentConfirmedTitle": {
+    "description": "Título cuando central confirmó el pago.",
+    "es": "Pago confirmado",
+    "en": "Payment confirmed",
+    "pt": "Pagamento confirmado"
+  },
+  "paymentConfirmedMessage": {
+    "description": "Mensaje tras confirmar el pago; sin plazos.",
+    "es": "Ya buscamos a tu chófer. Te avisaremos cuando esté asignado.",
+    "en": "We are looking for your chauffeur. We will let you know once one is assigned.",
+    "pt": "Já estamos buscando seu motorista. Avisaremos você quando ele for designado."
+  },
+  "paymentExpiredTitle": {
+    "description": "Título cuando venció el plazo para pagar.",
+    "es": "El plazo para pagar terminó",
+    "en": "The payment window has ended",
+    "pt": "O prazo para pagamento terminou"
+  },
+  "paymentExpiredMessage": {
+    "description": "Explicación de la reserva cancelada por falta de pago, con la referencia del pago.",
+    "es": "La reserva se canceló porque no recibimos el pago a tiempo. Si ya habías pagado, contacta con central e indica la referencia {reference}.",
+    "en": "The booking was cancelled because we did not receive the payment in time. If you had already paid, contact our operations team and quote the reference {reference}.",
+    "pt": "A reserva foi cancelada porque não recebemos o pagamento a tempo. Se você já tinha pago, fale com a central e informe a referência {reference}.",
+    "placeholders": {
+      "reference": {
+        "type": "String",
+        "example": "LX7K2M"
+      }
+    }
+  },
+  "paymentNewBooking": {
+    "description": "Botón para empezar una reserva nueva.",
+    "es": "Hacer una nueva reserva",
+    "en": "Make a new booking",
+    "pt": "Fazer uma nova reserva"
+  },
+  "paymentClosedTitle": {
+    "description": "Título cuando la reserva ya no acepta pagos (devuelta, cancelada…).",
+    "es": "Esta reserva ya no admite pagos",
+    "en": "This booking no longer accepts payments",
+    "pt": "Esta reserva não aceita mais pagamentos"
+  },
+  "paymentClosedMessage": {
+    "description": "Mensaje bajo «Esta reserva ya no admite pagos».",
+    "es": "Consulta el detalle y el comprobante en tu viaje.",
+    "en": "See the details and the receipt in your trip.",
+    "pt": "Consulte os detalhes e o comprovante na sua viagem."
+  },
+  "paymentRejected": {
+    "description": "Aviso cuando central no pudo confirmar el pago avisado.",
+    "es": "No pudimos confirmar tu pago. Revisa los datos y vuelve a avisarnos, o contacta con central.",
+    "en": "We could not confirm your payment. Check the details and let us know again, or contact our operations team.",
+    "pt": "Não foi possível confirmar seu pagamento. Confira os dados e nos avise novamente, ou fale com a central."
+  },
+  "paymentNoMethods": {
+    "description": "Aviso cuando ningún método de pago se puede usar en este dispositivo.",
+    "es": "Ahora mismo no podemos recibir el pago desde aquí. Contacta con central para completar tu reserva.",
+    "en": "We cannot take the payment here at the moment. Contact our operations team to complete your booking.",
+    "pt": "No momento não podemos receber o pagamento por aqui. Fale com a central para concluir sua reserva."
+  },
+  "paymentChangeMethod": {
+    "description": "Botón para volver a elegir el método de pago.",
+    "es": "Cambiar método de pago",
+    "en": "Change payment method",
+    "pt": "Alterar método de pagamento"
+  },
+  "paymentSearchAfterConfirm": {
+    "description": "Nota al pie de la pantalla de pago.",
+    "es": "Buscamos chófer cuando el pago está confirmado.",
+    "en": "We look for a chauffeur once the payment is confirmed.",
+    "pt": "Buscamos um motorista quando o pagamento é confirmado."
+  },
+  "paymentAmountDueEyebrow": {
+    "description": "Rótulo en mayúsculas sobre el importe a pagar.",
+    "es": "IMPORTE A PAGAR",
+    "en": "AMOUNT DUE",
+    "pt": "VALOR A PAGAR"
+  },
+  "paymentReference": {
+    "description": "Etiqueta de la referencia del pago (código a escribir en el concepto).",
+    "es": "Referencia",
+    "en": "Reference",
+    "pt": "Referência"
+  },
+  "paymentDeadlinePassed": {
+    "description": "El plazo para pagar ya pasó; {time} es la hora.",
+    "es": "El plazo para pagar terminó a las {time}.",
+    "en": "The payment window ended at {time}.",
+    "pt": "O prazo para pagamento terminou às {time}.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:30"
+      }
+    }
+  },
+  "paymentTimeLeft": {
+    "description": "Tiempo que queda para pagar; {span} es «24 min» o «1 h 5 min», {time} la hora límite.",
+    "es": "Quedan {span} para pagar (hasta las {time}).",
+    "en": "{span} left to pay (until {time}).",
+    "pt": "Restam {span} para pagar (até às {time}).",
+    "placeholders": {
+      "span": {
+        "type": "String",
+        "example": "24 min"
+      },
+      "time": {
+        "type": "String",
+        "example": "14:30"
+      }
+    }
+  },
+  "paymentSpanMinutes": {
+    "description": "Duración solo con minutos, dentro de «Quedan … para pagar».",
+    "es": "{minutes} min",
+    "en": "{minutes} min",
+    "pt": "{minutes} min",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentSpanHours": {
+    "description": "Duración en horas exactas dentro de «Quedan … para pagar».",
+    "es": "{hours} h",
+    "en": "{hours} h",
+    "pt": "{hours} h",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentSpanHoursMinutes": {
+    "description": "Duración en horas y minutos dentro de «Quedan … para pagar».",
+    "es": "{hours} h {minutes} min",
+    "en": "{hours} h {minutes} min",
+    "pt": "{hours} h {minutes} min",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentCopy": {
+    "description": "Etiqueta del botón de copiar; {label} es «referencia» o «cuenta», en minúscula.",
+    "es": "Copiar {label}",
+    "en": "Copy {label}",
+    "pt": "Copiar {label}",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "referencia"
+      }
+    }
+  },
+  "paymentCopied": {
+    "description": "Aviso tras copiar; {label} es «Referencia» o «Cuenta» (femenino).",
+    "es": "{label} copiada.",
+    "en": "{label} copied.",
+    "pt": "{label} copiada.",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Referencia"
+      }
+    }
+  },
+  "paymentMethodManualQr": {
+    "description": "Método de pago: QR o transferencia bancaria.",
+    "es": "QR o transferencia bancaria",
+    "en": "QR or bank transfer",
+    "pt": "QR ou transferência bancária"
+  },
+  "paymentMethodCard": {
+    "description": "Método de pago: tarjeta (también cuando no se conoce la marca).",
+    "es": "Tarjeta",
+    "en": "Card",
+    "pt": "Cartão"
+  },
+  "paymentHowToPay": {
+    "description": "Rótulo en mayúsculas sobre la lista de métodos.",
+    "es": "¿CÓMO QUIERES PAGAR?",
+    "en": "HOW WOULD YOU LIKE TO PAY?",
+    "pt": "COMO VOCÊ QUER PAGAR?"
+  },
+  "paymentManualEyebrow": {
+    "description": "Rótulo en mayúsculas sobre los datos de cobro.",
+    "es": "PAGA POR QR O TRANSFERENCIA",
+    "en": "PAY BY QR OR TRANSFER",
+    "pt": "PAGUE POR QR OU TRANSFERÊNCIA"
+  },
+  "paymentQrLabel": {
+    "description": "Etiqueta del lector de pantalla para la imagen del QR.",
+    "es": "Código QR para pagar",
+    "en": "QR code to pay",
+    "pt": "Código QR para pagar"
+  },
+  "paymentQrError": {
+    "description": "Aviso si la imagen del QR no carga.",
+    "es": "No pudimos mostrar el QR. Usa los datos de la cuenta.",
+    "en": "We could not show the QR code. Use the account details.",
+    "pt": "Não foi possível exibir o QR. Use os dados da conta."
+  },
+  "paymentHolder": {
+    "description": "Etiqueta: titular de la cuenta de cobro (el valor lo escribe el admin y no se traduce).",
+    "es": "Titular",
+    "en": "Account holder",
+    "pt": "Titular"
+  },
+  "paymentBank": {
+    "description": "Etiqueta: banco de la cuenta de cobro.",
+    "es": "Banco",
+    "en": "Bank",
+    "pt": "Banco"
+  },
+  "paymentAccountType": {
+    "description": "Etiqueta: tipo de cuenta de cobro.",
+    "es": "Tipo de cuenta",
+    "en": "Account type",
+    "pt": "Tipo de conta"
+  },
+  "paymentAccount": {
+    "description": "Etiqueta: número de cuenta de cobro (femenino en español y portugués: «Cuenta copiada»).",
+    "es": "Cuenta",
+    "en": "Account",
+    "pt": "Conta"
+  },
+  "paymentPayExactly": {
+    "description": "Instrucción del pago manual: importe exacto y referencia para el concepto.",
+    "es": "Paga exactamente {amount} y escribe la referencia {reference} en el concepto o glosa.",
+    "en": "Pay exactly {amount} and enter the reference {reference} in the payment description.",
+    "pt": "Pague exatamente {amount} e informe a referência {reference} na descrição do pagamento.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 86,50"
+      },
+      "reference": {
+        "type": "String",
+        "example": "LX7K2M"
+      }
+    }
+  },
+  "paymentOperationLabel": {
+    "description": "Etiqueta del campo del número de operación del banco.",
+    "es": "Número de operación (opcional)",
+    "en": "Transaction number (optional)",
+    "pt": "Número da operação (opcional)"
+  },
+  "paymentOperationHint": {
+    "description": "Ayuda del campo del número de operación.",
+    "es": "El que aparece en tu comprobante",
+    "en": "The one shown on your bank receipt",
+    "pt": "O que aparece no seu comprovante"
+  },
+  "paymentIPaid": {
+    "description": "Botón para avisar que ya se hizo el pago manual.",
+    "es": "Ya pagué",
+    "en": "I have paid",
+    "pt": "Já paguei"
+  },
+  "paymentWaitingTitle": {
+    "description": "Estado: el pago avisado espera que central lo confirme.",
+    "es": "Esperando confirmación",
+    "en": "Awaiting confirmation",
+    "pt": "Aguardando confirmação"
+  },
+  "paymentWaitingMessage": {
+    "description": "Explicación mientras central revisa el pago.",
+    "es": "Central está revisando tu pago. Te avisaremos aquí y en tus notificaciones cuando lo confirme.",
+    "en": "Our operations team is reviewing your payment. We will let you know here and in your notifications once it is confirmed.",
+    "pt": "A central está revisando seu pagamento. Avisaremos você aqui e nas suas notificações quando ele for confirmado."
+  },
+  "paymentOperationNumber": {
+    "description": "Número de operación que escribió la persona.",
+    "es": "Número de operación: {number}",
+    "en": "Transaction number: {number}",
+    "pt": "Número da operação: {number}",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "OP 9"
+      }
+    }
+  },
+  "paymentConfirming": {
+    "description": "Estado tras completar el formulario de tarjeta.",
+    "es": "Confirmando tu pago…",
+    "en": "Confirming your payment…",
+    "pt": "Confirmando seu pagamento…"
+  },
+  "paymentPayWithCard": {
+    "description": "Botón para abrir el pago con tarjeta.",
+    "es": "Pagar con tarjeta",
+    "en": "Pay by card",
+    "pt": "Pagar com cartão"
+  },
+  "paymentRetry": {
+    "description": "Botón para reintentar el pago con tarjeta tras un error.",
+    "es": "Reintentar",
+    "en": "Try again",
+    "pt": "Tentar novamente"
+  },
+  "paymentAddCardsOnPhone": {
+    "description": "Aviso en la web: las tarjetas se agregan desde la app del teléfono.",
+    "es": "Agrega tus tarjetas desde la app de Luxelane en tu teléfono.",
+    "en": "Add your cards from the Luxelane app on your phone.",
+    "pt": "Adicione seus cartões pelo app Luxelane no seu celular."
+  },
+  "paymentRemoveCardTitle": {
+    "description": "Título del diálogo para quitar una tarjeta.",
+    "es": "¿Quitar esta tarjeta?",
+    "en": "Remove this card?",
+    "pt": "Remover este cartão?"
+  },
+  "paymentRemoveCardMessage": {
+    "description": "Texto del diálogo para quitar una tarjeta.",
+    "es": "Dejará de estar disponible para tus próximas reservas.",
+    "en": "It will no longer be available for your upcoming bookings.",
+    "pt": "Ele deixará de estar disponível para suas próximas reservas."
+  },
+  "paymentCancel": {
+    "description": "Botón para cerrar el diálogo sin quitar la tarjeta.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "paymentRemove": {
+    "description": "Botón del diálogo que quita la tarjeta.",
+    "es": "Quitar",
+    "en": "Remove",
+    "pt": "Remover"
+  },
+  "paymentMethodsTitle": {
+    "description": "Título de la pantalla de métodos de pago del perfil.",
+    "es": "Métodos de pago",
+    "en": "Payment methods",
+    "pt": "Métodos de pagamento"
+  },
+  "paymentPerBooking": {
+    "description": "Estado vacío cuando no hay tarjetas que guardar: cada reserva se paga en su pantalla de pago.",
+    "es": "Cada reserva se paga en su paso de pago.",
+    "en": "Each booking is paid in its own payment step.",
+    "pt": "Cada reserva é paga na sua própria etapa de pagamento."
+  },
+  "paymentSavedCards": {
+    "description": "Encabezado de la lista de tarjetas.",
+    "es": "Tarjetas guardadas",
+    "en": "Saved cards",
+    "pt": "Cartões salvos"
+  },
+  "paymentSetDefaultHint": {
+    "description": "Pie de la lista de tarjetas.",
+    "es": "Toca una tarjeta para usarla por defecto al reservar.",
+    "en": "Tap a card to use it by default when booking.",
+    "pt": "Toque em um cartão para usá-lo como padrão ao reservar."
+  },
+  "paymentEncrypted": {
+    "description": "Nota de seguridad bajo la lista de tarjetas. Stripe no se traduce.",
+    "es": "Pagos cifrados y protegidos por Stripe",
+    "en": "Payments encrypted and protected by Stripe",
+    "pt": "Pagamentos criptografados e protegidos pela Stripe"
+  },
+  "paymentEmptyCards": {
+    "description": "Estado vacío de la lista de tarjetas.",
+    "es": "Paga sin pensarlo.",
+    "en": "Pay without a second thought.",
+    "pt": "Pague sem preocupação."
+  },
+  "paymentCardDefaultExpires": {
+    "description": "Detalle de la tarjeta predeterminada; {expiry} es «MM/AA».",
+    "es": "Predeterminada · vence {expiry}",
+    "en": "Default · expires {expiry}",
+    "pt": "Padrão · vence em {expiry}",
+    "placeholders": {
+      "expiry": {
+        "type": "String",
+        "example": "08/29"
+      }
+    }
+  },
+  "paymentCardExpires": {
+    "description": "Detalle de una tarjeta; {expiry} es «MM/AA».",
+    "es": "Vence {expiry}",
+    "en": "Expires {expiry}",
+    "pt": "Vence em {expiry}",
+    "placeholders": {
+      "expiry": {
+        "type": "String",
+        "example": "08/29"
+      }
+    }
+  },
+  "paymentRemoveCard": {
+    "description": "Etiqueta del botón para quitar una tarjeta de la lista.",
+    "es": "Quitar tarjeta",
+    "en": "Remove card",
+    "pt": "Remover cartão"
+  },
+  "paymentReceiptMethodManual": {
+    "description": "Método en el comprobante: QR o transferencia.",
+    "es": "QR o transferencia",
+    "en": "QR or transfer",
+    "pt": "QR ou transferência"
+  },
+  "paymentPendingTitle": {
+    "description": "Título de la tarjeta del viaje cuando falta pagar.",
+    "es": "Pago pendiente",
+    "en": "Payment pending",
+    "pt": "Pagamento pendente"
+  },
+  "paymentReportedMessage": {
+    "description": "La persona avisó que pagó; {amount} es el importe con «Bs».",
+    "es": "Avisaste que pagaste {amount}. Central lo está revisando.",
+    "en": "You let us know you paid {amount}. Our operations team is reviewing it.",
+    "pt": "Você avisou que pagou {amount}. A central está revisando.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 86,50"
+      }
+    }
+  },
+  "paymentPendingMessage": {
+    "description": "Falta pagar; {amount} es el importe con «Bs».",
+    "es": "Paga {amount} para que busquemos a tu chófer.",
+    "en": "Pay {amount} so we can look for your chauffeur.",
+    "pt": "Pague {amount} para buscarmos seu motorista.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 86,50"
+      }
+    }
+  },
+  "paymentViewPayment": {
+    "description": "Botón para abrir el pago ya avisado.",
+    "es": "Ver el pago",
+    "en": "View payment",
+    "pt": "Ver o pagamento"
+  },
+  "paymentPayNow": {
+    "description": "Botón para abrir la pantalla de pago.",
+    "es": "Pagar ahora",
+    "en": "Pay now",
+    "pt": "Pagar agora"
+  },
+  "paymentReceiptTitle": {
+    "description": "Título del comprobante de pago.",
+    "es": "Comprobante de pago",
+    "en": "Payment receipt",
+    "pt": "Comprovante de pagamento"
+  },
+  "paymentReceiptHide": {
+    "description": "Etiqueta del botón que pliega el comprobante.",
+    "es": "Ocultar comprobante",
+    "en": "Hide receipt",
+    "pt": "Ocultar comprovante"
+  },
+  "paymentReceiptShow": {
+    "description": "Etiqueta del botón que despliega el comprobante.",
+    "es": "Ver comprobante",
+    "en": "View receipt",
+    "pt": "Ver comprovante"
+  },
+  "paymentReceiptNotInvoice": {
+    "description": "Aclaración del comprobante: no es una factura.",
+    "es": "Este comprobante no es una factura.",
+    "en": "This receipt is not an invoice.",
+    "pt": "Este comprovante não é uma nota fiscal."
+  },
+  "paymentReceiptPaid": {
+    "description": "Fila del comprobante: importe pagado.",
+    "es": "Pagado",
+    "en": "Paid",
+    "pt": "Pago"
+  },
+  "paymentReceiptDate": {
+    "description": "Fila del comprobante: fecha del pago.",
+    "es": "Fecha",
+    "en": "Date",
+    "pt": "Data"
+  },
+  "paymentReceiptMethod": {
+    "description": "Fila del comprobante: método de pago.",
+    "es": "Método",
+    "en": "Method",
+    "pt": "Método"
+  },
+  "paymentReceiptRetained": {
+    "description": "Fila del comprobante: retención por cancelar.",
+    "es": "Retención por cancelación",
+    "en": "Cancellation fee",
+    "pt": "Taxa de cancelamento"
+  },
+  "paymentReceiptRefundPending": {
+    "description": "Fila del comprobante: devolución aún no registrada.",
+    "es": "Devolución pendiente",
+    "en": "Refund pending",
+    "pt": "Reembolso pendente"
+  },
+  "paymentReceiptRefundPendingNote": {
+    "description": "Nota bajo la devolución pendiente; sin plazos.",
+    "es": "Central la registrará y te avisaremos cuando quede hecha.",
+    "en": "Our operations team will record it and we will let you know once it is done.",
+    "pt": "A central vai registrá-lo e avisaremos você quando for concluído."
+  },
+  "paymentReceiptRefunded": {
+    "description": "Fila del comprobante: importe devuelto.",
+    "es": "Devuelto",
+    "en": "Refunded",
+    "pt": "Reembolsado"
+  },
+  "paymentReceiptRefundedNote": {
+    "description": "Nota bajo el importe devuelto.",
+    "es": "Te devolvemos el dinero al método con el que pagaste.",
+    "en": "The money is returned to the method you paid with.",
+    "pt": "O valor é devolvido ao método com que você pagou."
+  },
+  "paymentReceiptBalanceDue": {
+    "description": "Fila del comprobante: saldo que falta pagar.",
+    "es": "Saldo pendiente",
+    "en": "Balance due",
+    "pt": "Saldo pendente"
+  },
+  "paymentReceiptBalanceNote": {
+    "description": "Nota bajo el saldo pendiente; sin promesas de contacto.",
+    "es": "El importe final del viaje fue mayor que lo pagado.",
+    "en": "The final trip amount was higher than the amount paid.",
+    "pt": "O valor final da viagem foi maior que o valor pago."
+  }
+}

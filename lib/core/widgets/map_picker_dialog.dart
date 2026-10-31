@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
@@ -19,12 +20,12 @@ String mapPickerLabel(Place? place) =>
         ? place!.address
         : kPointOnMapLabel;
 
-const kPointOnMapLabel = 'Punto elegido en el mapa';
+String get kPointOnMapLabel => L10n.current.commonPointOnMap;
 
 Future<Place?> showMapPickerDialog(
   BuildContext context, {
   LatLng? initial,
-  String title = 'Seleccionar ubicación',
+  String? title,
   String? notice,
 }) {
   return showDialog<Place>(
@@ -32,7 +33,7 @@ Future<Place?> showMapPickerDialog(
     barrierColor: LuxColors.ink.withOpacity(0.35),
     builder: (_) => _MapPickerDialog(
       initial: initial ?? const LatLng(-17.7833, -63.1821), // Santa Cruz center
-      title: title,
+      title: title ?? context.l10n.commonSelectLocation,
       notice: notice,
     ),
   );
@@ -61,7 +62,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
   GoogleMapController? _ctrl;
 
   LatLng _center = const LatLng(-17.7833, -63.1821);
-  String _address = 'Mueve el mapa para elegir el lugar';
+  String _address = L10n.current.commonMoveMapToChoose;
   bool _loading = false;
   bool _dragging = false;
 
@@ -162,7 +163,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                           style: const TextStyle(
                             color: textColor,
                             fontSize: 15,
-                            fontFamily: 'Montserrat',
+                            fontFamily: LuxTypography.sansFamily,
                             fontWeight: FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -212,12 +213,12 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                               ),
                               const SizedBox(height: 12),
                             ],
-                            const Text(
-                              'UBICACIÓN SELECCIONADA',
-                              style: TextStyle(
+                            Text(
+                              context.l10n.commonSelectedLocation,
+                              style: const TextStyle(
                                 color: subColor,
                                 fontSize: 10,
-                                fontFamily: 'Montserrat',
+                                fontFamily: LuxTypography.sansFamily,
                                 fontWeight: FontWeight.w500,
                                 letterSpacing: 1.5,
                               ),
@@ -238,7 +239,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                                 style: const TextStyle(
                                   color: textColor,
                                   fontSize: 13,
-                                  fontFamily: 'Montserrat',
+                                  fontFamily: LuxTypography.sansFamily,
                                   fontWeight: FontWeight.w400,
                                 ),
                                 maxLines: 2,
@@ -263,13 +264,13 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                               borderRadius: BorderRadius.circular(LuxRadius.md),
                             ),
                             textStyle: const TextStyle(
-                              fontFamily: 'Montserrat',
+                              fontFamily: LuxTypography.sansFamily,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.5,
                             ),
                           ),
-                          child: const Text('CONFIRMAR'),
+                          child: Text(context.l10n.commonConfirmUpper),
                         ),
                       ),
                     ],

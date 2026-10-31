@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
+
 /// Reservar exige el correo verificado: explica por qué y lleva a
 /// «Verifica tu correo».
 class EmailNotVerifiedDialog extends StatelessWidget {
@@ -13,22 +15,19 @@ class EmailNotVerifiedDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Verifica tu correo para reservar'),
-        content: const Text(
-          'Por seguridad, solo se puede reservar con el correo verificado. '
-          'Abre el enlace que te enviamos o pide uno nuevo.',
-        ),
+        title: Text(context.l10n.commonEmailNotVerifiedTitle),
+        content: Text(context.l10n.commonEmailNotVerifiedBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Ahora no'),
+            child: Text(context.l10n.commonNotNow),
           ),
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
               context.push('/verify-email');
             },
-            child: const Text('Verificar mi correo'),
+            child: Text(context.l10n.commonVerifyMyEmail),
           ),
         ],
       );

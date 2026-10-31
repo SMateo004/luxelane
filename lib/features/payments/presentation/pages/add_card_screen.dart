@@ -7,6 +7,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/payment_bloc.dart';
 
@@ -24,7 +25,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
     if (_cardDetails == null || !(_cardDetails!.complete)) {
       showLuxSnackbar(
         context,
-        'Ingresa los datos completos de la tarjeta',
+        context.l10n.paymentCardIncomplete,
         isError: true,
       );
       return;
@@ -75,7 +76,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
       listener: (context, state) {
         if (state is CardOperationSuccess) {
           setState(() => _loading = false);
-          showLuxSnackbar(context, 'Tarjeta agregada exitosamente');
+          showLuxSnackbar(context, context.l10n.paymentCardAdded);
           context.pop();
         }
         if (state is PaymentError) {
@@ -85,9 +86,9 @@ class _AddCardScreenState extends State<AddCardScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Agregar método de pago'),
+          title: Text(context.l10n.paymentAddMethodTitle),
           leading: IconButton(
-            tooltip: 'Volver',
+            tooltip: context.l10n.paymentBack,
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.pop(),
           ),
@@ -97,7 +98,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Datos de la tarjeta'),
+              SectionHeader(title: context.l10n.paymentCardDetails),
               const SizedBox(height: LuxSpacing.lg),
               Container(
                 padding: const EdgeInsets.all(LuxSpacing.sm),
@@ -116,23 +117,23 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 ),
               ),
               const SizedBox(height: LuxSpacing.lg),
-              const Row(
+              Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.lock_outline,
                     size: 14,
                     color: LuxColors.inkTertiary,
                   ),
-                  SizedBox(width: LuxSpacing.xs),
+                  const SizedBox(width: LuxSpacing.xs),
                   Text(
-                    'Protegido por Stripe · Cumplimiento PCI DSS',
+                    context.l10n.paymentAddCardSecure,
                     style: LuxTypography.caption,
                   ),
                 ],
               ),
               const SizedBox(height: LuxSpacing.xl),
               LuxButton(
-                label: 'Agregar tarjeta',
+                label: context.l10n.paymentAddCard,
                 onPressed: _loading ? null : _submit,
                 loading: _loading,
               ),

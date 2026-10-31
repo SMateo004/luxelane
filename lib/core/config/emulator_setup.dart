@@ -31,8 +31,8 @@ FirebaseOptions startupOptions(
   if (!useEmulators) return real();
   if (emulator.projectId != kEmulatorProjectId) {
     throw StateError(
-      'El modo emuladores solo admite el proyecto $kEmulatorProjectId '
-      '(recibido: ${emulator.projectId}).',
+      'El modo emuladores solo admite el proyecto $kEmulatorProjectId ' // i18n-ignore: solo desarrollo
+      '(recibido: ${emulator.projectId}).', // i18n-ignore: solo desarrollo
     );
   }
   return emulator;

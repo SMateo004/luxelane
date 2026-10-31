@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../../app/theme/lux_motion.dart';
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 
 // ---------------------------------------------------------------------------
@@ -169,7 +170,7 @@ class LuxSkeletonList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando',
+        label: context.l10n.commonLoading,
         child: LuxShimmer(
           child: ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
@@ -247,7 +248,7 @@ class _LuxSuccessMarkState extends State<LuxSuccessMark>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Listo',
+        label: context.l10n.commonDone,
         child: AnimatedBuilder(
           animation: _c,
           builder: (_, __) => CustomPaint(
@@ -413,7 +414,7 @@ class _RideProgressBarState extends State<RideProgressBar>
     final step = _step;
     final calm = LuxMotion.reduced(context);
     return Semantics(
-      label: 'Etapa ${step.clamp(1, segments)} de $segments',
+      label: context.l10n.commonStepOf(step.clamp(1, segments), segments),
       child: Row(
         children: [
           for (var i = 0; i < segments; i++) ...[
@@ -526,7 +527,7 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
           return Semantics(
             button: true,
             label: widget.label,
-            hint: 'Desliza para confirmar',
+            hint: context.l10n.commonSlideToConfirm,
             onTap: widget.enabled && !_done
                 ? () {
                     // Lectores de pantalla: un toque basta.

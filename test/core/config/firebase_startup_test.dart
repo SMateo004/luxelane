@@ -38,9 +38,17 @@ void main() {
         release: true,
         log: logs.add,
       );
+      // Sin Firebase no hay idioma del perfil: usa el del teléfono.
+      tester.platformDispatcher.localesTestValue = const [Locale('es')];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
       await tester.pumpWidget(appForStartup(r, const Text('APP')));
       expect(find.text('APP'), findsNothing);
       expect(find.text('No pudimos iniciar la app'), findsOneWidget);
+
+      tester.platformDispatcher.localesTestValue = const [Locale('en')];
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(appForStartup(r, const Text('APP')));
+      expect(find.text('We could not start the app'), findsOneWidget);
     });
   });
 

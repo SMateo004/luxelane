@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
 import '../utils/service_area.dart';
@@ -116,12 +117,10 @@ class MapsService {
         accuracy: LocationAccuracy.high,
         distanceFilter: 25,
         intervalDuration: const Duration(seconds: 10),
-        foregroundNotificationConfig: const ForegroundNotificationConfig(
-          notificationTitle: 'Luxelane · estás conectado',
-          notificationText:
-              'Compartimos tu ubicación para asignarte viajes y guiar al '
-              'pasajero.',
-          notificationChannelName: 'Ubicación del chófer',
+        foregroundNotificationConfig: ForegroundNotificationConfig(
+          notificationTitle: L10n.current.commonLocationNotificationTitle,
+          notificationText: L10n.current.commonLocationNotificationText,
+          notificationChannelName: L10n.current.commonLocationChannelName,
           enableWakeLock: true,
           setOngoing: true,
         ),
@@ -229,7 +228,7 @@ class MapsService {
       );
 
       debugPrint(
-        '[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}',
+        '[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}', // i18n-ignore: registro de depuración
       );
 
       if (res.statusCode == 200) {
@@ -285,7 +284,7 @@ class MapsService {
       debugPrint('[Maps] Classic status=${res.statusCode}');
       if (res.statusCode != 200) {
         debugPrint(
-          '[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}',
+          '[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}', // i18n-ignore: registro de depuración
         );
       } else {
         final data = json.decode(res.body) as Map<String, dynamic>;

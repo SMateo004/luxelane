@@ -9,6 +9,7 @@ import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/lux_service_booking_card.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../booking/presentation/widgets/vehicle_visuals.dart';
 import '../../../home/presentation/pages/home_design.dart';
 
@@ -404,10 +405,10 @@ class _AssuranceBand extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const LuxEyebrow('Nuestra promesa'),
+            LuxEyebrow(context.l10n.servicesPromiseEyebrow),
             const SizedBox(height: 14),
             Text(
-              'Tranquilidad, por escrito.',
+              context.l10n.servicesPromiseTitle,
               style: displayText(size: narrow ? 36 : 52).copyWith(height: 1.05),
             ),
             SizedBox(height: narrow ? 36 : 56),
@@ -526,10 +527,10 @@ class _StepsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const LuxEyebrow('Cómo funciona'),
+            LuxEyebrow(context.l10n.servicesStepsEyebrow),
             const SizedBox(height: 14),
             Text(
-              'Tres pasos.\nNada más.',
+              context.l10n.servicesStepsTitle,
               style: displayText(size: narrow ? 36 : 52).copyWith(height: 1.05),
             ),
             SizedBox(height: narrow ? 40 : 64),
@@ -730,15 +731,15 @@ class _ClassesSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const LuxEyebrow('La flota'),
+            LuxEyebrow(context.l10n.servicesFleetEyebrow),
             const SizedBox(height: 14),
             Text(
-              'Elige cómo llegar.',
+              context.l10n.servicesFleetTitle,
               style: displayText(size: narrow ? 36 : 52).copyWith(height: 1.05),
             ),
             const SizedBox(height: 12),
             Text(
-              'Vehículos de gama alta, impecables y preparados antes de cada servicio.',
+              context.l10n.servicesFleetBody,
               style: bodyText(size: 14, color: LD.ink3),
             ),
             SizedBox(height: narrow ? 36 : 56),
@@ -844,7 +845,7 @@ class _ClassCardState extends State<_ClassCard> {
                         ),
                         color: LD.sphTint,
                         child: Text(
-                          'LA MÁS ELEGIDA',
+                          context.l10n.servicesMostChosen,
                           style:
                               uiLabel(size: 8.5, color: LD.sph, spacing: 1.4),
                         ),
@@ -871,7 +872,7 @@ class _ClassCardState extends State<_ClassCard> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Hasta ${widget.vc.capacity} pasajeros',
+                      context.l10n.servicesCapacity(widget.vc.capacity),
                       style: uiLabel(size: 12, color: LD.ink2, spacing: 0.4),
                     ),
                   ],
@@ -887,7 +888,7 @@ class _ClassCardState extends State<_ClassCard> {
                       children: [
                         if (widget.from != null) ...[
                           Text(
-                            'DESDE',
+                            context.l10n.servicesPriceFrom,
                             style:
                                 uiLabel(size: 9, color: LD.ink3, spacing: 1.8),
                           ),
@@ -895,7 +896,7 @@ class _ClassCardState extends State<_ClassCard> {
                         ],
                         Text(
                           widget.from == null
-                              ? 'Cotiza al reservar'
+                              ? context.l10n.servicesQuoteOnBooking
                               : widget.perHour
                                   ? '${LuxFormat.money(widget.from!)} · 2 h'
                                   : LuxFormat.money(widget.from!),
@@ -940,10 +941,10 @@ class _FaqSection extends StatelessWidget {
     final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const LuxEyebrow('Preguntas frecuentes'),
+        LuxEyebrow(context.l10n.servicesFaqEyebrow),
         const SizedBox(height: 14),
         Text(
-          'Todo lo que\nquieres saber.',
+          context.l10n.servicesFaqTitle,
           style: displayText(size: narrow ? 36 : 48).copyWith(height: 1.05),
         ),
       ],
@@ -1081,7 +1082,10 @@ class _ClosingSection extends StatelessWidget {
           dy: 40,
           child: Column(
             children: [
-              const LuxEyebrow('Luxelane', color: Color(0xFF8CB2E3)),
+              const LuxEyebrow(
+                'Luxelane', // i18n-ignore: marca propia
+                color: Color(0xFF8CB2E3),
+              ),
               const SizedBox(height: 18),
               Text(
                 title,
@@ -1106,9 +1110,9 @@ class _ClosingSection extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     minimumSize: const Size(0, 56),
                   ),
-                  child: const Text(
-                    'RESERVAR AHORA',
-                    style: TextStyle(
+                  child: Text(
+                    context.l10n.servicesBookNow,
+                    style: const TextStyle(
                       fontFamily: kSans,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,

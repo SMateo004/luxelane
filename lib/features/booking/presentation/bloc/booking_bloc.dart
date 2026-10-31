@@ -9,6 +9,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 // ---------------------------------------------------------------------------
 // Events
@@ -372,8 +373,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     await emit.forEach<List<Booking>>(
       _repo.watchBookingsByRider(event.riderId),
       onData: BookingTripsLoaded.new,
-      onError: (_, __) =>
-          const BookingError('No pudimos cargar tus viajes. Reintenta.'),
+      onError: (_, __) => BookingError(L10n.current.bookingTripsLoadError),
     );
   }
 }

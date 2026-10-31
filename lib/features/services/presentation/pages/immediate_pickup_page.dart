@@ -2,78 +2,76 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/widgets/lux_service_booking_card.dart';
+import '../../../../l10n/l10n.dart';
 import '../widgets/service_page_template.dart';
 
 /// /servicios/recogida-inmediata
 class ImmediatePickupPage extends StatelessWidget {
   const ImmediatePickupPage({super.key});
 
-  static const content = ServicePageContent(
-    mode: LuxBookingMode.immediate,
-    eyebrow: 'Recogida inmediata',
-    title: 'Cuando lo\nnecesites.',
-    lead: 'La misma excelencia de una reserva anticipada, sin planificar.',
-    heroImage: 'assets/images/services/recogida/hero.jpg',
-    heroFallback: 'assets/images/home/hero_bg.jpg',
-    assurances: [
-      LuxAssurance(
-        Icons.my_location_rounded,
-        'Seguimiento en tiempo real',
-        'Ve en el mapa dónde está tu chófer y cuándo llega.',
-      ),
-      LuxAssurance.fixedPrice,
-      LuxAssurance.chauffeurs,
-    ],
-    steps: [
-      ServiceStep(
-        'Indica origen y destino',
-        'Escribe la dirección o elígela en el mapa. Verás el precio final antes de confirmar.',
-      ),
-      ServiceStep(
-        'Confirma con un toque',
-        'Pagas la reserva. Con el pago confirmado buscamos chófer y te mostramos su nombre y vehículo.',
-      ),
-      ServiceStep(
-        'Síguelo en el mapa',
-        'Recibe un aviso cuando tu chófer esté en camino y otro cuando haya llegado.',
-      ),
-    ],
-    storyEyebrow: 'Sin planificar',
-    storyTitle: 'Lo imprevisto,\ncon la misma elegancia.',
-    storyBody: 'Una reunión que se alarga, un cambio de planes, una cena que '
-        'merece un final a la altura. La recogida inmediata pone un vehículo '
-        'premium y un chófer profesional a tu alcance.',
-    storyPoints: [
-      'Vehículos premium, impecables en cada servicio',
-      'Chóferes con documentos verificados',
-      'Precio fijo calculado antes de confirmar, sin tarifas dinámicas',
-    ],
-    storyImage: 'assets/images/services/recogida/story.jpg',
-    storyFallback: 'assets/images/home/promise_photo.jpg',
-    faqs: [
-      ServiceFaq(
-        '¿Cuánto tarda en llegar el chófer?',
-        'Depende de tu ubicación y de la disponibilidad. Verás la hora estimada de llegada antes de confirmar y podrás seguir al chófer en el mapa.',
-      ),
-      ServiceFaq(
-        '¿El precio cambia según la demanda?',
-        'No. El precio se fija antes de confirmar y no cambia: sin tarifas dinámicas ni cargos ocultos.',
-      ),
-      ServiceFaq(
-        '¿Puedo programar el viaje para más tarde?',
-        'Sí. Elige "Programar" en el formulario y selecciona el día y la hora que prefieras.',
-      ),
-      ServiceFaq(
-        '¿Qué pasa si necesito cancelar?',
-        'Puedes cancelar desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.',
-      ),
-    ],
-    closingTitle: 'Tu chófer,\na un toque.',
-    closingBody:
-        'Confirma ahora y sigue a tu chófer en tiempo real hasta la puerta.',
-  );
+  static ServicePageContent content(AppLocalizations t) => ServicePageContent(
+        mode: LuxBookingMode.immediate,
+        eyebrow: t.servicesImmediateEyebrow,
+        title: t.servicesImmediateTitle,
+        lead: t.servicesImmediateLead,
+        heroImage: 'assets/images/services/recogida/hero.jpg',
+        heroFallback: 'assets/images/home/hero_bg.jpg',
+        assurances: [
+          LuxAssurance(
+            Icons.my_location_rounded,
+            t.servicesImmediateTrackingTitle,
+            t.servicesImmediateTrackingDetail,
+          ),
+          LuxAssurance.fixedPrice,
+          LuxAssurance.chauffeurs,
+        ],
+        steps: [
+          ServiceStep(
+            t.servicesImmediateStep1Title,
+            t.servicesImmediateStep1Body,
+          ),
+          ServiceStep(
+            t.servicesImmediateStep2Title,
+            t.servicesImmediateStep2Body,
+          ),
+          ServiceStep(
+            t.servicesImmediateStep3Title,
+            t.servicesImmediateStep3Body,
+          ),
+        ],
+        storyEyebrow: t.servicesImmediateStoryEyebrow,
+        storyTitle: t.servicesImmediateStoryTitle,
+        storyBody: t.servicesImmediateStoryBody,
+        storyPoints: [
+          t.servicesImmediateStoryPoint1,
+          t.servicesImmediateStoryPoint2,
+          t.servicesImmediateStoryPoint3,
+        ],
+        storyImage: 'assets/images/services/recogida/story.jpg',
+        storyFallback: 'assets/images/home/promise_photo.jpg',
+        faqs: [
+          ServiceFaq(
+            t.servicesImmediateFaq1Question,
+            t.servicesImmediateFaq1Answer,
+          ),
+          ServiceFaq(
+            t.servicesImmediateFaq2Question,
+            t.servicesImmediateFaq2Answer,
+          ),
+          ServiceFaq(
+            t.servicesImmediateFaq3Question,
+            t.servicesImmediateFaq3Answer,
+          ),
+          ServiceFaq(
+            t.servicesImmediateFaq4Question,
+            t.servicesImmediateFaq4Answer,
+          ),
+        ],
+        closingTitle: t.servicesImmediateClosingTitle,
+        closingBody: t.servicesImmediateClosingBody,
+      );
 
   @override
   Widget build(BuildContext context) =>
-      const ServicePageTemplate(content: content);
+      ServicePageTemplate(content: content(context.l10n));
 }

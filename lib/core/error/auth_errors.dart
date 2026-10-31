@@ -5,16 +5,15 @@
 /// Firebase (DEPLOY.md).
 library;
 
+import '../../l10n/l10n.dart';
 import '../repositories/repositories.dart' show kBlockedAccountMessage;
-import 'function_errors.dart'
-    show kNoConnectionMessage, kTooManyAttemptsMessage;
+import 'function_errors.dart' show kTooManyAttemptsMessage;
 
-const kBadCredentialsMessage = 'Correo o contraseña incorrectos.';
+String get kBadCredentialsMessage => L10n.current.errorBadCredentials;
 
 /// Mismo texto para el éxito y para «no hay cuenta».
 String passwordResetSentMessage(String email) =>
-    'Si hay una cuenta con $email, te enviamos un enlace para restablecer '
-    'tu contraseña. Revisa también el correo no deseado.';
+    L10n.current.errorPasswordResetSent(email);
 
 String loginErrorMessage(String code) => switch (code) {
       'invalid-credential' ||
@@ -26,29 +25,27 @@ String loginErrorMessage(String code) => switch (code) {
       // Bloqueada desde el panel (B3 la deshabilita en Auth).
       'user-disabled' => kBlockedAccountMessage,
       'too-many-requests' => kTooManyAttemptsMessage,
-      'network-request-failed' => kNoConnectionMessage,
-      _ => 'No pudimos iniciar sesión. Inténtalo de nuevo.',
+      'network-request-failed' => L10n.current.errorNoConnection,
+      _ => L10n.current.errorLoginFailed,
     };
 
 String registerErrorMessage(String code) => switch (code) {
       // No confirma que el correo ya tenga cuenta.
       'email-already-in-use' ||
       'credential-already-in-use' =>
-        'No pudimos crear la cuenta con ese correo. Si ya te registraste, '
-            'inicia sesión o recupera tu contraseña.',
-      'invalid-email' => 'Ese correo no es válido. Revísalo.',
-      'weak-password' =>
-        'La contraseña es muy débil: usa al menos 6 caracteres.',
+        L10n.current.errorRegisterEmailInUse,
+      'invalid-email' => L10n.current.errorInvalidEmail,
+      'weak-password' => L10n.current.errorWeakPassword,
       'too-many-requests' => kTooManyAttemptsMessage,
-      'network-request-failed' => kNoConnectionMessage,
-      _ => 'No pudimos crear la cuenta. Inténtalo de nuevo.',
+      'network-request-failed' => L10n.current.errorNoConnection,
+      _ => L10n.current.errorRegisterFailed,
     };
 
 /// null = se informa como enviado (también si no hay cuenta).
 String? passwordResetErrorMessage(String code) => switch (code) {
       'user-not-found' => null,
-      'invalid-email' => 'Ese correo no es válido. Revísalo.',
+      'invalid-email' => L10n.current.errorInvalidEmail,
       'too-many-requests' => kTooManyAttemptsMessage,
-      'network-request-failed' => kNoConnectionMessage,
-      _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
+      'network-request-failed' => L10n.current.errorNoConnection,
+      _ => L10n.current.errorPasswordResetFailed,
     };

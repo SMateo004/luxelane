@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/home/presentation/pages/home_design.dart';
 import '../../features/notifications/presentation/widgets/notification_bell.dart';
-import '../design/lux_promise.dart';
+import '../../l10n/l10n.dart';
 import 'components.dart';
 
 // ============================================================
@@ -20,11 +20,15 @@ abstract class LuxServiceRoutes {
   static const airport = '/servicios/traslado-aeropuerto';
   static const hourly = '/servicios/contratacion-por-horas';
 
-  static const all = <(String, String, IconData)>[
-    ('Traslado al aeropuerto', airport, Icons.flight_takeoff_rounded),
-    ('Chófer por horas', hourly, Icons.schedule_rounded),
-    ('Recogida inmediata', pickup, Icons.bolt_rounded),
-  ];
+  static List<(String, String, IconData)> get all => [
+        (
+          L10n.current.commonServiceAirportTransfer,
+          airport,
+          Icons.flight_takeoff_rounded,
+        ),
+        (L10n.current.commonServiceHourly, hourly, Icons.schedule_rounded),
+        (L10n.current.commonServiceImmediate, pickup, Icons.bolt_rounded),
+      ];
 }
 
 const kSiteNavHeight = 72.0;
@@ -68,7 +72,7 @@ class LuxSiteNav extends StatelessWidget {
         children: [
           Semantics(
             button: true,
-            label: 'Luxelane, inicio',
+            label: context.l10n.commonHomeLinkLabel,
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
@@ -81,10 +85,13 @@ class LuxSiteNav extends StatelessWidget {
           if (!narrow) ...[
             const LuxServicesMenu(),
             const SizedBox(width: 32),
-            LuxNavLink('Flota', onTap: onFleet ?? () => context.go('/')),
+            LuxNavLink(
+              context.l10n.commonFleet,
+              onTap: onFleet ?? () => context.go('/'),
+            ),
             const SizedBox(width: 32),
             LuxNavLink(
-              'Para empresas',
+              context.l10n.commonForBusiness,
               onTap: onBusiness ?? () => context.go('/empresas'),
             ),
             const SizedBox(width: 40),
@@ -116,7 +123,10 @@ class LuxSiteNav extends StatelessWidget {
               return Row(
                 children: [
                   if (!narrow) ...[
-                    LuxNavLink('Iniciar sesión', onTap: () => ctx.go('/login')),
+                    LuxNavLink(
+                      ctx.l10n.commonSignIn,
+                      onTap: () => ctx.go('/login'),
+                    ),
                     const SizedBox(width: 24),
                   ],
                   LuxNavCta(onTap: book, compact: narrow),
@@ -274,7 +284,7 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'SERVICIOS',
+                context.l10n.commonServicesUpper,
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
@@ -395,7 +405,9 @@ class _LuxNavCtaState extends State<LuxNavCta> {
             transform: Matrix4.translationValues(0, _hover ? -1 : 0, 0),
             decoration: luxRaisedDecoration(radius: 3),
             child: Text(
-              widget.compact ? 'RESERVAR' : 'RESERVAR UN VIAJE',
+              widget.compact
+                  ? context.l10n.commonBookUpper
+                  : context.l10n.commonBookATripUpper,
               style: const TextStyle(
                 fontFamily: kSans,
                 fontSize: 10,
@@ -418,7 +430,7 @@ class _AvatarDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
         button: true,
-        label: 'Mi perfil',
+        label: context.l10n.commonMyProfile,
         child: GestureDetector(
           onTap: onTap,
           child: MouseRegion(
@@ -458,12 +470,12 @@ class _MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-        tooltip: 'Menú',
+        tooltip: context.l10n.commonMenu,
         icon: const Icon(Icons.menu_rounded, color: Colors.white, size: 22),
         onPressed: () => showGeneralDialog(
           context: context,
           barrierDismissible: true,
-          barrierLabel: 'Cerrar menú',
+          barrierLabel: context.l10n.commonCloseMenu,
           barrierColor: Colors.black54,
           transitionDuration: const Duration(milliseconds: 320),
           pageBuilder: (ctx, _, __) => _MobileMenu(
@@ -543,22 +555,25 @@ class _MobileMenu extends StatelessWidget {
                   const LuxelaneWordmark(color: Colors.white),
                   const Spacer(),
                   IconButton(
-                    tooltip: 'Cerrar',
+                    tooltip: context.l10n.commonClose,
                     icon: const Icon(Icons.close_rounded, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
               const SizedBox(height: 32),
-              const LuxEyebrow('Servicios', color: Color(0xFF8CB2E3)),
+              LuxEyebrow(
+                context.l10n.commonServices,
+                color: const Color(0xFF8CB2E3),
+              ),
               const SizedBox(height: 8),
               for (final s in LuxServiceRoutes.all)
                 item(s.$1, () => context.go(s.$2), icon: s.$3),
               const SizedBox(height: 24),
               Divider(color: Colors.white.withAlpha(25)),
-              item('Flota', onFleet ?? () => context.go('/')),
+              item(context.l10n.commonFleet, onFleet ?? () => context.go('/')),
               item(
-                'Para empresas',
+                context.l10n.commonForBusiness,
                 onBusiness ?? () => context.go('/empresas'),
               ),
               const Spacer(),
@@ -571,9 +586,9 @@ class _MobileMenu extends StatelessWidget {
                     foregroundColor: Colors.white,
                     shape: const RoundedRectangleBorder(),
                   ),
-                  child: const Text(
-                    'RESERVAR UN VIAJE',
-                    style: TextStyle(
+                  child: Text(
+                    context.l10n.commonBookATripUpper,
+                    style: const TextStyle(
                       fontFamily: kSans,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -584,7 +599,8 @@ class _MobileMenu extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
+                '${context.l10n.commonPromiseFixedPrice}  ·  '
+                '${context.l10n.commonPromiseChauffeurs}',
                 textAlign: TextAlign.center,
                 style: uiLabel(
                   size: 10,
@@ -622,27 +638,28 @@ class LuxSiteFooter extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300),
           child: Text(
-            'Servicio de chófer privado para quienes valoran su tiempo, '
-            'su privacidad y cada detalle del camino.',
+            context.l10n.commonFooterTagline,
             style: bodyText(size: 13, color: Colors.white.withAlpha(130)),
           ),
         ),
       ],
     );
 
-    final services = _FooterCol('Servicios', [
+    final l10n = context.l10n;
+    final services = _FooterCol(l10n.commonServices, [
       for (final s in LuxServiceRoutes.all) (s.$1, () => context.go(s.$2)),
     ]);
-    final company = _FooterCol('Luxelane', [
-      ('Flota', onFleet ?? () => context.go('/')),
-      ('Para empresas', () => context.go('/empresas')),
-      ('Conduce con nosotros', () => context.go('/driver/login')),
-      ('Términos y condiciones', () => context.go('/legal/terminos')),
-      ('Política de privacidad', () => context.go('/legal/privacidad')),
+    const brandName = 'Luxelane'; // i18n-ignore: nombre de marca
+    final company = _FooterCol(brandName, [
+      (l10n.commonFleet, onFleet ?? () => context.go('/')),
+      (l10n.commonForBusiness, () => context.go('/empresas')),
+      (l10n.commonDriveWithUs, () => context.go('/driver/login')),
+      (l10n.commonTerms, () => context.go('/legal/terminos')),
+      (l10n.commonPrivacy, () => context.go('/legal/privacidad')),
     ]);
-    const promises = _FooterCol('Nuestra promesa', [
-      (LuxPromise.fixedPrice, null),
-      (LuxPromise.chauffeurs, null),
+    final promises = _FooterCol(l10n.commonOurPromise, [
+      (l10n.commonPromiseFixedPrice, null),
+      (l10n.commonPromiseChauffeurs, null),
     ]);
 
     return Container(
@@ -685,7 +702,7 @@ class LuxSiteFooter extends StatelessWidget {
                     Container(height: 1, color: Colors.white.withAlpha(18)),
                     const SizedBox(height: 22),
                     Text(
-                      '© ${DateTime.now().year} Luxelane. Todos los derechos reservados.',
+                      l10n.commonCopyright('${DateTime.now().year}'),
                       style: uiLabel(
                         size: 10,
                         color: Colors.white.withAlpha(70),

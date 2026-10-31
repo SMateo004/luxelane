@@ -8,6 +8,7 @@ import '../../../core/error/failures.dart';
 import '../../../core/error/function_errors.dart';
 import '../../../core/models/models.dart';
 import '../../../core/repositories/repositories.dart';
+import '../../../l10n/l10n.dart';
 
 /// Sin respuesta en este tiempo, la pantalla ofrece llamar o enviar SMS.
 const kIncidentTimeout = Duration(seconds: 5);
@@ -51,7 +52,7 @@ class IncidentRepositoryImpl implements IncidentRepository {
       return Left(incidentFailureFor(e.code, e.details));
     } catch (_) {
       // Sin red o sin respuesta a tiempo.
-      return const Left(IncidentFailure(IncidentIssue.offline, _kOffline));
+      return Left(IncidentFailure(IncidentIssue.offline, _kOffline));
     }
   }
 
@@ -66,7 +67,7 @@ class IncidentRepositoryImpl implements IncidentRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(incidentFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(IncidentFailure(IncidentIssue.offline, _kOffline));
+      return Left(IncidentFailure(IncidentIssue.offline, _kOffline));
     }
   }
 
@@ -97,29 +98,29 @@ class IncidentRepositoryImpl implements IncidentRepository {
 String incidentLocationSlot(DateTime t) =>
     (t.millisecondsSinceEpoch ~/ 10000).toString();
 
-const _kOffline = 'No pudimos avisar a central: sin conexión.';
+String get _kOffline => L10n.current.incidentErrorOffline;
 
 Failure incidentFailureFor(String code, Object? details) {
   final reason = (details is Map ? details : const {})['reason'];
+  final t = L10n.current;
   return switch (reason) {
-    'outside_window' => const IncidentFailure(
+    'outside_window' => IncidentFailure(
         IncidentIssue.outsideWindow,
-        'El botón de ayuda funciona durante el viaje.',
+        t.incidentErrorOutsideWindow,
       ),
-    'rate_limited' => const IncidentFailure(
+    'rate_limited' => IncidentFailure(
         IncidentIssue.rateLimited,
-        'Ya enviaste varios avisos. Llama a central si lo necesitas.',
+        t.incidentErrorRateLimited,
       ),
-    'not_in_booking' || 'not_reporter' => const IncidentFailure(
+    'not_in_booking' || 'not_reporter' => IncidentFailure(
         IncidentIssue.notAllowed,
-        'Este viaje ya no está a tu nombre.',
+        t.incidentErrorNotAllowed,
       ),
     _ => code == 'unavailable' || code == 'deadline-exceeded'
-        ? const IncidentFailure(IncidentIssue.offline, _kOffline)
+        ? IncidentFailure(IncidentIssue.offline, _kOffline)
         : IncidentFailure(
             IncidentIssue.other,
-            commonFunctionError(code, details) ??
-                'No pudimos avisar a central.',
+            commonFunctionError(code, details) ?? t.incidentErrorGeneric,
           ),
   };
 }

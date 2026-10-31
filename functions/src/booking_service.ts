@@ -15,6 +15,7 @@ import { paymentSummary, reservePaymentRef, writeInitialPayment } from './paymen
 import { paymentStateRef } from './payment_model';
 import { storeLinks, updateRequired } from './app_version';
 import { driverViewDoc, driverViewRef, loadPlaylistHosts, sanitizePreferences, profilePreferences } from './preferences';
+import { AppLocale, DEFAULT_LOCALE, localeOf, t } from './i18n';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
 
 export interface BookingDeps {
@@ -58,14 +59,14 @@ export interface PricedTrip {
 }
 
 /** Valida zona y servicio y calcula el precio; no escribe nada. */
-export async function priceTrip(deps: BookingDeps, trip: QuoteInput): Promise<PricedTrip> {
+export async function priceTrip(deps: BookingDeps, trip: QuoteInput, locale: AppLocale = DEFAULT_LOCALE): Promise<PricedTrip> {
   const now = deps.now?.() ?? Date.now();
   if (trip.scheduledAt < now - 15 * 60 * 1000) throw bookingError('invalid-argument', 'past_pickup');
 
   const hourly = trip.serviceType === 'byTheHour';
   // Por horas sin destino fijo: la recogida como referencia (igual que la app).
   const destination = trip.destination ??
-    { name: 'Servicio por horas', address: trip.origin.address, lat: trip.origin.lat, lng: trip.origin.lng };
+    { name: t('hourly_destination.name', locale), address: trip.origin.address, lat: trip.origin.lat, lng: trip.origin.lng };
   if (!originOk(trip.origin) || (!hourly && !destinationOk(trip.origin, destination))) {
     throw bookingError('invalid-argument', 'out_of_area');
   }
@@ -207,7 +208,8 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     throw bookingError('failed-precondition', 'payments_unavailable');
   }
 
-  const priced = await priceTrip(deps, input);
+  // El nombre del destino por horas, en el idioma del pasajero.
+  const priced = await priceTrip(deps, input, localeOf(user));
   // El pasajero vio un precio menor: no se cobra más sin que lo confirme.
   if (input.quotedPrice !== undefined && priced.price > input.quotedPrice) {
     throw bookingError('failed-precondition', 'price_changed', { price: priced.price });

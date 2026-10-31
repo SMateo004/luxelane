@@ -7,6 +7,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineBoolean, defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import * as preferences from './preferences';
+import { AppLocale, formatMoney, localeOf, notice, NoticeType, vehicleClassName } from './i18n';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
@@ -268,18 +269,6 @@ function requireAuth(req: CallableRequest): string {
   return req.auth.uid;
 }
 
-const VEHICLE_CLASS_LABELS: Record<string, string> = {
-  business: 'Business Class',
-  businessSuv: 'Business SUV',
-  businessVan: 'Business Van',
-  firstClass: 'First Class',
-  electric: 'Eléctrico',
-};
-
-function vehicleClassLabel(vehicleClass: string | undefined): string {
-  return (vehicleClass && VEHICLE_CLASS_LABELS[vehicleClass]) || 'Luxelane';
-}
-
 /** Admin por el claim `role` (o Firestore en la transición) y con la cuenta activa. */
 async function requireAdmin(req: CallableRequest): Promise<string> {
   requireAuth(req);
@@ -299,9 +288,18 @@ async function sendPush(
   await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body }, ...(data ? { data } : {}) });
 }
 
-async function getUserTokens(userId: string): Promise<string[]> {
-  const doc = await db.collection('users').doc(userId).get();
-  return (doc.data()?.fcmTokens as string[]) ?? [];
+/** Tokens de push e idioma (users/{uid}.locale; por defecto español). */
+async function getUserTarget(userId: string): Promise<{ tokens: string[]; locale: AppLocale }> {
+  const data = (await db.collection('users').doc(userId).get()).data();
+  return { tokens: (data?.fcmTokens as string[]) ?? [], locale: localeOf(data) };
+}
+
+/** Push de un aviso del catálogo (i18n.ts) en el idioma de quien lo recibe. */
+async function pushNotice(userId: string, type: NoticeType, params: Record<string, string> = {},
+  data?: Record<string, string>): Promise<void> {
+  const { tokens, locale } = await getUserTarget(userId);
+  const n = notice(type, locale, params);
+  await sendPush(tokens, n.title, n.body, data);
 }
 
 // ---------------------------------------------------------------------------
@@ -831,18 +829,21 @@ async function notifyDriversOfBooking(bookingRef: admin.firestore.DocumentRefere
     .limit(20)
     .get();
 
-  const tokens: string[] = [];
+  // Un envío por idioma: cada chófer lo recibe en el suyo.
+  const byLocale = new Map<AppLocale, string[]>();
   for (const doc of driversSnap.docs) {
-    const driverTokens = await getUserTokens(doc.id);
-    tokens.push(...driverTokens);
+    const { tokens, locale } = await getUserTarget(doc.id);
+    byLocale.set(locale, [...(byLocale.get(locale) ?? []), ...tokens]);
   }
 
   try {
-    await sendPush(
-      tokens,
-      'Nuevo viaje disponible',
-      `${vehicleClassLabel(vehicleClass)} · Bs ${Math.round(booking.estimatedPrice)}`,
-    );
+    for (const [locale, tokens] of byLocale) {
+      const n = notice('new_trip_available', locale, {
+        vehicleClass: vehicleClassName(vehicleClass, locale),
+        amount: formatMoney(Math.round(booking.estimatedPrice), locale),
+      });
+      await sendPush(tokens, n.title, n.body);
+    }
   } catch (e) {
     // Si el envío puede salir bien en el reintento, se quita la marca para
     // que el reintento avise; si no, queda marcada y no se repite.
@@ -880,24 +881,26 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     to: after.status,
   });
 
-  const statusMessages: Partial<Record<BookingStatus, [string, string, string]>> = {
-    confirmed: ['Chófer asignado', 'Tu chófer ha sido asignado.', 'booking_confirmed'],
-    driver_arriving: ['El chófer está en camino', 'Tu chófer va hacia el punto de recogida.', 'driver_arriving'],
+  // Textos en i18n.ts, en el idioma del pasajero.
+  const statusNotices: Partial<Record<BookingStatus, NoticeType>> = {
+    confirmed: 'booking_confirmed',
+    driver_arriving: 'driver_arriving',
     // Sin el código del pasajero el viaje no empieza: el aviso lo recuerda
     // (el código no va en el aviso; solo se ve en la app).
-    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera. Abre la app y dale tu código de recogida.', 'driver_arrived'],
+    driver_arrived: 'driver_arrived',
     // verified no avisa: el pasajero está junto al chófer.
-    in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
-    completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
-    cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
+    in_progress: 'ride_started',
+    completed: 'ride_completed',
+    cancelled: 'booking_cancelled',
     // B5: el chófer liberó la reserva; se busca otro.
-    pending: ['Buscamos otro chófer', 'Tu chófer tuvo un imprevisto. Estamos buscando otro chófer para tu reserva.', 'booking_driver_released'],
-    no_show: ['No te encontramos', 'Tu chófer no te encontró en el punto de recogida. Central revisará tu reserva.', 'rider_no_show'],
+    pending: 'booking_driver_released',
+    no_show: 'rider_no_show',
   };
 
-  const entry = statusMessages[after.status];
-  if (!entry) return;
-  const [title, body, type] = entry;
+  const noticeType = statusNotices[after.status];
+  if (!noticeType) return;
+  const { tokens, locale } = await getUserTarget(after.riderId);
+  const { title, body, type } = notice(noticeType, locale);
 
   // Una sola notificación por cambio, escrita aquí y no por la app (que la
   // duplicaba cada vez que se abría el viaje).
@@ -908,12 +911,12 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     title,
     body,
     type,
+    locale,
     isRead: false,
     bookingId: event.params.bookingId,
     createdAt: admin.firestore.Timestamp.now(),
   });
 
-  const tokens = await getUserTokens(after.riderId);
   await sendPush(tokens, title, body, { bookingId: event.params.bookingId });
 });
 
@@ -1136,8 +1139,7 @@ export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (ev
   });
 
   if (after.status === 'cancelled' && (after as { cancelledBy?: string }).cancelledBy !== 'admin') {
-    const tokens = await getUserTokens(driverId);
-    await sendPush(tokens, 'Viaje cancelado', 'El pasajero canceló la reserva. Ya estás disponible.');
+    await pushNotice(driverId, 'trip_cancelled_by_rider');
   }
   logger.info('releaseDriver', 'released', { bookingId: event.params.bookingId, driverId, status: after.status });
 });
@@ -1331,8 +1333,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
     if (outcome === 'not_paid') return { assigned: false, reason: 'not_paid' };
     if (outcome === 'busy') continue;
 
-    const driverTokens = await getUserTokens(driverId);
-    await sendPush(driverTokens, 'Nueva reserva', 'Se te ha asignado un nuevo viaje.');
+    await pushNotice(driverId, 'driver_assigned');
     logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
     return { assigned: true, driverId };
   }
@@ -1389,8 +1390,8 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
 
     // Notify rider their driver is confirmed
     if (riderId) {
-      const tokens = await getUserTokens(riderId);
-      await sendPush(tokens, 'Chófer asignado', 'Tu chófer está en camino.');
+      // Antes decía «Tu chófer está en camino» aunque aún no salía.
+      await pushNotice(riderId, 'booking_confirmed');
     }
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
@@ -1464,10 +1465,7 @@ export const sendRideReceipt = onDocumentWritten('payments/{paymentId}', async (
 
   logger.info('sendRideReceipt', 'sending receipt', { paymentId: event.params.paymentId });
 
-  const tokens = await getUserTokens(after.riderId);
-  await sendPush(
-    tokens,
-    'Pago confirmado',
-    `Se cobraron Bs ${(after.amount / 100).toFixed(2)} por tu trayecto.`,
-  );
+  const { tokens, locale } = await getUserTarget(after.riderId);
+  const n = notice('payment_receipt', locale, { amount: formatMoney(after.amount / 100, locale) });
+  await sendPush(tokens, n.title, n.body);
 });

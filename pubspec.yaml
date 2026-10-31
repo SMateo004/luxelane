@@ -49,7 +49,8 @@ dependencies:
   # Utilities
   dartz: ^0.10.1
   rxdart: ^0.27.7
-  intl: ^0.19.0
+  # Versión fija: la que exige flutter_localizations del SDK 3.29.3.
+  intl: 0.19.0
   uuid: ^4.4.2
   cached_network_image: ^3.3.1
   fl_chart: ^0.68.0
@@ -71,6 +72,9 @@ dev_dependencies:
   bloc_test: ^9.1.7
 
 flutter:
+  # Textos de la app en lib/l10n/*.arb (l10n.yaml); flutter pub get genera
+  # lib/l10n/gen.
+  generate: true
   uses-material-design: true
   assets:
     - assets/images/

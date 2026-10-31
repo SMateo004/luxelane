@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         CameraUpdate,
         Marker,
         MarkerId;
+import 'package:intl/intl.dart' show DateFormat;
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/config/remote_flags.dart';
@@ -23,6 +24,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
 import '../../../../core/widgets/lux_map.dart' show MapsKeyMissing;
+import '../../../../l10n/l10n.dart';
 import '../../../booking/presentation/widgets/vehicle_visuals.dart';
 import 'home_design.dart';
 
@@ -405,14 +407,14 @@ class _HeroSectionState extends State<_HeroSection>
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Tu chófer ',
+                                text: context.l10n.homeWebHeadlineStart,
                                 style: displayText(
                                   size: narrow ? 52 : 100,
                                   color: Colors.white,
                                 ),
                               ),
                               TextSpan(
-                                text: 'te espera.',
+                                text: context.l10n.homeWebHeadlineEnd,
                                 style: displayText(
                                   size: narrow ? 52 : 100,
                                   color: Colors.white,
@@ -454,11 +456,11 @@ class _HeroSectionState extends State<_HeroSection>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     _BarField(
-                                      label: 'RECOGIDA',
+                                      label: context.l10n.homeWebPickup,
                                       icon: Icons.radio_button_checked,
                                       child: PlaceAutocompleteField(
-                                        label: '¿Dónde estás?',
-                                        hint: '¿Dónde estás?',
+                                        label: context.l10n.homeWebWhereAreYou,
+                                        hint: context.l10n.homeWebWhereAreYou,
                                         initialValue: widget.origin,
                                         onPlaceSelected:
                                             widget.onOriginSelected,
@@ -472,10 +474,12 @@ class _HeroSectionState extends State<_HeroSection>
                                     ),
                                     isOneWay
                                         ? _BarField(
-                                            label: 'DESTINO',
+                                            label:
+                                                context.l10n.homeWebDestination,
                                             icon: Icons.south,
                                             child: PlaceAutocompleteField(
-                                              label: '¿A dónde vas?',
+                                              label: context
+                                                  .l10n.homeDestinationHint,
                                               initialValue: widget.destination,
                                               sameCityAs: widget.origin,
                                               onPlaceSelected:
@@ -486,7 +490,7 @@ class _HeroSectionState extends State<_HeroSection>
                                             ),
                                           )
                                         : _BarField(
-                                            label: 'DURACIÓN',
+                                            label: context.l10n.homeWebDuration,
                                             icon: Icons.schedule_outlined,
                                             child: _HoursPicker(
                                               hours: widget.hours,
@@ -498,7 +502,7 @@ class _HeroSectionState extends State<_HeroSection>
                                       color: Colors.white.withAlpha(30),
                                     ),
                                     _BarField(
-                                      label: 'FECHA Y HORA',
+                                      label: context.l10n.homeWebDateTime,
                                       icon: Icons.calendar_today_outlined,
                                       child: _DateDisplayTrigger(
                                         date: widget.date,
@@ -526,11 +530,12 @@ class _HeroSectionState extends State<_HeroSection>
                                     Expanded(
                                       flex: 3,
                                       child: _BarField(
-                                        label: 'RECOGIDA',
+                                        label: context.l10n.homeWebPickup,
                                         icon: Icons.radio_button_checked,
                                         child: PlaceAutocompleteField(
-                                          label: '¿Dónde estás?',
-                                          hint: '¿Dónde estás?',
+                                          label:
+                                              context.l10n.homeWebWhereAreYou,
+                                          hint: context.l10n.homeWebWhereAreYou,
                                           initialValue: widget.origin,
                                           onPlaceSelected:
                                               widget.onOriginSelected,
@@ -544,10 +549,12 @@ class _HeroSectionState extends State<_HeroSection>
                                       flex: 3,
                                       child: isOneWay
                                           ? _BarField(
-                                              label: 'DESTINO',
+                                              label: context
+                                                  .l10n.homeWebDestination,
                                               icon: Icons.south,
                                               child: PlaceAutocompleteField(
-                                                label: '¿A dónde vas?',
+                                                label: context
+                                                    .l10n.homeDestinationHint,
                                                 initialValue:
                                                     widget.destination,
                                                 sameCityAs: widget.origin,
@@ -559,7 +566,8 @@ class _HeroSectionState extends State<_HeroSection>
                                               ),
                                             )
                                           : _BarField(
-                                              label: 'DURACIÓN',
+                                              label:
+                                                  context.l10n.homeWebDuration,
                                               icon: Icons.schedule_outlined,
                                               child: _HoursPicker(
                                                 hours: widget.hours,
@@ -572,7 +580,7 @@ class _HeroSectionState extends State<_HeroSection>
                                     Expanded(
                                       flex: 2,
                                       child: _BarField(
-                                        label: 'FECHA Y HORA',
+                                        label: context.l10n.homeWebDateTime,
                                         icon: Icons.calendar_today_outlined,
                                         child: _DateDisplayTrigger(
                                           date: widget.date,
@@ -611,7 +619,7 @@ class _HeroSectionState extends State<_HeroSection>
                                           _originMapPlace!.lng != 0.0)
                                   ? _InlineMapPanel(
                                       place: _originMapPlace!,
-                                      label: 'RECOGIDA',
+                                      label: context.l10n.homeWebPickup,
                                       onChangeTap: widget.onOriginMapPick,
                                       onClose: () => setState(
                                         () => _originMapOpen = false,
@@ -633,7 +641,7 @@ class _HeroSectionState extends State<_HeroSection>
                                           _destMapPlace!.lng != 0.0)
                                   ? _InlineMapPanel(
                                       place: _destMapPlace!,
-                                      label: 'DESTINO',
+                                      label: context.l10n.homeWebDestination,
                                       onChangeTap: widget.onDestinationMapPick,
                                       onClose: () => setState(
                                         () => _destMapOpen = false,
@@ -786,34 +794,21 @@ class _ClipRevealState extends State<_ClipReveal>
 
 // Dark navy map style — matches the date/time panel background (0xFF090F1A)
 // so all inline panels feel visually unified.
-const _kDarkMapStyle = '''[
-  {"elementType":"geometry",
-   "stylers":[{"color":"#090f1a"}]},
-  {"elementType":"labels.text.stroke",
-   "stylers":[{"color":"#090f1a"}]},
-  {"elementType":"labels.text.fill",
-   "stylers":[{"color":"#3a5f8a"}]},
-  {"featureType":"administrative","elementType":"geometry",
-   "stylers":[{"color":"#1a2b3c"}]},
-  {"featureType":"poi","elementType":"all",
-   "stylers":[{"visibility":"off"}]},
-  {"featureType":"road","elementType":"geometry",
-   "stylers":[{"color":"#1a2538"}]},
-  {"featureType":"road","elementType":"geometry.stroke",
-   "stylers":[{"color":"#0d1624"}]},
-  {"featureType":"road","elementType":"labels.text.fill",
-   "stylers":[{"color":"#4a6a8a"}]},
-  {"featureType":"road.highway","elementType":"geometry",
-   "stylers":[{"color":"#1e3455"}]},
-  {"featureType":"road.highway","elementType":"labels.text.fill",
-   "stylers":[{"color":"#6a90b8"}]},
-  {"featureType":"transit","elementType":"all",
-   "stylers":[{"visibility":"off"}]},
-  {"featureType":"water","elementType":"geometry",
-   "stylers":[{"color":"#030b14"}]},
-  {"featureType":"water","elementType":"labels.text.fill",
-   "stylers":[{"color":"#1a3a5a"}]}
-]''';
+const _kDarkMapStyle = '['
+    '{"elementType":"geometry","stylers":[{"color":"#090f1a"}]},'
+    '{"elementType":"labels.text.stroke","stylers":[{"color":"#090f1a"}]},'
+    '{"elementType":"labels.text.fill","stylers":[{"color":"#3a5f8a"}]},'
+    '{"featureType":"administrative","elementType":"geometry","stylers":[{"color":"#1a2b3c"}]},'
+    '{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},'
+    '{"featureType":"road","elementType":"geometry","stylers":[{"color":"#1a2538"}]},'
+    '{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#0d1624"}]},'
+    '{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#4a6a8a"}]},'
+    '{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#1e3455"}]},'
+    '{"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#6a90b8"}]},'
+    '{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},'
+    '{"featureType":"water","elementType":"geometry","stylers":[{"color":"#030b14"}]},'
+    '{"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#1a3a5a"}]}'
+    ']';
 
 class _InlineMapPanel extends StatefulWidget {
   const _InlineMapPanel({
@@ -908,7 +903,7 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'CAMBIAR UBICACIÓN',
+                        context.l10n.homeWebChangeLocation,
                         style: TextStyle(
                           fontFamily: kSans,
                           fontSize: 8.5,
@@ -964,12 +959,12 @@ class _ServicePillToggle extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _Pill(
-              label: 'Solo ida',
+              label: context.l10n.homeWebOneWay,
               selected: isOneWay,
               onTap: () => onChanged(ServiceType.oneWay),
             ),
             _Pill(
-              label: 'Por horas',
+              label: context.l10n.homeWebHourly,
               selected: !isOneWay,
               onTap: () => onChanged(ServiceType.byTheHour),
             ),
@@ -1111,9 +1106,9 @@ class _BarCtaState extends State<_BarCta> {
                 ),
               ),
               alignment: Alignment.center,
-              child: const Text(
-                'VER PRECIOS',
-                style: TextStyle(
+              child: Text(
+                context.l10n.homeWebSeePrices,
+                style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 10.5,
                   fontWeight: FontWeight.w600,
@@ -1255,16 +1250,20 @@ class _DateDisplayTrigger extends StatelessWidget {
           cursor: SystemMouseCursors.click,
           child: Row(
             children: [
-              Text(
-                _fmt(date),
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 13,
-                  color: Colors.white,
-                  decoration: TextDecoration.none,
+              // «Tomorrow · 9:15 AM» es más largo que «Mañana · 09:15».
+              Expanded(
+                child: Text(
+                  _fmt(date),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 13,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
+                  ),
                 ),
               ),
-              const Spacer(),
               AnimatedRotation(
                 turns: isOpen ? 0.5 : 0.0,
                 duration: const Duration(milliseconds: 250),
@@ -1300,21 +1299,20 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
   late DateTime _month; // first-day of the browsed month
   late DateTime _selected; // full date being built
 
-  static const _monthNames = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre',
-  ];
-  static const _dayLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  /// «Octubre 2026» / «October 2026» / «Outubro 2026» (intl, idioma activo).
+  static String _monthTitle(DateTime month) {
+    L10n.ensureDateSymbols();
+    final name = DateFormat.MMMM(L10n.code).format(month);
+    return '${name[0].toUpperCase()}${name.substring(1)} ${month.year}';
+  }
+
+  /// Iniciales de lunes a domingo: L M X J V S D / M T W T F S S / S T Q Q S S D.
+  static List<String> _dayLabels() {
+    L10n.ensureDateSymbols();
+    final f = DateFormat.EEEEE(L10n.code);
+    // 2024-01-01 fue lunes.
+    return [for (var i = 0; i < 7; i++) f.format(DateTime(2024, 1, 1 + i))];
+  }
 
   @override
   void initState() {
@@ -1384,7 +1382,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 _ChevBtn(icon: Icons.chevron_left, onTap: _prevMonth),
                 Expanded(
                   child: Text(
-                    '${_monthNames[_month.month - 1]} ${_month.year}',
+                    _monthTitle(_month),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: kSans,
@@ -1405,7 +1403,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
-              children: _dayLabels
+              children: _dayLabels()
                   .map(
                     (d) => Expanded(
                       child: Center(
@@ -1530,9 +1528,9 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 color: LD.sph,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
-                child: const Text(
-                  'CONFIRMAR',
-                  style: TextStyle(
+                child: Text(
+                  context.l10n.homeWebConfirm,
+                  style: const TextStyle(
                     fontFamily: kSans,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -1629,7 +1627,7 @@ class _HoursPicker extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Text(
-            '$hours hora${hours > 1 ? 's' : ''}',
+            context.l10n.homeWebHours(hours),
             style: const TextStyle(
               fontFamily: kSans,
               fontSize: 13,
@@ -1673,13 +1671,13 @@ class _MarqueeBarState extends State<_MarqueeBar>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
 
-  static const _items = [
-    'Precios Fijos',
-    'Chóferes Profesionales',
-    'Flota Premium',
-    'Traslados Aeroportuarios',
-    'Viajes Corporativos',
-  ];
+  static List<String> _items(AppLocalizations t) => [
+        t.homeWebMarqueeFixedPrices,
+        t.homeWebMarqueeChauffeurs,
+        t.homeWebMarqueeFleet,
+        t.homeWebMarqueeAirport,
+        t.homeWebMarqueeCorporate,
+      ];
   static const _oneSetPx = 2200.0;
 
   @override
@@ -1704,51 +1702,54 @@ class _MarqueeBarState extends State<_MarqueeBar>
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        height: 40,
-        color: LD.dark,
-        child: ClipRect(
-          child: AnimatedBuilder(
-            animation: _ctrl,
-            builder: (_, __) => OverflowBox(
-              maxWidth: double.infinity,
-              alignment: Alignment.centerLeft,
-              child: Transform.translate(
-                offset: Offset(-_ctrl.value * _oneSetPx, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (int r = 0; r < 3; r++)
-                      for (int i = 0; i < _items.length; i++) ...[
-                        Text(
-                          _items[i].toUpperCase(),
-                          style: TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 3.0,
-                            color: Colors.white.withAlpha(70),
-                            decoration: TextDecoration.none,
-                          ),
+  Widget build(BuildContext context) {
+    final items = _items(context.l10n);
+    return Container(
+      height: 40,
+      color: LD.dark,
+      child: ClipRect(
+        child: AnimatedBuilder(
+          animation: _ctrl,
+          builder: (_, __) => OverflowBox(
+            maxWidth: double.infinity,
+            alignment: Alignment.centerLeft,
+            child: Transform.translate(
+              offset: Offset(-_ctrl.value * _oneSetPx, 0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (int r = 0; r < 3; r++)
+                    for (int i = 0; i < items.length; i++) ...[
+                      Text(
+                        items[i].toUpperCase(),
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w300,
+                          letterSpacing: 3.0,
+                          color: Colors.white.withAlpha(70),
+                          decoration: TextDecoration.none,
                         ),
-                        const SizedBox(width: 24),
-                        Container(
-                          width: 3,
-                          height: 3,
-                          decoration: const BoxDecoration(
-                            color: LD.sph,
-                            shape: BoxShape.circle,
-                          ),
+                      ),
+                      const SizedBox(width: 24),
+                      Container(
+                        width: 3,
+                        height: 3,
+                        decoration: const BoxDecoration(
+                          color: LD.sph,
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(width: 24),
-                      ],
-                  ],
-                ),
+                      ),
+                      const SizedBox(width: 24),
+                    ],
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 // ============================================================
@@ -1810,12 +1811,13 @@ class _FleetSection extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RevealOnScroll(child: const LuxEyebrow('Nuestra Flota')),
+                      RevealOnScroll(
+                          child: LuxEyebrow(context.l10n.homeWebFleetEyebrow)),
                       const SizedBox(height: 20),
                       RevealOnScroll(
                         delay: const Duration(milliseconds: 80),
                         child: Text(
-                          'Vehículos premium,\nsin excepciones.',
+                          context.l10n.homeWebFleetTitle,
                           style: displayText(
                             size: narrow ? 36 : 52,
                             color: Colors.white,
@@ -1829,7 +1831,7 @@ class _FleetSection extends StatelessWidget {
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 160),
                     child: Text(
-                      'DESLIZA PARA EXPLORAR →',
+                      context.l10n.homeWebFleetSwipe,
                       style: TextStyle(
                         fontFamily: kSans,
                         fontSize: 9,
@@ -2049,30 +2051,31 @@ class _TestimonialsSection extends StatefulWidget {
 class _TestimonialsSectionState extends State<_TestimonialsSection> {
   int _current = 0;
 
-  static const _reviews = [
-    (
-      quote:
-          'Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.',
-      name: 'Alexandra M.',
-      location: 'Londres, Reino Unido',
-    ),
-    (
-      quote:
-          'Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.',
-      name: 'Marcus T.',
-      location: 'Nueva York, EE. UU.',
-    ),
-    (
-      quote:
-          'Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.',
-      name: 'Isabelle R.',
-      location: 'París, Francia',
-    ),
-  ];
+  static List<({String quote, String name, String location})> _reviews(
+    AppLocalizations t,
+  ) =>
+      [
+        (
+          quote: t.homeWebReview1Quote,
+          name: 'Alexandra M.', // i18n-ignore: nombre propio
+          location: t.homeWebReview1Location,
+        ),
+        (
+          quote: t.homeWebReview2Quote,
+          name: 'Marcus T.', // i18n-ignore: nombre propio
+          location: t.homeWebReview2Location,
+        ),
+        (
+          quote: t.homeWebReview3Quote,
+          name: 'Isabelle R.', // i18n-ignore: nombre propio
+          location: t.homeWebReview3Location,
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
-    final r = _reviews[_current];
+    final reviews = _reviews(context.l10n);
+    final r = reviews[_current];
     return Container(
       color: const Color(0xFFF2F5FB),
       padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 140),
@@ -2146,7 +2149,7 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
-              _reviews.length,
+              reviews.length,
               (i) => GestureDetector(
                 onTap: () => setState(() => _current = i),
                 child: AnimatedContainer(
@@ -2177,80 +2180,81 @@ class _BusinessSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onLearnMore;
 
-  static const _perks = [
-    'Facturación y cobros centralizados',
-    'Reservas prioritarias para ejecutivos',
-  ];
-
-  Widget _perksPanel(double hPad, double vPad) => Stack(
-        children: [
-          const Positioned.fill(child: _DarkBackdrop()),
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
-                  colors: const [Color(0xCC070E18), Color(0xE8070E18)],
-                ),
+  Widget _perksPanel(BuildContext context, double hPad, double vPad) {
+    final perks = [
+      context.l10n.homeWebBusinessPerkBilling,
+      context.l10n.homeWebBusinessPerkPriority,
+    ];
+    return Stack(
+      children: [
+        const Positioned.fill(child: _DarkBackdrop()),
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: const [Color(0xCC070E18), Color(0xE8070E18)],
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: _perks.asMap().entries.map((e) {
-                final i = e.key;
-                return RevealOnScroll(
-                  delay: Duration(milliseconds: i * 70),
-                  dy: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 22),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Colors.white.withAlpha(20)),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 36,
-                          child: Text(
-                            '0${i + 1}',
-                            style: TextStyle(
-                              fontFamily: kSerif,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w300,
-                              color: LD.sph.withAlpha(180),
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Text(
-                            e.value,
-                            style: const TextStyle(
-                              fontFamily: kSans,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xE6FFFFFF),
-                              letterSpacing: 0.2,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ),
-                      ],
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: perks.asMap().entries.map((e) {
+              final i = e.key;
+              return RevealOnScroll(
+                delay: Duration(milliseconds: i * 70),
+                dy: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 22),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.white.withAlpha(20)),
                     ),
                   ),
-                );
-              }).toList(),
-            ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 36,
+                        child: Text(
+                          '0${i + 1}',
+                          style: TextStyle(
+                            fontFamily: kSerif,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w300,
+                            color: LD.sph.withAlpha(180),
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Text(
+                          e.value,
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xE6FFFFFF),
+                            letterSpacing: 0.2,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2263,13 +2267,16 @@ class _BusinessSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RevealOnScroll(dx: -160, child: const LuxEyebrow('Para Empresas')),
+          RevealOnScroll(
+            dx: -160,
+            child: LuxEyebrow(context.l10n.homeWebBusinessEyebrow),
+          ),
           const SizedBox(height: 28),
           RevealOnScroll(
             delay: const Duration(milliseconds: 80),
             dx: -160,
             child: Text(
-              'Viajes corporativos,\nredefinidos.',
+              context.l10n.homeWebBusinessTitle,
               style: displayText(size: narrow ? 36 : 52, color: Colors.white),
             ),
           ),
@@ -2278,7 +2285,7 @@ class _BusinessSection extends StatelessWidget {
             delay: const Duration(milliseconds: 160),
             dx: -120,
             child: Text(
-              'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
+              context.l10n.homeWebBusinessBody,
               style: bodyText(size: 14, color: const Color(0xCCFFFFFF)),
             ),
           ),
@@ -2287,7 +2294,7 @@ class _BusinessSection extends StatelessWidget {
             delay: const Duration(milliseconds: 220),
             dx: -120,
             child: _GhostBtn(
-              label: 'Más información',
+              label: context.l10n.homeWebLearnMore,
               light: true,
               onTap: onLearnMore,
             ),
@@ -2303,7 +2310,7 @@ class _BusinessSection extends StatelessWidget {
           ? Column(
               children: [
                 headlinePanel,
-                SizedBox(height: 320, child: _perksPanel(hPad, 32)),
+                SizedBox(height: 320, child: _perksPanel(context, hPad, 32)),
               ],
             )
           : IntrinsicHeight(
@@ -2311,7 +2318,7 @@ class _BusinessSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(child: headlinePanel),
-                  Expanded(child: _perksPanel(hPad, vPad)),
+                  Expanded(child: _perksPanel(context, hPad, vPad)),
                 ],
               ),
             ),
@@ -2348,9 +2355,9 @@ class _CtaSection extends StatelessWidget {
                     RevealOnScroll(
                       dx: -100,
                       threshold: 0.9,
-                      child: const Text(
-                        'CUANDO QUIERAS. DONDE QUIERAS.',
-                        style: TextStyle(
+                      child: Text(
+                        context.l10n.homeWebCtaEyebrow,
+                        style: const TextStyle(
                           fontFamily: kSans,
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -2366,7 +2373,7 @@ class _CtaSection extends StatelessWidget {
                       dx: -100,
                       threshold: 0.9,
                       child: Text(
-                        'Tu próximo viaje,',
+                        context.l10n.homeWebCtaTitleStart,
                         style: displayText(size: 96, color: Colors.white),
                       ),
                     ),
@@ -2375,7 +2382,7 @@ class _CtaSection extends StatelessWidget {
                       dx: -100,
                       threshold: 0.9,
                       child: Text(
-                        'en tus términos.',
+                        context.l10n.homeWebCtaTitleEnd,
                         style: displayText(
                           size: 96,
                           color: Colors.white,
@@ -2388,9 +2395,9 @@ class _CtaSection extends StatelessWidget {
                       delay: const Duration(milliseconds: 160),
                       dx: -80,
                       threshold: 0.9,
-                      child: const Text(
-                        'Precio fijo  ·  Chóferes profesionales',
-                        style: TextStyle(
+                      child: Text(
+                        context.l10n.homeWebCtaPromise,
+                        style: const TextStyle(
                           fontFamily: kSans,
                           fontSize: 11,
                           fontWeight: FontWeight.w400,
@@ -2408,13 +2415,13 @@ class _CtaSection extends StatelessWidget {
                       child: Row(
                         children: [
                           _SolidBtn(
-                            label: 'Reservar un viaje',
+                            label: context.l10n.homeWebCtaBook,
                             white: true,
                             onTap: onBook,
                           ),
                           const SizedBox(width: 20),
                           _GhostBtn(
-                            label: 'Ver flota',
+                            label: context.l10n.homeWebCtaFleet,
                             light: true,
                             onTap: onViewFleet,
                           ),
@@ -2473,74 +2480,76 @@ class _BookPageData {
   final List<String> bullets;
 }
 
-const List<_BookPageData> _kBookPages = [
-  // Index 0: Cover (portada) — special: left=back cover, right=logo
-  _BookPageData(
-    num: '',
-    label: 'LUXELANE',
-    sub: 'Servicio de Chófer Premium',
-    tag: '',
-    headline: '',
-    body: '',
-    bullets: [],
-  ),
-  // Index 1: El Estándar (content page 01)
-  _BookPageData(
-    num: '01',
-    label: 'El Estándar',
-    sub: 'La Promesa Que Cumplimos',
-    photoPath: 'assets/images/home/promise_photo.jpg',
-    tag: 'El Estándar Luxelane',
-    headline: 'El estándar que\notros siguen.',
-    body: LuxPromise.chauffeursLong,
-    bullets: [
-      'Chóferes con documentos verificados',
-      'Precio fijo al reservar',
-    ],
-  ),
-  // Index 2: La Experiencia (content page 02)
-  _BookPageData(
-    num: '02',
-    label: 'La Experiencia',
-    sub: 'Cada Detalle Considerado',
-    photoPath: 'assets/images/home/immersive_bg.jpg',
-    tag: 'La Experiencia',
-    headline: 'Cada detalle,\ncuidado.',
-    body:
-        'Desde listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
-    bullets: [
-      'Interiores de cuero premium',
-      'Wi-Fi y carga inalámbrica',
-      'Servicio de champán disponible',
-      'Control de clima ambiental',
-    ],
-  ),
-  // Index 3: Para Empresas (content page 03)
-  _BookPageData(
-    num: '03',
-    label: 'Para Empresas',
-    sub: 'Viajes Corporativos Redefinidos',
-    photoPath: 'assets/images/home/business_photo.jpg',
-    tag: 'Para Empresas',
-    headline: 'Viajes corporativos,\nredefinidos.',
-    body:
-        'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
-    bullets: [
-      'Facturación centralizada',
-      'Reservas prioritarias para ejecutivos',
-    ],
-  ),
-  // Index 4: Back to cover (cierre del libro)
-  _BookPageData(
-    num: '',
-    label: 'LUXELANE',
-    sub: 'Servicio de Chófer Premium',
-    tag: '',
-    headline: '',
-    body: '',
-    bullets: [],
-  ),
-];
+/// Páginas del libro en el idioma activo.
+List<_BookPageData> _bookPages(AppLocalizations t) => [
+      // Index 0: Cover (portada) — special: left=back cover, right=logo
+      _BookPageData(
+        num: '',
+        label: _kBrandUpper,
+        sub: t.homeWebBookTagline,
+        tag: '',
+        headline: '',
+        body: '',
+        bullets: const [],
+      ),
+      // Index 1: El Estándar (content page 01)
+      _BookPageData(
+        num: '01',
+        label: t.homeWebBookStandardLabel,
+        sub: t.homeWebBookStandardSub,
+        photoPath: 'assets/images/home/promise_photo.jpg',
+        tag: t.homeWebBookStandardTag,
+        headline: t.homeWebBookStandardHeadline,
+        body: LuxPromise.chauffeursLong,
+        bullets: [
+          t.homeWebBookStandardBullet1,
+          t.homeWebBookStandardBullet2,
+        ],
+      ),
+      // Index 2: La Experiencia (content page 02)
+      _BookPageData(
+        num: '02',
+        label: t.homeWebBookExperienceLabel,
+        sub: t.homeWebBookExperienceSub,
+        photoPath: 'assets/images/home/immersive_bg.jpg',
+        tag: t.homeWebBookExperienceLabel,
+        headline: t.homeWebBookExperienceHeadline,
+        body: t.homeWebBookExperienceBody,
+        bullets: [
+          t.homeWebBookExperienceBullet1,
+          t.homeWebBookExperienceBullet2,
+          t.homeWebBookExperienceBullet3,
+          t.homeWebBookExperienceBullet4,
+        ],
+      ),
+      // Index 3: Para Empresas (content page 03)
+      _BookPageData(
+        num: '03',
+        label: t.homeWebBusinessEyebrow,
+        sub: t.homeWebBookBusinessSub,
+        photoPath: 'assets/images/home/business_photo.jpg',
+        tag: t.homeWebBusinessEyebrow,
+        headline: t.homeWebBusinessTitle,
+        body: t.homeWebBusinessBody,
+        bullets: [
+          t.homeWebBookBusinessBullet1,
+          t.homeWebBusinessPerkPriority,
+        ],
+      ),
+      // Index 4: Back to cover (cierre del libro)
+      _BookPageData(
+        num: '',
+        label: _kBrandUpper,
+        sub: t.homeWebBookTagline,
+        tag: '',
+        headline: '',
+        body: '',
+        bullets: const [],
+      ),
+    ];
+
+/// La marca en mayúsculas (portada y contraportada del libro).
+const _kBrandUpper = 'LUXELANE'; // i18n-ignore: marca propia
 
 class _BookSection extends StatefulWidget {
   const _BookSection();
@@ -2640,7 +2649,7 @@ class _BookSectionState extends State<_BookSection> {
                       right: 0,
                       child: Center(
                         child: Text(
-                          'OUR SIGNATURE EXPERIENCE',
+                          context.l10n.homeWebBookEyebrow,
                           style: GoogleFonts.montserrat(
                             fontSize: 9,
                             fontWeight: FontWeight.w500,
@@ -2655,7 +2664,7 @@ class _BookSectionState extends State<_BookSection> {
                     // Book
                     Center(
                       child: _BookWidget(
-                        pages: _kBookPages,
+                        pages: _bookPages(context.l10n),
                         currentPage: pageIdx,
                         flipAngle: flipAngle,
                         isMobile: isMobile,
@@ -2714,7 +2723,7 @@ class _BookSectionState extends State<_BookSection> {
                               RotatedBox(
                                 quarterTurns: 1,
                                 child: Text(
-                                  'SCROLL',
+                                  context.l10n.homeWebBookScroll,
                                   style: GoogleFonts.montserrat(
                                     fontSize: 7.5,
                                     fontWeight: FontWeight.w500,
@@ -3129,7 +3138,7 @@ class _BookRightPanel extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'LUXELANE',
+                _kBrandUpper,
                 style: GoogleFonts.montserrat(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -3140,7 +3149,7 @@ class _BookRightPanel extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'Servicio de Chófer Premium',
+                context.l10n.homeWebBookTagline,
                 style: GoogleFonts.cormorantGaramond(
                   fontSize: 14,
                   fontWeight: FontWeight.w300,

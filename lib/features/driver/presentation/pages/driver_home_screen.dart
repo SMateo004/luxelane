@@ -15,6 +15,7 @@ import '../../../../core/services/maps_service.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/mfa_reminder_banner.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
@@ -130,8 +131,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             return Scaffold(
               body: EmptyState(
                 icon: Icons.wifi_off_rounded,
-                message: 'No pudimos abrir tu panel.',
-                actionLabel: 'Reintentar',
+                message: context.l10n.driverHomeLoadError,
+                actionLabel: context.l10n.driverRetry,
                 onAction: () {
                   final auth = context.read<AuthBloc>().state;
                   if (auth is AuthAuthenticated) {
@@ -251,6 +252,7 @@ class _IdlePanel extends StatelessWidget {
         .toList()
       ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
     final rating = state.profile.rating;
+    final l10n = context.l10n;
     var i = 0;
     Widget item(Widget w) => LuxFadeIn(index: i++, child: w);
 
@@ -267,7 +269,9 @@ class _IdlePanel extends StatelessWidget {
         item(
           _Header(
             name: state.user.displayName,
-            title: online ? 'Estás en línea.' : 'Estás desconectado.',
+            title: online
+                ? l10n.driverHomeOnlineTitle
+                : l10n.driverHomeOfflineTitle,
           ),
         ),
         const SizedBox(height: LuxSpacing.lg),
@@ -281,20 +285,14 @@ class _IdlePanel extends StatelessWidget {
         // Lo que impide recibir viajes, dicho claramente.
         if (!state.profile.documentsVerified)
           item(
-            const _Notice(
-              'Tus documentos están en revisión. Podrás aceptar viajes '
-              'cuando Luxelane los verifique.',
-            ),
+            _Notice(l10n.driverHomeDocumentsPending),
           )
         else if (state.vehicleClass == null)
           item(
-            const _Notice(
-              'No tienes un vehículo activo registrado. Pide a '
-              'Luxelane que lo active para recibir solicitudes.',
-            ),
+            _Notice(l10n.driverHomeNoVehicle),
           ),
         const SizedBox(height: LuxSpacing.xl),
-        item(const SectionHeader(title: 'Hoy')),
+        item(SectionHeader(title: l10n.driverHomeToday)),
         const SizedBox(height: LuxSpacing.sm),
         item(
           Container(
@@ -309,18 +307,18 @@ class _IdlePanel extends StatelessWidget {
                 children: [
                   _Metric(
                     value: LuxFormat.money(state.todayEarnings),
-                    label: 'Ganancias netas',
+                    label: l10n.driverHomeNetEarnings,
                     big: true,
                   ),
                   const LuxDivider(vertical: true),
                   _Metric(
                     value: '${state.completedToday.length}',
-                    label: 'Viajes',
+                    label: l10n.driverHomeTrips,
                   ),
                   const LuxDivider(vertical: true),
                   _Metric(
                     value: rating > 0 ? '★ ${rating.toStringAsFixed(1)}' : '—',
-                    label: 'Valoración',
+                    label: l10n.driverHomeRating,
                   ),
                 ],
               ),
@@ -329,7 +327,7 @@ class _IdlePanel extends StatelessWidget {
         ),
         if (upcoming.isNotEmpty) ...[
           const SizedBox(height: LuxSpacing.xl),
-          item(const SectionHeader(title: 'Tus próximas reservas')),
+          item(SectionHeader(title: l10n.driverHomeUpcoming)),
           const SizedBox(height: LuxSpacing.sm),
           item(
             LuxGroup(
@@ -338,7 +336,8 @@ class _IdlePanel extends StatelessWidget {
                   LuxListRow(
                     icon: Icons.schedule_rounded,
                     title: b.serviceType == ServiceType.byTheHour
-                        ? '${b.hours ?? 2} h desde ${b.origin.displayName}'
+                        ? l10n.driverHourlyFrom(
+                            b.hours ?? 2, b.origin.displayName)
                         : b.destination.displayName,
                     subtitle:
                         '${LuxFormat.dateTime(b.scheduledAt)} · ${b.vehicleClass.label}',
@@ -455,7 +454,9 @@ class _GoControlState extends State<_GoControl>
                   ),
                 LuxPressable(
                   onTap: () => widget.onChanged(!online),
-                  semanticLabel: online ? 'Desconectarse' : 'Conectarse',
+                  semanticLabel: online
+                      ? context.l10n.driverGoOffline
+                      : context.l10n.driverGoOnline,
                   scale: 0.94,
                   haptic: false,
                   child: AnimatedContainer(
@@ -481,7 +482,9 @@ class _GoControlState extends State<_GoControl>
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          online ? 'En línea' : 'Conectarse',
+                          online
+                              ? context.l10n.driverOnlineBadge
+                              : context.l10n.driverGoOnline,
                           style: LuxTypography.button.copyWith(
                             fontSize: 14,
                             color: online
@@ -497,9 +500,11 @@ class _GoControlState extends State<_GoControl>
             ),
           ),
           Text(
-            online
-                ? 'Buscando viajes${widget.classLabel != null ? ' de ${widget.classLabel}' : ''}'
-                : 'Conéctate para recibir solicitudes',
+            !online
+                ? context.l10n.driverConnectToReceive
+                : widget.classLabel != null
+                    ? context.l10n.driverSearchingClass(widget.classLabel!)
+                    : context.l10n.driverSearching,
             textAlign: TextAlign.center,
             style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
           ),
@@ -509,7 +514,7 @@ class _GoControlState extends State<_GoControl>
                 LuxHaptics.tap();
                 widget.onChanged(false);
               },
-              child: const Text('Desconectarme'),
+              child: Text(context.l10n.driverDisconnectMe),
             ),
         ],
       ),
@@ -595,7 +600,7 @@ class _ActiveRidePanel extends StatelessWidget {
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {
-          throw 'Could not launch $url';
+          throw 'Could not launch $url'; // i18n-ignore: error interno, se captura y no se muestra
         }
         return;
       }
@@ -606,7 +611,7 @@ class _ActiveRidePanel extends StatelessWidget {
       if (availableMaps.isEmpty) {
         showLuxSnackbar(
           context,
-          'No hay aplicaciones de mapas disponibles',
+          context.l10n.driverMapsNone,
           isError: true,
         );
         return;
@@ -622,7 +627,7 @@ class _ActiveRidePanel extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(LuxSpacing.md),
                   child: Text(
-                    'Navegar hacia ${target.address}',
+                    context.l10n.driverMapsNavigateTo(target.address),
                     style: LuxTypography.titleMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -667,7 +672,7 @@ class _ActiveRidePanel extends StatelessWidget {
       if (context.mounted) {
         showLuxSnackbar(
           context,
-          'No se pudieron abrir los mapas',
+          context.l10n.driverMapsOpenFailed,
           isError: true,
         );
       }
@@ -681,6 +686,7 @@ class _ActiveRidePanel extends StatelessWidget {
         booking.status == BookingStatus.driverArrived;
     final target = goingToPickup ? booking.origin : booking.destination;
     final hourly = booking.serviceType == ServiceType.byTheHour;
+    final l10n = context.l10n;
 
     return Column(
       children: [
@@ -719,13 +725,13 @@ class _ActiveRidePanel extends StatelessWidget {
               LuxGroup(
                 children: [
                   _Stop(
-                    label: 'Recogida',
+                    label: l10n.driverStopPickup,
                     place: booking.origin,
                     current: goingToPickup,
                   ),
                   if (!hourly)
                     _Stop(
-                      label: 'Destino',
+                      label: l10n.driverStopDestination,
                       place: booking.destination,
                       current: !goingToPickup,
                       last: true,
@@ -738,7 +744,7 @@ class _ActiveRidePanel extends StatelessWidget {
                   children: [
                     LuxListRow(
                       icon: Icons.person_outline_rounded,
-                      title: 'Pasajero: ${booking.guest!.fullName}',
+                      title: l10n.driverGuestPassenger(booking.guest!.fullName),
                       subtitle: booking.guest!.contactLine.isEmpty
                           ? null
                           : booking.guest!.contactLine,
@@ -760,7 +766,7 @@ class _ActiveRidePanel extends StatelessWidget {
                   children: [
                     LuxListRow(
                       icon: Icons.notes_rounded,
-                      title: 'Nota del pasajero',
+                      title: l10n.driverRiderNote,
                       subtitle: booking.notes,
                     ),
                   ],
@@ -785,8 +791,8 @@ class _ActiveRidePanel extends StatelessWidget {
             children: [
               LuxOutlinedButton(
                 label: goingToPickup
-                    ? 'Navegar a la recogida'
-                    : 'Navegar al destino',
+                    ? l10n.driverNavigateToPickup
+                    : l10n.driverNavigateToDestination,
                 icon: Icons.navigation_outlined,
                 onPressed: () => _openMaps(context, target),
               ),
@@ -962,14 +968,20 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
   Widget build(BuildContext context) {
     final b = widget.request;
     final hourly = b.serviceType == ServiceType.byTheHour;
+    final l10n = context.l10n;
     final mins = b.scheduledAt.difference(DateTime.now()).inMinutes;
     final when = mins <= 45
-        ? (mins <= 1 ? 'Ahora' : 'En $mins min')
+        ? (mins <= 1
+            ? l10n.driverRequestNow
+            : l10n.driverRequestInMinutes(mins))
         : LuxFormat.dateTime(b.scheduledAt);
     final trip = _route != null
-        ? '~${_route!.distanceKm.toStringAsFixed(0)} km · ${_route!.durationMin} min'
+        ? l10n.driverRouteDistanceDuration(
+            _route!.distanceKm.toStringAsFixed(0),
+            _route!.durationMin,
+          )
         : b.tripKm != null
-            ? '~${b.tripKm!.toStringAsFixed(0)} km'
+            ? l10n.driverRouteDistance(b.tripKm!.toStringAsFixed(0))
             : null;
     return Container(
       decoration: const BoxDecoration(
@@ -1002,7 +1014,8 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 child: Column(
                   children: [
                     Text(
-                      'NUEVA SOLICITUD · ${b.vehicleClass.label.toUpperCase()}',
+                      l10n.driverRequestTitle(
+                          b.vehicleClass.label.toUpperCase()),
                       textAlign: TextAlign.center,
                       style: LuxTypography.eyebrow,
                     ),
@@ -1051,42 +1064,47 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     _RouteItem(
                       icon: Icons.radio_button_checked,
                       color: LuxColors.sapphire,
-                      label: 'ZONA DE RECOGIDA',
+                      label: l10n.driverRequestPickupZone,
                       address: b.pickupLabel,
                     ),
                     if (!hourly)
                       _RouteItem(
                         icon: Icons.stop_rounded,
                         color: LuxColors.ink,
-                        label: 'ZONA DE DESTINO',
+                        label: l10n.driverRequestDropoffZone,
                         address: b.dropoffLabel,
                       )
                     else
                       _RouteItem(
                         icon: Icons.schedule_rounded,
                         color: LuxColors.ink,
-                        label: 'POR HORAS',
-                        address: '${b.hours ?? 2} h a disposición',
+                        label: l10n.driverRequestHourly,
+                        address: l10n.driverHoursAvailable(b.hours ?? 2),
                       ),
                   ],
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                '${b.passengerCount} pasajero${b.passengerCount == 1 ? '' : 's'}'
-                ' · ${b.luggageCount} maleta${b.luggageCount == 1 ? '' : 's'}'
-                ' · Dirección exacta y datos al aceptar',
+                [
+                  l10n.driverRequestPassengers(b.passengerCount),
+                  l10n.driverRequestLuggage(b.luggageCount),
+                  l10n.driverRequestDetailsOnAccept,
+                ].join(' · '),
                 textAlign: TextAlign.center,
                 style: LuxTypography.caption.copyWith(fontSize: 12),
               ),
               const SizedBox(height: 20),
               LuxButton(
-                label: 'Aceptar viaje',
+                label: l10n.driverAcceptTrip,
                 icon: Icons.check_rounded,
                 onPressed: widget.onAccept,
               ),
               const SizedBox(height: LuxSpacing.xs),
-              LuxButton.ghost(label: 'Rechazar', onPressed: widget.onDecline),
+              LuxButton.ghost(
+                label: l10n.driverDecline,
+                onPressed: widget.onDecline,
+              ),
             ],
           ),
         ),

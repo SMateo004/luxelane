@@ -1,3 +1,5 @@
+import '../../l10n/l10n.dart';
+
 enum UserRole { rider, driver, admin }
 
 /// Order matters only for serialisation (`name`); never reorder or rename.
@@ -33,15 +35,15 @@ extension VehicleClassX on VehicleClass {
   String get label {
     switch (this) {
       case VehicleClass.business:
-        return 'Business Class';
+        return 'Business Class'; // i18n-ignore: nombre de producto
       case VehicleClass.businessSuv:
-        return 'Business SUV';
+        return 'Business SUV'; // i18n-ignore: nombre de producto
       case VehicleClass.firstClass:
-        return 'First Class';
+        return 'First Class'; // i18n-ignore: nombre de producto
       case VehicleClass.businessVan:
-        return 'Business Van';
+        return 'Business Van'; // i18n-ignore: nombre de producto
       case VehicleClass.electric:
-        return 'Eléctrico';
+        return L10n.current.commonVehicleElectric;
     }
   }
 
@@ -50,15 +52,15 @@ extension VehicleClassX on VehicleClass {
   String get description {
     switch (this) {
       case VehicleClass.business:
-        return 'Sedán ejecutivo';
+        return L10n.current.commonVehicleBusinessDescription;
       case VehicleClass.businessSuv:
-        return 'SUV ejecutiva, más espacio';
+        return L10n.current.commonVehicleSuvDescription;
       case VehicleClass.firstClass:
-        return 'Sedán insignia';
+        return L10n.current.commonVehicleFirstDescription;
       case VehicleClass.businessVan:
-        return 'Van ejecutiva para grupos';
+        return L10n.current.commonVehicleVanDescription;
       case VehicleClass.electric:
-        return 'Sedán ejecutivo eléctrico';
+        return L10n.current.commonVehicleElectricDescription;
     }
   }
 
@@ -109,18 +111,18 @@ extension ServiceTypeX on ServiceType {
   String get label {
     switch (this) {
       case ServiceType.oneWay:
-        return 'Solo ida';
+        return L10n.current.commonServiceOneWay;
       case ServiceType.byTheHour:
-        return 'Por horas';
+        return L10n.current.commonServiceByTheHour;
     }
   }
 
   String get description {
     switch (this) {
       case ServiceType.oneWay:
-        return 'Traslado a precio fijo a tu destino';
+        return L10n.current.commonServiceOneWayDescription;
       case ServiceType.byTheHour:
-        return 'Chófer a tu disposición por un tiempo determinado';
+        return L10n.current.commonServiceByTheHourDescription;
     }
   }
 }
@@ -152,23 +154,23 @@ extension BookingStatusX on BookingStatus {
   String get displayLabel {
     switch (this) {
       case BookingStatus.pending:
-        return 'Pendiente';
+        return L10n.current.commonStatusPending;
       case BookingStatus.confirmed:
-        return 'Confirmado';
+        return L10n.current.commonStatusConfirmed;
       case BookingStatus.driverArriving:
-        return 'En camino';
+        return L10n.current.commonStatusDriverArriving;
       case BookingStatus.driverArrived:
-        return 'Chófer llegó';
+        return L10n.current.commonStatusDriverArrived;
       case BookingStatus.verified:
-        return 'Verificada';
+        return L10n.current.commonStatusVerified;
       case BookingStatus.inProgress:
-        return 'En progreso';
+        return L10n.current.commonStatusInProgress;
       case BookingStatus.completed:
-        return 'Completado';
+        return L10n.current.commonStatusCompleted;
       case BookingStatus.cancelled:
-        return 'Cancelado';
+        return L10n.current.commonStatusCancelled;
       case BookingStatus.noShow:
-        return 'No se presentó';
+        return L10n.current.commonStatusNoShow;
     }
   }
 

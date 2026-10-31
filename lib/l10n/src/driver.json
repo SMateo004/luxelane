@@ -1,0 +1,1110 @@
+{
+  "driverErrorNotEnabled": {
+    "description": "Error al abrir la app del chófer: la cuenta aún no tiene el rol de chófer.",
+    "es": "Esta cuenta aún no está habilitada como chófer. Luxelane la activa después de revisar tu solicitud.",
+    "en": "This account is not yet enabled as a chauffeur. Luxelane activates it after reviewing your application.",
+    "pt": "Esta conta ainda não está habilitada como motorista. A Luxelane a ativa depois de revisar sua solicitação."
+  },
+  "driverErrorLoadAccount": {
+    "description": "Error al cargar la cuenta del chófer al abrir la app.",
+    "es": "No pudimos cargar tu cuenta. Revisa tu conexión e inténtalo de nuevo.",
+    "en": "We couldn't load your account. Check your connection and try again.",
+    "pt": "Não foi possível carregar sua conta. Verifique sua conexão e tente novamente."
+  },
+  "driverNoticeTripsLoadFailed": {
+    "description": "Aviso: no se pudieron leer los viajes asignados al chófer.",
+    "es": "No se pudieron cargar tus viajes.",
+    "en": "Your trips could not be loaded.",
+    "pt": "Não foi possível carregar suas viagens."
+  },
+  "driverNoticeRequestsLoadFailed": {
+    "description": "Aviso: no se pudieron leer las solicitudes abiertas.",
+    "es": "No se pudieron cargar las solicitudes de viaje.",
+    "en": "Trip requests could not be loaded.",
+    "pt": "Não foi possível carregar as solicitações de viagem."
+  },
+  "driverNoticeFinishTripFirst": {
+    "description": "Aviso al intentar conectarse con un viaje en curso.",
+    "es": "Termina tu viaje actual antes de conectarte.",
+    "en": "Finish your current trip before going online.",
+    "pt": "Termine sua viagem atual antes de ficar online."
+  },
+  "driverNoticeStatusChangeFailed": {
+    "description": "Aviso: no se guardó el cambio entre en línea y desconectado.",
+    "es": "No se pudo cambiar tu estado. Reintenta.",
+    "en": "Your status could not be changed. Try again.",
+    "pt": "Não foi possível alterar seu status. Tente novamente."
+  },
+  "driverNoticeLocationRequired": {
+    "description": "Aviso: el chófer no dio permiso de ubicación.",
+    "es": "Activa la ubicación para recibir viajes y que el pasajero vea dónde estás.",
+    "en": "Turn on location to receive trips and let the passenger see where you are.",
+    "pt": "Ative a localização para receber viagens e para que o passageiro veja onde você está."
+  },
+  "driverNoticeNoShowLocationRequired": {
+    "description": "Aviso al marcar «el pasajero no aparece» sin ubicación.",
+    "es": "Activa la ubicación: central necesita saber dónde esperaste.",
+    "en": "Turn on location: our operations team needs to know where you waited.",
+    "pt": "Ative a localização: a central precisa saber onde você esperou."
+  },
+  "driverNoticeNoShowReported": {
+    "description": "Aviso tras avisar a central de que el pasajero no apareció.",
+    "es": "Avisamos a central. Ya estás libre para otros viajes.",
+    "en": "We notified our operations team. You are now free for other trips.",
+    "pt": "Avisamos a central. Você já está livre para outras viagens."
+  },
+  "driverNoticeReleaseOffline": {
+    "description": "Aviso: sin conexión al liberar un viaje.",
+    "es": "Sin conexión: no se liberó el viaje. Vuelve a intentarlo.",
+    "en": "No connection: the trip was not released. Try again.",
+    "pt": "Sem conexão: a viagem não foi liberada. Tente novamente."
+  },
+  "driverNoticeReleased": {
+    "description": "Aviso tras liberar (devolver) un viaje aceptado.",
+    "es": "Liberaste el viaje. Central buscará otro chófer.",
+    "en": "You released the trip. Our operations team will look for another chauffeur.",
+    "pt": "Você liberou a viagem. A central vai procurar outro motorista."
+  },
+  "driverNoticeStepOffline": {
+    "description": "Aviso: sin conexión al guardar un paso del viaje (salir, llegar, iniciar, completar).",
+    "es": "Sin conexión: no se guardó el paso. Vuelve a intentarlo; no se duplicará.",
+    "en": "No connection: the step was not saved. Try again; it will not be duplicated.",
+    "pt": "Sem conexão: a etapa não foi salva. Tente novamente; ela não será duplicada."
+  },
+  "driverNoticeRequestAccepted": {
+    "description": "Aviso breve tras aceptar una solicitud.",
+    "es": "Viaje aceptado",
+    "en": "Trip accepted",
+    "pt": "Viagem aceita"
+  },
+  "driverHomeLoadError": {
+    "description": "Pantalla de error del inicio del chófer.",
+    "es": "No pudimos abrir tu panel.",
+    "en": "We couldn't open your dashboard.",
+    "pt": "Não foi possível abrir seu painel."
+  },
+  "driverRetry": {
+    "description": "Botón para reintentar.",
+    "es": "Reintentar",
+    "en": "Try again",
+    "pt": "Tentar novamente"
+  },
+  "driverHomeOnlineTitle": {
+    "description": "Título grande del inicio cuando el chófer está en línea.",
+    "es": "Estás en línea.",
+    "en": "You are online.",
+    "pt": "Você está online."
+  },
+  "driverHomeOfflineTitle": {
+    "description": "Título grande del inicio cuando el chófer está desconectado.",
+    "es": "Estás desconectado.",
+    "en": "You are offline.",
+    "pt": "Você está offline."
+  },
+  "driverHomeDocumentsPending": {
+    "description": "Aviso del inicio: documentos sin verificar.",
+    "es": "Tus documentos están en revisión. Podrás aceptar viajes cuando Luxelane los verifique.",
+    "en": "Your documents are under review. You can accept trips once Luxelane verifies them.",
+    "pt": "Seus documentos estão em análise. Você poderá aceitar viagens quando a Luxelane os verificar."
+  },
+  "driverHomeNoVehicle": {
+    "description": "Aviso del inicio: sin vehículo activo.",
+    "es": "No tienes un vehículo activo registrado. Pide a Luxelane que lo active para recibir solicitudes.",
+    "en": "You have no active vehicle registered. Ask Luxelane to activate it to receive requests.",
+    "pt": "Você não tem um veículo ativo cadastrado. Peça à Luxelane que o ative para receber solicitações."
+  },
+  "driverHomeToday": {
+    "description": "Encabezado de la sección con las cifras de hoy.",
+    "es": "Hoy",
+    "en": "Today",
+    "pt": "Hoje"
+  },
+  "driverHomeNetEarnings": {
+    "description": "Etiqueta de la cifra: ganancias netas de hoy.",
+    "es": "Ganancias netas",
+    "en": "Net earnings",
+    "pt": "Ganhos líquidos"
+  },
+  "driverHomeTrips": {
+    "description": "Etiqueta de la cifra: viajes completados hoy.",
+    "es": "Viajes",
+    "en": "Trips",
+    "pt": "Viagens"
+  },
+  "driverHomeRating": {
+    "description": "Etiqueta de la cifra: valoración media del chófer.",
+    "es": "Valoración",
+    "en": "Rating",
+    "pt": "Avaliação"
+  },
+  "driverHomeUpcoming": {
+    "description": "Encabezado de la lista de próximas reservas asignadas.",
+    "es": "Tus próximas reservas",
+    "en": "Your upcoming bookings",
+    "pt": "Suas próximas reservas"
+  },
+  "driverHourlyFrom": {
+    "description": "Título de un servicio por horas: horas y punto de recogida.",
+    "es": "{hours} h desde {place}",
+    "en": "{hours} h from {place}",
+    "pt": "{hours} h saindo de {place}",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      },
+      "place": {
+        "type": "String",
+        "example": "Hotel Europa"
+      }
+    }
+  },
+  "driverGoOffline": {
+    "description": "Etiqueta de lector de pantalla del gran botón: desconectarse.",
+    "es": "Desconectarse",
+    "en": "Go offline",
+    "pt": "Ficar offline"
+  },
+  "driverGoOnline": {
+    "description": "Gran botón del inicio y su etiqueta: conectarse para recibir viajes.",
+    "es": "Conectarse",
+    "en": "Go online",
+    "pt": "Ficar online"
+  },
+  "driverOnlineBadge": {
+    "description": "Texto del gran botón cuando el chófer está en línea.",
+    "es": "En línea",
+    "en": "Online",
+    "pt": "Online"
+  },
+  "driverSearching": {
+    "description": "Bajo el gran botón, en línea, sin clase de vehículo.",
+    "es": "Buscando viajes",
+    "en": "Looking for trips",
+    "pt": "Procurando viagens"
+  },
+  "driverSearchingClass": {
+    "description": "Bajo el gran botón, en línea: la clase del vehículo (nombre propio).",
+    "es": "Buscando viajes de {vehicleClass}",
+    "en": "Looking for {vehicleClass} trips",
+    "pt": "Procurando viagens de {vehicleClass}",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      }
+    }
+  },
+  "driverConnectToReceive": {
+    "description": "Bajo el gran botón, desconectado.",
+    "es": "Conéctate para recibir solicitudes",
+    "en": "Go online to receive requests",
+    "pt": "Fique online para receber solicitações"
+  },
+  "driverDisconnectMe": {
+    "description": "Botón de texto para desconectarse.",
+    "es": "Desconectarme",
+    "en": "Go offline",
+    "pt": "Ficar offline"
+  },
+  "driverMapsNone": {
+    "description": "Aviso: no hay apps de mapas instaladas.",
+    "es": "No hay aplicaciones de mapas disponibles",
+    "en": "No map apps available",
+    "pt": "Nenhum aplicativo de mapas disponível"
+  },
+  "driverMapsNavigateTo": {
+    "description": "Título de la hoja para elegir app de mapas.",
+    "es": "Navegar hacia {address}",
+    "en": "Navigate to {address}",
+    "pt": "Navegar até {address}",
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "example": "Av. Arce 2631"
+      }
+    }
+  },
+  "driverMapsOpenFailed": {
+    "description": "Aviso: no se pudieron abrir los mapas.",
+    "es": "No se pudieron abrir los mapas",
+    "en": "Maps could not be opened",
+    "pt": "Não foi possível abrir os mapas"
+  },
+  "driverStopPickup": {
+    "description": "Etiqueta de la parada de recogida (se muestra en mayúsculas).",
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque"
+  },
+  "driverStopDestination": {
+    "description": "Etiqueta de la parada de destino (se muestra en mayúsculas).",
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino"
+  },
+  "driverGuestPassenger": {
+    "description": "Nombre del invitado que viaja (reserva para otra persona).",
+    "es": "Pasajero: {name}",
+    "en": "Passenger: {name}",
+    "pt": "Passageiro: {name}",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana Rojas"
+      }
+    }
+  },
+  "driverRiderNote": {
+    "description": "Título de la nota que dejó el pasajero.",
+    "es": "Nota del pasajero",
+    "en": "Passenger's note",
+    "pt": "Observação do passageiro"
+  },
+  "driverNavigateToPickup": {
+    "description": "Botón para abrir la navegación hacia la recogida.",
+    "es": "Navegar a la recogida",
+    "en": "Navigate to pickup",
+    "pt": "Navegar até o embarque"
+  },
+  "driverNavigateToDestination": {
+    "description": "Botón para abrir la navegación hacia el destino.",
+    "es": "Navegar al destino",
+    "en": "Navigate to destination",
+    "pt": "Navegar até o destino"
+  },
+  "driverRequestNow": {
+    "description": "Hora de una solicitud que empieza ya.",
+    "es": "Ahora",
+    "en": "Now",
+    "pt": "Agora"
+  },
+  "driverRequestInMinutes": {
+    "description": "Hora de una solicitud que empieza en pocos minutos.",
+    "es": "En {minutes} min",
+    "en": "In {minutes} min",
+    "pt": "Em {minutes} min",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
+  "driverRouteDistanceDuration": {
+    "description": "Distancia y duración aproximadas del trayecto.",
+    "es": "~{km} km · {minutes} min",
+    "en": "~{km} km · {minutes} min",
+    "pt": "~{km} km · {minutes} min",
+    "placeholders": {
+      "km": {
+        "type": "String",
+        "example": "12"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "25"
+      }
+    }
+  },
+  "driverRouteDistance": {
+    "description": "Distancia aproximada del trayecto.",
+    "es": "~{km} km",
+    "en": "~{km} km",
+    "pt": "~{km} km",
+    "placeholders": {
+      "km": {
+        "type": "String",
+        "example": "12"
+      }
+    }
+  },
+  "driverRequestTitle": {
+    "description": "Cabecera de una solicitud nueva, en mayúsculas, con la clase (nombre propio en mayúsculas).",
+    "es": "NUEVA SOLICITUD · {vehicleClass}",
+    "en": "NEW REQUEST · {vehicleClass}",
+    "pt": "NOVA SOLICITAÇÃO · {vehicleClass}",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "BUSINESS CLASS"
+      }
+    }
+  },
+  "driverRequestPickupZone": {
+    "description": "Etiqueta en mayúsculas: zona aproximada de recogida.",
+    "es": "ZONA DE RECOGIDA",
+    "en": "PICKUP AREA",
+    "pt": "ÁREA DE EMBARQUE"
+  },
+  "driverRequestDropoffZone": {
+    "description": "Etiqueta en mayúsculas: zona aproximada de destino.",
+    "es": "ZONA DE DESTINO",
+    "en": "DESTINATION AREA",
+    "pt": "ÁREA DE DESTINO"
+  },
+  "driverRequestHourly": {
+    "description": "Etiqueta en mayúsculas: servicio por horas.",
+    "es": "POR HORAS",
+    "en": "HOURLY",
+    "pt": "POR HORA"
+  },
+  "driverHoursAvailable": {
+    "description": "Servicio por horas: horas a disposición del pasajero.",
+    "es": "{hours} h a disposición",
+    "en": "{hours} h hourly service",
+    "pt": "{hours} h à disposição",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "driverRequestPassengers": {
+    "description": "Número de pasajeros de una solicitud.",
+    "es": "{count, plural, =1{1 pasajero} other{{count} pasajeros}}",
+    "en": "{count, plural, =1{1 passenger} other{{count} passengers}}",
+    "pt": "{count, plural, =1{1 passageiro} other{{count} passageiros}}",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "driverRequestLuggage": {
+    "description": "Número de maletas de una solicitud.",
+    "es": "{count, plural, =1{1 maleta} other{{count} maletas}}",
+    "en": "{count, plural, =1{1 bag} other{{count} bags}}",
+    "pt": "{count, plural, =1{1 mala} other{{count} malas}}",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "driverRequestDetailsOnAccept": {
+    "description": "Nota de la solicitud: la dirección exacta y los datos se ven al aceptar.",
+    "es": "Dirección exacta y datos al aceptar",
+    "en": "Exact address and details once accepted",
+    "pt": "Endereço exato e dados ao aceitar"
+  },
+  "driverAcceptTrip": {
+    "description": "Botón para aceptar una solicitud.",
+    "es": "Aceptar viaje",
+    "en": "Accept trip",
+    "pt": "Aceitar viagem"
+  },
+  "driverDecline": {
+    "description": "Botón para rechazar una solicitud.",
+    "es": "Rechazar",
+    "en": "Decline",
+    "pt": "Recusar"
+  },
+  "driverTripNotFound": {
+    "description": "Pantalla de un viaje que ya no está en la lista.",
+    "es": "Viaje no encontrado",
+    "en": "Trip not found",
+    "pt": "Viagem não encontrada"
+  },
+  "driverBack": {
+    "description": "Botón o etiqueta para volver atrás.",
+    "es": "Volver",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "driverEstimatedFare": {
+    "description": "Etiqueta de la tarifa estimada del viaje.",
+    "es": "Tarifa estimada",
+    "en": "Estimated fare",
+    "pt": "Tarifa estimada"
+  },
+  "driverQueueTitle": {
+    "description": "Título de la pantalla de solicitudes.",
+    "es": "Solicitudes",
+    "en": "Requests",
+    "pt": "Solicitações"
+  },
+  "driverQueueEmptyOnline": {
+    "description": "Lista vacía, en línea (dos líneas).",
+    "es": "Las nuevas solicitudes\naparecerán aquí.",
+    "en": "New requests\nwill appear here.",
+    "pt": "As novas solicitações\naparecerão aqui."
+  },
+  "driverQueueEmptyOffline": {
+    "description": "Lista vacía, desconectado (dos líneas).",
+    "es": "Conéctate para\nrecibir solicitudes.",
+    "en": "Go online to\nreceive requests.",
+    "pt": "Fique online para\nreceber solicitações."
+  },
+  "driverQueueAvailable": {
+    "description": "Encabezado: solicitudes abiertas para el chófer.",
+    "es": "Disponibles para ti",
+    "en": "Available to you",
+    "pt": "Disponíveis para você"
+  },
+  "driverQueueAssigned": {
+    "description": "Encabezado: viajes ya asignados al chófer.",
+    "es": "Tus viajes asignados",
+    "en": "Your assigned trips",
+    "pt": "Suas viagens atribuídas"
+  },
+  "driverQueueFrom": {
+    "description": "Fecha y hora del viaje y el lugar de recogida.",
+    "es": "{date} · desde {place}",
+    "en": "{date} · from {place}",
+    "pt": "{date} · saindo de {place}",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      },
+      "place": {
+        "type": "String",
+        "example": "Calacoto"
+      }
+    }
+  },
+  "driverQueuePax": {
+    "description": "Número de pasajeros, abreviado.",
+    "es": "{count} pax",
+    "en": "{count} pax",
+    "pt": "{count} pax",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "driverQueueLoading": {
+    "description": "Botón mientras carga el estado del chófer.",
+    "es": "Cargando…",
+    "en": "Loading…",
+    "pt": "Carregando…"
+  },
+  "driverQueuePendingVerification": {
+    "description": "Botón deshabilitado: documentos sin verificar.",
+    "es": "Pendiente de verificación",
+    "en": "Pending verification",
+    "pt": "Verificação pendente"
+  },
+  "driverQueueFinishCurrent": {
+    "description": "Botón deshabilitado: hay un viaje en curso.",
+    "es": "Termina tu viaje actual",
+    "en": "Finish your current trip",
+    "pt": "Termine sua viagem atual"
+  },
+  "driverQueueConnectToAccept": {
+    "description": "Botón deshabilitado: el chófer está desconectado.",
+    "es": "Conéctate para aceptar",
+    "en": "Go online to accept",
+    "pt": "Fique online para aceitar"
+  },
+  "driverOnboardingDefaultColor": {
+    "description": "Color del vehículo que viene escrito por defecto en el registro (editable).",
+    "es": "Negro",
+    "en": "Black",
+    "pt": "Preto"
+  },
+  "driverOnboardingVehicleError": {
+    "description": "Error al registrar el vehículo.",
+    "es": "No se pudo registrar el vehículo. Revisa los datos e inténtalo de nuevo.",
+    "en": "The vehicle could not be registered. Check the details and try again.",
+    "pt": "Não foi possível cadastrar o veículo. Verifique os dados e tente novamente."
+  },
+  "driverOnboardingLicenseError": {
+    "description": "Error al guardar la licencia.",
+    "es": "No se pudo guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.",
+    "en": "Your license could not be saved. Check your connection and try again.",
+    "pt": "Não foi possível salvar sua habilitação. Verifique sua conexão e tente novamente."
+  },
+  "driverOnboardingGenericError": {
+    "description": "Error general del registro del chófer.",
+    "es": "No se pudo completar el registro. Inténtalo de nuevo.",
+    "en": "Registration could not be completed. Try again.",
+    "pt": "Não foi possível concluir o cadastro. Tente novamente."
+  },
+  "driverSignOut": {
+    "description": "Botón para cerrar sesión.",
+    "es": "Cerrar sesión",
+    "en": "Sign out",
+    "pt": "Sair"
+  },
+  "driverOnboardingVehicleTitle": {
+    "description": "Título del paso 1 del registro.",
+    "es": "Tu vehículo",
+    "en": "Your vehicle",
+    "pt": "Seu veículo"
+  },
+  "driverOnboardingVehicleSubtitle": {
+    "description": "Texto del paso 1 del registro.",
+    "es": "Registra el vehículo que vas a conducir.",
+    "en": "Register the vehicle you will drive.",
+    "pt": "Cadastre o veículo que você vai dirigir."
+  },
+  "driverContinue": {
+    "description": "Botón para pasar al siguiente paso.",
+    "es": "Continuar",
+    "en": "Continue",
+    "pt": "Continuar"
+  },
+  "driverOnboardingLicenseTitle": {
+    "description": "Título del paso 2 del registro.",
+    "es": "Licencia de conducir",
+    "en": "Driver's license",
+    "pt": "Carteira de habilitação"
+  },
+  "driverOnboardingLicenseSubtitle": {
+    "description": "Texto del paso 2 del registro.",
+    "es": "Tus documentos serán revisados antes de que puedas aceptar viajes.",
+    "en": "Your documents will be reviewed before you can accept trips.",
+    "pt": "Seus documentos serão analisados antes que você possa aceitar viagens."
+  },
+  "driverOnboardingReviewNotice": {
+    "description": "Aviso del paso 2: un administrador revisa los documentos.",
+    "es": "Un administrador verificará tus documentos antes de que puedas conectarte.",
+    "en": "An administrator will verify your documents before you can go online.",
+    "pt": "Um administrador verificará seus documentos antes que você possa ficar online."
+  },
+  "driverOnboardingBack": {
+    "description": "Botón para volver al paso anterior.",
+    "es": "Atrás",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "driverOnboardingSubmit": {
+    "description": "Botón para enviar el registro.",
+    "es": "Enviar",
+    "en": "Submit",
+    "pt": "Enviar"
+  },
+  "driverOnboardingClass": {
+    "description": "Etiqueta del selector de clase del vehículo.",
+    "es": "Categoría del vehículo",
+    "en": "Vehicle class",
+    "pt": "Categoria do veículo"
+  },
+  "driverOnboardingMake": {
+    "description": "Campo: marca del vehículo.",
+    "es": "Marca",
+    "en": "Make",
+    "pt": "Marca"
+  },
+  "driverOnboardingModel": {
+    "description": "Campo: modelo del vehículo.",
+    "es": "Modelo",
+    "en": "Model",
+    "pt": "Modelo"
+  },
+  "driverOnboardingPlate": {
+    "description": "Campo: placa (matrícula) del vehículo.",
+    "es": "Placa",
+    "en": "License plate",
+    "pt": "Placa"
+  },
+  "driverOnboardingYear": {
+    "description": "Campo: año del vehículo.",
+    "es": "Año",
+    "en": "Year",
+    "pt": "Ano"
+  },
+  "driverOnboardingColor": {
+    "description": "Campo: color del vehículo.",
+    "es": "Color",
+    "en": "Color",
+    "pt": "Cor"
+  },
+  "driverFieldRequired": {
+    "description": "Error de campo vacío.",
+    "es": "Requerido",
+    "en": "Required",
+    "pt": "Obrigatório"
+  },
+  "driverFieldInvalid": {
+    "description": "Error de valor no válido (año).",
+    "es": "Inválido",
+    "en": "Invalid",
+    "pt": "Inválido"
+  },
+  "driverOnboardingLicenseNumber": {
+    "description": "Campo: número de licencia de conducir.",
+    "es": "Número de licencia",
+    "en": "License number",
+    "pt": "Número da habilitação"
+  },
+  "driverOnboardingLicenseExpiry": {
+    "description": "Campo: vencimiento de la licencia, con el formato mes/año.",
+    "es": "Fecha de vencimiento (MM/AAAA)",
+    "en": "Expiry date (MM/YYYY)",
+    "pt": "Data de validade (MM/AAAA)"
+  },
+  "driverOnboardingExpiryFormat": {
+    "description": "Error: el vencimiento no tiene el formato mes/año.",
+    "es": "Usa MM/AAAA",
+    "en": "Use MM/YYYY",
+    "pt": "Use MM/AAAA"
+  },
+  "driverOnboardingInvalidMonth": {
+    "description": "Error: mes fuera de 1–12.",
+    "es": "Mes inválido",
+    "en": "Invalid month",
+    "pt": "Mês inválido"
+  },
+  "driverOnboardingLicenseExpired": {
+    "description": "Error: la licencia ya venció.",
+    "es": "Licencia vencida",
+    "en": "License expired",
+    "pt": "Habilitação vencida"
+  },
+  "driverEarningsTitle": {
+    "description": "Título de la pantalla de ganancias.",
+    "es": "Ganancias",
+    "en": "Earnings",
+    "pt": "Ganhos"
+  },
+  "driverEarningsCompleted": {
+    "description": "Encabezado de la lista de viajes completados.",
+    "es": "Viajes completados",
+    "en": "Completed trips",
+    "pt": "Viagens concluídas"
+  },
+  "driverEarningsNetTitle": {
+    "description": "Etiqueta en mayúsculas del total de ganancias netas.",
+    "es": "TUS GANANCIAS NETAS",
+    "en": "YOUR NET EARNINGS",
+    "pt": "SEUS GANHOS LÍQUIDOS"
+  },
+  "driverEarningsRides": {
+    "description": "Número de viajes completados.",
+    "es": "{count, plural, =1{1 viaje completado} other{{count} viajes completados}}",
+    "en": "{count, plural, =1{1 completed trip} other{{count} completed trips}}",
+    "pt": "{count, plural, =1{1 viagem concluída} other{{count} viagens concluídas}}",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "driverEarningsFares": {
+    "description": "Línea del resumen: suma de las tarifas.",
+    "es": "Tarifas de tus viajes",
+    "en": "Fares for your trips",
+    "pt": "Tarifas das suas viagens"
+  },
+  "driverEarningsCommission": {
+    "description": "Línea del resumen: comisión de Luxelane.",
+    "es": "Comisión Luxelane",
+    "en": "Luxelane commission",
+    "pt": "Comissão Luxelane"
+  },
+  "driverEarningsProvisionalNote": {
+    "description": "Nota: comisión por defecto mientras no hay liquidación.",
+    "es": "Los viajes provisionales se calculan con una comisión del {pct} % hasta que se confirme su liquidación.",
+    "en": "Provisional trips are calculated with a {pct} % commission until their settlement is confirmed.",
+    "pt": "As viagens provisórias são calculadas com uma comissão de {pct} % até que a liquidação seja confirmada.",
+    "placeholders": {
+      "pct": {
+        "type": "String",
+        "example": "15"
+      }
+    }
+  },
+  "driverEarningsRefunded": {
+    "description": "Fecha del viaje y que se reembolsó.",
+    "es": "{date} · reembolsado",
+    "en": "{date} · refunded",
+    "pt": "{date} · reembolsado",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      }
+    }
+  },
+  "driverEarningsFareLine": {
+    "description": "Fecha del viaje, tarifa y porcentaje de comisión.",
+    "es": "{date} · tarifa {fare} · {pct} %",
+    "en": "{date} · fare {fare} · {pct} %",
+    "pt": "{date} · tarifa {fare} · {pct} %",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      },
+      "fare": {
+        "type": "String",
+        "example": "Bs 120"
+      },
+      "pct": {
+        "type": "String",
+        "example": "15"
+      }
+    }
+  },
+  "driverEarningsProvisional": {
+    "description": "Marca de un viaje sin liquidación confirmada.",
+    "es": "Provisional",
+    "en": "Provisional",
+    "pt": "Provisório"
+  },
+  "driverEarningsEmpty": {
+    "description": "Lista de ganancias vacía (dos líneas).",
+    "es": "Tu primer viaje\naparecerá aquí.",
+    "en": "Your first trip\nwill appear here.",
+    "pt": "Sua primeira viagem\naparecerá aqui."
+  },
+  "driverSlideDepart": {
+    "description": "Deslizador: salir hacia la recogida.",
+    "es": "Salir hacia la recogida",
+    "en": "Head to pickup",
+    "pt": "Sair para o embarque"
+  },
+  "driverSlideArrived": {
+    "description": "Deslizador: el chófer llegó a la recogida.",
+    "es": "He llegado",
+    "en": "I have arrived",
+    "pt": "Cheguei"
+  },
+  "driverSlideStart": {
+    "description": "Deslizador: iniciar el viaje (se cita en driverCodeVerifiedHint).",
+    "es": "Iniciar viaje",
+    "en": "Start trip",
+    "pt": "Iniciar viagem"
+  },
+  "driverSlideComplete": {
+    "description": "Deslizador: completar el viaje.",
+    "es": "Completar viaje",
+    "en": "Complete trip",
+    "pt": "Concluir viagem"
+  },
+  "driverStepConfirmed": {
+    "description": "Estado del viaje: aceptado, aún sin salir.",
+    "es": "Dirígete a la recogida.",
+    "en": "Head to the pickup point.",
+    "pt": "Siga até o ponto de embarque."
+  },
+  "driverStepArriving": {
+    "description": "Estado del viaje: en camino a la recogida.",
+    "es": "En camino a la recogida.",
+    "en": "On the way to pickup.",
+    "pt": "A caminho do embarque."
+  },
+  "driverStepLocked": {
+    "description": "Estado: verificación bloqueada tras cinco códigos incorrectos.",
+    "es": "Verificación bloqueada. Contacta con central.",
+    "en": "Verification locked. Contact our operations team.",
+    "pt": "Verificação bloqueada. Fale com a central."
+  },
+  "driverStepAskCode": {
+    "description": "Estado: el chófer llegó y pide el código.",
+    "es": "Pide al pasajero su código de recogida.",
+    "en": "Ask the passenger for their pickup code.",
+    "pt": "Peça ao passageiro o código de embarque."
+  },
+  "driverStepVerified": {
+    "description": "Estado: pasajero verificado, listo para iniciar.",
+    "es": "Pasajero verificado. Desliza para iniciar.",
+    "en": "Passenger verified. Slide to start.",
+    "pt": "Passageiro verificado. Deslize para iniciar."
+  },
+  "driverStepInProgress": {
+    "description": "Estado: viaje en curso.",
+    "es": "Viaje en curso · rumbo al destino.",
+    "en": "Trip in progress · heading to destination.",
+    "pt": "Viagem em andamento · rumo ao destino."
+  },
+  "driverStepNoShow": {
+    "description": "Estado: el chófer avisó que el pasajero no apareció.",
+    "es": "Avisaste que el pasajero no apareció. Central lo revisa.",
+    "en": "You reported that the passenger did not show up. Our operations team is reviewing it.",
+    "pt": "Você avisou que o passageiro não apareceu. A central está analisando."
+  },
+  "driverStepActive": {
+    "description": "Estado genérico de un viaje activo.",
+    "es": "Viaje activo.",
+    "en": "Active trip.",
+    "pt": "Viagem ativa."
+  },
+  "driverLockedFiveCodes": {
+    "description": "Texto con la verificación bloqueada.",
+    "es": "Cinco códigos incorrectos: central debe verificar este viaje.",
+    "en": "Five incorrect codes: our operations team must verify this trip.",
+    "pt": "Cinco códigos incorretos: a central precisa verificar esta viagem."
+  },
+  "driverEnterCode": {
+    "description": "Botón para escribir el código de recogida.",
+    "es": "Ingresar código del pasajero",
+    "en": "Enter passenger's code",
+    "pt": "Inserir código do passageiro"
+  },
+  "driverCannotDoTrip": {
+    "description": "Botón para liberar un viaje aceptado.",
+    "es": "No puedo hacer este viaje",
+    "en": "I can't do this trip",
+    "pt": "Não posso fazer esta viagem"
+  },
+  "driverReleaseTitle": {
+    "description": "Título del diálogo para liberar un viaje.",
+    "es": "Liberar este viaje",
+    "en": "Release this trip",
+    "pt": "Liberar esta viagem"
+  },
+  "driverReleaseBody": {
+    "description": "Texto del diálogo para liberar un viaje.",
+    "es": "El viaje vuelve a buscar chófer y central recibe un aviso. Queda registrado en tu historial.",
+    "en": "The trip goes back to finding a chauffeur and our operations team is notified. It is recorded in your history.",
+    "pt": "A viagem volta a procurar motorista e a central recebe um aviso. Fica registrado no seu histórico."
+  },
+  "driverReleaseConfirm": {
+    "description": "Botón que confirma liberar el viaje.",
+    "es": "Liberar viaje",
+    "en": "Release trip",
+    "pt": "Liberar viagem"
+  },
+  "driverReleaseReasonVehicleIssue": {
+    "description": "Motivo para liberar: problema con el vehículo.",
+    "es": "Problema con el vehículo",
+    "en": "Vehicle problem",
+    "pt": "Problema com o veículo"
+  },
+  "driverReleaseReasonPersonalEmergency": {
+    "description": "Motivo para liberar: emergencia personal.",
+    "es": "Emergencia personal",
+    "en": "Personal emergency",
+    "pt": "Emergência pessoal"
+  },
+  "driverReleaseReasonUnsafeConditions": {
+    "description": "Motivo para liberar: condiciones inseguras.",
+    "es": "Condiciones inseguras",
+    "en": "Unsafe conditions",
+    "pt": "Condições inseguras"
+  },
+  "driverReleaseReasonScheduleConflict": {
+    "description": "Motivo para liberar: conflicto de horario.",
+    "es": "Conflicto de horario",
+    "en": "Schedule conflict",
+    "pt": "Conflito de horário"
+  },
+  "driverReleaseReasonOther": {
+    "description": "Motivo para liberar: otro.",
+    "es": "Otro motivo",
+    "en": "Other reason",
+    "pt": "Outro motivo"
+  },
+  "driverNoShowTitle": {
+    "description": "Título del diálogo «el pasajero no aparece».",
+    "es": "¿El pasajero no aparece?",
+    "en": "Passenger not showing up?",
+    "pt": "O passageiro não apareceu?"
+  },
+  "driverNoShowBody": {
+    "description": "Texto del diálogo «el pasajero no aparece».",
+    "es": "Central recibirá un aviso con tu ubicación y revisará la reserva. Quedarás libre para otros viajes.",
+    "en": "Our operations team will receive a notice with your location and review the booking. You will be free for other trips.",
+    "pt": "A central receberá um aviso com sua localização e analisará a reserva. Você ficará livre para outras viagens."
+  },
+  "driverNoShowKeepWaiting": {
+    "description": "Botón para seguir esperando al pasajero.",
+    "es": "Seguir esperando",
+    "en": "Keep waiting",
+    "pt": "Continuar esperando"
+  },
+  "driverNoShowNotify": {
+    "description": "Botón para avisar a central de que el pasajero no apareció.",
+    "es": "Avisar a central",
+    "en": "Notify operations team",
+    "pt": "Avisar a central"
+  },
+  "driverNoShowButton": {
+    "description": "Botón «el pasajero no aparece».",
+    "es": "El pasajero no aparece",
+    "en": "Passenger not showing up",
+    "pt": "O passageiro não apareceu"
+  },
+  "driverNoShowAvailableAt": {
+    "description": "Desde qué hora se puede marcar que el pasajero no aparece.",
+    "es": "Disponible a partir de las {time}.",
+    "en": "Available from {time}.",
+    "pt": "Disponível a partir das {time}.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "18:30"
+      }
+    }
+  },
+  "driverFlightAirportPickup": {
+    "description": "Tarjeta del vuelo sin aeropuerto conocido.",
+    "es": "Recogida en aeropuerto",
+    "en": "Airport pickup",
+    "pt": "Embarque no aeroporto"
+  },
+  "driverFlightExitLabel": {
+    "description": "Antes de la salida del aeropuerto por la que sale el pasajero.",
+    "es": "Tu pasajero sale por",
+    "en": "Your passenger comes out through",
+    "pt": "Seu passageiro sai por"
+  },
+  "driverFlightAskType": {
+    "description": "Sin tipo de vuelo: pedir al chófer que lo consulte.",
+    "es": "Consulta con el pasajero si su vuelo es nacional o internacional",
+    "en": "Ask the passenger whether their flight is domestic or international",
+    "pt": "Pergunte ao passageiro se o voo é nacional ou internacional"
+  },
+  "driverFlightNumber": {
+    "description": "Enlace con el número de vuelo.",
+    "es": "Vuelo {flight}",
+    "en": "Flight {flight}",
+    "pt": "Voo {flight}",
+    "placeholders": {
+      "flight": {
+        "type": "String",
+        "example": "OB 760"
+      }
+    }
+  },
+  "driverFlightCheckStatus": {
+    "description": "Enlace al sitio de estado de vuelos (dominio, no se traduce).",
+    "es": "Ver estado en mivuelo.att.gob.bo",
+    "en": "Check status at mivuelo.att.gob.bo",
+    "pt": "Ver status em mivuelo.att.gob.bo"
+  },
+  "driverFlightYourCityAirport": {
+    "description": "Va dentro de driverFlightDialogBody cuando no se conoce el aeropuerto.",
+    "es": "el aeropuerto de tu ciudad",
+    "en": "your city's airport",
+    "pt": "o aeroporto da sua cidade"
+  },
+  "driverFlightDialogTitle": {
+    "description": "Título del diálogo antes de abrir el sitio de vuelos.",
+    "es": "Primero cambia de aeropuerto",
+    "en": "Change the airport first",
+    "pt": "Primeiro mude o aeroporto"
+  },
+  "driverFlightDialogBody": {
+    "description": "Instrucciones antes de abrir el sitio de vuelos; {airport} es el nombre del aeropuerto o driverFlightYourCityAirport.",
+    "es": "Al abrir mivuelo.att.gob.bo, cambia primero el aeropuerto a {airport}, el que corresponde a tu ciudad. Después busca el vuelo {flight} en las llegadas.\n\nCopiaremos el número de vuelo para que solo tengas que pegarlo.",
+    "en": "When you open mivuelo.att.gob.bo, first change the airport to {airport}, the one for your city. Then look for flight {flight} under arrivals.\n\nWe will copy the flight number so you only need to paste it.",
+    "pt": "Ao abrir mivuelo.att.gob.bo, mude primeiro o aeroporto para {airport}, o que corresponde à sua cidade. Depois procure o voo {flight} nas chegadas.\n\nVamos copiar o número do voo para que você só precise colá-lo.",
+    "placeholders": {
+      "airport": {
+        "type": "String",
+        "example": "El Alto (La Paz)"
+      },
+      "flight": {
+        "type": "String",
+        "example": "OB 760"
+      }
+    }
+  },
+  "driverCancel": {
+    "description": "Botón para cancelar un diálogo.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "driverFlightDialogOpen": {
+    "description": "Botón que abre el sitio de vuelos.",
+    "es": "Entendido, abrir",
+    "en": "Understood, open",
+    "pt": "Entendi, abrir"
+  },
+  "driverFlightOpenFailed": {
+    "description": "Aviso: no se pudo abrir el sitio de vuelos.",
+    "es": "No se pudo abrir mivuelo.att.gob.bo",
+    "en": "mivuelo.att.gob.bo could not be opened",
+    "pt": "Não foi possível abrir mivuelo.att.gob.bo"
+  },
+  "driverCallDispatch": {
+    "description": "Botón para llamar a central.",
+    "es": "Llamar a central",
+    "en": "Call operations team",
+    "pt": "Ligar para a central"
+  },
+  "driverCodeLockedSecurity": {
+    "description": "La reserva llegó con la verificación bloqueada.",
+    "es": "Por seguridad, la verificación quedó bloqueada. Contacta con central.",
+    "en": "For security, verification has been locked. Contact our operations team.",
+    "pt": "Por segurança, a verificação foi bloqueada. Fale com a central."
+  },
+  "driverCodeAsk": {
+    "description": "Título de la pantalla del código de recogida.",
+    "es": "Pide el código al pasajero",
+    "en": "Ask the passenger for the code",
+    "pt": "Peça o código ao passageiro"
+  },
+  "driverCodeHint": {
+    "description": "Texto bajo el título del código de recogida.",
+    "es": "Lo ve en su app. Sin él no se puede iniciar el viaje.",
+    "en": "They can see it in their app. Without it the trip cannot start.",
+    "pt": "Ele aparece no app do passageiro. Sem ele não é possível iniciar a viagem."
+  },
+  "driverCodeSemantics": {
+    "description": "Etiqueta de lector de pantalla: dígitos escritos del código.",
+    "es": "Código, {entered} de {length} dígitos",
+    "en": "Code, {entered} of {length} digits",
+    "pt": "Código, {entered} de {length} dígitos",
+    "placeholders": {
+      "entered": {
+        "type": "int",
+        "example": "2"
+      },
+      "length": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "driverCodeDelete": {
+    "description": "Etiqueta de lector de pantalla de la tecla para borrar.",
+    "es": "Borrar",
+    "en": "Delete",
+    "pt": "Apagar"
+  },
+  "driverCodeVerified": {
+    "description": "Título tras verificar el código.",
+    "es": "Pasajero verificado",
+    "en": "Passenger verified",
+    "pt": "Passageiro verificado"
+  },
+  "driverCodeVerifiedHint": {
+    "description": "Tras verificar: cita el deslizador driverSlideStart.",
+    "es": "Desliza «Iniciar viaje» cuando estéis listos.",
+    "en": "Slide “Start trip” when you are both ready.",
+    "pt": "Deslize «Iniciar viagem» quando estiverem prontos."
+  },
+  "driverCodeContactDispatch": {
+    "description": "Título con la verificación bloqueada.",
+    "es": "Contacta con central",
+    "en": "Contact our operations team",
+    "pt": "Fale com a central"
+  },
+  "driverNavDrive": {
+    "description": "Pestaña de la app del chófer: inicio para conducir.",
+    "es": "Conducir",
+    "en": "Drive",
+    "pt": "Dirigir"
+  },
+  "driverNavRequests": {
+    "description": "Pestaña de la app del chófer: solicitudes.",
+    "es": "Solicitudes",
+    "en": "Requests",
+    "pt": "Solicitações"
+  },
+  "driverNavEarnings": {
+    "description": "Pestaña de la app del chófer: ganancias.",
+    "es": "Ganancias",
+    "en": "Earnings",
+    "pt": "Ganhos"
+  },
+  "driverNavProfile": {
+    "description": "Pestaña de la app del chófer: perfil.",
+    "es": "Perfil",
+    "en": "Profile",
+    "pt": "Perfil"
+  }
+}

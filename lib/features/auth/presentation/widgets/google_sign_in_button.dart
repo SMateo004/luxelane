@@ -4,26 +4,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/widgets/lux_text_scale.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/auth_bloc.dart';
+
+const _kSans = 'Montserrat'; // i18n-ignore: nombre de fuente
 
 /// "Continuar con Google" — white button with the Google mark, as Google's
 /// branding guidelines ask for on light surfaces. Dispatches
 /// [GoogleSignInRequested]; works on web (popup) and Android/iOS (native).
 class GoogleSignInButton extends StatelessWidget {
-  const GoogleSignInButton({super.key, this.label = 'Continuar con Google'});
-  final String label;
+  const GoogleSignInButton({super.key, this.label});
+
+  /// Por defecto, «Continuar con Google».
+  final String? label;
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (a, b) => (a is AuthLoading) != (b is AuthLoading),
         builder: (context, state) {
           final loading = state is AuthLoading;
+          final label = this.label ?? context.l10n.authGoogleContinue;
           return Semantics(
             button: true,
             label: label,
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
+            // Alto mínimo, no fijo: con la letra grande el texto pasa a dos
+            // líneas y el botón crece («Continuar com o Google», B4).
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: double.infinity,
+                minHeight: 52,
+              ),
               child: OutlinedButton(
                 onPressed: loading
                     ? null
@@ -48,14 +59,20 @@ class GoogleSignInButton extends StatelessWidget {
                       child: CustomPaint(painter: _GoogleMarkPainter()),
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.2,
-                        color: LuxColors.ink,
+                    // Flexible: una traducción más larga no desborda.
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: luxMaxLines(context, 1),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: _kSans,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.2,
+                          color: LuxColors.ink,
+                        ),
                       ),
                     ),
                   ],
@@ -69,8 +86,10 @@ class GoogleSignInButton extends StatelessWidget {
 
 /// Thin rule with a centred word — separates Google from email sign-in.
 class AuthOrDivider extends StatelessWidget {
-  const AuthOrDivider({super.key, this.label = 'o con tu correo'});
-  final String label;
+  const AuthOrDivider({super.key, this.label});
+
+  /// Por defecto, «o con tu correo».
+  final String? label;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -79,7 +98,7 @@ class AuthOrDivider extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Text(
-              label.toUpperCase(),
+              (label ?? context.l10n.authOrWithEmail).toUpperCase(),
               style: LuxTypography.caption.copyWith(
                 letterSpacing: 1.6,
                 fontSize: 10,

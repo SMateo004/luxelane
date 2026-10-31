@@ -7,6 +7,7 @@ import '../core/services/connection_status.dart';
 import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
+import '../core/services/locale_sync.dart';
 import '../core/widgets/lux_connection_banner.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
@@ -14,6 +15,8 @@ import '../features/driver/presentation/bloc/driver_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 import '../features/notifications/presentation/bloc/notification_bloc.dart';
+import '../l10n/l10n.dart';
+import 'locale_controller.dart';
 import 'lux_locale.dart';
 import 'router/router.dart';
 import 'theme/app_theme.dart';
@@ -33,6 +36,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   late final ProfileBloc _profileBloc;
   late final DriverBloc _driverBloc;
   late final NotificationBloc _notificationBloc;
+  final LocaleController _locale = sl<LocaleController>();
 
   // ── Routers — created once ─────────────────────────────────────────────
   late final dynamic _router;
@@ -47,6 +51,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _profileBloc = sl<ProfileBloc>();
     _driverBloc = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
+    _locale.load();
 
     _router = buildRouter(_authBloc);
 
@@ -74,6 +79,11 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
           _driverBloc.add(DriverStarted(userId: state.user.id));
         }
         _notificationBloc.add(NotificationWatchStarted(userId: state.user.id));
+        // Primer inicio de sesión: guarda el idioma del teléfono en la cuenta.
+        sl<LocaleSync>().onSignedIn(
+          serverLocale: state.user.locale,
+          serverSource: state.user.localeSource,
+        );
         // Registra el dispositivo para los avisos de la reserva aunque el
         // pasajero no abra la pantalla del viaje.
         sl<NotificationService>().init(
@@ -107,18 +117,30 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         BlocProvider<DriverBloc>.value(value: _driverBloc),
         BlocProvider<NotificationBloc>.value(value: _notificationBloc),
       ],
-      child: MaterialApp.router(
-        title: kAppTitle,
-        debugShowCheckedModeBanner: false,
-        locale: LuxLocale.locale,
-        supportedLocales: LuxLocale.supportedLocales,
-        localizationsDelegates: LuxLocale.delegates,
-        builder: (context, child) => LuxConnectionBanner(
-          online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
-          child: child ?? const SizedBox.shrink(),
+      // El idioma cambia al instante al elegirlo en el perfil.
+      child: ValueListenableBuilder<LocaleChoice>(
+        valueListenable: _locale,
+        builder: (context, choice, _) => MaterialApp.router(
+          title: kAppTitle,
+          // En la pestaña del navegador y el selector de apps, en el idioma
+          // activo (en español es el mismo kAppTitle).
+          onGenerateTitle: (context) => context.l10n.commonAppTitle,
+          debugShowCheckedModeBanner: false,
+          locale: choice == LocaleChoice.system ? null : Locale(choice.name),
+          localeListResolutionCallback: LuxLocale.resolveList,
+          supportedLocales: LuxLocale.supportedLocales,
+          localizationsDelegates: LuxLocale.delegates,
+          builder: (context, child) {
+            // Textos fuera de los widgets (blocs, enums) en el idioma activo.
+            L10n.use(Localizations.localeOf(context));
+            return LuxConnectionBanner(
+              online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
+          theme: luxTheme,
+          routerConfig: _router,
         ),
-        theme: luxTheme,
-        routerConfig: _router,
       ),
     );
   }

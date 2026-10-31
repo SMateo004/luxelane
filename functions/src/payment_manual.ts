@@ -17,6 +17,7 @@
  */
 import { createHash } from 'crypto';
 import * as admin from 'firebase-admin';
+import { notice, NoticeType, userLocale } from './i18n';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { AdminActor, changedFields, reasonSchema, writeAudit } from './admin_audit';
@@ -47,10 +48,12 @@ export const operationKey = (method: PaymentMethod, op: string): string =>
   createHash('sha256').update(`${method}:${op.replace(/\s+/g, '').toUpperCase()}`).digest('hex').slice(0, 40);
 
 /** Notificación al pasajero en su bandeja (texto sobrio, sin plazos ni promesas). */
-export function notifyRider(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, riderId: string,
-  bookingId: string, at: admin.firestore.Timestamp, title: string, body: string, type: string): void {
+export async function notifyRider(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, riderId: string,
+  bookingId: string, at: admin.firestore.Timestamp, noticeType: NoticeType, type: string = noticeType): Promise<void> {
+  // Idioma de quien lo recibe (lectura fuera de la transacción: solo el texto).
+  const n = notice(noticeType, await userLocale(db, riderId));
   const ref = db.collection('users').doc(riderId).collection('notifications').doc();
-  tx.set(ref, { id: ref.id, userId: riderId, title, body, type, isRead: false, bookingId, createdAt: at });
+  tx.set(ref, { id: ref.id, userId: riderId, title: n.title, body: n.body, type, locale: n.locale, isRead: false, bookingId, createdAt: at });
 }
 
 /** Marca como revisadas las alertas «ya pagué» de la reserva (lecturas: antes de escribir). */
@@ -224,11 +227,9 @@ export async function adminConfirmPayment(deps: PaymentDeps, actor: AdminActor, 
       externalRef, actorRole: 'admin', at, late,
     });
     alerts.forEach((a) => tx.update(a.ref, { resolved: true, resolvedAt: at, resolvedBy: actor.adminId }));
-    notifyRider(tx, db, s.riderId, input.bookingId, at, 'Pago confirmado',
-      result.paymentStatus === 'paid'
-        ? 'Confirmamos tu pago. Estamos buscando a tu chófer.'
-        : 'Confirmamos tu pago, pero la reserva ya estaba cancelada. Central gestionará la devolución.',
-      'payment_confirmed');
+    // Las dos variantes se guardan con type payment_confirmed, como antes.
+    await notifyRider(tx, db, s.riderId, input.bookingId, at,
+      result.paymentStatus === 'paid' ? 'payment_confirmed' : 'payment_confirmed_cancelled', 'payment_confirmed');
     writeAudit(tx, db, {
       actor, operation: 'confirm_payment', collection: 'bookings', docId: input.bookingId, targetType: 'payment',
       changes: changedFields({ paymentStatus: s.paymentStatus, amountPaid: s.amountPaid },
@@ -261,8 +262,7 @@ export async function adminRejectPayment(deps: PaymentDeps, actor: AdminActor, d
     }
     tx.update(stateRef, { paymentStatus: 'failed', riderReportedAt: null, rejectedAt: at, updatedAt: at });
     alerts.forEach((a) => tx.update(a.ref, { resolved: true, resolvedAt: at, resolvedBy: actor.adminId }));
-    notifyRider(tx, db, s.riderId, input.bookingId, at, 'Pago no confirmado',
-      'No pudimos confirmar tu pago. Revisa los datos del pago en la app o contacta con central.', 'payment_rejected');
+    await notifyRider(tx, db, s.riderId, input.bookingId, at, 'payment_rejected');
     writeAudit(tx, db, {
       actor, operation: 'reject_payment', collection: 'bookings', docId: input.bookingId, targetType: 'payment',
       changes: changedFields({ paymentStatus: s.paymentStatus }, { paymentStatus: 'failed' }),

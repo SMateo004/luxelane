@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../../app/theme/lux_motion.dart';
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
 import '../utils/lux_format.dart';
@@ -347,7 +348,7 @@ class VehicleCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Hasta ${vehicleClass.capacity}',
+                        context.l10n.commonUpTo(vehicleClass.capacity),
                         style: LuxTypography.caption,
                       ),
                     ],
@@ -366,8 +367,8 @@ class VehicleCard extends StatelessWidget {
                 ),
                 Text(
                   serviceType == ServiceType.byTheHour
-                      ? '${hours ?? 2}h en total'
-                      : 'precio fijo',
+                      ? context.l10n.commonHoursTotal(hours ?? 2)
+                      : context.l10n.commonFixedPriceLower,
                   style: LuxTypography.caption,
                 ),
               ],
@@ -893,7 +894,7 @@ class RiderPreferencesNote extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ESTILO DEL PASAJERO',
+            context.l10n.commonRiderStyle,
             style: LuxTypography.eyebrow.copyWith(fontSize: 9),
           ),
           const SizedBox(height: 8),
@@ -1003,13 +1004,15 @@ class PriceEstimateBar extends StatelessWidget {
     required this.price,
     required this.onConfirm,
     this.loading = false,
-    this.label = 'Confirmar reserva',
+    this.label,
   });
 
   final double price;
   final VoidCallback onConfirm;
   final bool loading;
-  final String label;
+
+  /// Sin texto: «Confirmar reserva» en el idioma activo.
+  final String? label;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -1030,7 +1033,10 @@ class PriceEstimateBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('PRECIO FIJO', style: LuxTypography.caption),
+                Text(
+                  context.l10n.commonFixedPriceUpper,
+                  style: LuxTypography.caption,
+                ),
                 Text(
                   LuxFormat.money(price),
                   style: LuxTypography.displayMedium.copyWith(
@@ -1042,7 +1048,7 @@ class PriceEstimateBar extends StatelessWidget {
             const SizedBox(width: LuxSpacing.lg),
             Expanded(
               child: LuxButton(
-                label: label,
+                label: label ?? context.l10n.commonConfirmBooking,
                 onPressed: onConfirm,
                 loading: loading,
               ),
@@ -1247,9 +1253,9 @@ class LuxelaneWordmark extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'L',
+                'L', // i18n-ignore: monograma de la marca
                 style: TextStyle(
-                  fontFamily: 'Cormorant Garamond',
+                  fontFamily: LuxTypography.serifFamily,
                   fontSize: size * 1.25,
                   fontWeight: FontWeight.w500,
                   color: c,
@@ -1262,9 +1268,9 @@ class LuxelaneWordmark extends StatelessWidget {
           SizedBox(width: size),
         ],
         Text(
-          'LUXELANE',
+          'LUXELANE', // i18n-ignore: marca
           style: TextStyle(
-            fontFamily: 'Montserrat',
+            fontFamily: LuxTypography.sansFamily,
             fontSize: size,
             fontWeight: FontWeight.w600,
             letterSpacing: size * 0.25,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../l10n/l10n.dart';
 import '../error/failures.dart';
 
 /// Enlace a la tienda de la plataforma actual, si el admin lo configuró.
@@ -37,18 +38,15 @@ class AppUpdateDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final url = storeUrlFor(failure, defaultTargetPlatform, web: web);
+    final l10n = context.l10n;
     return AlertDialog(
       title: Text(
         failure.forDriver
-            ? 'Actualiza la app para seguir'
-            : 'Actualiza la app para reservar',
+            ? l10n.commonUpdateTitleDriver
+            : l10n.commonUpdateTitleRider,
       ),
       content: Text(
-        web
-            ? 'Hay una versión nueva de la web. Recarga la página para '
-                'seguir reservando.'
-            : 'Hay una versión nueva de la app. Actualízala para seguir '
-                'reservando.',
+        web ? l10n.commonUpdateBodyWeb : l10n.commonUpdateBodyApp,
       ),
       actions: [
         if (url != null)
@@ -57,12 +55,12 @@ class AppUpdateDialog extends StatelessWidget {
               launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
               Navigator.of(context).pop();
             },
-            child: const Text('Ir a la tienda'),
+            child: Text(l10n.commonUpdateGoToStore),
           )
         else
           FilledButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Entendido'),
+            child: Text(l10n.commonGotIt),
           ),
       ],
     );

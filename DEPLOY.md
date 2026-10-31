@@ -244,6 +244,45 @@ Orden previsto al terminar la Parte B: functions → apps publicadas →
 `config/ops.playlistHosts` en la consola (lista de hosts permitidos; sin
 ella, el campo de la lista de música no se ofrece y el servidor lo rechaza).
 
+## Idiomas (cierre/idiomas): es, en y pt en las apps del pasajero y del chófer
+
+**Esta rama lleva dentro la Parte A de preferencias**: no se despliega hasta
+cerrar su B0 (ver «Preferencias del pasajero», arriba). Cuando se pueda:
+
+### Orden
+1. **Functions.** `updatePreferences` acepta `locale` y `localeSource`; los
+   avisos push y de la bandeja salen en el idioma de `users/{uid}.locale`.
+   Sin ese campo (todas las cuentas de hoy y las apps anteriores, que no lo
+   mandan) todo sale en español, como ahora.
+2. **Apps** (pasajero y chófer) publicadas. En el primer inicio de sesión
+   guardan el idioma del teléfono (es, en o pt; si no, español); el usuario
+   lo cambia en el perfil y se aplica sin reiniciar.
+3. **minAppVersion**: no hace falta subirlo por los idiomas (la app anterior
+   sigue funcionando en español). Si se sube por otra razón, va aquí.
+4. **Reglas al final**: `locale`, `localeSource` y `localeUpdatedAt` pasan a
+   campos que solo escribe el servidor. Las apps anteriores no los escriben,
+   así que no les afecta.
+
+### Qué ve una app anterior
+- Toda la interfaz en español (sus textos son fijos).
+- Los avisos del servidor, en el idioma guardado en la cuenta: si la persona
+  eligió inglés en la app nueva y abre también una app anterior en otro
+  dispositivo, recibe los push en inglés y ve la app en español.
+
+### Lo que sigue en español
+- El panel de admin (también sus fechas y textos de Material).
+- Las alertas del panel (`adminAlerts`), la auditoría y los scripts.
+- Las páginas legales: en inglés o portugués muestran un aviso traducido de
+  que el documento solo está en español, hasta que el abogado entregue las
+  traducciones.
+- El SMS de SOS que la persona envía a central.
+
+### Pasos manuales (responsable)
+- Revisión por hablantes nativos de todo el inglés y el portugués
+  (`lib/l10n/src/*.json` y `functions/src/i18n.ts`); lista en
+  docs/GLOSARIO_IDIOMAS.md.
+- Traducciones legales del abogado (términos y privacidad).
+
 ## Orden de despliegue de createBooking (D2)
 
 Las reservas pasan a crearse solo en el servidor (`createBooking`), que

@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get_it/get_it.dart';
 
+import '../../app/locale_controller.dart';
 import '../../features/admin/data/repositories/admin_payments_repository_impl.dart';
 import '../../features/admin/data/repositories/admin_repository_impl.dart';
 import '../../features/admin/domain/admin_payments.dart';
@@ -31,6 +32,7 @@ import '../auth/driver_device.dart';
 import '../auth/mfa.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
+import '../services/locale_sync.dart';
 import '../services/maps_service.dart';
 import '../services/notification_service.dart';
 
@@ -52,6 +54,17 @@ void _registerServices() {
   }
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(userRepository: sl()),
+  );
+  if (!sl.isRegistered<LocaleController>()) {
+    sl.registerLazySingleton<LocaleController>(() => LocaleController());
+  }
+  sl.registerLazySingleton<LocaleSync>(
+    () => LocaleSync(
+      controller: sl(),
+      save: (locale, source) => sl<FirebaseFunctions>()
+          .httpsCallable('updatePreferences')
+          .call({'locale': locale, 'localeSource': source}),
+    ),
   );
 }
 

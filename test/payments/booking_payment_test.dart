@@ -285,7 +285,7 @@ void main() {
 
     testWidgets('error del servidor visible y sin culpar a la persona',
         (t) async {
-      repo.startFailure = const PaymentFailure(kPaymentOurFault);
+      repo.startFailure = PaymentFailure(kPaymentOurFault);
       await pump(t, _payment());
       expect(find.text(kPaymentOurFault), findsOneWidget);
     });

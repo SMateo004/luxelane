@@ -8,6 +8,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl({
@@ -60,7 +61,7 @@ class BookingRepositoryImpl implements BookingRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(bookingFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(ServerFailure(_kConnectionError));
+      return Left(ServerFailure(_connectionError));
     }
   }
 
@@ -80,7 +81,7 @@ class BookingRepositoryImpl implements BookingRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(bookingFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(ServerFailure(_kConnectionError));
+      return Left(ServerFailure(_connectionError));
     }
   }
 
@@ -209,9 +210,7 @@ class BookingRepositoryImpl implements BookingRepository {
       });
       return const Right(null);
     } catch (e) {
-      return const Left(
-        ServerFailure('No se pudo guardar tu valoración. Inténtalo de nuevo.'),
-      );
+      return Left(ServerFailure(L10n.current.bookingRatingSaveError));
     }
   }
 
@@ -231,17 +230,13 @@ class BookingRepositoryImpl implements BookingRepository {
         final snapshot = await transaction.get(requestRef);
         final driver = await transaction.get(driverRef);
         if (!snapshot.exists) {
-          throw const _AcceptError('Otro chófer ya aceptó este viaje.');
+          throw _AcceptError(L10n.current.bookingAcceptTaken);
         }
         if (driver.data()?['documentsVerified'] != true) {
-          throw const _AcceptError(
-            'Tus documentos aún no están verificados por Luxelane.',
-          );
+          throw _AcceptError(L10n.current.bookingAcceptNotVerified);
         }
         if (driver.data()?['isAvailable'] != true) {
-          throw const _AcceptError(
-            'Conéctate y termina tu viaje actual antes de aceptar otro.',
-          );
+          throw _AcceptError(L10n.current.bookingAcceptBusy);
         }
         transaction.update(docRef, {
           'driverId': driverId,
@@ -264,10 +259,10 @@ class BookingRepositoryImpl implements BookingRepository {
       return Left(
         ServerFailure(
           e.code == 'permission-denied'
-              ? 'Este viaje ya no está disponible.'
+              ? L10n.current.bookingAcceptUnavailable
               : e.code == 'unavailable' || e.code == 'deadline-exceeded'
-                  ? 'No se pudo aceptar el viaje. Revisa tu conexión.'
-                  : 'No se pudo aceptar el viaje. Inténtalo de nuevo.',
+                  ? L10n.current.bookingAcceptConnection
+                  : L10n.current.bookingAcceptFailed,
         ),
       );
     } catch (e) {
@@ -291,7 +286,7 @@ class BookingRepositoryImpl implements BookingRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(cancelFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(ServerFailure(_kCancelConnectionError));
+      return Left(ServerFailure(_cancelConnectionError));
     }
   }
 
@@ -311,7 +306,7 @@ class BookingRepositoryImpl implements BookingRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(cancelFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(ServerFailure(_kCancelConnectionError));
+      return Left(ServerFailure(_cancelConnectionError));
     }
   }
 
@@ -326,8 +321,7 @@ class BookingRepositoryImpl implements BookingRepository {
       });
 }
 
-const _kConnectionError =
-    'No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.';
+String get _connectionError => L10n.current.bookingConnectionError;
 
 /// Solo los datos del viaje que aceptan quoteBooking y createBooking: el
 /// precio, el estado y la zona los pone el servidor.
@@ -387,32 +381,26 @@ Failure bookingFailureFor(String code, Object? details) {
       iosStoreUrl: d['iosStoreUrl'] as String?,
     );
   }
+  final t = L10n.current;
   return ServerFailure(switch (reason) {
-    'pricing_unavailable' => 'No pudimos calcular el precio de este viaje '
-        'ahora. Inténtalo de nuevo en unos minutos.',
-    'out_of_area' => 'Por ahora solo hacemos viajes dentro de la misma '
-        'ciudad de la recogida.',
-    'class_unavailable' => 'Esta clase de vehículo no está disponible en '
-        'este momento. Elige otra.',
-    'service_unavailable' => 'Las reservas están en pausa por '
-        'mantenimiento. Vuelve a intentarlo en unos minutos.',
-    'invalid_hours' => 'Elige un número entero de horas.',
-    'past_pickup' => 'La hora de recogida ya pasó. Elige una nueva hora.',
-    'inactive_user' => 'Tu cuenta no puede hacer reservas en este momento.',
-    'unauthenticated' => 'Inicia sesión para reservar.',
+    'pricing_unavailable' => t.bookingErrorPricingUnavailable,
+    'out_of_area' => t.bookingErrorOutOfArea,
+    'class_unavailable' => t.bookingErrorClassUnavailable,
+    'service_unavailable' => t.bookingErrorServiceUnavailable,
+    'invalid_hours' => t.bookingErrorInvalidHours,
+    'past_pickup' => t.bookingPickupPast,
+    'inactive_user' => t.bookingErrorInactiveUser,
+    'unauthenticated' => t.bookingErrorSignIn,
     // Ningún método de pago activo (config/ops): no se crea la reserva.
-    'payments_unavailable' => 'Ahora mismo no podemos recibir reservas. '
-        'Inténtalo de nuevo más tarde o contacta con central.',
+    'payments_unavailable' => t.bookingErrorPaymentsUnavailable,
     _ => code == 'unavailable' || code == 'deadline-exceeded'
-        ? _kConnectionError
+        ? _connectionError
         : commonFunctionError(code, details) ??
             // Solo un dato mal formado es cosa de la persona; un fallo del
             // servidor no la culpa (E37).
             (code == 'invalid-argument'
-                ? 'No pudimos procesar tu reserva. Revisa los datos del '
-                    'viaje e inténtalo de nuevo.'
-                : 'No pudimos completar la reserva por un problema nuestro. '
-                    'Inténtalo de nuevo en unos minutos.'),
+                ? t.bookingErrorInvalidRequest
+                : t.bookingErrorServer),
   });
 }
 
@@ -422,14 +410,11 @@ class _AcceptError implements Exception {
 }
 
 /// Sin respuesta de Functions (la llamada no salió): sí es la red.
-const _kCancelConnectionError =
-    'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.';
+String get _cancelConnectionError => L10n.current.bookingCancelConnectionError;
 
 /// Fallo del servidor al cancelar (internal, etc.): no es la red (E13).
 /// Sin red, commonFunctionError ya da el mensaje de conexión.
-const _kCancelServerError =
-    'No se pudo cancelar ahora. Inténtalo de nuevo en unos minutos; si '
-    'sigue, contacta con central.';
+String get _cancelServerError => L10n.current.bookingCancelServerError;
 
 /// Error de cancelBooking (details.reason) a lo que ve el pasajero.
 Failure cancelFailureFor(String code, Object? details) {
@@ -440,15 +425,12 @@ Failure cancelFailureFor(String code, Object? details) {
         (d['cancellationFee'] as num?)?.toDouble() ?? 0,
       );
     case 'not_cancellable':
-      return const ServerFailure(
-        'Esta reserva ya no se puede cancelar: el viaje está en curso o '
-        'terminó.',
-      );
+      return ServerFailure(L10n.current.bookingCancelNotCancellable);
     case 'not_owner':
     case 'booking_not_found':
-      return const ServerFailure('No encontramos esta reserva en tu cuenta.');
+      return ServerFailure(L10n.current.bookingNotFound);
   }
   return ServerFailure(
-    commonFunctionError(code, details) ?? _kCancelServerError,
+    commonFunctionError(code, details) ?? _cancelServerError,
   );
 }

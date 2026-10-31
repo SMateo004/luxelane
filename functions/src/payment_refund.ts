@@ -68,8 +68,7 @@ async function closeRefund(deps: PaymentDeps, c: CloseInput) {
     tx.update(stateRef, { paymentStatus: status, amountRefunded: nowRefunded, refundDue: pendingLeft, updatedAt: at });
     if (pendingLeft === 0) alerts.docs.forEach((a) => tx.update(a.ref, { resolved: true, resolvedAt: at, resolvedBy: c.actor?.adminId ?? 'system' }));
     // Solo ahora, con la devolución registrada, se le dice al pasajero.
-    notifyRider(tx, db, s.riderId, c.bookingId, at, 'Devolución registrada',
-      'Te devolvemos el dinero al método con el que pagaste.', 'refund_recorded');
+    await notifyRider(tx, db, s.riderId, c.bookingId, at, 'refund_recorded');
     if (c.actor) {
       writeAudit(tx, db, {
         actor: c.actor, operation: 'record_refund', collection: 'payments', docId: c.entryId, targetType: 'payment',

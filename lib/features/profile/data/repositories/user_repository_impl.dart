@@ -4,6 +4,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl({required FirebaseFirestore firestore}) : _db = firestore;
@@ -17,7 +18,9 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, User>> getUserById(String userId) async {
     try {
       final doc = await _users.doc(userId).get();
-      if (!doc.exists) return const Left(NotFoundFailure('User not found'));
+      if (!doc.exists) {
+        return Left(NotFoundFailure(L10n.current.errorProfileNotFound));
+      }
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
       return Left(ServerFailure(unexpectedErrorMessage(e)));
@@ -60,7 +63,9 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, DriverProfile>> getDriverProfile(String userId) async {
     try {
       final doc = await _db.collection('driverProfiles').doc(userId).get();
-      if (!doc.exists) return const Left(NotFoundFailure('Profile not found'));
+      if (!doc.exists) {
+        return Left(NotFoundFailure(L10n.current.errorProfileNotFound));
+      }
       return Right(DriverProfile.fromJson(doc.data()!));
     } catch (e) {
       return Left(ServerFailure(unexpectedErrorMessage(e)));

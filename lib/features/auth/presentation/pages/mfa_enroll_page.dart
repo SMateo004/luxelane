@@ -6,6 +6,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/auth/mfa.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Alta de la app autenticadora (TOTP) para chóferes y administradores.
 ///
@@ -76,7 +77,7 @@ class _MfaEnrollPageState extends State<MfaEnrollPage> {
     final code = _code.text.trim();
     if (e == null) return;
     if (!RegExp(r'^\d{6}$').hasMatch(code)) {
-      setState(() => _error = 'Escribe las 6 cifras del código.');
+      setState(() => _error = context.l10n.authMfaCodeDigits);
       return;
     }
     if (e.deadline != null && DateTime.now().isAfter(e.deadline!)) {
@@ -112,39 +113,37 @@ class _MfaEnrollPageState extends State<MfaEnrollPage> {
   @override
   Widget build(BuildContext context) {
     final e = _enrollment;
+    final t = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: const Text('Verificación en dos pasos')),
+      appBar: AppBar(title: Text(t.authMfaTitle)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(LuxSpacing.lg),
           children: [
             if (_done) ...[
-              const Text(
-                'Listo. A partir de ahora, al iniciar sesión te pediremos el '
-                'código de tu app autenticadora.',
+              Text(
+                t.authMfaEnrollDone,
                 style: LuxTypography.bodyLarge,
               ),
               const SizedBox(height: LuxSpacing.lg),
               LuxButton(
-                label: 'Volver',
+                label: t.authMfaBack,
                 onPressed: widget.onDone ?? () => Navigator.of(context).pop(),
               ),
             ] else if (e == null) ...[
-              const Text(
-                'Protege tu cuenta con una app autenticadora (por ejemplo, '
-                'la que trae tu teléfono o tu gestor de contraseñas). Te '
-                'pedirá un código de 6 cifras al iniciar sesión.',
+              Text(
+                t.authMfaEnrollIntro,
                 style: LuxTypography.bodyLarge,
               ),
               const SizedBox(height: LuxSpacing.lg),
               LuxButton(
-                label: 'Empezar',
+                label: t.authMfaStart,
                 loading: _busy,
                 onPressed: _busy ? null : _start,
               ),
             ] else ...[
-              const Text(
-                '1. Escanea este código con tu app autenticadora.',
+              Text(
+                t.authMfaScanStep,
                 style: LuxTypography.bodyLarge,
               ),
               const SizedBox(height: LuxSpacing.md),
@@ -156,34 +155,33 @@ class _MfaEnrollPageState extends State<MfaEnrollPage> {
                     key: const ValueKey('mfa-qr'),
                     data: e.qrCodeUrl,
                     size: 200,
-                    semanticsLabel: 'Código QR para la app autenticadora',
+                    semanticsLabel: t.authMfaQrSemantics,
                   ),
                 ),
               ),
               const SizedBox(height: LuxSpacing.sm),
               if (_mfa.canOpenInAuthenticator)
                 LuxButton.ghost(
-                  label: 'Abrir en la app autenticadora',
+                  label: t.authMfaOpenInApp,
                   onPressed: () => _mfa.openInAuthenticator(e),
                 ),
               const SizedBox(height: LuxSpacing.sm),
               Text(
-                '¿No puedes escanear? Escribe esta clave: '
-                '${_showKey ? e.secretKey : '••••••••••••'}',
+                t.authMfaManualKey(_showKey ? e.secretKey : '••••••••••••'),
                 key: const ValueKey('mfa-key'),
                 style: LuxTypography.bodyMedium,
               ),
               TextButton(
                 onPressed: () => setState(() => _showKey = !_showKey),
-                child: Text(_showKey ? 'Ocultar clave' : 'Mostrar clave'),
+                child: Text(_showKey ? t.authMfaHideKey : t.authMfaShowKey),
               ),
-              const Text(
-                'No compartas este código ni la clave, y no hagas capturas.',
+              Text(
+                t.authMfaNoShare,
                 style: LuxTypography.caption,
               ),
               const SizedBox(height: LuxSpacing.lg),
-              const Text(
-                '2. Escribe el código que muestra la app.',
+              Text(
+                t.authMfaCodeStep,
                 style: LuxTypography.bodyLarge,
               ),
               const SizedBox(height: LuxSpacing.sm),
@@ -196,12 +194,12 @@ class _MfaEnrollPageState extends State<MfaEnrollPage> {
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(6),
                 ],
-                decoration: const InputDecoration(labelText: 'Código'),
+                decoration: InputDecoration(labelText: t.authMfaCodeLabel),
                 onSubmitted: (_) => _finish(),
               ),
               const SizedBox(height: LuxSpacing.md),
               LuxButton(
-                label: 'Activar',
+                label: t.authMfaActivate,
                 loading: _busy,
                 onPressed: _busy ? null : _finish,
               ),

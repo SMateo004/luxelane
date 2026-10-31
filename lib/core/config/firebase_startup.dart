@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/lux_locale.dart';
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import 'firebase_env.dart';
 
 /// Resultado de iniciar Firebase al arrancar la app.
@@ -43,7 +45,7 @@ Future<FirebaseStartup> startFirebase(
     }
     final message = e is StagingNotConfiguredError
         ? e.message
-        : 'Firebase no se pudo iniciar: $e';
+        : 'Firebase no se pudo iniciar: $e'; // i18n-ignore: solo desarrollo (aviso en debug)
     log('[Luxelane] AVISO: $message');
     return FirebaseDegraded(message);
   }
@@ -60,7 +62,8 @@ Widget appForStartup(FirebaseStartup startup, Widget app) => switch (startup) {
         ),
     };
 
-/// Pantalla sobria que sustituye a la app cuando Firebase no arranca.
+/// Pantalla sobria que sustituye a la app cuando Firebase no arranca. Sin
+/// Firebase no se conoce el idioma del perfil: usa el del teléfono.
 class FirebaseStartupErrorApp extends StatelessWidget {
   const FirebaseStartupErrorApp({super.key});
 
@@ -68,34 +71,47 @@ class FirebaseStartupErrorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: LuxColors.bg,
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.all(LuxSpacing.xl),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.cloud_off_rounded,
-                    size: 40,
-                    color: LuxColors.inkTertiary,
-                  ),
-                  SizedBox(height: LuxSpacing.md),
-                  Text(
-                    'No pudimos iniciar la app',
-                    textAlign: TextAlign.center,
-                    style: LuxTypography.titleLarge,
-                  ),
-                  SizedBox(height: LuxSpacing.sm),
-                  Text(
-                    'Cierra la app y vuelve a abrirla en unos minutos.',
-                    textAlign: TextAlign.center,
-                    style: LuxTypography.bodyMedium,
-                  ),
-                ],
-              ),
+      supportedLocales: LuxLocale.supportedLocales,
+      localizationsDelegates: LuxLocale.delegates,
+      localeListResolutionCallback: LuxLocale.resolveList,
+      home: _StartupErrorPage(),
+    );
+  }
+}
+
+class _StartupErrorPage extends StatelessWidget {
+  const _StartupErrorPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Scaffold(
+      backgroundColor: LuxColors.bg,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(LuxSpacing.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.cloud_off_rounded,
+                  size: 40,
+                  color: LuxColors.inkTertiary,
+                ),
+                const SizedBox(height: LuxSpacing.md),
+                Text(
+                  l10n.commonStartupErrorTitle,
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.titleLarge,
+                ),
+                const SizedBox(height: LuxSpacing.sm),
+                Text(
+                  l10n.commonStartupErrorBody,
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.bodyMedium,
+                ),
+              ],
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
 
@@ -102,23 +103,24 @@ class RiderInsights {
 /// Una frase que acompaña el saludo según el momento: lo que probablemente
 /// necesita ahora mismo, dicho con calma.
 String contextualPrompt(DateTime now, {Booking? nextTrip}) {
+  final t = L10n.current;
   if (nextTrip != null) {
     final mins = nextTrip.scheduledAt.difference(now).inMinutes;
     if (nextTrip.status == BookingStatus.inProgress) {
-      return 'Disfruta el trayecto.';
+      return t.commonPromptEnjoyJourney;
     }
     if (nextTrip.status == BookingStatus.driverArrived) {
-      return 'Tu chófer ya te espera.';
+      return t.commonPromptChauffeurWaiting;
     }
     if (nextTrip.status == BookingStatus.driverArriving) {
-      return 'Tu chófer va en camino.';
+      return t.commonPromptChauffeurOnTheWay;
     }
-    if (mins >= 0 && mins <= 120) return 'Tu próximo trayecto está cerca.';
+    if (mins >= 0 && mins <= 120) return t.commonPromptNextTripSoon;
   }
   final h = now.hour;
-  if (h >= 5 && h < 11) return '¿A dónde empieza tu día?';
-  if (h >= 11 && h < 15) return '¿A dónde te llevamos?';
-  if (h >= 15 && h < 20) return '¿Cerramos el día en calma?';
-  if (h >= 20 || h < 1) return '¿Volvemos con calma?';
-  return 'Estamos aquí a cualquier hora.';
+  if (h >= 5 && h < 11) return t.commonPromptMorning;
+  if (h >= 11 && h < 15) return t.commonPromptMidday;
+  if (h >= 15 && h < 20) return t.commonPromptAfternoon;
+  if (h >= 20 || h < 1) return t.commonPromptEvening;
+  return t.commonPromptLateNight;
 }

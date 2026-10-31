@@ -112,7 +112,7 @@ void main() async {
     debugPrint('[Luxelane] env=${AppConfig.env.name} web=$kIsWeb');
     if (kIsWeb && AppConfig.googleMapsKey.isEmpty) {
       debugPrint(
-        '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY',
+        '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY', // i18n-ignore: registro de depuración
       );
     }
   }

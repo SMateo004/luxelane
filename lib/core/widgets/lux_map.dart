@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
@@ -14,7 +15,7 @@ import '../utils/route_geometry.dart';
 
 /// Ivory map style — the same light palette as the app (LD tokens):
 /// pale ivory land, soft blue-grey roads, sapphire-tinted water.
-const _kIvoryMapStyle = '''
+const _kIvoryMapStyle = /* // i18n-ignore: estilo JSON del mapa */ '''
 [
   {"elementType":"geometry","stylers":[{"color":"#f2f5fb"}]},
   {"elementType":"labels.icon","stylers":[{"visibility":"off"}]},
@@ -306,8 +307,7 @@ class LuxMapState extends State<LuxMap> {
 /// (`GOOGLE_MAPS_KEY`), so a missing key is visible instead of a blank map.
 /// La persona ve un texto neutro; la causa técnica va al registro al
 /// arrancar («GOOGLE_MAPS_KEY is empty», E27).
-const kMapUnavailableDetail =
-    'El mapa no se puede mostrar ahora. Los datos del viaje siguen aquí.';
+String get kMapUnavailableDetail => L10n.current.commonMapUnavailableDetail;
 
 class MapsKeyMissing extends StatelessWidget {
   const MapsKeyMissing({super.key});
@@ -316,20 +316,20 @@ class MapsKeyMissing extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         color: LuxColors.surfaceMuted,
         padding: const EdgeInsets.all(LuxSpacing.md),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.map_outlined, color: LuxColors.inkTertiary, size: 40),
               SizedBox(height: LuxSpacing.sm),
               Text(
-                'Mapa no disponible',
+                context.l10n.commonMapUnavailable,
                 style: LuxTypography.titleMedium,
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: LuxSpacing.xs),
               Text(
-                kMapUnavailableDetail,
+                context.l10n.commonMapUnavailableDetail,
                 style: LuxTypography.caption,
                 textAlign: TextAlign.center,
               ),

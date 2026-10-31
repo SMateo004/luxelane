@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/auth/mfa.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../l10n/l10n.dart';
 import '../pages/mfa_enroll_page.dart';
 
 /// Fase 1 (decisión 3): aviso para chóferes y administradores sin app
@@ -48,10 +49,8 @@ class _MfaReminderBannerState extends State<MfaReminderBanner> {
       child: ListTile(
         key: const ValueKey('mfa-reminder'),
         leading: const Icon(Icons.shield_outlined, color: LuxColors.warning),
-        title: const Text('Activa la verificación en dos pasos'),
-        subtitle: const Text(
-          'Pronto será obligatoria para entrar. Tarda un minuto.',
-        ),
+        title: Text(context.l10n.authMfaReminderTitle),
+        subtitle: Text(context.l10n.authMfaReminderBody),
         trailing: const Icon(Icons.chevron_right_rounded),
         onTap: () async {
           await Navigator.of(context).push(

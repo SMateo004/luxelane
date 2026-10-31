@@ -16,7 +16,7 @@ enum FirebaseEnv {
         _ => throw ArgumentError.value(
             raw,
             'FIREBASE_ENV',
-            'Debe ser "staging" o "production"',
+            'Debe ser "staging" o "production"', // i18n-ignore: solo desarrollo
           ),
       };
 }
@@ -27,9 +27,9 @@ class StagingNotConfiguredError implements Exception {
   const StagingNotConfiguredError();
 
   String get message =>
-      'Falta configurar el proyecto de staging: reemplaza los valores '
-      'REEMPLAZAR_* de lib/firebase_options.dart y .firebaserc (DEPLOY.md), '
-      'o compila con --dart-define=FIREBASE_ENV=production.';
+      'Falta configurar el proyecto de staging: reemplaza los valores ' // i18n-ignore: solo desarrollo
+      'REEMPLAZAR_* de lib/firebase_options.dart y .firebaserc (DEPLOY.md), ' // i18n-ignore: solo desarrollo
+      'o compila con --dart-define=FIREBASE_ENV=production.'; // i18n-ignore: solo desarrollo
 
   @override
   String toString() => message;

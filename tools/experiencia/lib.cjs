@@ -19,11 +19,12 @@ async function browser() {
 }
 
 /** Contexto con el SDK de Firebase servido desde node_modules (gstatic puede estar bloqueado). */
-async function context(b, { width = 390, height, geo = false, offline = false, storageState } = {}) {
+async function context(b, { width = 390, height, geo = false, offline = false, storageState, locale = 'es-BO' } = {}) {
   const ctx = await b.newContext({
     viewport: { width, height: height ?? (width < 700 ? 844 : width < 1000 ? 1024 : 800) },
     deviceScaleFactor: 1,
-    locale: 'es-BO',
+    // Idioma del navegador: la app lo toma como idioma del sistema.
+    locale,
     ...(storageState ? { storageState } : {}),
     timezoneId: 'America/La_Paz',
     ...(geo ? { geolocation: { latitude: -17.7834, longitude: -63.1821 }, permissions: ['geolocation'] } : {}),
@@ -73,16 +74,23 @@ async function tap(page, text, opts = {}) {
   return el.click();
 }
 
+/** Etiquetas del inicio de sesión en cada idioma de la app. */
+const LOGIN_LABELS = {
+  es: { email: 'Correo', password: 'Contraseña', submit: 'Iniciar sesión' },
+  en: { email: 'Email', password: 'Password', submit: 'Sign in' },
+  pt: { email: 'E-mail', password: 'Senha', submit: 'Entrar' },
+};
+
 /** Inicia sesión. Una ruta privada lleva al login (abrir /login directo
  * deja al invitado en el inicio web). */
-async function login(page, base, email, privatePath = '/trips') {
+async function login(page, base, email, privatePath = '/trips', labels = LOGIN_LABELS.es) {
   await page.goto(url(base, privatePath));
   await ready(page);
-  await type(page, 'Correo', email);
-  await type(page, 'Contraseña', 'prueba-123');
-  await tap(page, 'Iniciar sesión');
+  await type(page, labels.email, email);
+  await type(page, labels.password, 'prueba-123');
+  await tap(page, labels.submit);
   await page.waitForTimeout(4000);
   await ready(page, 500);
 }
 
-module.exports = { url, RIDER, DRIVER, browser, context, ready, type, tap, login, hideEmulatorBanner };
+module.exports = { url, RIDER, DRIVER, browser, context, ready, type, tap, login, hideEmulatorBanner, LOGIN_LABELS };

@@ -8,11 +8,10 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Texto que comparte el titular con su invitado.
-String pickupShareText(String code) =>
-    'Tu código de recogida es $code. Dáselo a tu chófer al subir; '
-    'sin él no puede iniciar el viaje.';
+String pickupShareText(String code) => L10n.current.rideCodeShareText(code);
 
 /// Código de recogida mientras el chófer espera (driver_arrived). Se pide al
 /// servidor cada vez que aparece y solo vive en esta pantalla: nunca se
@@ -114,7 +113,7 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando tu código de recogida',
+        label: context.l10n.rideCodeLoading,
         child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -143,7 +142,7 @@ class _CodeBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'CÓDIGO DE RECOGIDA',
+            context.l10n.rideCodeTitle,
             style: LuxTypography.caption.copyWith(
               letterSpacing: 1.4,
               color: LuxColors.inkSecondary,
@@ -151,7 +150,7 @@ class _CodeBody extends StatelessWidget {
           ),
           const SizedBox(height: LuxSpacing.sm),
           Semantics(
-            label: 'Código de recogida ${code.split('').join(' ')}',
+            label: context.l10n.rideCodeSemantics(code.split('').join(' ')),
             excludeSemantics: true,
             child: Wrap(
               spacing: LuxSpacing.sm,
@@ -162,15 +161,15 @@ class _CodeBody extends StatelessWidget {
           const SizedBox(height: LuxSpacing.sm),
           Text(
             guestName == null
-                ? 'Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.'
-                : 'Compártelo con $guestName: se lo dará al chófer al subir.',
+                ? context.l10n.rideCodeHint
+                : context.l10n.rideCodeGuestHint(guestName!),
             style:
                 LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
           ),
           if (onShare != null) ...[
             const SizedBox(height: LuxSpacing.md),
             LuxOutlinedButton(
-              label: 'Compartir código',
+              label: context.l10n.rideCodeShare,
               icon: Icons.ios_share_rounded,
               height: 46,
               onPressed: onShare,
@@ -239,7 +238,7 @@ class _ErrorBody extends StatelessWidget {
           if (onRetry != null) ...[
             const SizedBox(height: LuxSpacing.md),
             LuxOutlinedButton(
-              label: 'Reintentar',
+              label: context.l10n.rideRetry,
               icon: Icons.refresh_rounded,
               height: 46,
               onPressed: onRetry,

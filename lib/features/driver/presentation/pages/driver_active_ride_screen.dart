@@ -6,6 +6,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../bloc/driver_bloc.dart';
 import '../widgets/driver_step_action.dart';
@@ -31,7 +32,7 @@ class DriverActiveRideScreen extends StatelessWidget {
         if (booking == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Viaje no encontrado')),
+            body: Center(child: Text(context.l10n.driverTripNotFound)),
           );
         }
 
@@ -110,7 +111,7 @@ class _DriverTopBar extends StatelessWidget {
         child: Row(
           children: [
             LuxPressable(
-              semanticLabel: 'Volver',
+              semanticLabel: context.l10n.driverBack,
               onTap: () => context.pop(),
               child: LuxTapArea(
                   child: Container(
@@ -146,7 +147,7 @@ class _DriverWebHeader extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              tooltip: 'Volver',
+              tooltip: context.l10n.driverBack,
               onPressed: () => context.pop(),
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             ),
@@ -268,7 +269,8 @@ class _RideInfoRow extends StatelessWidget {
               children: [
                 LuxListRow(
                   icon: Icons.person_outline_rounded,
-                  title: 'Pasajero: ${booking.guest!.fullName}',
+                  title: context.l10n
+                      .driverGuestPassenger(booking.guest!.fullName),
                   subtitle: booking.guest!.contactLine.isEmpty
                       ? null
                       : booking.guest!.contactLine,
@@ -294,7 +296,10 @@ class _RideInfoRow extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Tarifa estimada', style: LuxTypography.caption),
+                Text(
+                  context.l10n.driverEstimatedFare,
+                  style: LuxTypography.caption,
+                ),
                 Text(
                   LuxFormat.money(booking.estimatedPrice),
                   style: LuxTypography.bodyLarge.copyWith(
