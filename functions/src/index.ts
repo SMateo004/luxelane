@@ -4,10 +4,11 @@ import { secureCallable } from './callable';
 import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { defineBoolean, defineSecret } from 'firebase-functions/params';
+import { defineBoolean, defineSecret, defineString } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import * as preferences from './preferences';
-import { AppLocale, formatMoney, localeOf, notice, NoticeType, vehicleClassName } from './i18n';
+import { AppLocale, formatMoney, localeOf, notice, NoticeType, vehicleClassName, vehicleColorName } from './i18n';
+import * as registration from './driver_application';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
@@ -837,6 +838,8 @@ async function notifyDriversOfBooking(bookingRef: admin.firestore.DocumentRefere
   // Un envío por idioma: cada chófer lo recibe en el suyo.
   const byLocale = new Map<AppLocale, string[]>();
   for (const doc of driversSnap.docs) {
+    // Bloqueado por documentos vencidos (registro de chóferes): no se le ofrece.
+    if (doc.data().docsBlocked === true) continue;
     const { tokens, locale } = await getUserTarget(doc.id);
     byLocale.set(locale, [...(byLocale.get(locale) ?? []), ...tokens]);
   }
@@ -981,6 +984,74 @@ export const adminSetLeadHandled = secureCallable('adminSetLeadHandled', {}, asy
   adminOps.adminSetLeadHandled({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
 // ---------------------------------------------------------------------------
+// Registro de chóferes (documentos en Cloud Storage, revisión del admin)
+// ---------------------------------------------------------------------------
+
+/** Bucket de los documentos; vacío = el predeterminado del proyecto. */
+const DRIVER_DOCS_BUCKET = defineString('DRIVER_DOCS_BUCKET', { default: '' });
+
+const regDeps = (): registration.RegDeps => {
+  let bucket = '';
+  try { bucket = DRIVER_DOCS_BUCKET.value(); } catch { bucket = ''; }
+  return {
+    db,
+    store: registration.gcsDocStore(admin.storage().bucket(bucket || undefined)),
+    push: async (tokens, title, body, data) => {
+      await sendPush(tokens, title, body, data);
+    },
+  };
+};
+
+/** Guarda un paso del registro (datos personales o vehículo). */
+export const saveDriverStep = secureCallable('saveDriverStep', {}, (req) =>
+  registration.saveDriverStep(regDeps(), req.auth?.uid, req.data), { role: 'driver' });
+
+/** Lo guardado, el estado y los documentos (para reanudar). */
+export const getDriverApplication = secureCallable('getDriverApplication', {}, (req) => {
+  parseInput(schema.getDriverApplication, req.data);
+  return registration.getDriverApplication(regDeps(), req.auth?.uid);
+}, { role: 'driver' });
+
+/** Registra un archivo ya subido a driverDocs/{uid}/{tipo}/{versión}. */
+export const registerDocumentUpload = secureCallable('registerDocumentUpload', {}, (req) =>
+  registration.registerDocumentUpload(regDeps(), req.auth?.uid, req.data), { role: 'driver' });
+
+/** Envía la solicitud a revisión. */
+export const submitApplication = secureCallable('submitApplication', {}, (req) => {
+  parseInput(schema.submitApplication, req.data);
+  return registration.submitApplication(regDeps(), req.auth?.uid);
+}, { role: 'driver' });
+
+/** URL firmada de pocos minutos de un documento; queda en la bitácora. */
+export const adminGetDocumentUrl = secureCallable('adminGetDocumentUrl', {}, async (req) =>
+  registration.adminGetDocumentUrl(regDeps(), await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Aprobar o rechazar un documento (motivo de lista cerrada). */
+export const adminReviewDocument = secureCallable('adminReviewDocument', {}, async (req) =>
+  registration.adminReviewDocument(regDeps(), await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Decisión final de la solicitud: aprobar, pedir cambios o rechazar. */
+export const adminDecideApplication = secureCallable('adminDecideApplication', {}, async (req) =>
+  registration.adminDecideApplication(regDeps(), await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Autorizar a un chófer bloqueado por documentos vencidos (con motivo). */
+export const adminAllowDriverOnline = secureCallable('adminAllowDriverOnline', {}, async (req) =>
+  registration.adminAllowDriverOnline(regDeps(), await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Purga manual de los archivos de un chófer: desactivada (config/ops). */
+export const adminPurgeDriverDocuments = secureCallable('adminPurgeDriverDocuments', {}, async (req) =>
+  registration.adminPurgeDriverDocuments(regDeps(), await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Cada día: avisos de vencimiento, vencidos, alertas y bloqueo. */
+export const driverDocExpiry = onSchedule({ schedule: 'every day 06:00', timeZone: 'America/La_Paz' }, async () => {
+  await registration.runDocExpiry(regDeps());
+});
+
+// ---------------------------------------------------------------------------
 // Pagos (A4): pago manual por QR o transferencia.
 // ---------------------------------------------------------------------------
 
@@ -1065,13 +1136,20 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
   }
   // El pasajero ya no lee driverProfiles: lo que necesita ver del chófer
   // (nombre, foto, vehículo, placa y valoración) se copia aquí.
-  const [userSnap, vehicleSnap, profileSnap] = await Promise.all([
+  const [userSnap, profileSnap, riderSnap] = await Promise.all([
     db.collection('users').doc(after.driverId).get(),
-    db.collection('vehicles').where('driverId', '==', after.driverId).limit(1).get(),
     db.collection('driverProfiles').doc(after.driverId).get(),
+    db.collection('users').doc(after.riderId).get(),
   ]);
   const u = userSnap.data() ?? {};
-  const v = vehicleSnap.docs[0]?.data();
+  // El vehículo aprobado del chófer (driverProfiles.vehicleId y activo); no
+  // uno nuevo que aún esté en revisión (registro de chóferes).
+  const vehicleId = profileSnap.data()?.vehicleId as string | undefined;
+  const vSnap = vehicleId ? await db.collection('vehicles').doc(vehicleId).get() : null;
+  const v = vSnap?.exists && vSnap.data()?.isActive === true && vSnap.data()?.driverId === after.driverId
+    ? vSnap.data()!
+    : null;
+  const riderLocale = localeOf(riderSnap.data());
   const rating = profileSnap.data()?.rating;
   // El teléfono no va en driverInfo (visible también en el historial): va
   // aparte y el pasajero solo lo lee mientras el viaje está activo.
@@ -1081,7 +1159,12 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
       name: u.displayName ?? '',
       photoUrl: u.photoUrl ?? null,
       vehicle: v
-        ? { make: v.make ?? '', model: v.model ?? '', plate: v.plate ?? '', color: v.color ?? '' }
+        ? {
+          make: v.make ?? '', model: v.model ?? '', plate: v.plate ?? '',
+          // Color en el idioma del pasajero (código del registro o texto antiguo).
+          color: vehicleColorName(v.color, v.colorOther, riderLocale),
+          colorCode: typeof v.color === 'string' ? v.color : null,
+        }
         : null,
       rating: typeof rating === 'number' ? rating : null,
     },
@@ -1136,7 +1219,7 @@ export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (ev
     tx.update(driverRef, {
       // Solo vuelve a estar disponible si sigue conectado (no se desconectó
       // ni cerró sesión durante el viaje).
-      isAvailable: snap.data()?.online !== false,
+      isAvailable: snap.data()?.online !== false && snap.data()?.docsBlocked !== true,
       ...(after.status === 'completed'
         ? { totalRides: (snap.data()?.totalRides ?? 0) + 1 }
         : {}),
@@ -1304,6 +1387,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
           driverId: p.id,
           isAvailable: d.isAvailable === true,
           documentsVerified: d.documentsVerified === true,
+          docsBlocked: d.docsBlocked === true,
           isActive: active.has(p.id),
           location: gp ? { lat: gp.latitude, lng: gp.longitude } : null,
         };
@@ -1381,6 +1465,7 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
 
       if (!driverSnap.exists) throw err.notFound('driver_not_found');
       if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('driver_not_verified');
+      if (driverSnap.data()?.docsBlocked === true) throw err.permissionDenied('driver_docs_blocked');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
 
       riderId = booking.riderId;

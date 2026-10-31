@@ -24,6 +24,9 @@ import { refundSchema } from './payment_refund';
 import { inboxSchema } from './payment_inbox';
 import { collectBalanceSchema } from './payment_balance';
 import { updatePreferencesSchema } from './preferences';
+import {
+  decideSchema, docUrlSchema, overrideSchema as allowOnlineSchema, purgeSchema, reviewSchema, stepSchema, uploadSchema,
+} from './driver_application';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -225,6 +228,52 @@ const CASES: Record<string, Case> = {
   deleteAccount: { schema: c.deleteAccount, valid: null, wrongType: 'borrar', extreme: [[]] },
   syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
   getPreferenceOptions: { schema: c.getPreferenceOptions, valid: null, wrongType: 'sí', extreme: [[]] },
+  getDriverApplication: { schema: c.getDriverApplication, valid: null, wrongType: 'sí', extreme: [[]] },
+  submitApplication: { schema: c.submitApplication, valid: null, wrongType: 'sí', extreme: [[]] },
+  saveDriverStep: {
+    schema: stepSchema,
+    valid: { step: 'vehicle', make: 'Marca', model: 'Modelo', year: 2022, color: 'black', plate: 'abc-1234',
+      bodyType: 'sedan', passengers: 3, vehicleClass: 'business' },
+    wrongType: { step: 'vehicle', make: 'Marca', model: 'Modelo', year: '2022', color: 'black', plate: 'ABC1234',
+      bodyType: 'sedan', passengers: 3, vehicleClass: 'business' },
+    extreme: [
+      { step: 'personal', fullName: 'A', nationalIdNumber: '123', licenseNumber: 'L-1', licenseExpiry: 1 },
+      { step: 'vehicle', make: 'M', model: 'M', year: 2022, color: 'other', plate: 'ABC1234', bodyType: 'sedan',
+        passengers: 3, vehicleClass: 'business' },
+      { step: 'vehicle', make: 'M', model: 'M', year: 2022, color: 'black', plate: 'AB', bodyType: 'sedan',
+        passengers: 3, vehicleClass: 'business' },
+      { step: 'vehicle', make: 'M', model: 'M', year: 2022, color: 'black', plate: 'ABC1234', bodyType: 'bus',
+        passengers: 30, vehicleClass: 'business' },
+    ],
+  },
+  registerDocumentUpload: {
+    schema: uploadSchema, valid: { type: 'license_front', version: 1, expiresAt: 1_900_000_000_000 },
+    wrongType: { type: 'license_front', version: '1' },
+    extreme: [{ type: 'selfie', version: 1 }, { type: 'license_front', version: 0 }, { type: 'license_front', version: 1_000_000 }],
+  },
+  adminGetDocumentUrl: {
+    schema: docUrlSchema, valid: { driverId: ID, type: 'national_id_front' },
+    wrongType: { driverId: ID, type: 5 }, extreme: [{ driverId: LONG_ID, type: 'national_id_front' }],
+  },
+  adminReviewDocument: {
+    schema: reviewSchema, valid: { driverId: ID, type: 'license_front', version: 1, decision: 'reject', rejectReason: 'illegible' },
+    wrongType: { driverId: ID, type: 'license_front', version: 1, decision: true },
+    extreme: [{ driverId: ID, type: 'license_front', version: 1, decision: 'reject' },
+      { driverId: ID, type: 'license_front', version: 1, decision: 'reject', rejectReason: 'feo' }],
+  },
+  adminDecideApplication: {
+    schema: decideSchema, valid: { driverId: ID, decision: 'approve', reason: 'Documentos revisados uno a uno' },
+    wrongType: { driverId: ID, decision: 1, reason: 'Documentos revisados uno a uno' },
+    extreme: [{ driverId: ID, decision: 'approve', reason: 'corto' }, { driverId: ID, decision: 'maybe', reason: 'Documentos revisados' }],
+  },
+  adminAllowDriverOnline: {
+    schema: allowOnlineSchema, valid: { driverId: ID, reason: 'Renovación en trámite, comprobante visto' },
+    wrongType: { driverId: 5, reason: 'Renovación en trámite' }, extreme: [{ driverId: ID, reason: 'x' }],
+  },
+  adminPurgeDriverDocuments: {
+    schema: purgeSchema, valid: { driverId: ID, reason: 'Orden del responsable legal' },
+    wrongType: { driverId: ID, reason: 7 }, extreme: [{ driverId: LONG_ID, reason: 'Orden del responsable legal' }],
+  },
   updatePreferences: {
     schema: updatePreferencesSchema,
     valid: { preferredDriverLanguages: ['es', 'pt'], conversation: 'quiet', note: 'Hola', locale: 'pt', localeSource: 'user' },

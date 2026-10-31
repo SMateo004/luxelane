@@ -293,7 +293,7 @@ async function markNoShow(tx: admin.firestore.Transaction, db: admin.firestore.F
   const driverRef = db.collection('driverProfiles').doc(driverId);
   const driver = await tx.get(driverRef);
   tx.update(ref, { status: 'no_show', noShowAt: at, updatedAt: at });
-  if (driver.exists) tx.update(driverRef, { isAvailable: driver.data()?.online !== false });
+  if (driver.exists) tx.update(driverRef, { isAvailable: driver.data()?.online !== false && driver.data()?.docsBlocked !== true });
   appendEvent(tx, db, ref.id, {
     from, to: 'no_show', actor: { uid: driverId, role: 'driver' }, source: 'driver_app',
     appVersion: input.appVersion, location: input.location,
