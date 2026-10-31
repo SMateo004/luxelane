@@ -115,3 +115,21 @@ describe('despliegue de functions', () => {
     expect(deploy).toContain(`firebase functions:delete ${f}`);
   });
 });
+
+// Vencimientos de documentos de chófer (A10): runDocExpiry consulta el grupo
+// de colecciones documents por expiresAt; sin el índice de grupo, falla en
+// producción (el emulador no lo exige).
+describe('firestore.indexes.json: registro de chóferes', () => {
+  const idx = JSON.parse(readFileSync(join(root, 'firestore.indexes.json'), 'utf8')) as {
+    fieldOverrides: { collectionGroup: string; fieldPath: string; indexes: { order?: string; queryScope: string }[] }[];
+  };
+  it('documents.expiresAt tiene índice de grupo de colecciones ascendente', () => {
+    const o = idx.fieldOverrides.find((f) => f.collectionGroup === 'documents' && f.fieldPath === 'expiresAt');
+    expect(o?.indexes).toEqual(expect.arrayContaining([{ order: 'ASCENDING', queryScope: 'COLLECTION_GROUP' }]));
+    // Al sobrescribir el campo se conserva el índice de colección.
+    expect(o?.indexes).toEqual(expect.arrayContaining([{ order: 'ASCENDING', queryScope: 'COLLECTION' }]));
+  });
+  it('runDocExpiry consulta ese grupo y ese campo', () => {
+    expect(src).toContain("collectionGroup('documents').where('expiresAt', '<='");
+  });
+});
