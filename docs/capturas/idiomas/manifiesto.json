@@ -1,0 +1,1150 @@
+{
+  "generado": "2026-10-31T01:40:04.354Z",
+  "idiomas": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "capturas": [
+    {
+      "idioma": "es",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 390,
+      "archivo": "es/01-inicio-invitado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 390,
+      "archivo": "es/02-iniciar-sesion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "03-registro",
+      "ancho": 390,
+      "archivo": "es/03-registro_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "04-inicio",
+      "ancho": 390,
+      "archivo": "es/04-inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "05-reserva",
+      "ancho": 390,
+      "archivo": "es/05-reserva_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 390,
+      "archivo": "es/06-viaje-codigo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "07-viaje-sos",
+      "ancho": 390,
+      "archivo": "es/07-viaje-sos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "08-mis-viajes",
+      "ancho": 390,
+      "archivo": "es/08-mis-viajes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "09-pagos",
+      "ancho": 390,
+      "archivo": "es/09-pagos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "10-perfil",
+      "ancho": 390,
+      "archivo": "es/10-perfil_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "11-terminos",
+      "ancho": 390,
+      "archivo": "es/11-terminos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 390,
+      "archivo": "es/12-chofer-inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 390,
+      "archivo": "es/13-chofer-solicitudes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 390,
+      "archivo": "es/14-chofer-recogida_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 768,
+      "archivo": "es/01-inicio-invitado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 768,
+      "archivo": "es/02-iniciar-sesion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "03-registro",
+      "ancho": 768,
+      "archivo": "es/03-registro_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "04-inicio",
+      "ancho": 768,
+      "archivo": "es/04-inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "05-reserva",
+      "ancho": 768,
+      "archivo": "es/05-reserva_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 768,
+      "archivo": "es/06-viaje-codigo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "07-viaje-sos",
+      "ancho": 768,
+      "archivo": "es/07-viaje-sos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "08-mis-viajes",
+      "ancho": 768,
+      "archivo": "es/08-mis-viajes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "09-pagos",
+      "ancho": 768,
+      "archivo": "es/09-pagos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "10-perfil",
+      "ancho": 768,
+      "archivo": "es/10-perfil_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "11-terminos",
+      "ancho": 768,
+      "archivo": "es/11-terminos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 768,
+      "archivo": "es/12-chofer-inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 768,
+      "archivo": "es/13-chofer-solicitudes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 768,
+      "archivo": "es/14-chofer-recogida_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 1280,
+      "archivo": "es/01-inicio-invitado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 1280,
+      "archivo": "es/02-iniciar-sesion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "03-registro",
+      "ancho": 1280,
+      "archivo": "es/03-registro_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "04-inicio",
+      "ancho": 1280,
+      "archivo": "es/04-inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "05-reserva",
+      "ancho": 1280,
+      "archivo": "es/05-reserva_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 1280,
+      "archivo": "es/06-viaje-codigo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "07-viaje-sos",
+      "ancho": 1280,
+      "archivo": "es/07-viaje-sos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "08-mis-viajes",
+      "ancho": 1280,
+      "archivo": "es/08-mis-viajes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "09-pagos",
+      "ancho": 1280,
+      "archivo": "es/09-pagos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "10-perfil",
+      "ancho": 1280,
+      "archivo": "es/10-perfil_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "11-terminos",
+      "ancho": 1280,
+      "archivo": "es/11-terminos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 1280,
+      "archivo": "es/12-chofer-inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 1280,
+      "archivo": "es/13-chofer-solicitudes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "es",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 1280,
+      "archivo": "es/14-chofer-recogida_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 390,
+      "archivo": "en/01-inicio-invitado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 390,
+      "archivo": "en/02-iniciar-sesion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "03-registro",
+      "ancho": 390,
+      "archivo": "en/03-registro_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "04-inicio",
+      "ancho": 390,
+      "archivo": "en/04-inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "05-reserva",
+      "ancho": 390,
+      "archivo": "en/05-reserva_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 390,
+      "archivo": "en/06-viaje-codigo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "07-viaje-sos",
+      "ancho": 390,
+      "archivo": "en/07-viaje-sos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "08-mis-viajes",
+      "ancho": 390,
+      "archivo": "en/08-mis-viajes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "09-pagos",
+      "ancho": 390,
+      "archivo": "en/09-pagos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "10-perfil",
+      "ancho": 390,
+      "archivo": "en/10-perfil_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "11-terminos",
+      "ancho": 390,
+      "archivo": "en/11-terminos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 390,
+      "archivo": "en/12-chofer-inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 390,
+      "archivo": "en/13-chofer-solicitudes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 390,
+      "archivo": "en/14-chofer-recogida_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 768,
+      "archivo": "en/01-inicio-invitado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 768,
+      "archivo": "en/02-iniciar-sesion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "03-registro",
+      "ancho": 768,
+      "archivo": "en/03-registro_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "04-inicio",
+      "ancho": 768,
+      "archivo": "en/04-inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "05-reserva",
+      "ancho": 768,
+      "archivo": "en/05-reserva_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 768,
+      "archivo": "en/06-viaje-codigo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "07-viaje-sos",
+      "ancho": 768,
+      "archivo": "en/07-viaje-sos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "08-mis-viajes",
+      "ancho": 768,
+      "archivo": "en/08-mis-viajes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "09-pagos",
+      "ancho": 768,
+      "archivo": "en/09-pagos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "10-perfil",
+      "ancho": 768,
+      "archivo": "en/10-perfil_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "11-terminos",
+      "ancho": 768,
+      "archivo": "en/11-terminos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 768,
+      "archivo": "en/12-chofer-inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 768,
+      "archivo": "en/13-chofer-solicitudes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 768,
+      "archivo": "en/14-chofer-recogida_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 1280,
+      "archivo": "en/01-inicio-invitado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 1280,
+      "archivo": "en/02-iniciar-sesion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "03-registro",
+      "ancho": 1280,
+      "archivo": "en/03-registro_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "04-inicio",
+      "ancho": 1280,
+      "archivo": "en/04-inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "05-reserva",
+      "ancho": 1280,
+      "archivo": "en/05-reserva_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 1280,
+      "archivo": "en/06-viaje-codigo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "07-viaje-sos",
+      "ancho": 1280,
+      "archivo": "en/07-viaje-sos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "08-mis-viajes",
+      "ancho": 1280,
+      "archivo": "en/08-mis-viajes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "09-pagos",
+      "ancho": 1280,
+      "archivo": "en/09-pagos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "10-perfil",
+      "ancho": 1280,
+      "archivo": "en/10-perfil_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "11-terminos",
+      "ancho": 1280,
+      "archivo": "en/11-terminos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 1280,
+      "archivo": "en/12-chofer-inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 1280,
+      "archivo": "en/13-chofer-solicitudes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "en",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 1280,
+      "archivo": "en/14-chofer-recogida_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 390,
+      "archivo": "pt/01-inicio-invitado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 390,
+      "archivo": "pt/02-iniciar-sesion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "03-registro",
+      "ancho": 390,
+      "archivo": "pt/03-registro_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "04-inicio",
+      "ancho": 390,
+      "archivo": "pt/04-inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "05-reserva",
+      "ancho": 390,
+      "archivo": "pt/05-reserva_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 390,
+      "archivo": "pt/06-viaje-codigo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "07-viaje-sos",
+      "ancho": 390,
+      "archivo": "pt/07-viaje-sos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "08-mis-viajes",
+      "ancho": 390,
+      "archivo": "pt/08-mis-viajes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "09-pagos",
+      "ancho": 390,
+      "archivo": "pt/09-pagos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "10-perfil",
+      "ancho": 390,
+      "archivo": "pt/10-perfil_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "11-terminos",
+      "ancho": 390,
+      "archivo": "pt/11-terminos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 390,
+      "archivo": "pt/12-chofer-inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 390,
+      "archivo": "pt/13-chofer-solicitudes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 390,
+      "archivo": "pt/14-chofer-recogida_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 768,
+      "archivo": "pt/01-inicio-invitado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 768,
+      "archivo": "pt/02-iniciar-sesion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "03-registro",
+      "ancho": 768,
+      "archivo": "pt/03-registro_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "04-inicio",
+      "ancho": 768,
+      "archivo": "pt/04-inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "05-reserva",
+      "ancho": 768,
+      "archivo": "pt/05-reserva_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 768,
+      "archivo": "pt/06-viaje-codigo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "07-viaje-sos",
+      "ancho": 768,
+      "archivo": "pt/07-viaje-sos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "08-mis-viajes",
+      "ancho": 768,
+      "archivo": "pt/08-mis-viajes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "09-pagos",
+      "ancho": 768,
+      "archivo": "pt/09-pagos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "10-perfil",
+      "ancho": 768,
+      "archivo": "pt/10-perfil_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "11-terminos",
+      "ancho": 768,
+      "archivo": "pt/11-terminos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 768,
+      "archivo": "pt/12-chofer-inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 768,
+      "archivo": "pt/13-chofer-solicitudes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 768,
+      "archivo": "pt/14-chofer-recogida_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "01-inicio-invitado",
+      "ancho": 1280,
+      "archivo": "pt/01-inicio-invitado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "02-iniciar-sesion",
+      "ancho": 1280,
+      "archivo": "pt/02-iniciar-sesion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "03-registro",
+      "ancho": 1280,
+      "archivo": "pt/03-registro_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "04-inicio",
+      "ancho": 1280,
+      "archivo": "pt/04-inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "05-reserva",
+      "ancho": 1280,
+      "archivo": "pt/05-reserva_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "06-viaje-codigo",
+      "ancho": 1280,
+      "archivo": "pt/06-viaje-codigo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "07-viaje-sos",
+      "ancho": 1280,
+      "archivo": "pt/07-viaje-sos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "08-mis-viajes",
+      "ancho": 1280,
+      "archivo": "pt/08-mis-viajes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "09-pagos",
+      "ancho": 1280,
+      "archivo": "pt/09-pagos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "10-perfil",
+      "ancho": 1280,
+      "archivo": "pt/10-perfil_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "11-terminos",
+      "ancho": 1280,
+      "archivo": "pt/11-terminos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "12-chofer-inicio",
+      "ancho": 1280,
+      "archivo": "pt/12-chofer-inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "13-chofer-solicitudes",
+      "ancho": 1280,
+      "archivo": "pt/13-chofer-solicitudes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    },
+    {
+      "idioma": "pt",
+      "pantalla": "14-chofer-recogida",
+      "ancho": 1280,
+      "archivo": "pt/14-chofer-recogida_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": []
+    }
+  ],
+  "nota": "pt 1280 repetido (la primera vez 14-chofer-recogida quedó en el inicio de sesión)"
+}
