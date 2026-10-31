@@ -103,10 +103,86 @@ traducen.
 Los textos de los tres idiomas de cada aviso están en
 `functions/src/i18n.ts`; los de la app, en `lib/l10n/app_*.arb`.
 
+## Cómo añadir un texto nuevo
+
+1. Elige el fragmento de su bloque en `lib/l10n/src/` (auth, booking,
+   payments, ride, incidents, trips, profile, notifications, driver, home,
+   services, business, common, errors, legal…). Un bloque nuevo, un archivo
+   nuevo.
+2. Añade la clave en lowerCamelCase con el prefijo del bloque y los tres
+   idiomas juntos:
+   ```json
+   "bookingSeatsLeft": {
+     "description": "Qué es y dónde sale, para quien traduce.",
+     "es": "Quedan {count} asientos",
+     "en": "{count} seats left",
+     "pt": "Restam {count} assentos",
+     "placeholders": { "count": { "type": "int" } }
+   }
+   ```
+   Marcadores `{así}` iguales en los tres idiomas (plural/select ICU si
+   hace falta). Inglés y portugués según este glosario y sus reglas de tono.
+3. Ejecuta `tool/l10n/build.sh`: genera `lib/l10n/app_{es,en,pt}.arb` y
+   `lib/l10n/gen`. No se editan a mano (`arb_sync_test.dart` lo comprueba).
+4. Úsala: en un widget `context.l10n.bookingSeatsLeft(3)`; fuera de un
+   widget (bloc, enum, helper) `L10n.current.bookingSeatsLeft(3)`. Importes
+   y fechas siempre con `LuxFormat` (respeta el idioma).
+5. Pruebas que lo vigilan: `arb_parity_test` (claves y marcadores),
+   `textos_fijos_trinquete_test` (ningún texto fijo nuevo en las apps; si
+   un literal no es texto de interfaz, `// i18n-ignore: <motivo>`),
+   `frases_prohibidas_test` y `promesas_test` (sin promesas en ningún
+   idioma).
+6. Añade la clave a la lista de pendientes de revisión nativa (abajo) si su
+   inglés o portugués es nuevo.
+
+Para los avisos del servidor, la clave va en `functions/src/i18n.ts`
+(`MESSAGES` y, si es un aviso, `NOTICES`); `i18n.test.ts` exige los tres
+idiomas y los mismos marcadores.
+
 ## Pendientes de revisión nativa
 
-- Todo el inglés y el portugués de `lib/l10n/app_en.arb`, `lib/l10n/app_pt.arb`
-  y `functions/src/i18n.ts`.
-- Decisiones de vocabulario que conviene confirmar: «chauffeur» también en la
-  app del chófer; «embarque» para la recogida en portugués; «operations team»
-  para central.
+Todo el inglés y el portugués está redactado por nosotros y **pendiente de
+revisión por un hablante nativo**: 1127 claves de la app y el catálogo del
+servidor.
+
+| Fragmento (lib/l10n/src) | Claves | Pantallas |
+|---|---|---|
+| auth.json | 99 | inicio de sesión, registro, verificar correo, segundo factor, términos al reservar |
+| booking.json | 128 | reserva (pasos, invitado, resumen, errores) |
+| business.json | 17 | página de empresas |
+| common.json | 195 | componentes comunes, enums, navegación web, promesas |
+| common_format.json | 5 | hoy/mañana y saludos |
+| driver.json | 159 | app del chófer |
+| errors.json | 55 | mensajes de error del cliente |
+| home.json | 88 | inicio móvil y web |
+| incidents.json | 42 | SOS e incidentes |
+| language.json | 4 | selector de idioma |
+| legal.json | 1 | aviso de las páginas legales |
+| notifications.json | 6 | bandeja de avisos |
+| payments.json | 99 | pago y comprobante |
+| profile.json | 47 | perfil |
+| ride.json | 76 | viaje, código de recogida, cancelación |
+| services.json | 93 | páginas de servicios |
+| trips.json | 13 | Mis viajes |
+| functions/src/i18n.ts | 21 avisos + 7 textos | push y bandeja |
+
+Puntos que conviene mirar primero:
+- Vocabulario: «chauffeur» también en la app del chófer; «embarque» en
+  portugués para la recogida; «operations team» para central.
+- Títulos del invitado: se guardan en español (Sr., Sra., Srta., Dr.,
+  Prof.) y se muestran traducidos (Mr., Mrs., Ms., Dr., Prof. / Sr., Sra.,
+  Srta., Dr., Prof.).
+- «Recogida inmediata»: «On-demand pickup» / «Embarque sob demanda».
+- Dos frases de la web en inglés y portugués no llevan «al instante» ni
+  «siempre», para no prometer (el español no cambia).
+- «Bem-vindo» en masculino, como «Bienvenido» en el original.
+
+## Lo que queda en español o sin traducir
+
+- Panel de admin y páginas legales (decisión 3); el SMS de SOS a central.
+- Datos: lo que escriben las personas o el admin (nombres, notas, datos de
+  cobro, color y modelo del vehículo), los títulos y textos de cada aviso
+  ya guardado y los nombres propios (ciudades, aeropuertos).
+- Mensajes por defecto que ya estaban en inglés en el original («Server
+  error», «Resource not found», «User not found»): siguen así en los tres
+  idiomas hasta que el responsable decida su texto.
