@@ -1497,5 +1497,73 @@
   "rideErrorGeneric": "No se pudo completar. Inténtalo de nuevo.",
   "@rideErrorGeneric": {
     "description": "Error genérico de un paso del viaje."
+  },
+  "tripsTitle": "Mis viajes",
+  "@tripsTitle": {
+    "description": "Título de la pantalla Mis viajes."
+  },
+  "tripsRetry": "Reintentar",
+  "@tripsRetry": {
+    "description": "Botón para volver a cargar la lista de viajes tras un error."
+  },
+  "tripsUpcoming": "Próximos",
+  "@tripsUpcoming": {
+    "description": "Encabezado de la sección de viajes próximos."
+  },
+  "tripsPast": "Anteriores",
+  "@tripsPast": {
+    "description": "Encabezado de la sección de viajes anteriores (historial)."
+  },
+  "tripsEmptyMessage": "Tu primer trayecto\nte está esperando.",
+  "@tripsEmptyMessage": {
+    "description": "Mensaje cuando la persona aún no tiene viajes (dos líneas, con salto de línea)."
+  },
+  "tripsEmptyAction": "Reservar ahora",
+  "@tripsEmptyAction": {
+    "description": "Botón del estado vacío que lleva a reservar un viaje."
+  },
+  "tripsHourlyTitle": "{hours} h a disposición",
+  "@tripsHourlyTitle": {
+    "description": "Título de la tarjeta de un servicio por horas: horas contratadas.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "tripsFrom": "{when} · desde {origin}",
+  "@tripsFrom": {
+    "description": "Línea de la tarjeta de viaje: fecha y hora, y el punto de recogida.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      },
+      "origin": {
+        "type": "String",
+        "example": "Hotel Los Tajibos"
+      }
+    }
+  },
+  "tripsTrackOnMap": "Seguir en el mapa",
+  "@tripsTrackOnMap": {
+    "description": "Acción de la tarjeta de un viaje en curso: seguirlo en el mapa."
+  },
+  "tripsRate": "Calificar viaje",
+  "@tripsRate": {
+    "description": "Acción de la tarjeta de un viaje completado sin calificar."
+  },
+  "tripsViewBooking": "Ver reserva",
+  "@tripsViewBooking": {
+    "description": "Acción de la tarjeta para abrir la reserva."
+  },
+  "tripsAwaitingPayment": "Esperando pago",
+  "@tripsAwaitingPayment": {
+    "description": "Etiqueta de una reserva pendiente sin pagar."
+  },
+  "tripsPaid": "Pagada",
+  "@tripsPaid": {
+    "description": "Etiqueta de una reserva pendiente ya pagada (se busca chófer)."
   }
 }

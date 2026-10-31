@@ -9,6 +9,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 
@@ -51,7 +52,7 @@ class _TripsScreenState extends State<_TripsView> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           // La lista está en vivo: no hace falta un botón de recargar.
-          title: const Text('Mis viajes'),
+          title: Text(context.l10n.tripsTitle),
         ),
         body: BlocBuilder<BookingBloc, BookingState>(
           builder: (context, state) {
@@ -66,7 +67,7 @@ class _TripsScreenState extends State<_TripsView> {
                     Text(state.message, style: LuxTypography.bodyMedium),
                     const SizedBox(height: LuxSpacing.md),
                     LuxOutlinedButton(
-                        label: 'Reintentar', onPressed: _loadTrips),
+                        label: context.l10n.tripsRetry, onPressed: _loadTrips),
                   ],
                 ),
               );
@@ -98,7 +99,7 @@ class _TripsScreenState extends State<_TripsView> {
                   ),
                   children: [
                     if (upcoming.isNotEmpty) ...[
-                      const SectionHeader(title: 'Próximos'),
+                      SectionHeader(title: context.l10n.tripsUpcoming),
                       const SizedBox(height: LuxSpacing.sm + 2),
                       for (final (i, b) in upcoming.indexed) ...[
                         LuxFadeIn(index: i, child: _TripCard(booking: b)),
@@ -107,7 +108,7 @@ class _TripsScreenState extends State<_TripsView> {
                       const SizedBox(height: LuxSpacing.lg),
                     ],
                     if (past.isNotEmpty) ...[
-                      const SectionHeader(title: 'Anteriores'),
+                      SectionHeader(title: context.l10n.tripsPast),
                       const SizedBox(height: LuxSpacing.sm + 2),
                       for (final (i, b) in past.indexed) ...[
                         LuxFadeIn(
@@ -127,8 +128,8 @@ class _TripsScreenState extends State<_TripsView> {
       );
 
   Widget _empty(BuildContext context) => EmptyState(
-        message: 'Tu primer trayecto\nte está esperando.',
-        actionLabel: 'Reservar ahora',
+        message: context.l10n.tripsEmptyMessage,
+        actionLabel: context.l10n.tripsEmptyAction,
         onAction: () => context.go('/'),
         icon: Icons.directions_car_outlined,
       );
@@ -142,11 +143,13 @@ class _TripCard extends StatelessWidget {
 
   /// Lo que la persona recuerda de un viaje: a dónde fue.
   String get _title => _hourly
-      ? '${booking.hours ?? 2} h a disposición'
+      ? L10n.current.tripsHourlyTitle(booking.hours ?? 2)
       : booking.destination.displayName;
 
-  String get _from => '${LuxFormat.dateTime(booking.scheduledAt)} · '
-      'desde ${booking.origin.displayName}';
+  String get _from => L10n.current.tripsFrom(
+        LuxFormat.dateTime(booking.scheduledAt),
+        booking.origin.displayName,
+      );
 
   String get _price =>
       LuxFormat.money(booking.finalPrice ?? booking.estimatedPrice);
@@ -159,14 +162,14 @@ class _TripCard extends StatelessWidget {
       case BookingStatus.driverArrived:
       case BookingStatus.verified:
       case BookingStatus.inProgress:
-        return 'Seguir en el mapa';
+        return L10n.current.tripsTrackOnMap;
       case BookingStatus.completed:
-        return booking.riderRating == null ? 'Calificar viaje' : null;
+        return booking.riderRating == null ? L10n.current.tripsRate : null;
       case BookingStatus.pending:
-        return 'Ver reserva';
+        return L10n.current.tripsViewBooking;
       case BookingStatus.cancelled:
       case BookingStatus.noShow:
-        return 'Ver reserva';
+        return L10n.current.tripsViewBooking;
     }
   }
 
@@ -260,10 +263,10 @@ class _TripCard extends StatelessWidget {
 ) {
   if (status != BookingStatus.pending || payment == null) return null;
   if (payment.payable) {
-    return (label: 'Esperando pago', color: LuxColors.warning);
+    return (label: L10n.current.tripsAwaitingPayment, color: LuxColors.warning);
   }
   if (payment.status == BookingPaymentStatus.paid) {
-    return (label: 'Pagada', color: LuxColors.success);
+    return (label: L10n.current.tripsPaid, color: LuxColors.success);
   }
   return null;
 }

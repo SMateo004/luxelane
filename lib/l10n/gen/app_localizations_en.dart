@@ -1152,4 +1152,47 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rideErrorGeneric =>
       'This could not be completed. Please try again.';
+
+  @override
+  String get tripsTitle => 'My trips';
+
+  @override
+  String get tripsRetry => 'Try again';
+
+  @override
+  String get tripsUpcoming => 'Upcoming';
+
+  @override
+  String get tripsPast => 'Past';
+
+  @override
+  String get tripsEmptyMessage => 'Your first journey\nis waiting for you.';
+
+  @override
+  String get tripsEmptyAction => 'Book now';
+
+  @override
+  String tripsHourlyTitle(int hours) {
+    return '$hours h at your disposal';
+  }
+
+  @override
+  String tripsFrom(String when, String origin) {
+    return '$when · from $origin';
+  }
+
+  @override
+  String get tripsTrackOnMap => 'Track on map';
+
+  @override
+  String get tripsRate => 'Rate trip';
+
+  @override
+  String get tripsViewBooking => 'View booking';
+
+  @override
+  String get tripsAwaitingPayment => 'Awaiting payment';
+
+  @override
+  String get tripsPaid => 'Paid';
 }

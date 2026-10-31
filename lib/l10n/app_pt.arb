@@ -325,5 +325,18 @@
   "rideErrorLocationRequired": "Ative a localização: a central precisa saber onde você esperou.",
   "rideErrorNotReleasable": "Você não pode mais liberar esta viagem. Entre em contato com a central.",
   "rideErrorInvalidTransition": "O status da viagem mudou. Atualizamos a tela.",
-  "rideErrorGeneric": "Não foi possível concluir. Tente novamente."
+  "rideErrorGeneric": "Não foi possível concluir. Tente novamente.",
+  "tripsTitle": "Minhas viagens",
+  "tripsRetry": "Tentar novamente",
+  "tripsUpcoming": "Próximas",
+  "tripsPast": "Anteriores",
+  "tripsEmptyMessage": "Seu primeiro trajeto\nestá esperando por você.",
+  "tripsEmptyAction": "Reservar agora",
+  "tripsHourlyTitle": "{hours} h à disposição",
+  "tripsFrom": "{when} · de {origin}",
+  "tripsTrackOnMap": "Acompanhar no mapa",
+  "tripsRate": "Avaliar viagem",
+  "tripsViewBooking": "Ver reserva",
+  "tripsAwaitingPayment": "Aguardando pagamento",
+  "tripsPaid": "Paga"
 }

@@ -325,5 +325,18 @@
   "rideErrorLocationRequired": "Turn on location: our operations team needs to know where you waited.",
   "rideErrorNotReleasable": "You can no longer release this trip. Contact our operations team.",
   "rideErrorInvalidTransition": "The trip status changed. We have updated the screen.",
-  "rideErrorGeneric": "This could not be completed. Please try again."
+  "rideErrorGeneric": "This could not be completed. Please try again.",
+  "tripsTitle": "My trips",
+  "tripsRetry": "Try again",
+  "tripsUpcoming": "Upcoming",
+  "tripsPast": "Past",
+  "tripsEmptyMessage": "Your first journey\nis waiting for you.",
+  "tripsEmptyAction": "Book now",
+  "tripsHourlyTitle": "{hours} h at your disposal",
+  "tripsFrom": "{when} · from {origin}",
+  "tripsTrackOnMap": "Track on map",
+  "tripsRate": "Rate trip",
+  "tripsViewBooking": "View booking",
+  "tripsAwaitingPayment": "Awaiting payment",
+  "tripsPaid": "Paid"
 }

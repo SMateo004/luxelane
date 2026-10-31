@@ -1,0 +1,96 @@
+{
+  "tripsTitle": {
+    "description": "Título de la pantalla Mis viajes.",
+    "es": "Mis viajes",
+    "en": "My trips",
+    "pt": "Minhas viagens"
+  },
+  "tripsRetry": {
+    "description": "Botón para volver a cargar la lista de viajes tras un error.",
+    "es": "Reintentar",
+    "en": "Try again",
+    "pt": "Tentar novamente"
+  },
+  "tripsUpcoming": {
+    "description": "Encabezado de la sección de viajes próximos.",
+    "es": "Próximos",
+    "en": "Upcoming",
+    "pt": "Próximas"
+  },
+  "tripsPast": {
+    "description": "Encabezado de la sección de viajes anteriores (historial).",
+    "es": "Anteriores",
+    "en": "Past",
+    "pt": "Anteriores"
+  },
+  "tripsEmptyMessage": {
+    "description": "Mensaje cuando la persona aún no tiene viajes (dos líneas, con salto de línea).",
+    "es": "Tu primer trayecto\nte está esperando.",
+    "en": "Your first journey\nis waiting for you.",
+    "pt": "Seu primeiro trajeto\nestá esperando por você."
+  },
+  "tripsEmptyAction": {
+    "description": "Botón del estado vacío que lleva a reservar un viaje.",
+    "es": "Reservar ahora",
+    "en": "Book now",
+    "pt": "Reservar agora"
+  },
+  "tripsHourlyTitle": {
+    "description": "Título de la tarjeta de un servicio por horas: horas contratadas.",
+    "es": "{hours} h a disposición",
+    "en": "{hours} h at your disposal",
+    "pt": "{hours} h à disposição",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "tripsFrom": {
+    "description": "Línea de la tarjeta de viaje: fecha y hora, y el punto de recogida.",
+    "es": "{when} · desde {origin}",
+    "en": "{when} · from {origin}",
+    "pt": "{when} · de {origin}",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      },
+      "origin": {
+        "type": "String",
+        "example": "Hotel Los Tajibos"
+      }
+    }
+  },
+  "tripsTrackOnMap": {
+    "description": "Acción de la tarjeta de un viaje en curso: seguirlo en el mapa.",
+    "es": "Seguir en el mapa",
+    "en": "Track on map",
+    "pt": "Acompanhar no mapa"
+  },
+  "tripsRate": {
+    "description": "Acción de la tarjeta de un viaje completado sin calificar.",
+    "es": "Calificar viaje",
+    "en": "Rate trip",
+    "pt": "Avaliar viagem"
+  },
+  "tripsViewBooking": {
+    "description": "Acción de la tarjeta para abrir la reserva.",
+    "es": "Ver reserva",
+    "en": "View booking",
+    "pt": "Ver reserva"
+  },
+  "tripsAwaitingPayment": {
+    "description": "Etiqueta de una reserva pendiente sin pagar.",
+    "es": "Esperando pago",
+    "en": "Awaiting payment",
+    "pt": "Aguardando pagamento"
+  },
+  "tripsPaid": {
+    "description": "Etiqueta de una reserva pendiente ya pagada (se busca chófer).",
+    "es": "Pagada",
+    "en": "Paid",
+    "pt": "Paga"
+  }
+}

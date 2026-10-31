@@ -2055,6 +2055,84 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo completar. Inténtalo de nuevo.'**
   String get rideErrorGeneric;
+
+  /// Título de la pantalla Mis viajes.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis viajes'**
+  String get tripsTitle;
+
+  /// Botón para volver a cargar la lista de viajes tras un error.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get tripsRetry;
+
+  /// Encabezado de la sección de viajes próximos.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximos'**
+  String get tripsUpcoming;
+
+  /// Encabezado de la sección de viajes anteriores (historial).
+  ///
+  /// In es, this message translates to:
+  /// **'Anteriores'**
+  String get tripsPast;
+
+  /// Mensaje cuando la persona aún no tiene viajes (dos líneas, con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu primer trayecto\nte está esperando.'**
+  String get tripsEmptyMessage;
+
+  /// Botón del estado vacío que lleva a reservar un viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar ahora'**
+  String get tripsEmptyAction;
+
+  /// Título de la tarjeta de un servicio por horas: horas contratadas.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h a disposición'**
+  String tripsHourlyTitle(int hours);
+
+  /// Línea de la tarjeta de viaje: fecha y hora, y el punto de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'{when} · desde {origin}'**
+  String tripsFrom(String when, String origin);
+
+  /// Acción de la tarjeta de un viaje en curso: seguirlo en el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguir en el mapa'**
+  String get tripsTrackOnMap;
+
+  /// Acción de la tarjeta de un viaje completado sin calificar.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificar viaje'**
+  String get tripsRate;
+
+  /// Acción de la tarjeta para abrir la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver reserva'**
+  String get tripsViewBooking;
+
+  /// Etiqueta de una reserva pendiente sin pagar.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando pago'**
+  String get tripsAwaitingPayment;
+
+  /// Etiqueta de una reserva pendiente ya pagada (se busca chófer).
+  ///
+  /// In es, this message translates to:
+  /// **'Pagada'**
+  String get tripsPaid;
 }
 
 class _AppLocalizationsDelegate
