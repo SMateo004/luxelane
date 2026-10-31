@@ -361,6 +361,155 @@ class AppLocalizationsPt extends AppLocalizations {
   String get greetingEvening => 'Boa noite';
 
   @override
+  String incidentSmsHeader(String id) {
+    return 'SOS. Reserva #$id.';
+  }
+
+  @override
+  String incidentSmsLocation(String link) {
+    return 'Localização: $link';
+  }
+
+  @override
+  String get incidentSmsNoLocation => 'Localização indisponível.';
+
+  @override
+  String get incidentNoNumbersHelp =>
+      'Entre em contato com as autoridades locais.';
+
+  @override
+  String get incidentSendingTitle => 'Avisando a central…';
+
+  @override
+  String get incidentSendingBody => 'Não feche o app.';
+
+  @override
+  String get incidentFailedTitle => 'Não foi possível avisar a central';
+
+  @override
+  String get incidentOfflineBody =>
+      'Sem conexão. Ligue ou envie a mensagem já preparada.';
+
+  @override
+  String get incidentCancelledTitle => 'Alerta cancelado';
+
+  @override
+  String get incidentCancelledBody =>
+      'A central foi avisada. Não compartilhamos mais sua localização.';
+
+  @override
+  String get incidentOpenTitle => 'Avisamos a central';
+
+  @override
+  String get incidentOpenBody =>
+      'A central foi avisada. Compartilhamos sua localização enquanto o alerta estiver ativo.';
+
+  @override
+  String get incidentAckTitle => 'A central recebeu seu alerta';
+
+  @override
+  String get incidentAckBody => 'Uma pessoa da central está cuidando dele.';
+
+  @override
+  String get incidentClosedTitle => 'Alerta encerrado';
+
+  @override
+  String get incidentClosedBody =>
+      'A central encerrou o alerta. Não compartilhamos mais sua localização.';
+
+  @override
+  String get incidentCancelRequestedBody =>
+      'A central vai ligar para você para verificar se está tudo bem. Não compartilhamos mais sua localização.';
+
+  @override
+  String get incidentHelp => 'Ajuda';
+
+  @override
+  String get incidentIdleBody =>
+      'Mantenha SOS pressionado para avisar a central.';
+
+  @override
+  String get incidentFalseAlarmQuestion => 'Foi um alarme falso?';
+
+  @override
+  String get incidentFalseAlarmBody =>
+      'Vamos cancelar o alerta. A central o verá mesmo assim e ele fica registrado.';
+
+  @override
+  String get incidentBack => 'Voltar';
+
+  @override
+  String get incidentCancelAlert => 'Cancelar alerta';
+
+  @override
+  String incidentSentTimes(int count) {
+    return 'Alerta enviado $count vezes.';
+  }
+
+  @override
+  String get incidentCallDispatch => 'Ligar para a central';
+
+  @override
+  String get incidentSmsDispatch => 'Enviar SMS para a central';
+
+  @override
+  String get incidentRetry => 'Tentar o alerta novamente';
+
+  @override
+  String get incidentAlertAgain => 'Avisar de novo';
+
+  @override
+  String get incidentHoldToAlertAgain =>
+      'Mantenha pressionado para avisar de novo';
+
+  @override
+  String get incidentFalseAlarm => 'Foi um alarme falso';
+
+  @override
+  String get incidentConfirmTitle => 'Avisar a central?';
+
+  @override
+  String get incidentConfirmBody =>
+      'A central receberá seu alerta e sua localização enquanto ele estiver ativo.';
+
+  @override
+  String get incidentConfirmCancel => 'Cancelar';
+
+  @override
+  String get incidentConfirmSend => 'Avisar a central';
+
+  @override
+  String incidentSosSemantics(String label) {
+    return '$label SOS';
+  }
+
+  @override
+  String get incidentSosHint =>
+      'Mantenha pressionado por dois segundos para avisar a central. Com leitor de tela, toque duas vezes e confirme.';
+
+  @override
+  String get incidentLive => 'Ajuda em andamento';
+
+  @override
+  String get incidentErrorOffline =>
+      'Não foi possível avisar a central: sem conexão.';
+
+  @override
+  String get incidentErrorOutsideWindow =>
+      'O botão de ajuda funciona durante a viagem.';
+
+  @override
+  String get incidentErrorRateLimited =>
+      'Você já enviou vários alertas. Ligue para a central se precisar.';
+
+  @override
+  String get incidentErrorNotAllowed =>
+      'Esta viagem não está mais no seu nome.';
+
+  @override
+  String get incidentErrorGeneric => 'Não foi possível avisar a central.';
+
+  @override
   String get languageTitle => 'Idioma';
 
   @override

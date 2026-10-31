@@ -724,6 +724,258 @@ abstract class AppLocalizations {
   /// **'Buenas noches'**
   String get greetingEvening;
 
+  /// Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'SOS. Reserva #{id}.'**
+  String incidentSmsHeader(String id);
+
+  /// SMS de SOS: enlace de mapa a la última ubicación.
+  ///
+  /// In es, this message translates to:
+  /// **'Ubicación: {link}'**
+  String incidentSmsLocation(String link);
+
+  /// SMS de SOS cuando no hay ubicación.
+  ///
+  /// In es, this message translates to:
+  /// **'Ubicación no disponible.'**
+  String get incidentSmsNoLocation;
+
+  /// Ayuda del SOS si no hay números de emergencia configurados (nunca se inventa uno).
+  ///
+  /// In es, this message translates to:
+  /// **'Contacta con las autoridades locales.'**
+  String get incidentNoNumbersHelp;
+
+  /// Ayuda del SOS: enviando el aviso (título).
+  ///
+  /// In es, this message translates to:
+  /// **'Avisando a central…'**
+  String get incidentSendingTitle;
+
+  /// Ayuda del SOS: enviando el aviso (detalle).
+  ///
+  /// In es, this message translates to:
+  /// **'No cierres la app.'**
+  String get incidentSendingBody;
+
+  /// Ayuda del SOS: el aviso no llegó (título).
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos avisar a central'**
+  String get incidentFailedTitle;
+
+  /// Ayuda del SOS: sin conexión; se ofrece llamar o enviar SMS.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay conexión. Llama o envía el mensaje ya preparado.'**
+  String get incidentOfflineBody;
+
+  /// Ayuda del SOS: quien pidió ayuda canceló el aviso (título).
+  ///
+  /// In es, this message translates to:
+  /// **'Aviso cancelado'**
+  String get incidentCancelledTitle;
+
+  /// Ayuda del SOS: aviso cancelado por quien lo pidió.
+  ///
+  /// In es, this message translates to:
+  /// **'Central fue avisada. Ya no compartimos tu ubicación.'**
+  String get incidentCancelledBody;
+
+  /// Ayuda del SOS: aviso abierto (título).
+  ///
+  /// In es, this message translates to:
+  /// **'Avisamos a central'**
+  String get incidentOpenTitle;
+
+  /// Ayuda del SOS: aviso abierto (detalle).
+  ///
+  /// In es, this message translates to:
+  /// **'Central fue avisada. Compartimos tu ubicación mientras dure el aviso.'**
+  String get incidentOpenBody;
+
+  /// Ayuda del SOS: central reconoció el aviso (título).
+  ///
+  /// In es, this message translates to:
+  /// **'Central recibió tu aviso'**
+  String get incidentAckTitle;
+
+  /// Ayuda del SOS: central reconoció el aviso (detalle).
+  ///
+  /// In es, this message translates to:
+  /// **'Una persona de central lo está atendiendo.'**
+  String get incidentAckBody;
+
+  /// Ayuda del SOS: central cerró el aviso (título).
+  ///
+  /// In es, this message translates to:
+  /// **'Aviso cerrado'**
+  String get incidentClosedTitle;
+
+  /// Ayuda del SOS: central cerró el aviso (detalle).
+  ///
+  /// In es, this message translates to:
+  /// **'Central cerró el aviso. Ya no compartimos tu ubicación.'**
+  String get incidentClosedBody;
+
+  /// Ayuda del SOS: se pidió cancelar y central verificará por llamada.
+  ///
+  /// In es, this message translates to:
+  /// **'Central te llamará para verificar que estás bien. Ya no compartimos tu ubicación.'**
+  String get incidentCancelRequestedBody;
+
+  /// Título de la ayuda del SOS sin aviso y nombre del botón de ayuda (se anuncia «Ayuda SOS»).
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda'**
+  String get incidentHelp;
+
+  /// Ayuda del SOS sin aviso: cómo avisar. SOS no se traduce.
+  ///
+  /// In es, this message translates to:
+  /// **'Mantén pulsado SOS para avisar a central.'**
+  String get incidentIdleBody;
+
+  /// Título del diálogo para cancelar un SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Fue una falsa alarma?'**
+  String get incidentFalseAlarmQuestion;
+
+  /// Diálogo para cancelar un SOS: qué pasa al cancelarlo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelaremos el aviso. Central lo verá igualmente y queda registrado.'**
+  String get incidentFalseAlarmBody;
+
+  /// Botón para cerrar el diálogo sin cancelar el SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver'**
+  String get incidentBack;
+
+  /// Botón para confirmar que el SOS fue una falsa alarma.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar aviso'**
+  String get incidentCancelAlert;
+
+  /// Ayuda del SOS: veces que se envió el aviso (solo con 2 o más).
+  ///
+  /// In es, this message translates to:
+  /// **'Aviso enviado {count} veces.'**
+  String incidentSentTimes(int count);
+
+  /// Botón para llamar a central desde la ayuda del SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'Llamar a central'**
+  String get incidentCallDispatch;
+
+  /// Botón para enviar el SMS preparado a central.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar SMS a central'**
+  String get incidentSmsDispatch;
+
+  /// Botón para reintentar el aviso de SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar el aviso'**
+  String get incidentRetry;
+
+  /// Nombre del botón SOS para volver a avisar (se anuncia «Avisar de nuevo SOS»).
+  ///
+  /// In es, this message translates to:
+  /// **'Avisar de nuevo'**
+  String get incidentAlertAgain;
+
+  /// Bajo el botón SOS cuando ya hay un aviso.
+  ///
+  /// In es, this message translates to:
+  /// **'Mantén pulsado para avisar de nuevo'**
+  String get incidentHoldToAlertAgain;
+
+  /// Botón para cancelar un SOS por falsa alarma.
+  ///
+  /// In es, this message translates to:
+  /// **'Fue una falsa alarma'**
+  String get incidentFalseAlarm;
+
+  /// Diálogo de confirmación del SOS con lector de pantalla o teclado: título.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Avisar a central?'**
+  String get incidentConfirmTitle;
+
+  /// Diálogo de confirmación del SOS: qué recibe central.
+  ///
+  /// In es, this message translates to:
+  /// **'Central recibirá tu aviso y tu ubicación mientras dure.'**
+  String get incidentConfirmBody;
+
+  /// Botón para no enviar el SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get incidentConfirmCancel;
+
+  /// Botón para confirmar el envío del SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisar a central'**
+  String get incidentConfirmSend;
+
+  /// Etiqueta de lector de pantalla del botón SOS: su nombre seguido de SOS (SOS no se traduce).
+  ///
+  /// In es, this message translates to:
+  /// **'{label} SOS'**
+  String incidentSosSemantics(String label);
+
+  /// Indicación de lector de pantalla del botón SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'Mantén pulsado dos segundos para avisar a central. Con lector de pantalla, toca dos veces y confirma.'**
+  String get incidentSosHint;
+
+  /// Botón de la pantalla del viaje con un SOS en curso.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda en curso'**
+  String get incidentLive;
+
+  /// Error del SOS sin conexión.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos avisar a central: sin conexión.'**
+  String get incidentErrorOffline;
+
+  /// Error del SOS fuera del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'El botón de ayuda funciona durante el viaje.'**
+  String get incidentErrorOutsideWindow;
+
+  /// Error del SOS: demasiados avisos.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya enviaste varios avisos. Llama a central si lo necesitas.'**
+  String get incidentErrorRateLimited;
+
+  /// Error del SOS: la reserva ya no es de esta persona.
+  ///
+  /// In es, this message translates to:
+  /// **'Este viaje ya no está a tu nombre.'**
+  String get incidentErrorNotAllowed;
+
+  /// Error genérico del SOS.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos avisar a central.'**
+  String get incidentErrorGeneric;
+
   /// Título de la sección del perfil donde se elige el idioma de la app.
   ///
   /// In es, this message translates to:

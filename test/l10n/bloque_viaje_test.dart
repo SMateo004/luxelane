@@ -5,6 +5,9 @@ import 'package:luxelane/app/lux_locale.dart';
 import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/repositories/repositories.dart';
+import 'package:luxelane/features/incidents/data/incident_repository_impl.dart';
+import 'package:luxelane/features/incidents/presentation/help_contacts.dart';
+import 'package:luxelane/features/incidents/presentation/widgets/sos_button.dart';
 import 'package:luxelane/features/ride/data/repositories/trip_flow_repository_impl.dart';
 import 'package:luxelane/features/ride/presentation/widgets/cancel_booking_dialog.dart';
 import 'package:luxelane/features/ride/presentation/widgets/pickup_code_card.dart';
@@ -16,10 +19,16 @@ class _TripRepo extends Mock implements TripFlowRepository {}
 
 final _code = PickupCode(code: '4207', expiresAt: DateTime(2026, 10, 20, 19));
 
-/// Bloque viaje (B1): código de recogida, cancelación y errores del viaje
-/// en inglés y en portugués, sin restos del español.
+/// Bloque viaje (B1): código de recogida, cancelación, errores del viaje y
+/// botón SOS con su diálogo en inglés y en portugués, sin restos del
+/// español. «SOS» no se traduce.
 void main() {
-  Future<void> pump(WidgetTester t, Locale locale, Widget child) async {
+  Future<void> pump(
+    WidgetTester t,
+    Locale locale,
+    Widget child, {
+    bool screenReader = false,
+  }) async {
     t.view.physicalSize = const Size(900, 1800);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
@@ -28,7 +37,14 @@ void main() {
         locale: locale,
         supportedLocales: LuxLocale.supportedLocales,
         localizationsDelegates: LuxLocale.delegates,
-        home: Scaffold(body: SingleChildScrollView(child: child)),
+        home: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              accessibleNavigation: screenReader,
+            ),
+            child: Scaffold(body: SingleChildScrollView(child: child)),
+          ),
+        ),
       ),
     );
     await t.pumpAndSettle();
@@ -48,6 +64,13 @@ void main() {
       reason: 'My plans changed',
       fee: '1,234.50 of what you paid',
       wrongCode: 'Incorrect code. You have 2 attempts left.',
+      sosLabel: 'Help SOS',
+      sosHint: 'Press and hold for two seconds',
+      sosTitle: 'Notify our operations team?',
+      sosSend: 'Notify operations team',
+      sosCancel: 'Cancel',
+      sms: 'SOS. Booking #ABC123. Location not available.',
+      sosError: 'The help button works during the trip.',
     ),
     'pt': (
       title: 'CÓDIGO DE EMBARQUE',
@@ -59,6 +82,13 @@ void main() {
       reason: 'Mudei de planos',
       fee: '1.234,50 do valor pago',
       wrongCode: 'Código incorreto. Restam 2 tentativas.',
+      sosLabel: 'Ajuda SOS',
+      sosHint: 'Mantenha pressionado por dois segundos',
+      sosTitle: 'Avisar a central?',
+      sosSend: 'Avisar a central',
+      sosCancel: 'Cancelar',
+      sms: 'SOS. Reserva #ABC123. Localização indisponível.',
+      sosError: 'O botão de ajuda funciona durante a viagem.',
     ),
   };
 
@@ -104,6 +134,38 @@ void main() {
         expect(find.textContaining('Según la política'), findsNothing);
         expect(
             find.text('Motivo'), code == 'pt' ? findsOneWidget : findsNothing);
+      });
+
+      testWidgets('botón SOS y su diálogo de confirmación', (t) async {
+        var hits = 0;
+        await pump(
+          t,
+          locale,
+          Center(child: SosButton(onActivated: () => hits++)),
+          screenReader: true,
+        );
+        // «SOS» se ve igual en todos los idiomas.
+        expect(find.text('SOS'), findsOneWidget);
+        final node = t.getSemantics(find.byKey(const ValueKey('sos-button')));
+        expect(node.label, c.sosLabel);
+        expect(node.hint, startsWith(c.sosHint));
+        expect(node.label, isNot(contains('Ayuda SOS')));
+        await t.tap(find.byKey(const ValueKey('sos-button')));
+        await t.pumpAndSettle();
+        expect(find.text(c.sosTitle), findsOneWidget);
+        expect(find.text('¿Avisar a central?'), findsNothing);
+        expect(find.text(c.sosCancel), findsOneWidget);
+        await t.tap(find.text(c.sosSend));
+        await t.pumpAndSettle();
+        expect(hits, 1);
+      });
+
+      test('SMS y errores del SOS', () {
+        expect(incidentSmsBody('ABC123'), c.sms);
+        final f = incidentFailureFor('failed-precondition', {
+          'reason': 'outside_window',
+        }) as IncidentFailure;
+        expect(f.message, c.sosError);
       });
 
       test('errores del viaje', () {

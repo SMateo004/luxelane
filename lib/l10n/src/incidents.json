@@ -1,0 +1,278 @@
+{
+  "incidentSmsHeader": {
+    "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.",
+    "es": "SOS. Reserva #{id}.",
+    "en": "SOS. Booking #{id}.",
+    "pt": "SOS. Reserva #{id}.",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
+  "incidentSmsLocation": {
+    "description": "SMS de SOS: enlace de mapa a la última ubicación.",
+    "es": "Ubicación: {link}",
+    "en": "Location: {link}",
+    "pt": "Localização: {link}",
+    "placeholders": {
+      "link": {
+        "type": "String",
+        "example": "https://maps.google.com/?q=-17.78,-63.18"
+      }
+    }
+  },
+  "incidentSmsNoLocation": {
+    "description": "SMS de SOS cuando no hay ubicación.",
+    "es": "Ubicación no disponible.",
+    "en": "Location not available.",
+    "pt": "Localização indisponível."
+  },
+  "incidentNoNumbersHelp": {
+    "description": "Ayuda del SOS si no hay números de emergencia configurados (nunca se inventa uno).",
+    "es": "Contacta con las autoridades locales.",
+    "en": "Contact the local authorities.",
+    "pt": "Entre em contato com as autoridades locais."
+  },
+  "incidentSendingTitle": {
+    "description": "Ayuda del SOS: enviando el aviso (título).",
+    "es": "Avisando a central…",
+    "en": "Notifying our operations team…",
+    "pt": "Avisando a central…"
+  },
+  "incidentSendingBody": {
+    "description": "Ayuda del SOS: enviando el aviso (detalle).",
+    "es": "No cierres la app.",
+    "en": "Do not close the app.",
+    "pt": "Não feche o app."
+  },
+  "incidentFailedTitle": {
+    "description": "Ayuda del SOS: el aviso no llegó (título).",
+    "es": "No pudimos avisar a central",
+    "en": "We could not notify our operations team",
+    "pt": "Não foi possível avisar a central"
+  },
+  "incidentOfflineBody": {
+    "description": "Ayuda del SOS: sin conexión; se ofrece llamar o enviar SMS.",
+    "es": "No hay conexión. Llama o envía el mensaje ya preparado.",
+    "en": "There is no connection. Call or send the prepared message.",
+    "pt": "Sem conexão. Ligue ou envie a mensagem já preparada."
+  },
+  "incidentCancelledTitle": {
+    "description": "Ayuda del SOS: quien pidió ayuda canceló el aviso (título).",
+    "es": "Aviso cancelado",
+    "en": "Alert cancelled",
+    "pt": "Alerta cancelado"
+  },
+  "incidentCancelledBody": {
+    "description": "Ayuda del SOS: aviso cancelado por quien lo pidió.",
+    "es": "Central fue avisada. Ya no compartimos tu ubicación.",
+    "en": "Our operations team has been notified. We are no longer sharing your location.",
+    "pt": "A central foi avisada. Não compartilhamos mais sua localização."
+  },
+  "incidentOpenTitle": {
+    "description": "Ayuda del SOS: aviso abierto (título).",
+    "es": "Avisamos a central",
+    "en": "We notified our operations team",
+    "pt": "Avisamos a central"
+  },
+  "incidentOpenBody": {
+    "description": "Ayuda del SOS: aviso abierto (detalle).",
+    "es": "Central fue avisada. Compartimos tu ubicación mientras dure el aviso.",
+    "en": "Our operations team has been notified. We share your location while the alert is active.",
+    "pt": "A central foi avisada. Compartilhamos sua localização enquanto o alerta estiver ativo."
+  },
+  "incidentAckTitle": {
+    "description": "Ayuda del SOS: central reconoció el aviso (título).",
+    "es": "Central recibió tu aviso",
+    "en": "Our operations team received your alert",
+    "pt": "A central recebeu seu alerta"
+  },
+  "incidentAckBody": {
+    "description": "Ayuda del SOS: central reconoció el aviso (detalle).",
+    "es": "Una persona de central lo está atendiendo.",
+    "en": "A member of our operations team is handling it.",
+    "pt": "Uma pessoa da central está cuidando dele."
+  },
+  "incidentClosedTitle": {
+    "description": "Ayuda del SOS: central cerró el aviso (título).",
+    "es": "Aviso cerrado",
+    "en": "Alert closed",
+    "pt": "Alerta encerrado"
+  },
+  "incidentClosedBody": {
+    "description": "Ayuda del SOS: central cerró el aviso (detalle).",
+    "es": "Central cerró el aviso. Ya no compartimos tu ubicación.",
+    "en": "Our operations team closed the alert. We are no longer sharing your location.",
+    "pt": "A central encerrou o alerta. Não compartilhamos mais sua localização."
+  },
+  "incidentCancelRequestedBody": {
+    "description": "Ayuda del SOS: se pidió cancelar y central verificará por llamada.",
+    "es": "Central te llamará para verificar que estás bien. Ya no compartimos tu ubicación.",
+    "en": "Our operations team will call you to check that you are safe. We are no longer sharing your location.",
+    "pt": "A central vai ligar para você para verificar se está tudo bem. Não compartilhamos mais sua localização."
+  },
+  "incidentHelp": {
+    "description": "Título de la ayuda del SOS sin aviso y nombre del botón de ayuda (se anuncia «Ayuda SOS»).",
+    "es": "Ayuda",
+    "en": "Help",
+    "pt": "Ajuda"
+  },
+  "incidentIdleBody": {
+    "description": "Ayuda del SOS sin aviso: cómo avisar. SOS no se traduce.",
+    "es": "Mantén pulsado SOS para avisar a central.",
+    "en": "Press and hold SOS to notify our operations team.",
+    "pt": "Mantenha SOS pressionado para avisar a central."
+  },
+  "incidentFalseAlarmQuestion": {
+    "description": "Título del diálogo para cancelar un SOS.",
+    "es": "¿Fue una falsa alarma?",
+    "en": "Was it a false alarm?",
+    "pt": "Foi um alarme falso?"
+  },
+  "incidentFalseAlarmBody": {
+    "description": "Diálogo para cancelar un SOS: qué pasa al cancelarlo.",
+    "es": "Cancelaremos el aviso. Central lo verá igualmente y queda registrado.",
+    "en": "We will cancel the alert. Our operations team will still see it and it remains on record.",
+    "pt": "Vamos cancelar o alerta. A central o verá mesmo assim e ele fica registrado."
+  },
+  "incidentBack": {
+    "description": "Botón para cerrar el diálogo sin cancelar el SOS.",
+    "es": "Volver",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "incidentCancelAlert": {
+    "description": "Botón para confirmar que el SOS fue una falsa alarma.",
+    "es": "Cancelar aviso",
+    "en": "Cancel alert",
+    "pt": "Cancelar alerta"
+  },
+  "incidentSentTimes": {
+    "description": "Ayuda del SOS: veces que se envió el aviso (solo con 2 o más).",
+    "es": "Aviso enviado {count} veces.",
+    "en": "Alert sent {count} times.",
+    "pt": "Alerta enviado {count} vezes.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "incidentCallDispatch": {
+    "description": "Botón para llamar a central desde la ayuda del SOS.",
+    "es": "Llamar a central",
+    "en": "Call our operations team",
+    "pt": "Ligar para a central"
+  },
+  "incidentSmsDispatch": {
+    "description": "Botón para enviar el SMS preparado a central.",
+    "es": "Enviar SMS a central",
+    "en": "Text our operations team",
+    "pt": "Enviar SMS para a central"
+  },
+  "incidentRetry": {
+    "description": "Botón para reintentar el aviso de SOS.",
+    "es": "Reintentar el aviso",
+    "en": "Retry the alert",
+    "pt": "Tentar o alerta novamente"
+  },
+  "incidentAlertAgain": {
+    "description": "Nombre del botón SOS para volver a avisar (se anuncia «Avisar de nuevo SOS»).",
+    "es": "Avisar de nuevo",
+    "en": "Alert again",
+    "pt": "Avisar de novo"
+  },
+  "incidentHoldToAlertAgain": {
+    "description": "Bajo el botón SOS cuando ya hay un aviso.",
+    "es": "Mantén pulsado para avisar de nuevo",
+    "en": "Press and hold to alert again",
+    "pt": "Mantenha pressionado para avisar de novo"
+  },
+  "incidentFalseAlarm": {
+    "description": "Botón para cancelar un SOS por falsa alarma.",
+    "es": "Fue una falsa alarma",
+    "en": "It was a false alarm",
+    "pt": "Foi um alarme falso"
+  },
+  "incidentConfirmTitle": {
+    "description": "Diálogo de confirmación del SOS con lector de pantalla o teclado: título.",
+    "es": "¿Avisar a central?",
+    "en": "Notify our operations team?",
+    "pt": "Avisar a central?"
+  },
+  "incidentConfirmBody": {
+    "description": "Diálogo de confirmación del SOS: qué recibe central.",
+    "es": "Central recibirá tu aviso y tu ubicación mientras dure.",
+    "en": "Our operations team will receive your alert and your location while it is active.",
+    "pt": "A central receberá seu alerta e sua localização enquanto ele estiver ativo."
+  },
+  "incidentConfirmCancel": {
+    "description": "Botón para no enviar el SOS.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "incidentConfirmSend": {
+    "description": "Botón para confirmar el envío del SOS.",
+    "es": "Avisar a central",
+    "en": "Notify operations team",
+    "pt": "Avisar a central"
+  },
+  "incidentSosSemantics": {
+    "description": "Etiqueta de lector de pantalla del botón SOS: su nombre seguido de SOS (SOS no se traduce).",
+    "es": "{label} SOS",
+    "en": "{label} SOS",
+    "pt": "{label} SOS",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Ayuda"
+      }
+    }
+  },
+  "incidentSosHint": {
+    "description": "Indicación de lector de pantalla del botón SOS.",
+    "es": "Mantén pulsado dos segundos para avisar a central. Con lector de pantalla, toca dos veces y confirma.",
+    "en": "Press and hold for two seconds to notify our operations team. With a screen reader, double-tap and confirm.",
+    "pt": "Mantenha pressionado por dois segundos para avisar a central. Com leitor de tela, toque duas vezes e confirme."
+  },
+  "incidentLive": {
+    "description": "Botón de la pantalla del viaje con un SOS en curso.",
+    "es": "Ayuda en curso",
+    "en": "Help in progress",
+    "pt": "Ajuda em andamento"
+  },
+  "incidentErrorOffline": {
+    "description": "Error del SOS sin conexión.",
+    "es": "No pudimos avisar a central: sin conexión.",
+    "en": "We could not notify our operations team: no connection.",
+    "pt": "Não foi possível avisar a central: sem conexão."
+  },
+  "incidentErrorOutsideWindow": {
+    "description": "Error del SOS fuera del viaje.",
+    "es": "El botón de ayuda funciona durante el viaje.",
+    "en": "The help button works during the trip.",
+    "pt": "O botão de ajuda funciona durante a viagem."
+  },
+  "incidentErrorRateLimited": {
+    "description": "Error del SOS: demasiados avisos.",
+    "es": "Ya enviaste varios avisos. Llama a central si lo necesitas.",
+    "en": "You have already sent several alerts. Call our operations team if you need to.",
+    "pt": "Você já enviou vários alertas. Ligue para a central se precisar."
+  },
+  "incidentErrorNotAllowed": {
+    "description": "Error del SOS: la reserva ya no es de esta persona.",
+    "es": "Este viaje ya no está a tu nombre.",
+    "en": "This trip is no longer in your name.",
+    "pt": "Esta viagem não está mais no seu nome."
+  },
+  "incidentErrorGeneric": {
+    "description": "Error genérico del SOS.",
+    "es": "No pudimos avisar a central.",
+    "en": "We could not notify our operations team.",
+    "pt": "Não foi possível avisar a central."
+  }
+}

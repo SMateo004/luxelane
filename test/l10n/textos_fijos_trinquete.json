@@ -5,7 +5,6 @@
     "lib/features/business": 21,
     "lib/features/driver": 179,
     "lib/features/home": 133,
-    "lib/features/incidents": 49,
     "lib/features/notifications": 9,
     "lib/features/profile": 61,
     "lib/features/services": 102,

@@ -7,6 +7,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/maps_service.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/incident_bloc.dart';
 import 'incident_help_sheet.dart';
 import 'sos_button.dart';
@@ -90,7 +91,7 @@ class SosEntry extends StatelessWidget {
                   size: 18,
                   color: LuxColors.error,
                 ),
-                label: const Text('Ayuda en curso'),
+                label: Text(context.l10n.incidentLive),
                 onPressed: () => openHelp(context, bloc),
               );
             }

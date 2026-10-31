@@ -359,6 +359,153 @@ class AppLocalizationsEn extends AppLocalizations {
   String get greetingEvening => 'Good evening';
 
   @override
+  String incidentSmsHeader(String id) {
+    return 'SOS. Booking #$id.';
+  }
+
+  @override
+  String incidentSmsLocation(String link) {
+    return 'Location: $link';
+  }
+
+  @override
+  String get incidentSmsNoLocation => 'Location not available.';
+
+  @override
+  String get incidentNoNumbersHelp => 'Contact the local authorities.';
+
+  @override
+  String get incidentSendingTitle => 'Notifying our operations team…';
+
+  @override
+  String get incidentSendingBody => 'Do not close the app.';
+
+  @override
+  String get incidentFailedTitle => 'We could not notify our operations team';
+
+  @override
+  String get incidentOfflineBody =>
+      'There is no connection. Call or send the prepared message.';
+
+  @override
+  String get incidentCancelledTitle => 'Alert cancelled';
+
+  @override
+  String get incidentCancelledBody =>
+      'Our operations team has been notified. We are no longer sharing your location.';
+
+  @override
+  String get incidentOpenTitle => 'We notified our operations team';
+
+  @override
+  String get incidentOpenBody =>
+      'Our operations team has been notified. We share your location while the alert is active.';
+
+  @override
+  String get incidentAckTitle => 'Our operations team received your alert';
+
+  @override
+  String get incidentAckBody =>
+      'A member of our operations team is handling it.';
+
+  @override
+  String get incidentClosedTitle => 'Alert closed';
+
+  @override
+  String get incidentClosedBody =>
+      'Our operations team closed the alert. We are no longer sharing your location.';
+
+  @override
+  String get incidentCancelRequestedBody =>
+      'Our operations team will call you to check that you are safe. We are no longer sharing your location.';
+
+  @override
+  String get incidentHelp => 'Help';
+
+  @override
+  String get incidentIdleBody =>
+      'Press and hold SOS to notify our operations team.';
+
+  @override
+  String get incidentFalseAlarmQuestion => 'Was it a false alarm?';
+
+  @override
+  String get incidentFalseAlarmBody =>
+      'We will cancel the alert. Our operations team will still see it and it remains on record.';
+
+  @override
+  String get incidentBack => 'Back';
+
+  @override
+  String get incidentCancelAlert => 'Cancel alert';
+
+  @override
+  String incidentSentTimes(int count) {
+    return 'Alert sent $count times.';
+  }
+
+  @override
+  String get incidentCallDispatch => 'Call our operations team';
+
+  @override
+  String get incidentSmsDispatch => 'Text our operations team';
+
+  @override
+  String get incidentRetry => 'Retry the alert';
+
+  @override
+  String get incidentAlertAgain => 'Alert again';
+
+  @override
+  String get incidentHoldToAlertAgain => 'Press and hold to alert again';
+
+  @override
+  String get incidentFalseAlarm => 'It was a false alarm';
+
+  @override
+  String get incidentConfirmTitle => 'Notify our operations team?';
+
+  @override
+  String get incidentConfirmBody =>
+      'Our operations team will receive your alert and your location while it is active.';
+
+  @override
+  String get incidentConfirmCancel => 'Cancel';
+
+  @override
+  String get incidentConfirmSend => 'Notify operations team';
+
+  @override
+  String incidentSosSemantics(String label) {
+    return '$label SOS';
+  }
+
+  @override
+  String get incidentSosHint =>
+      'Press and hold for two seconds to notify our operations team. With a screen reader, double-tap and confirm.';
+
+  @override
+  String get incidentLive => 'Help in progress';
+
+  @override
+  String get incidentErrorOffline =>
+      'We could not notify our operations team: no connection.';
+
+  @override
+  String get incidentErrorOutsideWindow =>
+      'The help button works during the trip.';
+
+  @override
+  String get incidentErrorRateLimited =>
+      'You have already sent several alerts. Call our operations team if you need to.';
+
+  @override
+  String get incidentErrorNotAllowed => 'This trip is no longer in your name.';
+
+  @override
+  String get incidentErrorGeneric => 'We could not notify our operations team.';
+
+  @override
   String get languageTitle => 'Language';
 
   @override

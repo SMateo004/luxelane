@@ -434,6 +434,198 @@
   "@greetingEvening": {
     "description": "Saludo de la noche en el inicio (de 19 a 5 h)."
   },
+  "incidentSmsHeader": "SOS. Reserva #{id}.",
+  "@incidentSmsHeader": {
+    "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
+  "incidentSmsLocation": "Ubicación: {link}",
+  "@incidentSmsLocation": {
+    "description": "SMS de SOS: enlace de mapa a la última ubicación.",
+    "placeholders": {
+      "link": {
+        "type": "String",
+        "example": "https://maps.google.com/?q=-17.78,-63.18"
+      }
+    }
+  },
+  "incidentSmsNoLocation": "Ubicación no disponible.",
+  "@incidentSmsNoLocation": {
+    "description": "SMS de SOS cuando no hay ubicación."
+  },
+  "incidentNoNumbersHelp": "Contacta con las autoridades locales.",
+  "@incidentNoNumbersHelp": {
+    "description": "Ayuda del SOS si no hay números de emergencia configurados (nunca se inventa uno)."
+  },
+  "incidentSendingTitle": "Avisando a central…",
+  "@incidentSendingTitle": {
+    "description": "Ayuda del SOS: enviando el aviso (título)."
+  },
+  "incidentSendingBody": "No cierres la app.",
+  "@incidentSendingBody": {
+    "description": "Ayuda del SOS: enviando el aviso (detalle)."
+  },
+  "incidentFailedTitle": "No pudimos avisar a central",
+  "@incidentFailedTitle": {
+    "description": "Ayuda del SOS: el aviso no llegó (título)."
+  },
+  "incidentOfflineBody": "No hay conexión. Llama o envía el mensaje ya preparado.",
+  "@incidentOfflineBody": {
+    "description": "Ayuda del SOS: sin conexión; se ofrece llamar o enviar SMS."
+  },
+  "incidentCancelledTitle": "Aviso cancelado",
+  "@incidentCancelledTitle": {
+    "description": "Ayuda del SOS: quien pidió ayuda canceló el aviso (título)."
+  },
+  "incidentCancelledBody": "Central fue avisada. Ya no compartimos tu ubicación.",
+  "@incidentCancelledBody": {
+    "description": "Ayuda del SOS: aviso cancelado por quien lo pidió."
+  },
+  "incidentOpenTitle": "Avisamos a central",
+  "@incidentOpenTitle": {
+    "description": "Ayuda del SOS: aviso abierto (título)."
+  },
+  "incidentOpenBody": "Central fue avisada. Compartimos tu ubicación mientras dure el aviso.",
+  "@incidentOpenBody": {
+    "description": "Ayuda del SOS: aviso abierto (detalle)."
+  },
+  "incidentAckTitle": "Central recibió tu aviso",
+  "@incidentAckTitle": {
+    "description": "Ayuda del SOS: central reconoció el aviso (título)."
+  },
+  "incidentAckBody": "Una persona de central lo está atendiendo.",
+  "@incidentAckBody": {
+    "description": "Ayuda del SOS: central reconoció el aviso (detalle)."
+  },
+  "incidentClosedTitle": "Aviso cerrado",
+  "@incidentClosedTitle": {
+    "description": "Ayuda del SOS: central cerró el aviso (título)."
+  },
+  "incidentClosedBody": "Central cerró el aviso. Ya no compartimos tu ubicación.",
+  "@incidentClosedBody": {
+    "description": "Ayuda del SOS: central cerró el aviso (detalle)."
+  },
+  "incidentCancelRequestedBody": "Central te llamará para verificar que estás bien. Ya no compartimos tu ubicación.",
+  "@incidentCancelRequestedBody": {
+    "description": "Ayuda del SOS: se pidió cancelar y central verificará por llamada."
+  },
+  "incidentHelp": "Ayuda",
+  "@incidentHelp": {
+    "description": "Título de la ayuda del SOS sin aviso y nombre del botón de ayuda (se anuncia «Ayuda SOS»)."
+  },
+  "incidentIdleBody": "Mantén pulsado SOS para avisar a central.",
+  "@incidentIdleBody": {
+    "description": "Ayuda del SOS sin aviso: cómo avisar. SOS no se traduce."
+  },
+  "incidentFalseAlarmQuestion": "¿Fue una falsa alarma?",
+  "@incidentFalseAlarmQuestion": {
+    "description": "Título del diálogo para cancelar un SOS."
+  },
+  "incidentFalseAlarmBody": "Cancelaremos el aviso. Central lo verá igualmente y queda registrado.",
+  "@incidentFalseAlarmBody": {
+    "description": "Diálogo para cancelar un SOS: qué pasa al cancelarlo."
+  },
+  "incidentBack": "Volver",
+  "@incidentBack": {
+    "description": "Botón para cerrar el diálogo sin cancelar el SOS."
+  },
+  "incidentCancelAlert": "Cancelar aviso",
+  "@incidentCancelAlert": {
+    "description": "Botón para confirmar que el SOS fue una falsa alarma."
+  },
+  "incidentSentTimes": "Aviso enviado {count} veces.",
+  "@incidentSentTimes": {
+    "description": "Ayuda del SOS: veces que se envió el aviso (solo con 2 o más).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "incidentCallDispatch": "Llamar a central",
+  "@incidentCallDispatch": {
+    "description": "Botón para llamar a central desde la ayuda del SOS."
+  },
+  "incidentSmsDispatch": "Enviar SMS a central",
+  "@incidentSmsDispatch": {
+    "description": "Botón para enviar el SMS preparado a central."
+  },
+  "incidentRetry": "Reintentar el aviso",
+  "@incidentRetry": {
+    "description": "Botón para reintentar el aviso de SOS."
+  },
+  "incidentAlertAgain": "Avisar de nuevo",
+  "@incidentAlertAgain": {
+    "description": "Nombre del botón SOS para volver a avisar (se anuncia «Avisar de nuevo SOS»)."
+  },
+  "incidentHoldToAlertAgain": "Mantén pulsado para avisar de nuevo",
+  "@incidentHoldToAlertAgain": {
+    "description": "Bajo el botón SOS cuando ya hay un aviso."
+  },
+  "incidentFalseAlarm": "Fue una falsa alarma",
+  "@incidentFalseAlarm": {
+    "description": "Botón para cancelar un SOS por falsa alarma."
+  },
+  "incidentConfirmTitle": "¿Avisar a central?",
+  "@incidentConfirmTitle": {
+    "description": "Diálogo de confirmación del SOS con lector de pantalla o teclado: título."
+  },
+  "incidentConfirmBody": "Central recibirá tu aviso y tu ubicación mientras dure.",
+  "@incidentConfirmBody": {
+    "description": "Diálogo de confirmación del SOS: qué recibe central."
+  },
+  "incidentConfirmCancel": "Cancelar",
+  "@incidentConfirmCancel": {
+    "description": "Botón para no enviar el SOS."
+  },
+  "incidentConfirmSend": "Avisar a central",
+  "@incidentConfirmSend": {
+    "description": "Botón para confirmar el envío del SOS."
+  },
+  "incidentSosSemantics": "{label} SOS",
+  "@incidentSosSemantics": {
+    "description": "Etiqueta de lector de pantalla del botón SOS: su nombre seguido de SOS (SOS no se traduce).",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Ayuda"
+      }
+    }
+  },
+  "incidentSosHint": "Mantén pulsado dos segundos para avisar a central. Con lector de pantalla, toca dos veces y confirma.",
+  "@incidentSosHint": {
+    "description": "Indicación de lector de pantalla del botón SOS."
+  },
+  "incidentLive": "Ayuda en curso",
+  "@incidentLive": {
+    "description": "Botón de la pantalla del viaje con un SOS en curso."
+  },
+  "incidentErrorOffline": "No pudimos avisar a central: sin conexión.",
+  "@incidentErrorOffline": {
+    "description": "Error del SOS sin conexión."
+  },
+  "incidentErrorOutsideWindow": "El botón de ayuda funciona durante el viaje.",
+  "@incidentErrorOutsideWindow": {
+    "description": "Error del SOS fuera del viaje."
+  },
+  "incidentErrorRateLimited": "Ya enviaste varios avisos. Llama a central si lo necesitas.",
+  "@incidentErrorRateLimited": {
+    "description": "Error del SOS: demasiados avisos."
+  },
+  "incidentErrorNotAllowed": "Este viaje ya no está a tu nombre.",
+  "@incidentErrorNotAllowed": {
+    "description": "Error del SOS: la reserva ya no es de esta persona."
+  },
+  "incidentErrorGeneric": "No pudimos avisar a central.",
+  "@incidentErrorGeneric": {
+    "description": "Error genérico del SOS."
+  },
   "languageTitle": "Idioma",
   "@languageTitle": {
     "description": "Título de la sección del perfil donde se elige el idioma de la app."
