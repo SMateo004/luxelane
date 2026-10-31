@@ -4,6 +4,76 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/preferencias, Parte B (B0–B6, commit ca6aa15, 2026-10-31)
+
+Desde cierre/integracion 4e3000a (con idiomas). Flutter 3.29.3, Node 22,
+emuladores con `demo-luxelane`.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           109 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           290 archivos, 0 cambiados       0
+flutter test                                  pasa           854/854                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           557/557 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (demo-luxelane)            pasa           1631/1631 (25 de 25 suites)     0
+npm run test:integration (demo-luxelane)      pasa           402/402 (46 de 46 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+capturas de preferencias (B5)                 34 de 36       panel a 390 px sin capturar     —
+```
+
+La Parte B no cambia `firestore.rules`. Trinquete de textos fijos en 0.
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de 5443ec1 (antes de preferencias) con los tests de
+ca6aa15, código de salida 1:
+
+```
+Test Suites: 3 failed, 22 passed, 25 total
+Tests:       19 failed, 1612 passed, 1631 total
+
+● bookings/{id}/driverView › admin › leer
+● bookings/{id}/driverView › admin › listar
+● bookings/{id}/driverView › ana › leer
+● bookings/{id}/driverView › ana › listar
+● bookings/{id}/driverView › asig › leer
+● bookings/{id}/driverView › asig › listar
+● copia por reserva: … › chófer asignado y activo, etapa confirmed: la lee
+● copia por reserva: … › chófer asignado y activo, etapa driver_arrived: la lee
+● copia por reserva: … › chófer asignado y activo, etapa driver_arriving: la lee
+● copia por reserva: … › chófer asignado y activo, etapa in_progress: la lee
+● copia por reserva: … › chófer asignado y activo, etapa verified: la lee
+● copia por reserva: … › el admin la lee
+● copia por reserva: … › el pasajero dueño la lee en cualquier etapa; otro pasajero, nunca
+● perfil: tripPreferences no se escribe desde el cliente › el alta no trae tripPreferences
+● perfil: tripPreferences no se escribe desde el cliente › el dueño no cambia las ridePreferences antiguas
+● perfil: tripPreferences no se escribe desde el cliente › el dueño no las cambia
+● users/{uid}.locale no se escribe desde el cliente › el alta no trae idioma
+● users/{uid}.locale no se escribe desde el cliente › el chófer tampoco
+● users/{uid}.locale no se escribe desde el cliente › el pasajero no cambia su idioma directo
+```
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                     Archivo de tests                          Sin el cambio
+B0a deleteAccount         delete_account.int.ts                     1 de 2 falla
+B0b modelo y perfil       trip_preferences_test, profile_prefs_bloc no compilan sin el modelo
+B0c tarjeta del chófer    driver_preferences_card_test.dart         no compila sin el widget
+B1 perfil                 preferences_screen_test.dart              2 fallan (fila del perfil); resto no compila
+B1 reserva y viaje        booking_preferences_test, ride_prefs      5 fallan; el de viaje no compila
+B1 limpieza               auth_state_preferences_test.dart          no compila sin el campo
+B2 idiomas en solicitud   open_request_languages_test.dart          no compila sin el campo
+B2 nada en push           i18n.test.ts (2)                          prueba nueva (guarda)
+B3 panel                  admin_booking_preferences_test.dart       1 de 6 falla; sin el widget no compila
+Panel en español          locale_test.dart, idioma_test.dart        no compila / 1 falla
+B4 frases prohibidas      frases_prohibidas_test.dart               prueba nueva (casos sintéticos)
+B5 200 % y lector         preferencias_accesibilidad_test.dart      9 de 18 fallan
+```
+
 ## cierre/integracion tras fusionar cierre/idiomas (commit 98f464d, 2026-10-31)
 
 Fusión `git merge --no-ff cierre/idiomas` (hasta 4eefcf0, con la corrección
