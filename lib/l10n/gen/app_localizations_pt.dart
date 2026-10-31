@@ -3231,6 +3231,29 @@ class AppLocalizationsPt extends AppLocalizations {
   String get prefsSaved => 'Preferências salvas.';
 
   @override
+  String get prefsScreenTitle => 'Preferências';
+
+  @override
+  String get prefsEmpty =>
+      'Você ainda não tem preferências. Adicione as que quiser que seu motorista conheça.';
+
+  @override
+  String get prefsEmptyShort => 'Nenhuma preferência ainda';
+
+  @override
+  String get prefsSave => 'Salvar';
+
+  @override
+  String get prefsPlaylistHelp =>
+      'Cole um link https. Sempre abre fora do app.';
+
+  @override
+  String get prefsPlaylistInvalid => 'O link deve começar com https://';
+
+  @override
+  String get prefsNoteHint => 'Por exemplo, onde esperar por você';
+
+  @override
   String get profileSaveError =>
       'Não foi possível salvar as alterações. Tente novamente.';
 
@@ -3242,9 +3265,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get profileEdit => 'Editar';
-
-  @override
-  String get profileRideStyle => 'Seu estilo de viagem';
 
   @override
   String get profileDriverDocuments => 'Habilitação e veículo';
@@ -3284,31 +3304,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get profileDeleteAccount => 'Excluir conta';
-
-  @override
-  String get profilePreferencesFooter =>
-      'Seu motorista verá isto antes do embarque. Vale para suas próximas reservas.';
-
-  @override
-  String get profileQuietRide => 'Viagem em silêncio';
-
-  @override
-  String get profileQuietRideDetail => 'Sem conversa, só o necessário';
-
-  @override
-  String get profileSoftMusic => 'Música suave';
-
-  @override
-  String get profileTemperature => 'Temperatura';
-
-  @override
-  String get profileTemperatureAny => 'Tanto faz';
-
-  @override
-  String get profileLuggageHelp => 'Ajuda com a bagagem';
-
-  @override
-  String get profileOpenDoor => 'Abrir a porta para mim';
 
   @override
   String get profileAccountDeleted => 'Sua conta foi excluída.';
@@ -3388,6 +3383,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String profileVehicleDetail(String vehicleClass, String plate) {
     return '$vehicleClass · placa $plate';
   }
+
+  @override
+  String get profilePreferencesEntry => 'Preferências para o seu motorista';
 
   @override
   String get rideLoadNotFound => 'Não encontramos esta reserva na sua conta.';

@@ -4242,6 +4242,34 @@
   "@prefsSaved": {
     "description": "Confirmación sobria al guardar las preferencias del perfil."
   },
+  "prefsScreenTitle": "Preferencias",
+  "@prefsScreenTitle": {
+    "description": "Título de la pantalla de preferencias del perfil."
+  },
+  "prefsEmpty": "Aún no tienes preferencias. Añade las que quieras que tu chófer conozca.",
+  "@prefsEmpty": {
+    "description": "Estado vacío de la pantalla de preferencias: aún no hay ninguna."
+  },
+  "prefsEmptyShort": "Sin preferencias todavía",
+  "@prefsEmptyShort": {
+    "description": "Subtítulo de la fila del perfil cuando no hay preferencias."
+  },
+  "prefsSave": "Guardar",
+  "@prefsSave": {
+    "description": "Botón para guardar las preferencias del perfil."
+  },
+  "prefsPlaylistHelp": "Pega un enlace https. Se abre siempre fuera de la app.",
+  "@prefsPlaylistHelp": {
+    "description": "Ayuda bajo el campo de la lista de música."
+  },
+  "prefsPlaylistInvalid": "El enlace debe empezar por https://",
+  "@prefsPlaylistInvalid": {
+    "description": "Error del campo de la lista: el enlace no empieza por https."
+  },
+  "prefsNoteHint": "Por ejemplo, dónde esperarte",
+  "@prefsNoteHint": {
+    "description": "Ejemplo dentro del campo de la nota para el chófer."
+  },
   "profileSaveError": "No pudimos guardar los cambios. Inténtalo de nuevo.",
   "@profileSaveError": {
     "description": "Aviso de error si no se guardaron los cambios del perfil."
@@ -4257,10 +4285,6 @@
   "profileEdit": "Editar",
   "@profileEdit": {
     "description": "Botón de la barra superior para editar el perfil."
-  },
-  "profileRideStyle": "Tu estilo de viaje",
-  "@profileRideStyle": {
-    "description": "Encabezado de las preferencias de viaje del pasajero."
   },
   "profileDriverDocuments": "Licencia y vehículo",
   "@profileDriverDocuments": {
@@ -4313,38 +4337,6 @@
   "profileDeleteAccount": "Eliminar cuenta",
   "@profileDeleteAccount": {
     "description": "Botón para eliminar la cuenta."
-  },
-  "profilePreferencesFooter": "Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.",
-  "@profilePreferencesFooter": {
-    "description": "Nota bajo las preferencias de viaje."
-  },
-  "profileQuietRide": "Viaje en silencio",
-  "@profileQuietRide": {
-    "description": "Preferencia: viaje en silencio."
-  },
-  "profileQuietRideDetail": "Sin conversación, salvo lo necesario",
-  "@profileQuietRideDetail": {
-    "description": "Detalle de la preferencia de viaje en silencio."
-  },
-  "profileSoftMusic": "Música suave",
-  "@profileSoftMusic": {
-    "description": "Preferencia: música suave."
-  },
-  "profileTemperature": "Temperatura",
-  "@profileTemperature": {
-    "description": "Preferencia: temperatura de la cabina."
-  },
-  "profileTemperatureAny": "Indistinta",
-  "@profileTemperatureAny": {
-    "description": "Opción de temperatura: sin preferencia."
-  },
-  "profileLuggageHelp": "Ayuda con el equipaje",
-  "@profileLuggageHelp": {
-    "description": "Preferencia: ayuda con el equipaje."
-  },
-  "profileOpenDoor": "Abrirme la puerta",
-  "@profileOpenDoor": {
-    "description": "Preferencia: que el chófer abra la puerta."
   },
   "profileAccountDeleted": "Tu cuenta fue eliminada.",
   "@profileAccountDeleted": {
@@ -4461,6 +4453,10 @@
         "example": "1234ABC"
       }
     }
+  },
+  "profilePreferencesEntry": "Preferencias para tu chófer",
+  "@profilePreferencesEntry": {
+    "description": "Fila del perfil del pasajero que abre sus preferencias para el chófer."
   },
   "rideLoadNotFound": "No encontramos esta reserva en tu cuenta.",
   "@rideLoadNotFound": {

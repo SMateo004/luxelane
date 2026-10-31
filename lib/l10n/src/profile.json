@@ -23,12 +23,6 @@
     "en": "Edit",
     "pt": "Editar"
   },
-  "profileRideStyle": {
-    "description": "Encabezado de las preferencias de viaje del pasajero.",
-    "es": "Tu estilo de viaje",
-    "en": "Your travel style",
-    "pt": "Seu estilo de viagem"
-  },
   "profileDriverDocuments": {
     "description": "Encabezado de la sección de licencia y vehículo del chófer.",
     "es": "Licencia y vehículo",
@@ -106,54 +100,6 @@
     "es": "Eliminar cuenta",
     "en": "Delete account",
     "pt": "Excluir conta"
-  },
-  "profilePreferencesFooter": {
-    "description": "Nota bajo las preferencias de viaje.",
-    "es": "Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.",
-    "en": "Your chauffeur will see this before your pickup. It applies to your upcoming bookings.",
-    "pt": "Seu motorista verá isto antes do embarque. Vale para suas próximas reservas."
-  },
-  "profileQuietRide": {
-    "description": "Preferencia: viaje en silencio.",
-    "es": "Viaje en silencio",
-    "en": "Quiet ride",
-    "pt": "Viagem em silêncio"
-  },
-  "profileQuietRideDetail": {
-    "description": "Detalle de la preferencia de viaje en silencio.",
-    "es": "Sin conversación, salvo lo necesario",
-    "en": "No conversation beyond what is needed",
-    "pt": "Sem conversa, só o necessário"
-  },
-  "profileSoftMusic": {
-    "description": "Preferencia: música suave.",
-    "es": "Música suave",
-    "en": "Soft music",
-    "pt": "Música suave"
-  },
-  "profileTemperature": {
-    "description": "Preferencia: temperatura de la cabina.",
-    "es": "Temperatura",
-    "en": "Temperature",
-    "pt": "Temperatura"
-  },
-  "profileTemperatureAny": {
-    "description": "Opción de temperatura: sin preferencia.",
-    "es": "Indistinta",
-    "en": "No preference",
-    "pt": "Tanto faz"
-  },
-  "profileLuggageHelp": {
-    "description": "Preferencia: ayuda con el equipaje.",
-    "es": "Ayuda con el equipaje",
-    "en": "Help with luggage",
-    "pt": "Ajuda com a bagagem"
-  },
-  "profileOpenDoor": {
-    "description": "Preferencia: que el chófer abra la puerta.",
-    "es": "Abrirme la puerta",
-    "en": "Open the door for me",
-    "pt": "Abrir a porta para mim"
   },
   "profileAccountDeleted": {
     "description": "Aviso tras eliminar la cuenta.",
@@ -312,5 +258,11 @@
         "example": "1234ABC"
       }
     }
+  },
+  "profilePreferencesEntry": {
+    "description": "Fila del perfil del pasajero que abre sus preferencias para el chófer.",
+    "es": "Preferencias para tu chófer",
+    "en": "Preferences for your chauffeur",
+    "pt": "Preferências para o seu motorista"
   }
 }

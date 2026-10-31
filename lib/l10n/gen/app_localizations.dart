@@ -5728,6 +5728,48 @@ abstract class AppLocalizations {
   /// **'Preferencias guardadas.'**
   String get prefsSaved;
 
+  /// Título de la pantalla de preferencias del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias'**
+  String get prefsScreenTitle;
+
+  /// Estado vacío de la pantalla de preferencias: aún no hay ninguna.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes preferencias. Añade las que quieras que tu chófer conozca.'**
+  String get prefsEmpty;
+
+  /// Subtítulo de la fila del perfil cuando no hay preferencias.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin preferencias todavía'**
+  String get prefsEmptyShort;
+
+  /// Botón para guardar las preferencias del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get prefsSave;
+
+  /// Ayuda bajo el campo de la lista de música.
+  ///
+  /// In es, this message translates to:
+  /// **'Pega un enlace https. Se abre siempre fuera de la app.'**
+  String get prefsPlaylistHelp;
+
+  /// Error del campo de la lista: el enlace no empieza por https.
+  ///
+  /// In es, this message translates to:
+  /// **'El enlace debe empezar por https://'**
+  String get prefsPlaylistInvalid;
+
+  /// Ejemplo dentro del campo de la nota para el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Por ejemplo, dónde esperarte'**
+  String get prefsNoteHint;
+
   /// Aviso de error si no se guardaron los cambios del perfil.
   ///
   /// In es, this message translates to:
@@ -5751,12 +5793,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Editar'**
   String get profileEdit;
-
-  /// Encabezado de las preferencias de viaje del pasajero.
-  ///
-  /// In es, this message translates to:
-  /// **'Tu estilo de viaje'**
-  String get profileRideStyle;
 
   /// Encabezado de la sección de licencia y vehículo del chófer.
   ///
@@ -5835,54 +5871,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Eliminar cuenta'**
   String get profileDeleteAccount;
-
-  /// Nota bajo las preferencias de viaje.
-  ///
-  /// In es, this message translates to:
-  /// **'Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.'**
-  String get profilePreferencesFooter;
-
-  /// Preferencia: viaje en silencio.
-  ///
-  /// In es, this message translates to:
-  /// **'Viaje en silencio'**
-  String get profileQuietRide;
-
-  /// Detalle de la preferencia de viaje en silencio.
-  ///
-  /// In es, this message translates to:
-  /// **'Sin conversación, salvo lo necesario'**
-  String get profileQuietRideDetail;
-
-  /// Preferencia: música suave.
-  ///
-  /// In es, this message translates to:
-  /// **'Música suave'**
-  String get profileSoftMusic;
-
-  /// Preferencia: temperatura de la cabina.
-  ///
-  /// In es, this message translates to:
-  /// **'Temperatura'**
-  String get profileTemperature;
-
-  /// Opción de temperatura: sin preferencia.
-  ///
-  /// In es, this message translates to:
-  /// **'Indistinta'**
-  String get profileTemperatureAny;
-
-  /// Preferencia: ayuda con el equipaje.
-  ///
-  /// In es, this message translates to:
-  /// **'Ayuda con el equipaje'**
-  String get profileLuggageHelp;
-
-  /// Preferencia: que el chófer abra la puerta.
-  ///
-  /// In es, this message translates to:
-  /// **'Abrirme la puerta'**
-  String get profileOpenDoor;
 
   /// Aviso tras eliminar la cuenta.
   ///
@@ -6009,6 +5997,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{vehicleClass} · placa {plate}'**
   String profileVehicleDetail(String vehicleClass, String plate);
+
+  /// Fila del perfil del pasajero que abre sus preferencias para el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias para tu chófer'**
+  String get profilePreferencesEntry;
 
   /// Pantalla del viaje: la reserva no existe o no es de esta cuenta.
   ///

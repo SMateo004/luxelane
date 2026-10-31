@@ -16,6 +16,7 @@ import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/driver_documents_group.dart';
 import '../widgets/language_selector.dart';
+import 'preferences_screen.dart';
 
 // ---------------------------------------------------------------------------
 // ProfileScreen
@@ -80,7 +81,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         body: BlocConsumer<ProfileBloc, ProfileState>(
+          // Con Preferencias abierta encima, el aviso lo da esa pantalla.
           listenWhen: (prev, next) =>
+              ModalRoute.of(context)?.isCurrent != false &&
               next is ProfileLoaded &&
               next.message != null &&
               (prev is! ProfileLoaded || prev.messageSeq != next.messageSeq),
@@ -163,6 +166,13 @@ class _ProfileBody extends StatelessWidget {
             onEdit: onEdit,
           ),
         ),
+        // Solo el pasajero: el chófer no tiene preferencias para su chófer.
+        if (rider) ...[
+          const SizedBox(height: LuxSpacing.xl),
+          item(SectionHeader(title: context.l10n.prefsScreenTitle)),
+          const SizedBox(height: LuxSpacing.sm),
+          item(_PreferencesRow(preferences: user.tripPreferences)),
+        ],
         if (driverProfile != null) ...[
           const SizedBox(height: LuxSpacing.xl),
           item(SectionHeader(title: context.l10n.profileDriverDocuments)),
@@ -251,6 +261,37 @@ class _ProfileBody extends StatelessWidget {
         const Center(
           child: Text('Luxelane · v1.0.0', // i18n-ignore: marca y versión
               style: LuxTypography.caption),
+        ),
+      ],
+    );
+  }
+}
+
+/// Entrada a las preferencias para el chófer, con un resumen corto de lo
+/// guardado.
+class _PreferencesRow extends StatelessWidget {
+  const _PreferencesRow({required this.preferences});
+  final TripPreferences preferences;
+
+  @override
+  Widget build(BuildContext context) {
+    final summary = preferences.summary;
+    return LuxGroup(
+      children: [
+        LuxListRow(
+          icon: Icons.tune_rounded,
+          title: context.l10n.profilePreferencesEntry,
+          subtitle: summary.isEmpty
+              ? context.l10n.prefsEmptyShort
+              : [...summary.take(3), if (summary.length > 3) '…'].join(' · '),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => BlocProvider.value(
+                value: context.read<ProfileBloc>(),
+                child: const PreferencesScreen(),
+              ),
+            ),
+          ),
         ),
       ],
     );

@@ -3211,6 +3211,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prefsSaved => 'Preferences saved.';
 
   @override
+  String get prefsScreenTitle => 'Preferences';
+
+  @override
+  String get prefsEmpty =>
+      'You have no preferences yet. Add any you would like your chauffeur to know.';
+
+  @override
+  String get prefsEmptyShort => 'No preferences yet';
+
+  @override
+  String get prefsSave => 'Save';
+
+  @override
+  String get prefsPlaylistHelp =>
+      'Paste an https link. It always opens outside the app.';
+
+  @override
+  String get prefsPlaylistInvalid => 'The link must start with https://';
+
+  @override
+  String get prefsNoteHint => 'For example, where to wait for you';
+
+  @override
   String get profileSaveError =>
       'We couldn\'t save your changes. Please try again.';
 
@@ -3222,9 +3245,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileEdit => 'Edit';
-
-  @override
-  String get profileRideStyle => 'Your travel style';
 
   @override
   String get profileDriverDocuments => 'Licence and vehicle';
@@ -3264,31 +3284,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileDeleteAccount => 'Delete account';
-
-  @override
-  String get profilePreferencesFooter =>
-      'Your chauffeur will see this before your pickup. It applies to your upcoming bookings.';
-
-  @override
-  String get profileQuietRide => 'Quiet ride';
-
-  @override
-  String get profileQuietRideDetail => 'No conversation beyond what is needed';
-
-  @override
-  String get profileSoftMusic => 'Soft music';
-
-  @override
-  String get profileTemperature => 'Temperature';
-
-  @override
-  String get profileTemperatureAny => 'No preference';
-
-  @override
-  String get profileLuggageHelp => 'Help with luggage';
-
-  @override
-  String get profileOpenDoor => 'Open the door for me';
 
   @override
   String get profileAccountDeleted => 'Your account has been deleted.';
@@ -3367,6 +3362,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String profileVehicleDetail(String vehicleClass, String plate) {
     return '$vehicleClass · plate $plate';
   }
+
+  @override
+  String get profilePreferencesEntry => 'Preferences for your chauffeur';
 
   @override
   String get rideLoadNotFound =>

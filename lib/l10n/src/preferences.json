@@ -274,5 +274,47 @@
     "es": "Preferencias guardadas.",
     "en": "Preferences saved.",
     "pt": "Preferências salvas."
+  },
+  "prefsScreenTitle": {
+    "description": "Título de la pantalla de preferencias del perfil.",
+    "es": "Preferencias",
+    "en": "Preferences",
+    "pt": "Preferências"
+  },
+  "prefsEmpty": {
+    "description": "Estado vacío de la pantalla de preferencias: aún no hay ninguna.",
+    "es": "Aún no tienes preferencias. Añade las que quieras que tu chófer conozca.",
+    "en": "You have no preferences yet. Add any you would like your chauffeur to know.",
+    "pt": "Você ainda não tem preferências. Adicione as que quiser que seu motorista conheça."
+  },
+  "prefsEmptyShort": {
+    "description": "Subtítulo de la fila del perfil cuando no hay preferencias.",
+    "es": "Sin preferencias todavía",
+    "en": "No preferences yet",
+    "pt": "Nenhuma preferência ainda"
+  },
+  "prefsSave": {
+    "description": "Botón para guardar las preferencias del perfil.",
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "prefsPlaylistHelp": {
+    "description": "Ayuda bajo el campo de la lista de música.",
+    "es": "Pega un enlace https. Se abre siempre fuera de la app.",
+    "en": "Paste an https link. It always opens outside the app.",
+    "pt": "Cole um link https. Sempre abre fora do app."
+  },
+  "prefsPlaylistInvalid": {
+    "description": "Error del campo de la lista: el enlace no empieza por https.",
+    "es": "El enlace debe empezar por https://",
+    "en": "The link must start with https://",
+    "pt": "O link deve começar com https://"
+  },
+  "prefsNoteHint": {
+    "description": "Ejemplo dentro del campo de la nota para el chófer.",
+    "es": "Por ejemplo, dónde esperarte",
+    "en": "For example, where to wait for you",
+    "pt": "Por exemplo, onde esperar por você"
   }
 }
