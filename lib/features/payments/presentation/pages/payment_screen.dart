@@ -8,6 +8,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../../domain/card_payment_presenter.dart';
@@ -53,7 +54,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     if (kIsWeb) {
       showLuxSnackbar(
         context,
-        'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.',
+        context.l10n.paymentAddCardsOnPhone,
       );
       return;
     }
@@ -67,19 +68,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('¿Quitar esta tarjeta?'),
-        content: const Text(
-          'Dejará de estar disponible para tus próximas reservas.',
-        ),
+        title: Text(ctx.l10n.paymentRemoveCardTitle),
+        content: Text(ctx.l10n.paymentRemoveCardMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancelar'),
+            child: Text(ctx.l10n.paymentCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
-            child: const Text('Quitar'),
+            child: Text(ctx.l10n.paymentRemove),
           ),
         ],
       ),
@@ -102,16 +101,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
     if (!_cardsEnabled) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Métodos de pago'),
+          title: Text(context.l10n.paymentMethodsTitle),
           leading: IconButton(
-            tooltip: 'Volver',
+            tooltip: context.l10n.paymentBack,
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.pop(),
           ),
         ),
-        body: const EmptyState(
+        body: EmptyState(
           icon: Icons.payments_outlined,
-          message: 'Cada reserva se paga en su paso de pago.',
+          message: context.l10n.paymentPerBooking,
         ),
       );
     }
@@ -129,15 +128,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Métodos de pago'),
+            title: Text(context.l10n.paymentMethodsTitle),
             leading: IconButton(
-              tooltip: 'Volver',
+              tooltip: context.l10n.paymentBack,
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () => context.pop(),
             ),
             actions: [
               IconButton(
-                tooltip: 'Agregar tarjeta',
+                tooltip: context.l10n.paymentAddCard,
                 onPressed: _addCard,
                 icon: const Icon(Icons.add_rounded, color: LuxColors.sapphire),
               ),
@@ -173,10 +172,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: ListView(
           padding: const EdgeInsets.all(LuxSpacing.md),
           children: [
-            const SectionHeader(title: 'Tarjetas guardadas'),
+            SectionHeader(title: context.l10n.paymentSavedCards),
             const SizedBox(height: LuxSpacing.sm),
             LuxGroup(
-              footer: 'Toca una tarjeta para usarla por defecto al reservar.',
+              footer: context.l10n.paymentSetDefaultHint,
               children: [
                 for (final card in cards)
                   _CardTile(
@@ -191,22 +190,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
             const SizedBox(height: LuxSpacing.lg),
             LuxOutlinedButton(
-              label: 'Agregar tarjeta',
+              label: context.l10n.paymentAddCard,
               onPressed: _addCard,
               icon: Icons.add_rounded,
             ),
             const SizedBox(height: LuxSpacing.md),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.lock_outline,
                   size: 14,
                   color: LuxColors.inkTertiary,
                 ),
-                SizedBox(width: LuxSpacing.xs),
+                const SizedBox(width: LuxSpacing.xs),
                 Text(
-                  'Pagos cifrados y protegidos por Stripe',
+                  context.l10n.paymentEncrypted,
                   style: LuxTypography.caption,
                 ),
               ],
@@ -225,8 +224,8 @@ class _EmptyCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) => EmptyState(
         icon: Icons.credit_card_outlined,
-        message: 'Paga sin pensarlo.',
-        actionLabel: 'Agregar tarjeta',
+        message: context.l10n.paymentEmptyCards,
+        actionLabel: context.l10n.paymentAddCard,
         onAction: onAdd,
       );
 }
@@ -244,11 +243,11 @@ class _CardTile extends StatelessWidget {
   final VoidCallback onSetDefault;
   final VoidCallback onRemove;
 
-  static String _brand(String? b) => switch (b) {
-        'visa' => 'Visa',
-        'mastercard' => 'Mastercard',
-        'amex' => 'American Express',
-        null || '' => 'Tarjeta',
+  static String _brand(BuildContext context, String? b) => switch (b) {
+        'visa' => 'Visa', // i18n-ignore: marca de la tarjeta
+        'mastercard' => 'Mastercard', // i18n-ignore: marca de la tarjeta
+        'amex' => 'American Express', // i18n-ignore: marca de la tarjeta
+        null || '' => context.l10n.paymentMethodCard,
         _ => '${b[0].toUpperCase()}${b.substring(1)}',
       };
 
@@ -256,6 +255,8 @@ class _CardTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final exp =
         '${card['expMonth'].toString().padLeft(2, '0')}/${card['expYear'].toString().substring(2)}';
+    final brand = _brand(context, card['brand'] as String?);
+    final last4 = card['last4'] ?? '····';
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -288,14 +289,16 @@ class _CardTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${_brand(card['brand'] as String?)} ·· ${card['last4'] ?? '····'}',
+                      '$brand ·· $last4',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      isDefault ? 'Predeterminada · vence $exp' : 'Vence $exp',
+                      isDefault
+                          ? context.l10n.paymentCardDefaultExpires(exp)
+                          : context.l10n.paymentCardExpires(exp),
                       style: LuxTypography.caption.copyWith(
                         fontSize: 12,
                         color: isDefault
@@ -321,7 +324,7 @@ class _CardTile extends StatelessWidget {
                     : const SizedBox(key: ValueKey('off'), width: 38),
               ),
               IconButton(
-                tooltip: 'Quitar tarjeta',
+                tooltip: context.l10n.paymentRemoveCard,
                 onPressed: onRemove,
                 icon: const Icon(
                   Icons.delete_outline_rounded,

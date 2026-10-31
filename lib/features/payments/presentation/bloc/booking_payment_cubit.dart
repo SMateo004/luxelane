@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/models/booking_payment.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 import '../../domain/card_payment_presenter.dart';
 
 /// Pago de una reserva desde la app del pasajero (pagos, B1). El estado de
@@ -85,8 +86,7 @@ class BookingPaymentCubit extends Cubit<BookingPaymentState> {
   final CardPaymentPresenter? cardPresenter;
   StreamSubscription<BookingPayment?>? _sub;
 
-  static const kPaymentLoadError =
-      'No pudimos cargar el pago de tu reserva. Revisa tu conexión.';
+  static String get kPaymentLoadError => L10n.current.paymentLoadError;
 
   /// Métodos que se pueden usar aquí: la web y una app sin formulario de
   /// tarjeta solo ofrecen el pago manual (E38).
@@ -151,11 +151,8 @@ class BookingPaymentCubit extends Cubit<BookingPaymentState> {
     }
   }
 
-  static const kCardUnavailable =
-      'El pago con tarjeta no está disponible ahora. Elige otro método.';
-  static const kCardFailed =
-      'No se pudo completar el pago con tarjeta. Revisa los datos e '
-      'inténtalo de nuevo.';
+  static String get kCardUnavailable => L10n.current.paymentCardUnavailable;
+  static String get kCardFailed => L10n.current.paymentCardFailed;
 
   /// Volver a la elección de método.
   void changeMethod() =>

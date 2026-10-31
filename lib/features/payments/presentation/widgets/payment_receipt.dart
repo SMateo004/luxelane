@@ -4,13 +4,14 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/booking_payment.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 String _bs(int cents) => LuxFormat.money(BookingPayment.bs(cents));
 
 /// Texto del método en el comprobante.
 String receiptMethodLabel(String? m) => switch (m) {
-      PayMethod.manualQr => 'QR o transferencia',
-      PayMethod.card => 'Tarjeta',
+      PayMethod.manualQr => L10n.current.paymentReceiptMethodManual,
+      PayMethod.card => L10n.current.paymentMethodCard,
       _ => '—',
     };
 
@@ -33,21 +34,25 @@ class PaymentPendingCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                payment.reported ? 'Esperando confirmación' : 'Pago pendiente',
+                payment.reported
+                    ? context.l10n.paymentWaitingTitle
+                    : context.l10n.paymentPendingTitle,
                 style: LuxTypography.titleMedium,
               ),
               const SizedBox(height: LuxSpacing.xs),
               Text(
                 payment.reported
-                    ? 'Avisaste que pagaste ${_bs(payment.amountDue)}. '
-                        'Central lo está revisando.'
-                    : 'Paga ${_bs(payment.amountDue)} para que busquemos '
-                        'a tu chófer.',
+                    ? context.l10n
+                        .paymentReportedMessage(_bs(payment.amountDue))
+                    : context.l10n
+                        .paymentPendingMessage(_bs(payment.amountDue)),
                 style: LuxTypography.bodyMedium,
               ),
               const SizedBox(height: LuxSpacing.md),
               LuxButton(
-                label: payment.reported ? 'Ver el pago' : 'Pagar ahora',
+                label: payment.reported
+                    ? context.l10n.paymentViewPayment
+                    : context.l10n.paymentPayNow,
                 onPressed: onPay,
               ),
             ],
@@ -88,13 +93,14 @@ class _PaymentReceiptCardState extends State<PaymentReceiptCard> {
   @override
   Widget build(BuildContext context) {
     final p = widget.payment;
+    final t = context.l10n;
     final header = Row(
       children: [
         Expanded(
           child: Semantics(
             header: true,
-            child: const Text(
-              'Comprobante de pago',
+            child: Text(
+              t.paymentReceiptTitle,
               style: LuxTypography.titleMedium,
             ),
           ),
@@ -109,7 +115,7 @@ class _PaymentReceiptCardState extends State<PaymentReceiptCard> {
           ),
           IconButton(
             key: const ValueKey('payment-receipt-toggle'),
-            tooltip: _open ? 'Ocultar comprobante' : 'Ver comprobante',
+            tooltip: _open ? t.paymentReceiptHide : t.paymentReceiptShow,
             icon: Icon(
               _open ? Icons.expand_less_rounded : Icons.expand_more_rounded,
             ),
@@ -142,36 +148,32 @@ class _PaymentReceiptCardState extends State<PaymentReceiptCard> {
           children: [
             header,
             Text(
-              'Este comprobante no es una factura.',
+              t.paymentReceiptNotInvoice,
               style:
                   LuxTypography.caption.copyWith(color: LuxColors.inkTertiary),
             ),
             const SizedBox(height: LuxSpacing.sm),
-            _Row('Pagado', _bs(p.amountPaid)),
-            if (p.paidAt != null) _Row('Fecha', LuxFormat.dateTime(p.paidAt!)),
-            _Row('Método', receiptMethodLabel(p.method)),
-            if (p.paymentRef != null) _Row('Referencia', p.paymentRef!),
+            _Row(t.paymentReceiptPaid, _bs(p.amountPaid)),
+            if (p.paidAt != null)
+              _Row(t.paymentReceiptDate, LuxFormat.dateTime(p.paidAt!)),
+            _Row(t.paymentReceiptMethod, receiptMethodLabel(p.method)),
+            if (p.paymentRef != null) _Row(t.paymentReference, p.paymentRef!),
             if (p.amountRetained > 0)
-              _Row('Retención por cancelación', _bs(p.amountRetained)),
+              _Row(t.paymentReceiptRetained, _bs(p.amountRetained)),
             if (p.status == BookingPaymentStatus.refundPending &&
                 p.refundDue > 0) ...[
-              _Row('Devolución pendiente', _bs(p.refundDue)),
-              const _Note(
-                'Central la registrará y te avisaremos cuando quede hecha.',
-              ),
+              _Row(t.paymentReceiptRefundPending, _bs(p.refundDue)),
+              _Note(t.paymentReceiptRefundPendingNote),
             ],
             if (p.amountRefunded > 0) ...[
-              _Row('Devuelto', _bs(p.amountRefunded)),
-              const _Note(
-                'Te devolvemos el dinero al método con el que pagaste.',
-              ),
+              _Row(t.paymentReceiptRefunded, _bs(p.amountRefunded)),
+              _Note(t.paymentReceiptRefundedNote),
             ],
             // H3: el saldo se muestra tal cual; lo gestiona central. Sin
             // promesas de contacto ni plazos.
             if (p.balanceDue > 0) ...[
-              _Row('Saldo pendiente', _bs(p.balanceDue)),
-              const _Note(
-                  'El importe final del viaje fue mayor que lo pagado.'),
+              _Row(t.paymentReceiptBalanceDue, _bs(p.balanceDue)),
+              _Note(t.paymentReceiptBalanceNote),
             ],
           ],
         ),

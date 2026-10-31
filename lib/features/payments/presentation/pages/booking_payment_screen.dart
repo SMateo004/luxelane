@@ -12,6 +12,7 @@ import '../../../../core/models/booking_payment.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../domain/card_payment_presenter.dart';
 import '../bloc/booking_payment_cubit.dart';
 
@@ -47,9 +48,9 @@ class BookingPaymentView extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: LuxColors.bg,
         appBar: AppBar(
-          title: const Text('Pago de tu reserva'),
+          title: Text(context.l10n.paymentBookingTitle),
           leading: IconButton(
-            tooltip: 'Ver mi viaje',
+            tooltip: context.l10n.paymentViewTrip,
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.go('/ride/$bookingId'),
           ),
@@ -71,8 +72,8 @@ class BookingPaymentView extends StatelessWidget {
     if (p == null) {
       return EmptyState(
         icon: Icons.receipt_long_outlined,
-        message: s.error ?? 'Esta reserva no tiene un pago pendiente.',
-        actionLabel: 'Ver mi viaje',
+        message: s.error ?? context.l10n.paymentNoPending,
+        actionLabel: context.l10n.paymentViewTrip,
         onAction: toTrip,
       );
     }
@@ -95,29 +96,27 @@ class BookingPaymentView extends StatelessWidget {
     BookingPayment p,
     VoidCallback toTrip,
   ) {
+    final t = context.l10n;
     switch (p.status) {
       case BookingPaymentStatus.paid:
         return [
-          const _Outcome(
+          _Outcome(
             success: true,
-            title: 'Pago confirmado',
-            message: 'Ya buscamos a tu chófer. Te avisaremos cuando esté '
-                'asignado.',
+            title: t.paymentConfirmedTitle,
+            message: t.paymentConfirmedMessage,
           ),
           const SizedBox(height: LuxSpacing.lg),
-          LuxButton(label: 'Ver mi viaje', onPressed: toTrip),
+          LuxButton(label: t.paymentViewTrip, onPressed: toTrip),
         ];
       case BookingPaymentStatus.expired:
         return [
           _Outcome(
-            title: 'El plazo para pagar terminó',
-            message: 'La reserva se canceló porque no recibimos el pago a '
-                'tiempo. Si ya habías pagado, contacta con central e indica '
-                'la referencia ${p.paymentRef ?? ''}.',
+            title: t.paymentExpiredTitle,
+            message: t.paymentExpiredMessage(p.paymentRef ?? ''),
           ),
           const SizedBox(height: LuxSpacing.lg),
           LuxButton(
-            label: 'Hacer una nueva reserva',
+            label: t.paymentNewBooking,
             onPressed: () => context.go('/'),
           ),
         ];
@@ -126,12 +125,12 @@ class BookingPaymentView extends StatelessWidget {
       case BookingPaymentStatus.partiallyRefunded:
       case BookingPaymentStatus.unknown:
         return [
-          const _Outcome(
-            title: 'Esta reserva ya no admite pagos',
-            message: 'Consulta el detalle y el comprobante en tu viaje.',
+          _Outcome(
+            title: t.paymentClosedTitle,
+            message: t.paymentClosedMessage,
           ),
           const SizedBox(height: LuxSpacing.lg),
-          LuxButton(label: 'Ver mi viaje', onPressed: toTrip),
+          LuxButton(label: t.paymentViewTrip, onPressed: toTrip),
         ];
       case BookingPaymentStatus.awaitingPayment:
       case BookingPaymentStatus.failed:
@@ -147,19 +146,11 @@ class BookingPaymentView extends StatelessWidget {
         _Waiting(payment: p)
       else ...[
         if (p.rejected) ...[
-          const _Notice(
-            error: true,
-            text: 'No pudimos confirmar tu pago. Revisa los datos y vuelve '
-                'a avisarnos, o contacta con central.',
-          ),
+          _Notice(error: true, text: t.paymentRejected),
           const SizedBox(height: LuxSpacing.md),
         ],
         if (usable.isEmpty)
-          const _Notice(
-            error: true,
-            text: 'Ahora mismo no podemos recibir el pago desde aquí. '
-                'Contacta con central para completar tu reserva.',
-          )
+          _Notice(error: true, text: t.paymentNoMethods)
         else if (s.start == null)
           _MethodChoice(methods: usable, busy: s.busy)
         else if (s.start!.method == PayMethod.manualQr)
@@ -169,7 +160,7 @@ class BookingPaymentView extends StatelessWidget {
         if (s.start != null && usable.length > 1 && !s.busy) ...[
           const SizedBox(height: LuxSpacing.sm),
           LuxButton.ghost(
-            label: 'Cambiar método de pago',
+            label: t.paymentChangeMethod,
             onPressed: cubit.changeMethod,
           ),
         ],
@@ -180,7 +171,7 @@ class BookingPaymentView extends StatelessWidget {
       ],
       const SizedBox(height: LuxSpacing.lg),
       Text(
-        'Buscamos chófer cuando el pago está confirmado.',
+        t.paymentSearchAfterConfirm,
         style: LuxTypography.caption.copyWith(color: LuxColors.inkTertiary),
         textAlign: TextAlign.center,
       ),
@@ -204,7 +195,10 @@ class _AmountCard extends StatelessWidget {
         children: [
           Semantics(
             header: true,
-            child: const Text('IMPORTE A PAGAR', style: LuxTypography.eyebrow),
+            child: Text(
+              context.l10n.paymentAmountDueEyebrow,
+              style: LuxTypography.eyebrow,
+            ),
           ),
           const SizedBox(height: LuxSpacing.xs),
           Text(
@@ -213,7 +207,7 @@ class _AmountCard extends StatelessWidget {
           ),
           if (ref != null) ...[
             const SizedBox(height: LuxSpacing.md),
-            _CopyRow(label: 'Referencia', value: ref),
+            _CopyRow(label: context.l10n.paymentReference, value: ref),
           ],
           if (payment.paymentDeadline != null) ...[
             const SizedBox(height: LuxSpacing.sm),
@@ -277,14 +271,17 @@ class _DeadlineState extends State<_Deadline> {
 /// «Quedan 24 min para pagar (hasta las 14:30)». Solo con el plazo que da
 /// el servidor (config/ops.paymentWindowMinutes); sin él no se muestra nada.
 String paymentTimeLeft(DateTime deadline, DateTime now) {
+  final t = L10n.current;
   final left = deadline.difference(now);
   final until = LuxFormat.time(deadline);
-  if (left.inSeconds <= 0) return 'El plazo para pagar terminó a las $until.';
+  if (left.inSeconds <= 0) return t.paymentDeadlinePassed(until);
   final mins = (left.inSeconds / 60).ceil();
   final span = mins < 60
-      ? '$mins min'
-      : '${mins ~/ 60} h${mins % 60 == 0 ? '' : ' ${mins % 60} min'}';
-  return 'Quedan $span para pagar (hasta las $until).';
+      ? t.paymentSpanMinutes(mins)
+      : mins % 60 == 0
+          ? t.paymentSpanHours(mins ~/ 60)
+          : t.paymentSpanHoursMinutes(mins ~/ 60, mins % 60);
+  return t.paymentTimeLeft(span, until);
 }
 
 class _CopyRow extends StatelessWidget {
@@ -311,13 +308,13 @@ class _CopyRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Copiar ${label.toLowerCase()}',
+            tooltip: context.l10n.paymentCopy(label.toLowerCase()),
             icon: const Icon(Icons.copy_rounded, size: 20),
             color: LuxColors.sapphire,
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: value));
               if (context.mounted) {
-                showLuxSnackbar(context, '$label copiada.');
+                showLuxSnackbar(context, context.l10n.paymentCopied(label));
               }
             },
           ),
@@ -328,8 +325,8 @@ class _CopyRow extends StatelessWidget {
 // ── Método ──────────────────────────────────────────────────────────────────
 
 String payMethodLabel(String m) => switch (m) {
-      PayMethod.manualQr => 'QR o transferencia bancaria',
-      PayMethod.card => 'Tarjeta',
+      PayMethod.manualQr => L10n.current.paymentMethodManualQr,
+      PayMethod.card => L10n.current.paymentMethodCard,
       _ => m,
     };
 
@@ -344,8 +341,10 @@ class _MethodChoice extends StatelessWidget {
         children: [
           Semantics(
             header: true,
-            child: const Text('¿CÓMO QUIERES PAGAR?',
-                style: LuxTypography.eyebrow),
+            child: Text(
+              context.l10n.paymentHowToPay,
+              style: LuxTypography.eyebrow,
+            ),
           ),
           const SizedBox(height: LuxSpacing.sm),
           for (final m in methods)
@@ -427,8 +426,8 @@ class _ManualPayState extends State<_ManualPay> {
             children: [
               Semantics(
                 header: true,
-                child: const Text(
-                  'PAGA POR QR O TRANSFERENCIA',
+                child: Text(
+                  context.l10n.paymentManualEyebrow,
                   style: LuxTypography.eyebrow,
                 ),
               ),
@@ -437,17 +436,16 @@ class _ManualPayState extends State<_ManualPay> {
                 Center(
                   child: Semantics(
                     image: true,
-                    label: 'Código QR para pagar',
+                    label: context.l10n.paymentQrLabel,
                     child: Image.network(
                       i!.qrImageUrl!,
                       width: 220,
                       height: 220,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const SizedBox(
+                      errorBuilder: (_, __, ___) => SizedBox(
                         width: 220,
                         child: Text(
-                          'No pudimos mostrar el QR. Usa los datos de la '
-                          'cuenta.',
+                          context.l10n.paymentQrError,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -457,12 +455,16 @@ class _ManualPayState extends State<_ManualPay> {
                 const SizedBox(height: LuxSpacing.md),
               ],
               if (i != null) ...[
-                _Line('Titular', i.holderName),
-                if (i.bankName != null) _Line('Banco', i.bankName!),
+                _Line(context.l10n.paymentHolder, i.holderName),
+                if (i.bankName != null)
+                  _Line(context.l10n.paymentBank, i.bankName!),
                 if (i.accountType != null)
-                  _Line('Tipo de cuenta', i.accountType!),
+                  _Line(context.l10n.paymentAccountType, i.accountType!),
                 if (i.accountNumber != null)
-                  _CopyRow(label: 'Cuenta', value: i.accountNumber!),
+                  _CopyRow(
+                    label: context.l10n.paymentAccount,
+                    value: i.accountNumber!,
+                  ),
                 if (i.note != null) ...[
                   const SizedBox(height: LuxSpacing.sm),
                   Text(i.note!, style: LuxTypography.bodyMedium),
@@ -470,10 +472,10 @@ class _ManualPayState extends State<_ManualPay> {
               ],
               const SizedBox(height: LuxSpacing.md),
               Text(
-                'Paga exactamente '
-                '${LuxFormat.money(BookingPayment.bs(widget.start.amountDue))}'
-                ' y escribe la referencia ${widget.start.paymentRef} en el '
-                'concepto o glosa.',
+                context.l10n.paymentPayExactly(
+                  LuxFormat.money(BookingPayment.bs(widget.start.amountDue)),
+                  widget.start.paymentRef,
+                ),
                 style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
               ),
             ],
@@ -481,14 +483,14 @@ class _ManualPayState extends State<_ManualPay> {
         ),
         const SizedBox(height: LuxSpacing.md),
         LuxTextField(
-          label: 'Número de operación (opcional)',
-          hint: 'El que aparece en tu comprobante',
+          label: context.l10n.paymentOperationLabel,
+          hint: context.l10n.paymentOperationHint,
           controller: _op,
           inputFormatters: [LengthLimitingTextInputFormatter(40)],
         ),
         const SizedBox(height: LuxSpacing.md),
         LuxButton(
-          label: 'Ya pagué',
+          label: context.l10n.paymentIPaid,
           icon: Icons.check_rounded,
           loading: widget.busy,
           onPressed: widget.busy
@@ -542,18 +544,20 @@ class _Waiting extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Esperando confirmación',
-                        style: LuxTypography.titleMedium),
+                    Text(
+                      context.l10n.paymentWaitingTitle,
+                      style: LuxTypography.titleMedium,
+                    ),
                     const SizedBox(height: LuxSpacing.xs),
-                    const Text(
-                      'Central está revisando tu pago. Te avisaremos aquí y '
-                      'en tus notificaciones cuando lo confirme.',
+                    Text(
+                      context.l10n.paymentWaitingMessage,
                       style: LuxTypography.bodyMedium,
                     ),
                     if (payment.riderOperationNumber != null) ...[
                       const SizedBox(height: LuxSpacing.sm),
                       Text(
-                        'Número de operación: ${payment.riderOperationNumber}',
+                        context.l10n.paymentOperationNumber(
+                            payment.riderOperationNumber!),
                         style: LuxTypography.caption,
                       ),
                     ],
@@ -577,24 +581,26 @@ class _CardPay extends StatelessWidget {
     if (state.cardSubmitted) {
       return Semantics(
         liveRegion: true,
-        child: const LuxCard(
-          padding: EdgeInsets.all(LuxSpacing.lg),
+        child: LuxCard(
+          padding: const EdgeInsets.all(LuxSpacing.lg),
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              SizedBox(width: LuxSpacing.md),
-              Expanded(child: Text('Confirmando tu pago…')),
+              const SizedBox(width: LuxSpacing.md),
+              Expanded(child: Text(context.l10n.paymentConfirming)),
             ],
           ),
         ),
       );
     }
     return LuxButton(
-      label: state.error == null ? 'Pagar con tarjeta' : 'Reintentar',
+      label: state.error == null
+          ? context.l10n.paymentPayWithCard
+          : context.l10n.paymentRetry,
       icon: Icons.credit_card_rounded,
       loading: state.busy,
       onPressed: state.busy

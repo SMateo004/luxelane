@@ -378,4 +378,357 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get legalSpanishOnlyNotice =>
       'Este documento solo está disponible en español por ahora.';
+
+  @override
+  String get paymentOurFault =>
+      'No pudimos completar el pago por un problema nuestro. Inténtalo de nuevo en unos minutos.';
+
+  @override
+  String get paymentMethodDisabled =>
+      'Este método de pago no está disponible ahora. Elige otro o contacta con central.';
+
+  @override
+  String get paymentAlreadyPaid => 'Esta reserva ya está pagada.';
+
+  @override
+  String get paymentNotAwaiting =>
+      'Esta reserva ya no admite pagos. Revisa su estado en Mis viajes.';
+
+  @override
+  String get paymentBookingNotFound => 'No encontramos esta reserva.';
+
+  @override
+  String get paymentInvalidOperationNumber =>
+      'Revisa el número de operación: usa solo letras, números, espacios y . _ / -';
+
+  @override
+  String get paymentAccountNotEnabled =>
+      'tu cuenta aún no tiene pagos habilitados';
+
+  @override
+  String get paymentServerUnreachable =>
+      'no se pudo contactar con el servidor de pagos';
+
+  @override
+  String get paymentCardInUse =>
+      'Esta tarjeta paga una reserva pendiente. Cancélala o espera a que termine antes de quitar la tarjeta.';
+
+  @override
+  String get paymentRemoveCardError =>
+      'No pudimos quitar la tarjeta. Inténtalo de nuevo.';
+
+  @override
+  String get paymentSetDefaultError =>
+      'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.';
+
+  @override
+  String get paymentProfileError =>
+      'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.';
+
+  @override
+  String get paymentLoadError =>
+      'No pudimos cargar el pago de tu reserva. Revisa tu conexión.';
+
+  @override
+  String get paymentCardUnavailable =>
+      'El pago con tarjeta no está disponible ahora. Elige otro método.';
+
+  @override
+  String get paymentCardFailed =>
+      'No se pudo completar el pago con tarjeta. Revisa los datos e inténtalo de nuevo.';
+
+  @override
+  String get paymentCardIncomplete =>
+      'Ingresa los datos completos de la tarjeta';
+
+  @override
+  String get paymentCardAdded => 'Tarjeta agregada exitosamente';
+
+  @override
+  String get paymentAddMethodTitle => 'Agregar método de pago';
+
+  @override
+  String get paymentBack => 'Volver';
+
+  @override
+  String get paymentCardDetails => 'Datos de la tarjeta';
+
+  @override
+  String get paymentAddCardSecure =>
+      'Protegido por Stripe · Cumplimiento PCI DSS';
+
+  @override
+  String get paymentAddCard => 'Agregar tarjeta';
+
+  @override
+  String get paymentBookingTitle => 'Pago de tu reserva';
+
+  @override
+  String get paymentViewTrip => 'Ver mi viaje';
+
+  @override
+  String get paymentNoPending => 'Esta reserva no tiene un pago pendiente.';
+
+  @override
+  String get paymentConfirmedTitle => 'Pago confirmado';
+
+  @override
+  String get paymentConfirmedMessage =>
+      'Ya buscamos a tu chófer. Te avisaremos cuando esté asignado.';
+
+  @override
+  String get paymentExpiredTitle => 'El plazo para pagar terminó';
+
+  @override
+  String paymentExpiredMessage(String reference) {
+    return 'La reserva se canceló porque no recibimos el pago a tiempo. Si ya habías pagado, contacta con central e indica la referencia $reference.';
+  }
+
+  @override
+  String get paymentNewBooking => 'Hacer una nueva reserva';
+
+  @override
+  String get paymentClosedTitle => 'Esta reserva ya no admite pagos';
+
+  @override
+  String get paymentClosedMessage =>
+      'Consulta el detalle y el comprobante en tu viaje.';
+
+  @override
+  String get paymentRejected =>
+      'No pudimos confirmar tu pago. Revisa los datos y vuelve a avisarnos, o contacta con central.';
+
+  @override
+  String get paymentNoMethods =>
+      'Ahora mismo no podemos recibir el pago desde aquí. Contacta con central para completar tu reserva.';
+
+  @override
+  String get paymentChangeMethod => 'Cambiar método de pago';
+
+  @override
+  String get paymentSearchAfterConfirm =>
+      'Buscamos chófer cuando el pago está confirmado.';
+
+  @override
+  String get paymentAmountDueEyebrow => 'IMPORTE A PAGAR';
+
+  @override
+  String get paymentReference => 'Referencia';
+
+  @override
+  String paymentDeadlinePassed(String time) {
+    return 'El plazo para pagar terminó a las $time.';
+  }
+
+  @override
+  String paymentTimeLeft(String span, String time) {
+    return 'Quedan $span para pagar (hasta las $time).';
+  }
+
+  @override
+  String paymentSpanMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String paymentSpanHours(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String paymentSpanHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String paymentCopy(String label) {
+    return 'Copiar $label';
+  }
+
+  @override
+  String paymentCopied(String label) {
+    return '$label copiada.';
+  }
+
+  @override
+  String get paymentMethodManualQr => 'QR o transferencia bancaria';
+
+  @override
+  String get paymentMethodCard => 'Tarjeta';
+
+  @override
+  String get paymentHowToPay => '¿CÓMO QUIERES PAGAR?';
+
+  @override
+  String get paymentManualEyebrow => 'PAGA POR QR O TRANSFERENCIA';
+
+  @override
+  String get paymentQrLabel => 'Código QR para pagar';
+
+  @override
+  String get paymentQrError =>
+      'No pudimos mostrar el QR. Usa los datos de la cuenta.';
+
+  @override
+  String get paymentHolder => 'Titular';
+
+  @override
+  String get paymentBank => 'Banco';
+
+  @override
+  String get paymentAccountType => 'Tipo de cuenta';
+
+  @override
+  String get paymentAccount => 'Cuenta';
+
+  @override
+  String paymentPayExactly(String amount, String reference) {
+    return 'Paga exactamente $amount y escribe la referencia $reference en el concepto o glosa.';
+  }
+
+  @override
+  String get paymentOperationLabel => 'Número de operación (opcional)';
+
+  @override
+  String get paymentOperationHint => 'El que aparece en tu comprobante';
+
+  @override
+  String get paymentIPaid => 'Ya pagué';
+
+  @override
+  String get paymentWaitingTitle => 'Esperando confirmación';
+
+  @override
+  String get paymentWaitingMessage =>
+      'Central está revisando tu pago. Te avisaremos aquí y en tus notificaciones cuando lo confirme.';
+
+  @override
+  String paymentOperationNumber(String number) {
+    return 'Número de operación: $number';
+  }
+
+  @override
+  String get paymentConfirming => 'Confirmando tu pago…';
+
+  @override
+  String get paymentPayWithCard => 'Pagar con tarjeta';
+
+  @override
+  String get paymentRetry => 'Reintentar';
+
+  @override
+  String get paymentAddCardsOnPhone =>
+      'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.';
+
+  @override
+  String get paymentRemoveCardTitle => '¿Quitar esta tarjeta?';
+
+  @override
+  String get paymentRemoveCardMessage =>
+      'Dejará de estar disponible para tus próximas reservas.';
+
+  @override
+  String get paymentCancel => 'Cancelar';
+
+  @override
+  String get paymentRemove => 'Quitar';
+
+  @override
+  String get paymentMethodsTitle => 'Métodos de pago';
+
+  @override
+  String get paymentPerBooking => 'Cada reserva se paga en su paso de pago.';
+
+  @override
+  String get paymentSavedCards => 'Tarjetas guardadas';
+
+  @override
+  String get paymentSetDefaultHint =>
+      'Toca una tarjeta para usarla por defecto al reservar.';
+
+  @override
+  String get paymentEncrypted => 'Pagos cifrados y protegidos por Stripe';
+
+  @override
+  String get paymentEmptyCards => 'Paga sin pensarlo.';
+
+  @override
+  String paymentCardDefaultExpires(String expiry) {
+    return 'Predeterminada · vence $expiry';
+  }
+
+  @override
+  String paymentCardExpires(String expiry) {
+    return 'Vence $expiry';
+  }
+
+  @override
+  String get paymentRemoveCard => 'Quitar tarjeta';
+
+  @override
+  String get paymentReceiptMethodManual => 'QR o transferencia';
+
+  @override
+  String get paymentPendingTitle => 'Pago pendiente';
+
+  @override
+  String paymentReportedMessage(String amount) {
+    return 'Avisaste que pagaste $amount. Central lo está revisando.';
+  }
+
+  @override
+  String paymentPendingMessage(String amount) {
+    return 'Paga $amount para que busquemos a tu chófer.';
+  }
+
+  @override
+  String get paymentViewPayment => 'Ver el pago';
+
+  @override
+  String get paymentPayNow => 'Pagar ahora';
+
+  @override
+  String get paymentReceiptTitle => 'Comprobante de pago';
+
+  @override
+  String get paymentReceiptHide => 'Ocultar comprobante';
+
+  @override
+  String get paymentReceiptShow => 'Ver comprobante';
+
+  @override
+  String get paymentReceiptNotInvoice => 'Este comprobante no es una factura.';
+
+  @override
+  String get paymentReceiptPaid => 'Pagado';
+
+  @override
+  String get paymentReceiptDate => 'Fecha';
+
+  @override
+  String get paymentReceiptMethod => 'Método';
+
+  @override
+  String get paymentReceiptRetained => 'Retención por cancelación';
+
+  @override
+  String get paymentReceiptRefundPending => 'Devolución pendiente';
+
+  @override
+  String get paymentReceiptRefundPendingNote =>
+      'Central la registrará y te avisaremos cuando quede hecha.';
+
+  @override
+  String get paymentReceiptRefunded => 'Devuelto';
+
+  @override
+  String get paymentReceiptRefundedNote =>
+      'Te devolvemos el dinero al método con el que pagaste.';
+
+  @override
+  String get paymentReceiptBalanceDue => 'Saldo pendiente';
+
+  @override
+  String get paymentReceiptBalanceNote =>
+      'El importe final del viaje fue mayor que lo pagado.';
 }

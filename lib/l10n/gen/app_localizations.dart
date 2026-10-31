@@ -753,6 +753,600 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Este documento solo está disponible en español por ahora.'**
   String get legalSpanishOnlyNotice;
+
+  /// Error de pago por un fallo del servidor; no culpa a la persona.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos completar el pago por un problema nuestro. Inténtalo de nuevo en unos minutos.'**
+  String get paymentOurFault;
+
+  /// Error: el método de pago elegido está desactivado.
+  ///
+  /// In es, this message translates to:
+  /// **'Este método de pago no está disponible ahora. Elige otro o contacta con central.'**
+  String get paymentMethodDisabled;
+
+  /// Error: la reserva ya está pagada.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva ya está pagada.'**
+  String get paymentAlreadyPaid;
+
+  /// Error: la reserva ya no espera un pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva ya no admite pagos. Revisa su estado en Mis viajes.'**
+  String get paymentNotAwaiting;
+
+  /// Error: no se encontró la reserva (o no es de la persona).
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos esta reserva.'**
+  String get paymentBookingNotFound;
+
+  /// Error: el número de operación tiene caracteres no permitidos. Los caracteres finales son literales.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa el número de operación: usa solo letras, números, espacios y . _ / -'**
+  String get paymentInvalidOperationNumber;
+
+  /// Error del pago con tarjeta: la cuenta no tiene pagos habilitados (en minúscula, va dentro de otro mensaje).
+  ///
+  /// In es, this message translates to:
+  /// **'tu cuenta aún no tiene pagos habilitados'**
+  String get paymentAccountNotEnabled;
+
+  /// Error del pago con tarjeta: no hubo respuesta del servidor de pagos (en minúscula).
+  ///
+  /// In es, this message translates to:
+  /// **'no se pudo contactar con el servidor de pagos'**
+  String get paymentServerUnreachable;
+
+  /// Error al quitar una tarjeta que paga una reserva pendiente.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta tarjeta paga una reserva pendiente. Cancélala o espera a que termine antes de quitar la tarjeta.'**
+  String get paymentCardInUse;
+
+  /// Error al quitar una tarjeta guardada.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos quitar la tarjeta. Inténtalo de nuevo.'**
+  String get paymentRemoveCardError;
+
+  /// Error al cambiar la tarjeta predeterminada.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.'**
+  String get paymentSetDefaultError;
+
+  /// Error al crear el perfil de pagos de la persona.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.'**
+  String get paymentProfileError;
+
+  /// Error al cargar el estado del pago de una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar el pago de tu reserva. Revisa tu conexión.'**
+  String get paymentLoadError;
+
+  /// Error: el pago con tarjeta no se puede usar en este momento.
+  ///
+  /// In es, this message translates to:
+  /// **'El pago con tarjeta no está disponible ahora. Elige otro método.'**
+  String get paymentCardUnavailable;
+
+  /// Error: el formulario de tarjeta no completó el pago.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar el pago con tarjeta. Revisa los datos e inténtalo de nuevo.'**
+  String get paymentCardFailed;
+
+  /// Aviso al agregar una tarjeta sin todos los datos.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa los datos completos de la tarjeta'**
+  String get paymentCardIncomplete;
+
+  /// Aviso tras guardar una tarjeta nueva.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta agregada exitosamente'**
+  String get paymentCardAdded;
+
+  /// Título de la pantalla para agregar una tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar método de pago'**
+  String get paymentAddMethodTitle;
+
+  /// Etiqueta del botón de volver en las pantallas de tarjetas.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver'**
+  String get paymentBack;
+
+  /// Encabezado del formulario de la tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos de la tarjeta'**
+  String get paymentCardDetails;
+
+  /// Nota de seguridad bajo el formulario de tarjeta. Stripe y PCI DSS no se traducen.
+  ///
+  /// In es, this message translates to:
+  /// **'Protegido por Stripe · Cumplimiento PCI DSS'**
+  String get paymentAddCardSecure;
+
+  /// Botón o acción para agregar una tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar tarjeta'**
+  String get paymentAddCard;
+
+  /// Título de la pantalla de pago de una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago de tu reserva'**
+  String get paymentBookingTitle;
+
+  /// Botón para ir al detalle del viaje desde el pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver mi viaje'**
+  String get paymentViewTrip;
+
+  /// Estado vacío: la reserva no tiene pago pendiente.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva no tiene un pago pendiente.'**
+  String get paymentNoPending;
+
+  /// Título cuando central confirmó el pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago confirmado'**
+  String get paymentConfirmedTitle;
+
+  /// Mensaje tras confirmar el pago; sin plazos.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya buscamos a tu chófer. Te avisaremos cuando esté asignado.'**
+  String get paymentConfirmedMessage;
+
+  /// Título cuando venció el plazo para pagar.
+  ///
+  /// In es, this message translates to:
+  /// **'El plazo para pagar terminó'**
+  String get paymentExpiredTitle;
+
+  /// Explicación de la reserva cancelada por falta de pago, con la referencia del pago.
+  ///
+  /// In es, this message translates to:
+  /// **'La reserva se canceló porque no recibimos el pago a tiempo. Si ya habías pagado, contacta con central e indica la referencia {reference}.'**
+  String paymentExpiredMessage(String reference);
+
+  /// Botón para empezar una reserva nueva.
+  ///
+  /// In es, this message translates to:
+  /// **'Hacer una nueva reserva'**
+  String get paymentNewBooking;
+
+  /// Título cuando la reserva ya no acepta pagos (devuelta, cancelada…).
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva ya no admite pagos'**
+  String get paymentClosedTitle;
+
+  /// Mensaje bajo «Esta reserva ya no admite pagos».
+  ///
+  /// In es, this message translates to:
+  /// **'Consulta el detalle y el comprobante en tu viaje.'**
+  String get paymentClosedMessage;
+
+  /// Aviso cuando central no pudo confirmar el pago avisado.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos confirmar tu pago. Revisa los datos y vuelve a avisarnos, o contacta con central.'**
+  String get paymentRejected;
+
+  /// Aviso cuando ningún método de pago se puede usar en este dispositivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora mismo no podemos recibir el pago desde aquí. Contacta con central para completar tu reserva.'**
+  String get paymentNoMethods;
+
+  /// Botón para volver a elegir el método de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar método de pago'**
+  String get paymentChangeMethod;
+
+  /// Nota al pie de la pantalla de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscamos chófer cuando el pago está confirmado.'**
+  String get paymentSearchAfterConfirm;
+
+  /// Rótulo en mayúsculas sobre el importe a pagar.
+  ///
+  /// In es, this message translates to:
+  /// **'IMPORTE A PAGAR'**
+  String get paymentAmountDueEyebrow;
+
+  /// Etiqueta de la referencia del pago (código a escribir en el concepto).
+  ///
+  /// In es, this message translates to:
+  /// **'Referencia'**
+  String get paymentReference;
+
+  /// El plazo para pagar ya pasó; {time} es la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'El plazo para pagar terminó a las {time}.'**
+  String paymentDeadlinePassed(String time);
+
+  /// Tiempo que queda para pagar; {span} es «24 min» o «1 h 5 min», {time} la hora límite.
+  ///
+  /// In es, this message translates to:
+  /// **'Quedan {span} para pagar (hasta las {time}).'**
+  String paymentTimeLeft(String span, String time);
+
+  /// Duración solo con minutos, dentro de «Quedan … para pagar».
+  ///
+  /// In es, this message translates to:
+  /// **'{minutes} min'**
+  String paymentSpanMinutes(int minutes);
+
+  /// Duración en horas exactas dentro de «Quedan … para pagar».
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h'**
+  String paymentSpanHours(int hours);
+
+  /// Duración en horas y minutos dentro de «Quedan … para pagar».
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String paymentSpanHoursMinutes(int hours, int minutes);
+
+  /// Etiqueta del botón de copiar; {label} es «referencia» o «cuenta», en minúscula.
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar {label}'**
+  String paymentCopy(String label);
+
+  /// Aviso tras copiar; {label} es «Referencia» o «Cuenta» (femenino).
+  ///
+  /// In es, this message translates to:
+  /// **'{label} copiada.'**
+  String paymentCopied(String label);
+
+  /// Método de pago: QR o transferencia bancaria.
+  ///
+  /// In es, this message translates to:
+  /// **'QR o transferencia bancaria'**
+  String get paymentMethodManualQr;
+
+  /// Método de pago: tarjeta (también cuando no se conoce la marca).
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta'**
+  String get paymentMethodCard;
+
+  /// Rótulo en mayúsculas sobre la lista de métodos.
+  ///
+  /// In es, this message translates to:
+  /// **'¿CÓMO QUIERES PAGAR?'**
+  String get paymentHowToPay;
+
+  /// Rótulo en mayúsculas sobre los datos de cobro.
+  ///
+  /// In es, this message translates to:
+  /// **'PAGA POR QR O TRANSFERENCIA'**
+  String get paymentManualEyebrow;
+
+  /// Etiqueta del lector de pantalla para la imagen del QR.
+  ///
+  /// In es, this message translates to:
+  /// **'Código QR para pagar'**
+  String get paymentQrLabel;
+
+  /// Aviso si la imagen del QR no carga.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos mostrar el QR. Usa los datos de la cuenta.'**
+  String get paymentQrError;
+
+  /// Etiqueta: titular de la cuenta de cobro (el valor lo escribe el admin y no se traduce).
+  ///
+  /// In es, this message translates to:
+  /// **'Titular'**
+  String get paymentHolder;
+
+  /// Etiqueta: banco de la cuenta de cobro.
+  ///
+  /// In es, this message translates to:
+  /// **'Banco'**
+  String get paymentBank;
+
+  /// Etiqueta: tipo de cuenta de cobro.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de cuenta'**
+  String get paymentAccountType;
+
+  /// Etiqueta: número de cuenta de cobro (femenino en español y portugués: «Cuenta copiada»).
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta'**
+  String get paymentAccount;
+
+  /// Instrucción del pago manual: importe exacto y referencia para el concepto.
+  ///
+  /// In es, this message translates to:
+  /// **'Paga exactamente {amount} y escribe la referencia {reference} en el concepto o glosa.'**
+  String paymentPayExactly(String amount, String reference);
+
+  /// Etiqueta del campo del número de operación del banco.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de operación (opcional)'**
+  String get paymentOperationLabel;
+
+  /// Ayuda del campo del número de operación.
+  ///
+  /// In es, this message translates to:
+  /// **'El que aparece en tu comprobante'**
+  String get paymentOperationHint;
+
+  /// Botón para avisar que ya se hizo el pago manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya pagué'**
+  String get paymentIPaid;
+
+  /// Estado: el pago avisado espera que central lo confirme.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando confirmación'**
+  String get paymentWaitingTitle;
+
+  /// Explicación mientras central revisa el pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Central está revisando tu pago. Te avisaremos aquí y en tus notificaciones cuando lo confirme.'**
+  String get paymentWaitingMessage;
+
+  /// Número de operación que escribió la persona.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de operación: {number}'**
+  String paymentOperationNumber(String number);
+
+  /// Estado tras completar el formulario de tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmando tu pago…'**
+  String get paymentConfirming;
+
+  /// Botón para abrir el pago con tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagar con tarjeta'**
+  String get paymentPayWithCard;
+
+  /// Botón para reintentar el pago con tarjeta tras un error.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get paymentRetry;
+
+  /// Aviso en la web: las tarjetas se agregan desde la app del teléfono.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.'**
+  String get paymentAddCardsOnPhone;
+
+  /// Título del diálogo para quitar una tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Quitar esta tarjeta?'**
+  String get paymentRemoveCardTitle;
+
+  /// Texto del diálogo para quitar una tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Dejará de estar disponible para tus próximas reservas.'**
+  String get paymentRemoveCardMessage;
+
+  /// Botón para cerrar el diálogo sin quitar la tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get paymentCancel;
+
+  /// Botón del diálogo que quita la tarjeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar'**
+  String get paymentRemove;
+
+  /// Título de la pantalla de métodos de pago del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Métodos de pago'**
+  String get paymentMethodsTitle;
+
+  /// Estado vacío cuando no hay tarjetas que guardar: cada reserva se paga en su pantalla de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada reserva se paga en su paso de pago.'**
+  String get paymentPerBooking;
+
+  /// Encabezado de la lista de tarjetas.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjetas guardadas'**
+  String get paymentSavedCards;
+
+  /// Pie de la lista de tarjetas.
+  ///
+  /// In es, this message translates to:
+  /// **'Toca una tarjeta para usarla por defecto al reservar.'**
+  String get paymentSetDefaultHint;
+
+  /// Nota de seguridad bajo la lista de tarjetas. Stripe no se traduce.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagos cifrados y protegidos por Stripe'**
+  String get paymentEncrypted;
+
+  /// Estado vacío de la lista de tarjetas.
+  ///
+  /// In es, this message translates to:
+  /// **'Paga sin pensarlo.'**
+  String get paymentEmptyCards;
+
+  /// Detalle de la tarjeta predeterminada; {expiry} es «MM/AA».
+  ///
+  /// In es, this message translates to:
+  /// **'Predeterminada · vence {expiry}'**
+  String paymentCardDefaultExpires(String expiry);
+
+  /// Detalle de una tarjeta; {expiry} es «MM/AA».
+  ///
+  /// In es, this message translates to:
+  /// **'Vence {expiry}'**
+  String paymentCardExpires(String expiry);
+
+  /// Etiqueta del botón para quitar una tarjeta de la lista.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar tarjeta'**
+  String get paymentRemoveCard;
+
+  /// Método en el comprobante: QR o transferencia.
+  ///
+  /// In es, this message translates to:
+  /// **'QR o transferencia'**
+  String get paymentReceiptMethodManual;
+
+  /// Título de la tarjeta del viaje cuando falta pagar.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago pendiente'**
+  String get paymentPendingTitle;
+
+  /// La persona avisó que pagó; {amount} es el importe con «Bs».
+  ///
+  /// In es, this message translates to:
+  /// **'Avisaste que pagaste {amount}. Central lo está revisando.'**
+  String paymentReportedMessage(String amount);
+
+  /// Falta pagar; {amount} es el importe con «Bs».
+  ///
+  /// In es, this message translates to:
+  /// **'Paga {amount} para que busquemos a tu chófer.'**
+  String paymentPendingMessage(String amount);
+
+  /// Botón para abrir el pago ya avisado.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver el pago'**
+  String get paymentViewPayment;
+
+  /// Botón para abrir la pantalla de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagar ahora'**
+  String get paymentPayNow;
+
+  /// Título del comprobante de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Comprobante de pago'**
+  String get paymentReceiptTitle;
+
+  /// Etiqueta del botón que pliega el comprobante.
+  ///
+  /// In es, this message translates to:
+  /// **'Ocultar comprobante'**
+  String get paymentReceiptHide;
+
+  /// Etiqueta del botón que despliega el comprobante.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver comprobante'**
+  String get paymentReceiptShow;
+
+  /// Aclaración del comprobante: no es una factura.
+  ///
+  /// In es, this message translates to:
+  /// **'Este comprobante no es una factura.'**
+  String get paymentReceiptNotInvoice;
+
+  /// Fila del comprobante: importe pagado.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagado'**
+  String get paymentReceiptPaid;
+
+  /// Fila del comprobante: fecha del pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha'**
+  String get paymentReceiptDate;
+
+  /// Fila del comprobante: método de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Método'**
+  String get paymentReceiptMethod;
+
+  /// Fila del comprobante: retención por cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Retención por cancelación'**
+  String get paymentReceiptRetained;
+
+  /// Fila del comprobante: devolución aún no registrada.
+  ///
+  /// In es, this message translates to:
+  /// **'Devolución pendiente'**
+  String get paymentReceiptRefundPending;
+
+  /// Nota bajo la devolución pendiente; sin plazos.
+  ///
+  /// In es, this message translates to:
+  /// **'Central la registrará y te avisaremos cuando quede hecha.'**
+  String get paymentReceiptRefundPendingNote;
+
+  /// Fila del comprobante: importe devuelto.
+  ///
+  /// In es, this message translates to:
+  /// **'Devuelto'**
+  String get paymentReceiptRefunded;
+
+  /// Nota bajo el importe devuelto.
+  ///
+  /// In es, this message translates to:
+  /// **'Te devolvemos el dinero al método con el que pagaste.'**
+  String get paymentReceiptRefundedNote;
+
+  /// Fila del comprobante: saldo que falta pagar.
+  ///
+  /// In es, this message translates to:
+  /// **'Saldo pendiente'**
+  String get paymentReceiptBalanceDue;
+
+  /// Nota bajo el saldo pendiente; sin promesas de contacto.
+  ///
+  /// In es, this message translates to:
+  /// **'El importe final del viaje fue mayor que lo pagado.'**
+  String get paymentReceiptBalanceNote;
 }
 
 class _AppLocalizationsDelegate

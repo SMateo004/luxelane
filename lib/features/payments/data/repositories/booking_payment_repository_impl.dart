@@ -5,27 +5,24 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/booking_payment.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
-const kPaymentOurFault = 'No pudimos completar el pago por un problema '
-    'nuestro. Inténtalo de nuevo en unos minutos.';
+/// Fallo del servidor, en el idioma activo.
+String get kPaymentOurFault => L10n.current.paymentOurFault;
 
 /// Mensaje para el pasajero según el motivo del servidor. Sin texto
 /// técnico; un fallo del servidor no se presenta como culpa suya (E37).
 String paymentFailureFor(String code, Object? details) {
   final common = commonFunctionError(code, details);
   if (common != null) return common;
+  final t = L10n.current;
   return switch (functionErrorReason(details)) {
-    'method_disabled' =>
-      'Este método de pago no está disponible ahora. Elige otro o contacta '
-          'con central.',
-    'already_paid' => 'Esta reserva ya está pagada.',
-    'not_awaiting_payment' =>
-      'Esta reserva ya no admite pagos. Revisa su estado en Mis viajes.',
-    'booking_not_found' || 'not_owner' => 'No encontramos esta reserva.',
-    _ when code == 'invalid-argument' =>
-      'Revisa el número de operación: usa solo letras, números, espacios '
-          'y . _ / -',
-    _ => kPaymentOurFault,
+    'method_disabled' => t.paymentMethodDisabled,
+    'already_paid' => t.paymentAlreadyPaid,
+    'not_awaiting_payment' => t.paymentNotAwaiting,
+    'booking_not_found' || 'not_owner' => t.paymentBookingNotFound,
+    _ when code == 'invalid-argument' => t.paymentInvalidOperationNumber,
+    _ => t.paymentOurFault,
   };
 }
 

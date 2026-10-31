@@ -459,5 +459,493 @@
   "legalSpanishOnlyNotice": "Este documento solo está disponible en español por ahora.",
   "@legalSpanishOnlyNotice": {
     "description": "Aviso sobre las páginas legales (términos, privacidad) cuando la app está en inglés o portugués: el texto legal sigue en español hasta que el abogado entregue las traducciones. En español no se muestra."
+  },
+  "paymentOurFault": "No pudimos completar el pago por un problema nuestro. Inténtalo de nuevo en unos minutos.",
+  "@paymentOurFault": {
+    "description": "Error de pago por un fallo del servidor; no culpa a la persona."
+  },
+  "paymentMethodDisabled": "Este método de pago no está disponible ahora. Elige otro o contacta con central.",
+  "@paymentMethodDisabled": {
+    "description": "Error: el método de pago elegido está desactivado."
+  },
+  "paymentAlreadyPaid": "Esta reserva ya está pagada.",
+  "@paymentAlreadyPaid": {
+    "description": "Error: la reserva ya está pagada."
+  },
+  "paymentNotAwaiting": "Esta reserva ya no admite pagos. Revisa su estado en Mis viajes.",
+  "@paymentNotAwaiting": {
+    "description": "Error: la reserva ya no espera un pago."
+  },
+  "paymentBookingNotFound": "No encontramos esta reserva.",
+  "@paymentBookingNotFound": {
+    "description": "Error: no se encontró la reserva (o no es de la persona)."
+  },
+  "paymentInvalidOperationNumber": "Revisa el número de operación: usa solo letras, números, espacios y . _ / -",
+  "@paymentInvalidOperationNumber": {
+    "description": "Error: el número de operación tiene caracteres no permitidos. Los caracteres finales son literales."
+  },
+  "paymentAccountNotEnabled": "tu cuenta aún no tiene pagos habilitados",
+  "@paymentAccountNotEnabled": {
+    "description": "Error del pago con tarjeta: la cuenta no tiene pagos habilitados (en minúscula, va dentro de otro mensaje)."
+  },
+  "paymentServerUnreachable": "no se pudo contactar con el servidor de pagos",
+  "@paymentServerUnreachable": {
+    "description": "Error del pago con tarjeta: no hubo respuesta del servidor de pagos (en minúscula)."
+  },
+  "paymentCardInUse": "Esta tarjeta paga una reserva pendiente. Cancélala o espera a que termine antes de quitar la tarjeta.",
+  "@paymentCardInUse": {
+    "description": "Error al quitar una tarjeta que paga una reserva pendiente."
+  },
+  "paymentRemoveCardError": "No pudimos quitar la tarjeta. Inténtalo de nuevo.",
+  "@paymentRemoveCardError": {
+    "description": "Error al quitar una tarjeta guardada."
+  },
+  "paymentSetDefaultError": "No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.",
+  "@paymentSetDefaultError": {
+    "description": "Error al cambiar la tarjeta predeterminada."
+  },
+  "paymentProfileError": "No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.",
+  "@paymentProfileError": {
+    "description": "Error al crear el perfil de pagos de la persona."
+  },
+  "paymentLoadError": "No pudimos cargar el pago de tu reserva. Revisa tu conexión.",
+  "@paymentLoadError": {
+    "description": "Error al cargar el estado del pago de una reserva."
+  },
+  "paymentCardUnavailable": "El pago con tarjeta no está disponible ahora. Elige otro método.",
+  "@paymentCardUnavailable": {
+    "description": "Error: el pago con tarjeta no se puede usar en este momento."
+  },
+  "paymentCardFailed": "No se pudo completar el pago con tarjeta. Revisa los datos e inténtalo de nuevo.",
+  "@paymentCardFailed": {
+    "description": "Error: el formulario de tarjeta no completó el pago."
+  },
+  "paymentCardIncomplete": "Ingresa los datos completos de la tarjeta",
+  "@paymentCardIncomplete": {
+    "description": "Aviso al agregar una tarjeta sin todos los datos."
+  },
+  "paymentCardAdded": "Tarjeta agregada exitosamente",
+  "@paymentCardAdded": {
+    "description": "Aviso tras guardar una tarjeta nueva."
+  },
+  "paymentAddMethodTitle": "Agregar método de pago",
+  "@paymentAddMethodTitle": {
+    "description": "Título de la pantalla para agregar una tarjeta."
+  },
+  "paymentBack": "Volver",
+  "@paymentBack": {
+    "description": "Etiqueta del botón de volver en las pantallas de tarjetas."
+  },
+  "paymentCardDetails": "Datos de la tarjeta",
+  "@paymentCardDetails": {
+    "description": "Encabezado del formulario de la tarjeta."
+  },
+  "paymentAddCardSecure": "Protegido por Stripe · Cumplimiento PCI DSS",
+  "@paymentAddCardSecure": {
+    "description": "Nota de seguridad bajo el formulario de tarjeta. Stripe y PCI DSS no se traducen."
+  },
+  "paymentAddCard": "Agregar tarjeta",
+  "@paymentAddCard": {
+    "description": "Botón o acción para agregar una tarjeta."
+  },
+  "paymentBookingTitle": "Pago de tu reserva",
+  "@paymentBookingTitle": {
+    "description": "Título de la pantalla de pago de una reserva."
+  },
+  "paymentViewTrip": "Ver mi viaje",
+  "@paymentViewTrip": {
+    "description": "Botón para ir al detalle del viaje desde el pago."
+  },
+  "paymentNoPending": "Esta reserva no tiene un pago pendiente.",
+  "@paymentNoPending": {
+    "description": "Estado vacío: la reserva no tiene pago pendiente."
+  },
+  "paymentConfirmedTitle": "Pago confirmado",
+  "@paymentConfirmedTitle": {
+    "description": "Título cuando central confirmó el pago."
+  },
+  "paymentConfirmedMessage": "Ya buscamos a tu chófer. Te avisaremos cuando esté asignado.",
+  "@paymentConfirmedMessage": {
+    "description": "Mensaje tras confirmar el pago; sin plazos."
+  },
+  "paymentExpiredTitle": "El plazo para pagar terminó",
+  "@paymentExpiredTitle": {
+    "description": "Título cuando venció el plazo para pagar."
+  },
+  "paymentExpiredMessage": "La reserva se canceló porque no recibimos el pago a tiempo. Si ya habías pagado, contacta con central e indica la referencia {reference}.",
+  "@paymentExpiredMessage": {
+    "description": "Explicación de la reserva cancelada por falta de pago, con la referencia del pago.",
+    "placeholders": {
+      "reference": {
+        "type": "String",
+        "example": "LX7K2M"
+      }
+    }
+  },
+  "paymentNewBooking": "Hacer una nueva reserva",
+  "@paymentNewBooking": {
+    "description": "Botón para empezar una reserva nueva."
+  },
+  "paymentClosedTitle": "Esta reserva ya no admite pagos",
+  "@paymentClosedTitle": {
+    "description": "Título cuando la reserva ya no acepta pagos (devuelta, cancelada…)."
+  },
+  "paymentClosedMessage": "Consulta el detalle y el comprobante en tu viaje.",
+  "@paymentClosedMessage": {
+    "description": "Mensaje bajo «Esta reserva ya no admite pagos»."
+  },
+  "paymentRejected": "No pudimos confirmar tu pago. Revisa los datos y vuelve a avisarnos, o contacta con central.",
+  "@paymentRejected": {
+    "description": "Aviso cuando central no pudo confirmar el pago avisado."
+  },
+  "paymentNoMethods": "Ahora mismo no podemos recibir el pago desde aquí. Contacta con central para completar tu reserva.",
+  "@paymentNoMethods": {
+    "description": "Aviso cuando ningún método de pago se puede usar en este dispositivo."
+  },
+  "paymentChangeMethod": "Cambiar método de pago",
+  "@paymentChangeMethod": {
+    "description": "Botón para volver a elegir el método de pago."
+  },
+  "paymentSearchAfterConfirm": "Buscamos chófer cuando el pago está confirmado.",
+  "@paymentSearchAfterConfirm": {
+    "description": "Nota al pie de la pantalla de pago."
+  },
+  "paymentAmountDueEyebrow": "IMPORTE A PAGAR",
+  "@paymentAmountDueEyebrow": {
+    "description": "Rótulo en mayúsculas sobre el importe a pagar."
+  },
+  "paymentReference": "Referencia",
+  "@paymentReference": {
+    "description": "Etiqueta de la referencia del pago (código a escribir en el concepto)."
+  },
+  "paymentDeadlinePassed": "El plazo para pagar terminó a las {time}.",
+  "@paymentDeadlinePassed": {
+    "description": "El plazo para pagar ya pasó; {time} es la hora.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:30"
+      }
+    }
+  },
+  "paymentTimeLeft": "Quedan {span} para pagar (hasta las {time}).",
+  "@paymentTimeLeft": {
+    "description": "Tiempo que queda para pagar; {span} es «24 min» o «1 h 5 min», {time} la hora límite.",
+    "placeholders": {
+      "span": {
+        "type": "String",
+        "example": "24 min"
+      },
+      "time": {
+        "type": "String",
+        "example": "14:30"
+      }
+    }
+  },
+  "paymentSpanMinutes": "{minutes} min",
+  "@paymentSpanMinutes": {
+    "description": "Duración solo con minutos, dentro de «Quedan … para pagar».",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentSpanHours": "{hours} h",
+  "@paymentSpanHours": {
+    "description": "Duración en horas exactas dentro de «Quedan … para pagar».",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentSpanHoursMinutes": "{hours} h {minutes} min",
+  "@paymentSpanHoursMinutes": {
+    "description": "Duración en horas y minutos dentro de «Quedan … para pagar».",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentCopy": "Copiar {label}",
+  "@paymentCopy": {
+    "description": "Etiqueta del botón de copiar; {label} es «referencia» o «cuenta», en minúscula.",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "referencia"
+      }
+    }
+  },
+  "paymentCopied": "{label} copiada.",
+  "@paymentCopied": {
+    "description": "Aviso tras copiar; {label} es «Referencia» o «Cuenta» (femenino).",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Referencia"
+      }
+    }
+  },
+  "paymentMethodManualQr": "QR o transferencia bancaria",
+  "@paymentMethodManualQr": {
+    "description": "Método de pago: QR o transferencia bancaria."
+  },
+  "paymentMethodCard": "Tarjeta",
+  "@paymentMethodCard": {
+    "description": "Método de pago: tarjeta (también cuando no se conoce la marca)."
+  },
+  "paymentHowToPay": "¿CÓMO QUIERES PAGAR?",
+  "@paymentHowToPay": {
+    "description": "Rótulo en mayúsculas sobre la lista de métodos."
+  },
+  "paymentManualEyebrow": "PAGA POR QR O TRANSFERENCIA",
+  "@paymentManualEyebrow": {
+    "description": "Rótulo en mayúsculas sobre los datos de cobro."
+  },
+  "paymentQrLabel": "Código QR para pagar",
+  "@paymentQrLabel": {
+    "description": "Etiqueta del lector de pantalla para la imagen del QR."
+  },
+  "paymentQrError": "No pudimos mostrar el QR. Usa los datos de la cuenta.",
+  "@paymentQrError": {
+    "description": "Aviso si la imagen del QR no carga."
+  },
+  "paymentHolder": "Titular",
+  "@paymentHolder": {
+    "description": "Etiqueta: titular de la cuenta de cobro (el valor lo escribe el admin y no se traduce)."
+  },
+  "paymentBank": "Banco",
+  "@paymentBank": {
+    "description": "Etiqueta: banco de la cuenta de cobro."
+  },
+  "paymentAccountType": "Tipo de cuenta",
+  "@paymentAccountType": {
+    "description": "Etiqueta: tipo de cuenta de cobro."
+  },
+  "paymentAccount": "Cuenta",
+  "@paymentAccount": {
+    "description": "Etiqueta: número de cuenta de cobro (femenino en español y portugués: «Cuenta copiada»)."
+  },
+  "paymentPayExactly": "Paga exactamente {amount} y escribe la referencia {reference} en el concepto o glosa.",
+  "@paymentPayExactly": {
+    "description": "Instrucción del pago manual: importe exacto y referencia para el concepto.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 86,50"
+      },
+      "reference": {
+        "type": "String",
+        "example": "LX7K2M"
+      }
+    }
+  },
+  "paymentOperationLabel": "Número de operación (opcional)",
+  "@paymentOperationLabel": {
+    "description": "Etiqueta del campo del número de operación del banco."
+  },
+  "paymentOperationHint": "El que aparece en tu comprobante",
+  "@paymentOperationHint": {
+    "description": "Ayuda del campo del número de operación."
+  },
+  "paymentIPaid": "Ya pagué",
+  "@paymentIPaid": {
+    "description": "Botón para avisar que ya se hizo el pago manual."
+  },
+  "paymentWaitingTitle": "Esperando confirmación",
+  "@paymentWaitingTitle": {
+    "description": "Estado: el pago avisado espera que central lo confirme."
+  },
+  "paymentWaitingMessage": "Central está revisando tu pago. Te avisaremos aquí y en tus notificaciones cuando lo confirme.",
+  "@paymentWaitingMessage": {
+    "description": "Explicación mientras central revisa el pago."
+  },
+  "paymentOperationNumber": "Número de operación: {number}",
+  "@paymentOperationNumber": {
+    "description": "Número de operación que escribió la persona.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "OP 9"
+      }
+    }
+  },
+  "paymentConfirming": "Confirmando tu pago…",
+  "@paymentConfirming": {
+    "description": "Estado tras completar el formulario de tarjeta."
+  },
+  "paymentPayWithCard": "Pagar con tarjeta",
+  "@paymentPayWithCard": {
+    "description": "Botón para abrir el pago con tarjeta."
+  },
+  "paymentRetry": "Reintentar",
+  "@paymentRetry": {
+    "description": "Botón para reintentar el pago con tarjeta tras un error."
+  },
+  "paymentAddCardsOnPhone": "Agrega tus tarjetas desde la app de Luxelane en tu teléfono.",
+  "@paymentAddCardsOnPhone": {
+    "description": "Aviso en la web: las tarjetas se agregan desde la app del teléfono."
+  },
+  "paymentRemoveCardTitle": "¿Quitar esta tarjeta?",
+  "@paymentRemoveCardTitle": {
+    "description": "Título del diálogo para quitar una tarjeta."
+  },
+  "paymentRemoveCardMessage": "Dejará de estar disponible para tus próximas reservas.",
+  "@paymentRemoveCardMessage": {
+    "description": "Texto del diálogo para quitar una tarjeta."
+  },
+  "paymentCancel": "Cancelar",
+  "@paymentCancel": {
+    "description": "Botón para cerrar el diálogo sin quitar la tarjeta."
+  },
+  "paymentRemove": "Quitar",
+  "@paymentRemove": {
+    "description": "Botón del diálogo que quita la tarjeta."
+  },
+  "paymentMethodsTitle": "Métodos de pago",
+  "@paymentMethodsTitle": {
+    "description": "Título de la pantalla de métodos de pago del perfil."
+  },
+  "paymentPerBooking": "Cada reserva se paga en su paso de pago.",
+  "@paymentPerBooking": {
+    "description": "Estado vacío cuando no hay tarjetas que guardar: cada reserva se paga en su pantalla de pago."
+  },
+  "paymentSavedCards": "Tarjetas guardadas",
+  "@paymentSavedCards": {
+    "description": "Encabezado de la lista de tarjetas."
+  },
+  "paymentSetDefaultHint": "Toca una tarjeta para usarla por defecto al reservar.",
+  "@paymentSetDefaultHint": {
+    "description": "Pie de la lista de tarjetas."
+  },
+  "paymentEncrypted": "Pagos cifrados y protegidos por Stripe",
+  "@paymentEncrypted": {
+    "description": "Nota de seguridad bajo la lista de tarjetas. Stripe no se traduce."
+  },
+  "paymentEmptyCards": "Paga sin pensarlo.",
+  "@paymentEmptyCards": {
+    "description": "Estado vacío de la lista de tarjetas."
+  },
+  "paymentCardDefaultExpires": "Predeterminada · vence {expiry}",
+  "@paymentCardDefaultExpires": {
+    "description": "Detalle de la tarjeta predeterminada; {expiry} es «MM/AA».",
+    "placeholders": {
+      "expiry": {
+        "type": "String",
+        "example": "08/29"
+      }
+    }
+  },
+  "paymentCardExpires": "Vence {expiry}",
+  "@paymentCardExpires": {
+    "description": "Detalle de una tarjeta; {expiry} es «MM/AA».",
+    "placeholders": {
+      "expiry": {
+        "type": "String",
+        "example": "08/29"
+      }
+    }
+  },
+  "paymentRemoveCard": "Quitar tarjeta",
+  "@paymentRemoveCard": {
+    "description": "Etiqueta del botón para quitar una tarjeta de la lista."
+  },
+  "paymentReceiptMethodManual": "QR o transferencia",
+  "@paymentReceiptMethodManual": {
+    "description": "Método en el comprobante: QR o transferencia."
+  },
+  "paymentPendingTitle": "Pago pendiente",
+  "@paymentPendingTitle": {
+    "description": "Título de la tarjeta del viaje cuando falta pagar."
+  },
+  "paymentReportedMessage": "Avisaste que pagaste {amount}. Central lo está revisando.",
+  "@paymentReportedMessage": {
+    "description": "La persona avisó que pagó; {amount} es el importe con «Bs».",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 86,50"
+      }
+    }
+  },
+  "paymentPendingMessage": "Paga {amount} para que busquemos a tu chófer.",
+  "@paymentPendingMessage": {
+    "description": "Falta pagar; {amount} es el importe con «Bs».",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 86,50"
+      }
+    }
+  },
+  "paymentViewPayment": "Ver el pago",
+  "@paymentViewPayment": {
+    "description": "Botón para abrir el pago ya avisado."
+  },
+  "paymentPayNow": "Pagar ahora",
+  "@paymentPayNow": {
+    "description": "Botón para abrir la pantalla de pago."
+  },
+  "paymentReceiptTitle": "Comprobante de pago",
+  "@paymentReceiptTitle": {
+    "description": "Título del comprobante de pago."
+  },
+  "paymentReceiptHide": "Ocultar comprobante",
+  "@paymentReceiptHide": {
+    "description": "Etiqueta del botón que pliega el comprobante."
+  },
+  "paymentReceiptShow": "Ver comprobante",
+  "@paymentReceiptShow": {
+    "description": "Etiqueta del botón que despliega el comprobante."
+  },
+  "paymentReceiptNotInvoice": "Este comprobante no es una factura.",
+  "@paymentReceiptNotInvoice": {
+    "description": "Aclaración del comprobante: no es una factura."
+  },
+  "paymentReceiptPaid": "Pagado",
+  "@paymentReceiptPaid": {
+    "description": "Fila del comprobante: importe pagado."
+  },
+  "paymentReceiptDate": "Fecha",
+  "@paymentReceiptDate": {
+    "description": "Fila del comprobante: fecha del pago."
+  },
+  "paymentReceiptMethod": "Método",
+  "@paymentReceiptMethod": {
+    "description": "Fila del comprobante: método de pago."
+  },
+  "paymentReceiptRetained": "Retención por cancelación",
+  "@paymentReceiptRetained": {
+    "description": "Fila del comprobante: retención por cancelar."
+  },
+  "paymentReceiptRefundPending": "Devolución pendiente",
+  "@paymentReceiptRefundPending": {
+    "description": "Fila del comprobante: devolución aún no registrada."
+  },
+  "paymentReceiptRefundPendingNote": "Central la registrará y te avisaremos cuando quede hecha.",
+  "@paymentReceiptRefundPendingNote": {
+    "description": "Nota bajo la devolución pendiente; sin plazos."
+  },
+  "paymentReceiptRefunded": "Devuelto",
+  "@paymentReceiptRefunded": {
+    "description": "Fila del comprobante: importe devuelto."
+  },
+  "paymentReceiptRefundedNote": "Te devolvemos el dinero al método con el que pagaste.",
+  "@paymentReceiptRefundedNote": {
+    "description": "Nota bajo el importe devuelto."
+  },
+  "paymentReceiptBalanceDue": "Saldo pendiente",
+  "@paymentReceiptBalanceDue": {
+    "description": "Fila del comprobante: saldo que falta pagar."
+  },
+  "paymentReceiptBalanceNote": "El importe final del viaje fue mayor que lo pagado.",
+  "@paymentReceiptBalanceNote": {
+    "description": "Nota bajo el saldo pendiente; sin promesas de contacto."
   }
 }

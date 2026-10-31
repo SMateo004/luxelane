@@ -6,6 +6,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 class PaymentRepositoryImpl implements PaymentRepository {
   PaymentRepositoryImpl({
@@ -37,8 +38,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
         PaymentFailure(
           commonFunctionError(e.code, e.details) ??
               (e.code == 'failed-precondition'
-                  ? 'tu cuenta aún no tiene pagos habilitados'
-                  : 'no se pudo contactar con el servidor de pagos'),
+                  ? L10n.current.paymentAccountNotEnabled
+                  : L10n.current.paymentServerUnreachable),
         ),
       );
     } catch (e) {
@@ -170,17 +171,12 @@ class PaymentRepositoryImpl implements PaymentRepository {
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
       if (functionErrorReason(e.details) == 'card-in-use') {
-        return const Left(
-          PaymentFailure(
-            'Esta tarjeta paga una reserva pendiente. Cancélala o espera a '
-            'que termine antes de quitar la tarjeta.',
-          ),
-        );
+        return Left(PaymentFailure(L10n.current.paymentCardInUse));
       }
       return Left(
         PaymentFailure(
           commonFunctionError(e.code, e.details) ??
-              'No pudimos quitar la tarjeta. Inténtalo de nuevo.',
+              L10n.current.paymentRemoveCardError,
         ),
       );
     } catch (e) {
@@ -188,8 +184,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
     }
   }
 
-  static const _setDefaultError =
-      'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.';
+  static String get _setDefaultError => L10n.current.paymentSetDefaultError;
 
   @override
   Future<Either<Failure, void>> setDefaultCard(String paymentMethodId) async {
@@ -205,7 +200,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
         ),
       );
     } catch (_) {
-      return const Left(PaymentFailure(_setDefaultError));
+      return Left(PaymentFailure(_setDefaultError));
     }
   }
 
@@ -216,11 +211,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
           await _fn.httpsCallable('ensureStripeCustomer').call<dynamic>();
       return Right((result.data as Map)['customerId'] as String);
     } catch (_) {
-      return const Left(
-        PaymentFailure(
-          'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.',
-        ),
-      );
+      return Left(PaymentFailure(L10n.current.paymentProfileError));
     }
   }
 }
