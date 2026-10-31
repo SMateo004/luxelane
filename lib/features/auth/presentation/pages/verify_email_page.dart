@@ -8,6 +8,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// «Verifica tu correo»: tras registrarse con correo y contraseña. Reservar
 /// exige el correo verificado; el resto de la app funciona sin él.
@@ -88,7 +89,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       _busy = false;
       r.fold((f) => _error = f.message, (_) {
         _resends++;
-        _info = 'Te enviamos un enlace nuevo.';
+        _info = context.l10n.authVerifyResent;
       });
     });
     final tooMany = r.fold(
@@ -114,12 +115,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       (f) => setState(() => _error = f.message),
       (verified) {
         if (verified) {
-          showLuxSnackbar(context, 'Correo verificado. Ya puedes reservar.');
+          showLuxSnackbar(context, context.l10n.authVerifyDone);
           _done();
         } else {
           setState(
-            () => _error = 'Aún no vemos el correo verificado. Abre el '
-                'enlace que te enviamos y vuelve a intentarlo.',
+            () => _error = context.l10n.authVerifyNotYet,
           );
         }
       },
@@ -129,28 +129,27 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   Widget build(BuildContext context) {
     final exhausted = _resends >= widget.maxResends;
+    final t = context.l10n;
     final resendLabel = exhausted
-        ? 'Límite de reenvíos alcanzado'
+        ? t.authVerifyResendLimit
         : _wait > 0
-            ? 'Reenviar enlace ($_wait s)'
-            : 'Reenviar enlace';
+            ? t.authVerifyResendIn(_wait)
+            : t.authVerifyResend;
     return Scaffold(
-      appBar: AppBar(title: const Text('Verifica tu correo')),
+      appBar: AppBar(title: Text(t.authVerifyTitle)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(LuxSpacing.lg),
           children: [
             Text(
               widget.email == null
-                  ? 'Te enviamos un enlace a tu correo.'
-                  : 'Te enviamos un enlace a ${widget.email}.',
+                  ? t.authVerifySentGeneric
+                  : t.authVerifySentTo(widget.email!),
               style: LuxTypography.titleMedium,
             ),
             const SizedBox(height: LuxSpacing.sm),
-            const Text(
-              'Ábrelo y vuelve aquí. Necesitas el correo verificado para '
-              'reservar. Si el enlace venció o no llega, pide uno nuevo '
-              '(revisa también la carpeta de correo no deseado).',
+            Text(
+              t.authVerifyBody,
               style: LuxTypography.bodyMedium,
             ),
             const SizedBox(height: LuxSpacing.lg),
@@ -173,7 +172,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 child: Text(_info!, style: LuxTypography.bodyMedium),
               ),
             LuxButton(
-              label: 'Ya lo verifiqué',
+              label: t.authVerifyConfirm,
               loading: _busy,
               onPressed: _busy ? null : _check,
             ),
@@ -184,7 +183,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                   _busy || _wait > 0 || exhausted ? null : () => _resend(),
             ),
             const SizedBox(height: LuxSpacing.sm),
-            LuxButton.ghost(label: 'Más tarde', onPressed: _done),
+            LuxButton.ghost(label: t.authVerifyLater, onPressed: _done),
           ],
         ),
       ),

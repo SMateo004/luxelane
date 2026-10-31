@@ -7,6 +7,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/auth_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/auth_bloc.dart';
 import '../widgets/google_sign_in_button.dart';
 import 'mfa_sign_in_page.dart';
@@ -19,8 +20,8 @@ const _sph = LuxColors.sapphire;
 const _sphLt = LuxColors.sapphireLight;
 const _ink = LuxColors.ink;
 const _onSph = LuxColors.onAccent;
-const _kSans = 'Montserrat';
-const _kSerif = 'Cormorant Garamond';
+const _kSans = 'Montserrat'; // i18n-ignore: nombre de fuente
+const _kSerif = 'Cormorant Garamond'; // i18n-ignore: nombre de fuente
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -60,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!email.contains('@')) {
       showLuxSnackbar(
         context,
-        'Escribe tu correo arriba y te enviaremos un enlace.',
+        context.l10n.authResetNeedsEmail,
         isError: true,
       );
       return;
@@ -153,9 +154,9 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Iniciar sesión',
-                          style: TextStyle(
+                        Text(
+                          context.l10n.authLoginTitle,
+                          style: const TextStyle(
                             fontFamily: _kSerif,
                             fontSize: 42,
                             fontWeight: FontWeight.w500,
@@ -164,9 +165,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        const Text(
-                          'Bienvenido de nuevo a Luxelane.',
-                          style: TextStyle(
+                        Text(
+                          context.l10n.authLoginWelcomeBack,
+                          style: const TextStyle(
                             fontFamily: _kSans,
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
@@ -196,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               LuxPressable(
-                semanticLabel: 'Luxelane, ir al inicio',
+                semanticLabel: context.l10n.authHomeLinkSemantics,
                 haptic: false,
                 onTap: () => context.go('/'),
                 child: const LuxTapArea(child: LuxelaneWordmark(size: 11)),
@@ -205,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
               const _AuthHeroPhoto(),
               const SizedBox(height: 32),
               Text(
-                'BIENVENIDO',
+                context.l10n.authLoginEyebrow,
                 style: LuxTypography.caption.copyWith(
                   color: _sph,
                   letterSpacing: 3,
@@ -214,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Tu chófer,\ncomo lo recuerdas.',
+                context.l10n.authLoginHeadline,
                 textScaler: luxDisplayTextScaler(context),
                 style: const TextStyle(
                   fontFamily: _kSerif,
@@ -225,9 +226,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Inicia sesión para reservar y seguir tus trayectos.',
-                style: TextStyle(
+              Text(
+                context.l10n.authLoginSubtitle,
+                style: const TextStyle(
                   fontFamily: _kSans,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -257,51 +258,54 @@ class _LoginPageState extends State<LoginPage> {
                 const AuthOrDivider(),
                 const SizedBox(height: 24),
                 _AuthField(
-                  label: 'Correo electrónico',
+                  label: context.l10n.authEmailLabel,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   icon: Icons.email_outlined,
                   validator: (v) => v == null || !v.contains('@')
-                      ? 'Ingresa un correo válido'
+                      ? context.l10n.authEmailInvalid
                       : null,
                 ),
                 const SizedBox(height: 14),
                 _AuthField(
-                  label: 'Contraseña',
+                  label: context.l10n.authPasswordLabel,
                   controller: _pass,
                   obscureText: true,
                   icon: Icons.lock_outline,
-                  validator: (v) =>
-                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                  validator: (v) => v == null || v.length < 6
+                      ? context.l10n.authPasswordMinLength
+                      : null,
                 ),
                 const SizedBox(height: 6),
                 Align(
                   alignment: Alignment.centerRight,
                   child: _TextLink(
-                    label: '¿Olvidaste tu contraseña?',
+                    label: context.l10n.authForgotPassword,
                     onTap: _resetPassword,
                   ),
                 ),
                 const SizedBox(height: 28),
                 _AuthButton(
-                  label: 'Iniciar sesión',
+                  label: context.l10n.authLoginTitle,
                   loading: loading,
                   onTap: loading ? null : _submit,
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                // Wrap: en otros idiomas la frase puede no caber en una línea.
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    const Text(
-                      '¿No tienes cuenta? ',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.authNoAccount,
+                      style: const TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
                         color: LuxColors.inkTertiary,
                       ),
                     ),
                     _TextLink(
-                      label: 'Crear una',
+                      label: context.l10n.authCreateOne,
                       onTap: () => context.go('/register'),
                     ),
                   ],
@@ -319,11 +323,13 @@ class _LoginPageState extends State<LoginPage> {
 class AuthBrandPanel extends StatelessWidget {
   const AuthBrandPanel({
     super.key,
-    this.title = 'Tu chófer,\ncomo lo recuerdas.',
-    this.subtitle = 'Tus direcciones, preferencias y viajes, siempre a mano.',
+    this.title,
+    this.subtitle,
   });
-  final String title;
-  final String subtitle;
+
+  /// Por defecto, los del inicio de sesión.
+  final String? title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -377,7 +383,7 @@ class AuthBrandPanel extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
                   Text(
-                    title,
+                    title ?? context.l10n.authLoginHeadline,
                     style: const TextStyle(
                       fontFamily: _kSerif,
                       fontSize: 52,
@@ -388,7 +394,7 @@ class AuthBrandPanel extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    subtitle,
+                    subtitle ?? context.l10n.authBrandSubtitle,
                     style: const TextStyle(
                       fontFamily: _kSans,
                       fontSize: 13,
@@ -401,10 +407,10 @@ class AuthBrandPanel extends StatelessWidget {
                   // Sapphire divider
                   Container(width: 40, height: 1, color: _sph),
                   const SizedBox(height: 32),
-                  for (final line in const [
-                    'Reserva en menos de 2 minutos',
-                    'Todos tus viajes en un solo lugar',
-                    'Seguimiento de tu chófer en tiempo real',
+                  for (final line in [
+                    context.l10n.authBrandPointBooking,
+                    context.l10n.authBrandPointTrips,
+                    context.l10n.authBrandPointTracking,
                   ])
                     Padding(
                       padding: const EdgeInsets.only(bottom: 14),

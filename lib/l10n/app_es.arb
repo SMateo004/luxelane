@@ -1,5 +1,419 @@
 {
   "@@locale": "es",
+  "authLoginTitle": "Iniciar sesión",
+  "@authLoginTitle": {
+    "description": "Título de la pantalla de inicio de sesión (web) y botón principal para entrar."
+  },
+  "authLoginWelcomeBack": "Bienvenido de nuevo a Luxelane.",
+  "@authLoginWelcomeBack": {
+    "description": "Subtítulo bajo «Iniciar sesión» en la web."
+  },
+  "authHomeLinkSemantics": "Luxelane, ir al inicio",
+  "@authHomeLinkSemantics": {
+    "description": "Etiqueta de lector de pantalla del logo que lleva al inicio (inicio de sesión y registro)."
+  },
+  "authLoginEyebrow": "BIENVENIDO",
+  "@authLoginEyebrow": {
+    "description": "Antetítulo en mayúsculas de la pantalla de inicio de sesión (móvil)."
+  },
+  "authLoginHeadline": "Tu chófer,\ncomo lo recuerdas.",
+  "@authLoginHeadline": {
+    "description": "Titular grande del inicio de sesión (móvil) y del panel de marca en la web; el salto de línea es intencional."
+  },
+  "authLoginSubtitle": "Inicia sesión para reservar y seguir tus trayectos.",
+  "@authLoginSubtitle": {
+    "description": "Texto bajo el titular del inicio de sesión (móvil)."
+  },
+  "authEmailLabel": "Correo electrónico",
+  "@authEmailLabel": {
+    "description": "Etiqueta del campo de correo (inicio de sesión y registro)."
+  },
+  "authEmailInvalid": "Ingresa un correo válido",
+  "@authEmailInvalid": {
+    "description": "Error del campo de correo cuando no parece un correo."
+  },
+  "authPasswordLabel": "Contraseña",
+  "@authPasswordLabel": {
+    "description": "Etiqueta del campo de contraseña."
+  },
+  "authPasswordMinLength": "Mínimo 6 caracteres",
+  "@authPasswordMinLength": {
+    "description": "Error del campo de contraseña si es demasiado corta."
+  },
+  "authForgotPassword": "¿Olvidaste tu contraseña?",
+  "@authForgotPassword": {
+    "description": "Enlace para pedir un enlace de cambio de contraseña."
+  },
+  "authResetNeedsEmail": "Escribe tu correo arriba y te enviaremos un enlace.",
+  "@authResetNeedsEmail": {
+    "description": "Aviso al pedir el cambio de contraseña sin haber escrito el correo."
+  },
+  "authNoAccount": "¿No tienes cuenta? ",
+  "@authNoAccount": {
+    "description": "Texto antes del enlace «Crear una» (el espacio final separa del enlace)."
+  },
+  "authCreateOne": "Crear una",
+  "@authCreateOne": {
+    "description": "Enlace a la pantalla de registro, tras «¿No tienes cuenta?»."
+  },
+  "authBrandSubtitle": "Tus direcciones, preferencias y viajes, siempre a mano.",
+  "@authBrandSubtitle": {
+    "description": "Subtítulo del panel de marca de la web en el inicio de sesión."
+  },
+  "authBrandPointBooking": "Reserva en menos de 2 minutos",
+  "@authBrandPointBooking": {
+    "description": "Punto destacado del panel de marca (web)."
+  },
+  "authBrandPointTrips": "Todos tus viajes en un solo lugar",
+  "@authBrandPointTrips": {
+    "description": "Punto destacado del panel de marca (web)."
+  },
+  "authBrandPointTracking": "Seguimiento de tu chófer en tiempo real",
+  "@authBrandPointTracking": {
+    "description": "Punto destacado del panel de marca (web)."
+  },
+  "authRegisterEyebrow": "CREAR CUENTA",
+  "@authRegisterEyebrow": {
+    "description": "Antetítulo en mayúsculas de la pantalla de registro (móvil)."
+  },
+  "authRegisterHeadline": "Bienvenido\na Luxelane.",
+  "@authRegisterHeadline": {
+    "description": "Titular grande del registro (móvil y panel de marca web); el salto de línea es intencional."
+  },
+  "authRegisterSubtitle": "Crea tu cuenta en menos de un minuto.",
+  "@authRegisterSubtitle": {
+    "description": "Texto bajo el titular del registro (móvil)."
+  },
+  "authRegisterBrandSubtitle": "Una cuenta para reservar, seguir y recordar cada trayecto.",
+  "@authRegisterBrandSubtitle": {
+    "description": "Subtítulo del panel de marca de la web en el registro."
+  },
+  "authRegisterTitle": "Crear cuenta",
+  "@authRegisterTitle": {
+    "description": "Título del registro (web) y botón para crear la cuenta."
+  },
+  "authRegisterWebSubtitle": "Solo te pediremos lo necesario para tu chófer.",
+  "@authRegisterWebSubtitle": {
+    "description": "Subtítulo bajo «Crear cuenta» en la web."
+  },
+  "authGoogleRegister": "Registrarte con Google",
+  "@authGoogleRegister": {
+    "description": "Botón de registro con la cuenta de Google."
+  },
+  "authNameLabel": "Nombre completo",
+  "@authNameLabel": {
+    "description": "Etiqueta del campo de nombre en el registro."
+  },
+  "authNameRequired": "Indica tu nombre para que tu chófer pueda recibirte",
+  "@authNameRequired": {
+    "description": "Error si el nombre está vacío en el registro."
+  },
+  "authPhoneLabel": "Teléfono (con código de país)",
+  "@authPhoneLabel": {
+    "description": "Etiqueta del campo de teléfono en el registro."
+  },
+  "authPhoneRequired": "Tu chófer lo necesita para contactarte",
+  "@authPhoneRequired": {
+    "description": "Error si el teléfono es demasiado corto en el registro."
+  },
+  "authTermsRequired": "Acepta los Términos y la Política de privacidad para continuar",
+  "@authTermsRequired": {
+    "description": "Error si no se marcó la casilla de términos al registrarse."
+  },
+  "authRegisterDataNote": "Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.",
+  "@authRegisterDataNote": {
+    "description": "Nota bajo el botón de registro: para qué se piden nombre y teléfono."
+  },
+  "authHaveAccount": "¿Ya tienes cuenta? ",
+  "@authHaveAccount": {
+    "description": "Texto antes del enlace «Inicia sesión» (el espacio final separa del enlace)."
+  },
+  "authSignInLink": "Inicia sesión",
+  "@authSignInLink": {
+    "description": "Enlace a la pantalla de inicio de sesión desde el registro."
+  },
+  "authTermsCheckboxSemantics": "Acepto los Términos y la Política de privacidad",
+  "@authTermsCheckboxSemantics": {
+    "description": "Etiqueta de lector de pantalla de la casilla de términos."
+  },
+  "authTermsReadPrefix": "He leído y acepto los ",
+  "@authTermsReadPrefix": {
+    "description": "Primera parte de «He leído y acepto los Términos y la Política de privacidad.»; sigue el enlace «Términos» (espacio final)."
+  },
+  "authTermsLink": "Términos",
+  "@authTermsLink": {
+    "description": "Enlace a los Términos dentro de la frase de la casilla."
+  },
+  "authTermsAnd": " y la ",
+  "@authTermsAnd": {
+    "description": "Unión entre los enlaces «Términos» y «Política de privacidad» (espacios a ambos lados)."
+  },
+  "authPrivacyLink": "Política de privacidad",
+  "@authPrivacyLink": {
+    "description": "Enlace a la Política de privacidad dentro de la frase de la casilla."
+  },
+  "authGoogleContinue": "Continuar con Google",
+  "@authGoogleContinue": {
+    "description": "Botón para entrar con la cuenta de Google (también en «Confirma que eres tú»)."
+  },
+  "authOrWithEmail": "o con tu correo",
+  "@authOrWithEmail": {
+    "description": "Separador entre Google y el formulario de correo; se muestra en mayúsculas."
+  },
+  "authVerifyTitle": "Verifica tu correo",
+  "@authVerifyTitle": {
+    "description": "Título de la pantalla «Verifica tu correo»."
+  },
+  "authVerifySentGeneric": "Te enviamos un enlace a tu correo.",
+  "@authVerifySentGeneric": {
+    "description": "Encabezado de «Verifica tu correo» cuando no se conoce la dirección."
+  },
+  "authVerifySentTo": "Te enviamos un enlace a {email}.",
+  "@authVerifySentTo": {
+    "description": "Encabezado de «Verifica tu correo» con la dirección.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "ana@example.com"
+      }
+    }
+  },
+  "authVerifyBody": "Ábrelo y vuelve aquí. Necesitas el correo verificado para reservar. Si el enlace venció o no llega, pide uno nuevo (revisa también la carpeta de correo no deseado).",
+  "@authVerifyBody": {
+    "description": "Explicación de «Verifica tu correo»."
+  },
+  "authVerifyResent": "Te enviamos un enlace nuevo.",
+  "@authVerifyResent": {
+    "description": "Aviso tras reenviar el enlace de verificación."
+  },
+  "authVerifyDone": "Correo verificado. Ya puedes reservar.",
+  "@authVerifyDone": {
+    "description": "Aviso al comprobar que el correo ya está verificado."
+  },
+  "authVerifyNotYet": "Aún no vemos el correo verificado. Abre el enlace que te enviamos y vuelve a intentarlo.",
+  "@authVerifyNotYet": {
+    "description": "Error si al comprobar el correo aún no está verificado."
+  },
+  "authVerifyResendLimit": "Límite de reenvíos alcanzado",
+  "@authVerifyResendLimit": {
+    "description": "Botón de reenvío deshabilitado tras el máximo de reenvíos."
+  },
+  "authVerifyResendIn": "Reenviar enlace ({seconds} s)",
+  "@authVerifyResendIn": {
+    "description": "Botón de reenvío mientras corre la espera, con los segundos que faltan.",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "authVerifyResend": "Reenviar enlace",
+  "@authVerifyResend": {
+    "description": "Botón para reenviar el enlace de verificación."
+  },
+  "authVerifyConfirm": "Ya lo verifiqué",
+  "@authVerifyConfirm": {
+    "description": "Botón para comprobar que el correo ya se verificó."
+  },
+  "authVerifyLater": "Más tarde",
+  "@authVerifyLater": {
+    "description": "Botón para dejar la verificación del correo para después."
+  },
+  "authMfaTitle": "Verificación en dos pasos",
+  "@authMfaTitle": {
+    "description": "Título de las pantallas de verificación en dos pasos (alta y segundo paso al entrar)."
+  },
+  "authMfaCodeDigits": "Escribe las 6 cifras del código.",
+  "@authMfaCodeDigits": {
+    "description": "Error si el código de la app autenticadora no tiene 6 cifras."
+  },
+  "authCancel": "Cancelar",
+  "@authCancel": {
+    "description": "Botón o descripción emergente para cancelar."
+  },
+  "authMfaSignInPrompt": "Abre tu app autenticadora y escribe el código de Luxelane.",
+  "@authMfaSignInPrompt": {
+    "description": "Instrucción del segundo paso al iniciar sesión."
+  },
+  "authMfaCodeLabel": "Código",
+  "@authMfaCodeLabel": {
+    "description": "Etiqueta del campo del código de 6 cifras."
+  },
+  "authMfaSignInButton": "Entrar",
+  "@authMfaSignInButton": {
+    "description": "Botón para entrar con el código del segundo paso."
+  },
+  "authMfaLostAccess": "¿Perdiste el acceso a tu app autenticadora? Contacta con central para recuperar la cuenta.",
+  "@authMfaLostAccess": {
+    "description": "Ayuda si se perdió la app autenticadora."
+  },
+  "authMfaEnrollDone": "Listo. A partir de ahora, al iniciar sesión te pediremos el código de tu app autenticadora.",
+  "@authMfaEnrollDone": {
+    "description": "Mensaje al terminar el alta de la app autenticadora."
+  },
+  "authMfaBack": "Volver",
+  "@authMfaBack": {
+    "description": "Botón para volver tras el alta de la app autenticadora."
+  },
+  "authMfaEnrollIntro": "Protege tu cuenta con una app autenticadora (por ejemplo, la que trae tu teléfono o tu gestor de contraseñas). Te pedirá un código de 6 cifras al iniciar sesión.",
+  "@authMfaEnrollIntro": {
+    "description": "Explicación antes de empezar el alta de la app autenticadora."
+  },
+  "authMfaStart": "Empezar",
+  "@authMfaStart": {
+    "description": "Botón para empezar el alta de la app autenticadora."
+  },
+  "authMfaScanStep": "1. Escanea este código con tu app autenticadora.",
+  "@authMfaScanStep": {
+    "description": "Paso 1 del alta: escanear el código QR."
+  },
+  "authMfaQrSemantics": "Código QR para la app autenticadora",
+  "@authMfaQrSemantics": {
+    "description": "Etiqueta de lector de pantalla del código QR."
+  },
+  "authMfaOpenInApp": "Abrir en la app autenticadora",
+  "@authMfaOpenInApp": {
+    "description": "Botón para abrir el alta directamente en la app autenticadora."
+  },
+  "authMfaManualKey": "¿No puedes escanear? Escribe esta clave: {key}",
+  "@authMfaManualKey": {
+    "description": "Clave para escribir a mano si no se puede escanear; {key} es la clave o puntos si está oculta.",
+    "placeholders": {
+      "key": {
+        "type": "String",
+        "example": "••••••••••••"
+      }
+    }
+  },
+  "authMfaHideKey": "Ocultar clave",
+  "@authMfaHideKey": {
+    "description": "Botón para ocultar la clave escrita."
+  },
+  "authMfaShowKey": "Mostrar clave",
+  "@authMfaShowKey": {
+    "description": "Botón para mostrar la clave escrita."
+  },
+  "authMfaNoShare": "No compartas este código ni la clave, y no hagas capturas.",
+  "@authMfaNoShare": {
+    "description": "Advertencia de seguridad bajo el código QR."
+  },
+  "authMfaCodeStep": "2. Escribe el código que muestra la app.",
+  "@authMfaCodeStep": {
+    "description": "Paso 2 del alta: escribir el código."
+  },
+  "authMfaActivate": "Activar",
+  "@authMfaActivate": {
+    "description": "Botón para terminar el alta de la app autenticadora."
+  },
+  "authMfaReminderTitle": "Activa la verificación en dos pasos",
+  "@authMfaReminderTitle": {
+    "description": "Título del aviso para dar de alta la verificación en dos pasos."
+  },
+  "authMfaReminderBody": "Pronto será obligatoria para entrar. Tarda un minuto.",
+  "@authMfaReminderBody": {
+    "description": "Detalle del aviso de verificación en dos pasos."
+  },
+  "authReauthConfirmed": "Identidad confirmada. Repite la acción.",
+  "@authReauthConfirmed": {
+    "description": "Aviso tras confirmar la identidad: hay que repetir la acción."
+  },
+  "authReauthPasswordEmpty": "Escribe tu contraseña.",
+  "@authReauthPasswordEmpty": {
+    "description": "Error si se confirma sin escribir la contraseña."
+  },
+  "authReauthTitle": "Confirma que eres tú",
+  "@authReauthTitle": {
+    "description": "Título del diálogo para volver a identificarse."
+  },
+  "authReauthPassword": "Por seguridad, escribe tu contraseña para continuar.",
+  "@authReauthPassword": {
+    "description": "Explicación del diálogo con contraseña."
+  },
+  "authReauthGoogle": "Por seguridad, vuelve a entrar con Google para continuar.",
+  "@authReauthGoogle": {
+    "description": "Explicación del diálogo con cuenta de Google."
+  },
+  "authReauthNone": "Por seguridad, cierra sesión y vuelve a entrar para continuar.",
+  "@authReauthNone": {
+    "description": "Explicación del diálogo sin método disponible."
+  },
+  "authConfirm": "Confirmar",
+  "@authConfirm": {
+    "description": "Botón para confirmar la contraseña."
+  },
+  "authTermsAcceptedSnack": "Listo. Ya puedes reservar.",
+  "@authTermsAcceptedSnack": {
+    "description": "Aviso tras aceptar los términos vigentes desde el diálogo."
+  },
+  "authTermsDialogTitle": "Acepta los términos para reservar",
+  "@authTermsDialogTitle": {
+    "description": "Título del diálogo que pide aceptar los términos vigentes."
+  },
+  "authTermsDialogBody": "Para reservar necesitamos que aceptes la versión vigente de los Términos y la Política de privacidad.",
+  "@authTermsDialogBody": {
+    "description": "Texto del diálogo que pide aceptar los términos vigentes."
+  },
+  "authTermsRead": "Leer los Términos",
+  "@authTermsRead": {
+    "description": "Botón para abrir los Términos."
+  },
+  "authPrivacyRead": "Leer la Política de privacidad",
+  "@authPrivacyRead": {
+    "description": "Botón para abrir la Política de privacidad."
+  },
+  "authNotNow": "Ahora no",
+  "@authNotNow": {
+    "description": "Botón para cerrar el diálogo sin aceptar."
+  },
+  "authAccept": "Acepto",
+  "@authAccept": {
+    "description": "Botón para aceptar los términos vigentes."
+  },
+  "authErrorOffline": "Sin conexión. Revisa tu internet e inténtalo de nuevo.",
+  "@authErrorOffline": {
+    "description": "Error sin conexión al entrar con Google."
+  },
+  "authGoogleGenericError": "No pudimos iniciar sesión con Google. Inténtalo de nuevo.",
+  "@authGoogleGenericError": {
+    "description": "Error genérico al entrar con Google."
+  },
+  "authGoogleAccountExists": "Ya tienes una cuenta con este correo. Inicia sesión con tu contraseña.",
+  "@authGoogleAccountExists": {
+    "description": "Error de Google: ya hay una cuenta con ese correo y contraseña."
+  },
+  "authGooglePopupBlocked": "Tu navegador bloqueó la ventana de Google. Permite las ventanas emergentes e inténtalo de nuevo.",
+  "@authGooglePopupBlocked": {
+    "description": "Error de Google en la web: el navegador bloqueó la ventana."
+  },
+  "authGoogleUnauthorizedDomain": "Este dominio no está autorizado para iniciar sesión con Google.",
+  "@authGoogleUnauthorizedDomain": {
+    "description": "Error de Google en la web: dominio no autorizado."
+  },
+  "authGoogleNotEnabled": "El inicio de sesión con Google no está habilitado.",
+  "@authGoogleNotEnabled": {
+    "description": "Error de Google: el inicio de sesión con Google está desactivado."
+  },
+  "authDeleteAccountError": "No pudimos eliminar tu cuenta. Revisa tu conexión.",
+  "@authDeleteAccountError": {
+    "description": "Error al eliminar la cuenta sin respuesta del servidor."
+  },
+  "authResetLinkError": "No pudimos enviar el enlace. Inténtalo de nuevo.",
+  "@authResetLinkError": {
+    "description": "Error al enviar el enlace para cambiar la contraseña."
+  },
+  "authVerifyTooMany": "Enviamos varios enlaces seguidos. Espera unos minutos antes de pedir otro.",
+  "@authVerifyTooMany": {
+    "description": "Error de verificación del correo: demasiados enlaces seguidos."
+  },
+  "authVerifyOffline": "Sin conexión. Revisa tu red e inténtalo de nuevo.",
+  "@authVerifyOffline": {
+    "description": "Error de verificación del correo sin conexión."
+  },
+  "authVerifyFailed": "No pudimos completar la verificación. Inténtalo de nuevo.",
+  "@authVerifyFailed": {
+    "description": "Error genérico de verificación del correo."
+  },
   "formatToday": "Hoy",
   "@formatToday": {
     "description": "Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»)."

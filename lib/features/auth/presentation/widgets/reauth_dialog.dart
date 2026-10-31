@@ -5,6 +5,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../pages/mfa_sign_in_page.dart';
 
 /// Para las acciones que no se repiten solas (tarjetas, panel admin): tras
@@ -15,7 +16,7 @@ Future<void> confirmIdentityThenRetry(
 }) async {
   if (await ReauthDialog.show(context, repository: repository) &&
       context.mounted) {
-    showLuxSnackbar(context, 'Identidad confirmada. Repite la acción.');
+    showLuxSnackbar(context, context.l10n.authReauthConfirmed);
   }
 }
 
@@ -54,7 +55,7 @@ class _ReauthDialogState extends State<ReauthDialog> {
 
   Future<void> _confirm({String? password}) async {
     if (password != null && password.isEmpty) {
-      setState(() => _error = 'Escribe tu contraseña.');
+      setState(() => _error = context.l10n.authReauthPasswordEmpty);
       return;
     }
     setState(() {
@@ -95,21 +96,18 @@ class _ReauthDialogState extends State<ReauthDialog> {
   @override
   Widget build(BuildContext context) {
     final method = widget.repository.reauthMethod;
+    final t = context.l10n;
     return AlertDialog(
-      title: const Text('Confirma que eres tú'),
+      title: Text(t.authReauthTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             switch (method) {
-              ReauthMethod.password =>
-                'Por seguridad, escribe tu contraseña para continuar.',
-              ReauthMethod.google =>
-                'Por seguridad, vuelve a entrar con Google para continuar.',
-              ReauthMethod.none =>
-                'Por seguridad, cierra sesión y vuelve a entrar para '
-                    'continuar.',
+              ReauthMethod.password => t.authReauthPassword,
+              ReauthMethod.google => t.authReauthGoogle,
+              ReauthMethod.none => t.authReauthNone,
             },
           ),
           if (method == ReauthMethod.password) ...[
@@ -121,7 +119,7 @@ class _ReauthDialogState extends State<ReauthDialog> {
               autofocus: true,
               enabled: !_busy,
               autofillHints: const [AutofillHints.password],
-              decoration: const InputDecoration(labelText: 'Contraseña'),
+              decoration: InputDecoration(labelText: t.authPasswordLabel),
               onSubmitted: (v) => _confirm(password: v),
             ),
           ],
@@ -137,17 +135,17 @@ class _ReauthDialogState extends State<ReauthDialog> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-          child: const Text('Cancelar'),
+          child: Text(t.authCancel),
         ),
         if (method == ReauthMethod.password)
           FilledButton(
             onPressed: _busy ? null : () => _confirm(password: _password.text),
-            child: const Text('Confirmar'),
+            child: Text(t.authConfirm),
           ),
         if (method == ReauthMethod.google)
           FilledButton(
             onPressed: _busy ? null : _confirm,
-            child: const Text('Continuar con Google'),
+            child: Text(t.authGoogleContinue),
           ),
       ],
     );

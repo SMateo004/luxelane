@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/auth_bloc.dart';
 import '../widgets/google_sign_in_button.dart';
 import 'login_page.dart' show AuthBrandPanel;
@@ -85,14 +86,14 @@ class _RegisterPageState extends State<RegisterPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               LuxPressable(
-                semanticLabel: 'Luxelane, ir al inicio',
+                semanticLabel: context.l10n.authHomeLinkSemantics,
                 haptic: false,
                 onTap: () => context.go('/'),
                 child: const LuxTapArea(child: LuxelaneWordmark(size: 11)),
               ),
               const SizedBox(height: 36),
               Text(
-                'CREAR CUENTA',
+                context.l10n.authRegisterEyebrow,
                 style: LuxTypography.caption.copyWith(
                   color: LuxColors.sapphire,
                   letterSpacing: 3,
@@ -101,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Bienvenido\na Luxelane.',
+                context.l10n.authRegisterHeadline,
                 textScaler: luxDisplayTextScaler(context),
                 style: LuxTypography.displayMedium.copyWith(
                   fontSize: 40,
@@ -109,8 +110,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Crea tu cuenta en menos de un minuto.',
+              Text(
+                context.l10n.authRegisterSubtitle,
                 style: LuxTypography.bodyMedium,
               ),
               const SizedBox(height: 40),
@@ -122,11 +123,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _webLayout() => Row(
         children: [
-          const Expanded(
+          Expanded(
             child: AuthBrandPanel(
-              title: 'Bienvenido\na Luxelane.',
-              subtitle:
-                  'Una cuenta para reservar, seguir y recordar cada trayecto.',
+              title: context.l10n.authRegisterHeadline,
+              subtitle: context.l10n.authRegisterBrandSubtitle,
             ),
           ),
           Expanded(
@@ -146,14 +146,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Crear cuenta',
+                            context.l10n.authRegisterTitle,
                             style: LuxTypography.displayMedium.copyWith(
                               fontSize: 42,
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'Solo te pediremos lo necesario para tu chófer.',
+                          Text(
+                            context.l10n.authRegisterWebSubtitle,
                             style: LuxTypography.bodyMedium,
                           ),
                           const SizedBox(height: 40),
@@ -176,56 +176,55 @@ class _RegisterPageState extends State<RegisterPage> {
             key: _form,
             child: Column(
               children: [
-                const GoogleSignInButton(label: 'Registrarte con Google'),
+                GoogleSignInButton(label: context.l10n.authGoogleRegister),
                 const SizedBox(height: LuxSpacing.lg),
                 const AuthOrDivider(),
                 const SizedBox(height: LuxSpacing.lg),
                 LuxTextField(
-                  label: 'Nombre completo',
+                  label: context.l10n.authNameLabel,
                   controller: _name,
                   prefixIcon: Icons.person_outline,
                   validator: (v) => v == null || v.trim().isEmpty
-                      ? 'Indica tu nombre para que tu chófer pueda recibirte'
+                      ? context.l10n.authNameRequired
                       : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Correo electrónico',
+                  label: context.l10n.authEmailLabel,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) => v == null || !v.contains('@')
-                      ? 'Ingresa un correo válido'
+                      ? context.l10n.authEmailInvalid
                       : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Teléfono (con código de país)',
+                  label: context.l10n.authPhoneLabel,
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
                   validator: (v) => v == null || v.trim().length < 6
-                      ? 'Tu chófer lo necesita para contactarte'
+                      ? context.l10n.authPhoneRequired
                       : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Contraseña',
+                  label: context.l10n.authPasswordLabel,
                   controller: _pass,
                   obscureText: true,
                   prefixIcon: Icons.lock_outline,
-                  validator: (v) =>
-                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                  validator: (v) => v == null || v.length < 6
+                      ? context.l10n.authPasswordMinLength
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 // Casilla explícita (decisión 7): sin marcarla no se crea la
                 // cuenta. El servidor anota versión y hora (acceptTerms).
                 FormField<bool>(
                   initialValue: false,
-                  validator: (v) => v == true
-                      ? null
-                      : 'Acepta los Términos y la Política de privacidad '
-                          'para continuar',
+                  validator: (v) =>
+                      v == true ? null : context.l10n.authTermsRequired,
                   builder: (field) => _TermsConsent(
                     value: field.value ?? false,
                     error: field.errorText,
@@ -234,29 +233,31 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: LuxSpacing.lg),
                 LuxButton(
-                  label: 'Crear cuenta',
+                  label: context.l10n.authRegisterTitle,
                   onPressed: loading ? null : _submit,
                   loading: loading,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 Text(
-                  'Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.',
+                  context.l10n.authRegisterDataNote,
                   textAlign: TextAlign.center,
                   style: LuxTypography.caption.copyWith(
                     color: LuxColors.inkSecondary,
                   ),
                 ),
                 const SizedBox(height: LuxSpacing.sm),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                // Wrap: en otros idiomas la frase puede no caber en una línea.
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    const Text(
-                      '¿Ya tienes cuenta? ',
+                    Text(
+                      context.l10n.authHaveAccount,
                       style: LuxTypography.bodyMedium,
                     ),
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Inicia sesión'),
+                      child: Text(context.l10n.authSignInLink),
                     ),
                   ],
                 ),
@@ -293,7 +294,7 @@ class _TermsConsent extends StatelessWidget {
         Row(
           children: [
             Semantics(
-              label: 'Acepto los Términos y la Política de privacidad',
+              label: context.l10n.authTermsCheckboxSemantics,
               child: Checkbox(
                 key: const Key('terms-checkbox'),
                 value: value,
@@ -305,25 +306,25 @@ class _TermsConsent extends StatelessWidget {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text('He leído y acepto los ', style: plain),
+                  Text(context.l10n.authTermsReadPrefix, style: plain),
                   Semantics(
                     link: true,
                     child: LuxFocusable(
                       onActivate: () => context.push('/legal/terminos'),
                       child: GestureDetector(
                         onTap: () => context.push('/legal/terminos'),
-                        child: Text('Términos', style: link),
+                        child: Text(context.l10n.authTermsLink, style: link),
                       ),
                     ),
                   ),
-                  Text(' y la ', style: plain),
+                  Text(context.l10n.authTermsAnd, style: plain),
                   Semantics(
                     link: true,
                     child: LuxFocusable(
                       onActivate: () => context.push('/legal/privacidad'),
                       child: GestureDetector(
                         onTap: () => context.push('/legal/privacidad'),
-                        child: Text('Política de privacidad', style: link),
+                        child: Text(context.l10n.authPrivacyLink, style: link),
                       ),
                     ),
                   ),

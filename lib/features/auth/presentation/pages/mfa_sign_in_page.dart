@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/auth/mfa.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Segundo paso del inicio de sesión: el código de 6 cifras de la app
 /// autenticadora (chóferes y administradores).
@@ -38,7 +39,7 @@ class _MfaSignInPageState extends State<MfaSignInPage> {
   Future<void> _submit() async {
     final code = _code.text.trim();
     if (!RegExp(r'^\d{6}$').hasMatch(code)) {
-      setState(() => _error = 'Escribe las 6 cifras del código.');
+      setState(() => _error = context.l10n.authMfaCodeDigits);
       return;
     }
     setState(() {
@@ -60,10 +61,10 @@ class _MfaSignInPageState extends State<MfaSignInPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Verificación en dos pasos'),
+          title: Text(context.l10n.authMfaTitle),
           leading: IconButton(
             icon: const Icon(Icons.close_rounded),
-            tooltip: 'Cancelar',
+            tooltip: context.l10n.authCancel,
             onPressed: _busy ? null : widget.onCancel,
           ),
         ),
@@ -73,8 +74,7 @@ class _MfaSignInPageState extends State<MfaSignInPage> {
             children: [
               Text(
                 widget.challenge.hasTotp
-                    ? 'Abre tu app autenticadora y escribe el código de '
-                        'Luxelane.'
+                    ? context.l10n.authMfaSignInPrompt
                     : mfaErrorMessage('no-totp'),
                 style: LuxTypography.bodyLarge,
               ),
@@ -90,7 +90,8 @@ class _MfaSignInPageState extends State<MfaSignInPage> {
                   LengthLimitingTextInputFormatter(6),
                 ],
                 autofillHints: const [AutofillHints.oneTimeCode],
-                decoration: const InputDecoration(labelText: 'Código'),
+                decoration:
+                    InputDecoration(labelText: context.l10n.authMfaCodeLabel),
                 onSubmitted: (_) => _submit(),
               ),
               if (_error != null)
@@ -107,14 +108,13 @@ class _MfaSignInPageState extends State<MfaSignInPage> {
                 ),
               const SizedBox(height: LuxSpacing.lg),
               LuxButton(
-                label: 'Entrar',
+                label: context.l10n.authMfaSignInButton,
                 loading: _busy,
                 onPressed: _busy || !widget.challenge.hasTotp ? null : _submit,
               ),
               const SizedBox(height: LuxSpacing.md),
-              const Text(
-                '¿Perdiste el acceso a tu app autenticadora? Contacta con '
-                'central para recuperar la cuenta.',
+              Text(
+                context.l10n.authMfaLostAccess,
                 style: LuxTypography.caption,
               ),
             ],

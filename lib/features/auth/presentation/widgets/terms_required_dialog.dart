@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Reservar exige los términos vigentes (createBooking: terms_required):
 /// enlaces a los textos y «Aceptar», que lo anota en el servidor.
@@ -25,7 +26,7 @@ class TermsRequiredDialog extends StatefulWidget {
         ) ??
         false;
     if (ok && context.mounted) {
-      showLuxSnackbar(context, 'Listo. Ya puedes reservar.');
+      showLuxSnackbar(context, context.l10n.authTermsAcceptedSnack);
     }
     return ok;
   }
@@ -56,26 +57,23 @@ class _TermsRequiredDialogState extends State<TermsRequiredDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Acepta los términos para reservar'),
+        title: Text(context.l10n.authTermsDialogTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Para reservar necesitamos que aceptes la versión vigente de '
-              'los Términos y la Política de privacidad.',
-            ),
+            Text(context.l10n.authTermsDialogBody),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               children: [
                 TextButton(
                   onPressed: () => context.push('/legal/terminos'),
-                  child: const Text('Leer los Términos'),
+                  child: Text(context.l10n.authTermsRead),
                 ),
                 TextButton(
                   onPressed: () => context.push('/legal/privacidad'),
-                  child: const Text('Leer la Política de privacidad'),
+                  child: Text(context.l10n.authPrivacyRead),
                 ),
               ],
             ),
@@ -89,11 +87,11 @@ class _TermsRequiredDialogState extends State<TermsRequiredDialog> {
         actions: [
           TextButton(
             onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-            child: const Text('Ahora no'),
+            child: Text(context.l10n.authNotNow),
           ),
           FilledButton(
             onPressed: _busy ? null : _accept,
-            child: const Text('Acepto'),
+            child: Text(context.l10n.authAccept),
           ),
         ],
       );

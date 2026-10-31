@@ -1,7 +1,6 @@
 {
   "trinquete": {
     "lib/core/widgets": 111,
-    "lib/features/auth": 135,
     "lib/features/booking": 158,
     "lib/features/business": 21,
     "lib/features/driver": 179,

@@ -15,6 +15,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
@@ -172,7 +173,7 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
       final fbUser = cred.user;
-      if (fbUser == null) return const Left(AuthFailure(_googleGenericError));
+      if (fbUser == null) return Left(AuthFailure(_googleGenericError));
       return _activeOrBlocked(await _ensureProfile(fbUser));
     } on fb.FirebaseAuthMultiFactorException catch (e) {
       return Left(MfaRequiredFailure(_challenge(e)));
@@ -191,7 +192,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(
         AuthFailure(
           e.code == GoogleSignIn.kNetworkError
-              ? 'Sin conexión. Revisa tu internet e inténtalo de nuevo.'
+              ? L10n.current.authErrorOffline
               : _googleGenericError,
         ),
       );
@@ -271,26 +272,27 @@ class AuthRepositoryImpl implements AuthRepository {
     return Left(AuthFailure(blockedAccountMessage(user.role)));
   }
 
-  static const _googleGenericError =
-      'No pudimos iniciar sesión con Google. Inténtalo de nuevo.';
+  // Solo para getCurrentUser, que no llega a ninguna pantalla.
+  static const _notSignedIn = 'Not authenticated'; // i18n-ignore: interno
+  static const _noProfile = 'User not found'; // i18n-ignore: interno
+
+  static String get _googleGenericError => L10n.current.authGoogleGenericError;
 
   static String _googleErrorMessage(String code) {
+    final t = L10n.current;
     switch (code) {
       case 'account-exists-with-different-credential':
-        return 'Ya tienes una cuenta con este correo. Inicia sesión con tu '
-            'contraseña.';
+        return t.authGoogleAccountExists;
       case 'popup-blocked':
-        return 'Tu navegador bloqueó la ventana de Google. Permite las '
-            'ventanas emergentes e inténtalo de nuevo.';
+        return t.authGooglePopupBlocked;
       case 'unauthorized-domain':
-        return 'Este dominio no está autorizado para iniciar sesión con '
-            'Google.';
+        return t.authGoogleUnauthorizedDomain;
       case 'operation-not-allowed':
-        return 'El inicio de sesión con Google no está habilitado.';
+        return t.authGoogleNotEnabled;
       case 'user-disabled':
         return kBlockedAccountMessage;
       case 'network-request-failed':
-        return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+        return t.authErrorOffline;
       default:
         return _googleGenericError;
     }
@@ -407,9 +409,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(ServerFailure(deleteAccountErrorMessage(e.code, e.details)));
     } catch (_) {
-      return const Left(
-        ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'),
-      );
+      return Left(ServerFailure(L10n.current.authDeleteAccountError));
     }
   }
 
@@ -469,9 +469,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final message = passwordResetErrorMessage(e.code);
       return message == null ? const Right(null) : Left(AuthFailure(message));
     } catch (_) {
-      return const Left(
-        ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'),
-      );
+      return Left(ServerFailure(L10n.current.authResetLinkError));
     }
   }
 
@@ -479,9 +477,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> getCurrentUser() async {
     try {
       final fbUser = _auth.currentUser;
-      if (fbUser == null) return const Left(AuthFailure('Not authenticated'));
+      if (fbUser == null) return const Left(AuthFailure(_notSignedIn));
       final doc = await _db.collection('users').doc(fbUser.uid).get();
-      if (!doc.exists) return const Left(NotFoundFailure('User not found'));
+      if (!doc.exists) return const Left(NotFoundFailure(_noProfile));
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
       return Left(ServerFailure(unexpectedErrorMessage(e)));
@@ -492,17 +490,16 @@ class AuthRepositoryImpl implements AuthRepository {
 /// Errores de Auth al enviar o comprobar la verificación del correo.
 EmailVerificationFailure emailVerificationFailureFor(String code) =>
     switch (code) {
-      'too-many-requests' => const EmailVerificationFailure(
+      'too-many-requests' => EmailVerificationFailure(
           EmailVerificationIssue.tooManyRequests,
-          'Enviamos varios enlaces seguidos. Espera unos minutos antes de '
-          'pedir otro.',
+          L10n.current.authVerifyTooMany,
         ),
-      'network-request-failed' => const EmailVerificationFailure(
+      'network-request-failed' => EmailVerificationFailure(
           EmailVerificationIssue.network,
-          'Sin conexión. Revisa tu red e inténtalo de nuevo.',
+          L10n.current.authVerifyOffline,
         ),
-      _ => const EmailVerificationFailure(
+      _ => EmailVerificationFailure(
           EmailVerificationIssue.other,
-          'No pudimos completar la verificación. Inténtalo de nuevo.',
+          L10n.current.authVerifyFailed,
         ),
     };
