@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import '../l10n/gen/app_localizations.dart';
+import '../l10n/l10n.dart';
 
 /// Idioma de las apps del pasajero y del chófer: español (base), inglés y
 /// portugués de Brasil (pt). Sin los delegados de Material los textos del
@@ -50,4 +50,22 @@ abstract final class LuxLocale {
   /// Para MaterialApp.localeListResolutionCallback.
   static Locale resolveList(List<Locale>? device, Iterable<Locale> _) =>
       fromDevice(device);
+}
+
+/// Subárbol siempre en español (el panel de admin, decisión 3): textos de
+/// Material, context.l10n y L10n.current, aunque la app esté en otro idioma.
+class LuxSpanishOnly extends StatelessWidget {
+  const LuxSpanishOnly({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    L10n.use(LuxLocale.fallback);
+    return Localizations.override(
+      context: context,
+      locale: LuxLocale.fallback,
+      child: child,
+    );
+  }
 }

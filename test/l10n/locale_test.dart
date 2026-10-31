@@ -7,7 +7,7 @@ import 'package:luxelane/app/locale_controller.dart';
 import 'package:luxelane/app/lux_locale.dart';
 import 'package:luxelane/core/services/locale_sync.dart';
 import 'package:luxelane/features/profile/presentation/widgets/language_selector.dart';
-import 'package:luxelane/l10n/gen/app_localizations.dart';
+import 'package:luxelane/l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Idiomas, A1, A3 y A7: resolución del idioma, cambio en caliente desde el
@@ -195,38 +195,37 @@ void main() {
   });
 
   group('panel de admin', () {
+    tearDown(() => L10n.use(const Locale('es')));
+
     testWidgets('con la app en inglés, el panel sigue en español', (t) async {
       late String cancel;
+      late String title;
+      L10n.use(const Locale('en'));
       await t.pumpWidget(
         MaterialApp(
           locale: const Locale('en'),
           supportedLocales: LuxLocale.supportedLocales,
           localizationsDelegates: LuxLocale.delegates,
-          home: Builder(
-            builder: (c) => Localizations.override(
-              context: c,
-              locale: LuxLocale.fallback,
-              child: Builder(
-                builder: (inner) {
-                  cancel = MaterialLocalizations.of(inner).cancelButtonLabel;
-                  return const SizedBox();
-                },
-              ),
+          home: LuxSpanishOnly(
+            child: Builder(
+              builder: (inner) {
+                cancel = MaterialLocalizations.of(inner).cancelButtonLabel;
+                title = inner.l10n.languageTitle;
+                return const SizedBox();
+              },
             ),
           ),
         ),
       );
       expect(cancel.toLowerCase(), 'cancelar');
+      expect(title, 'Idioma');
+      // Los textos fuera de los widgets (enums, formatos) también.
+      expect(L10n.current.languageSystem, 'Sistema');
     });
 
-    test('la ruta del panel fuerza el español', () {
+    test('la ruta del panel va dentro de LuxSpanishOnly', () {
       final src = File('lib/app/router/router.dart').readAsStringSync();
-      expect(
-        src,
-        matches(RegExp(
-          r'Localizations\.override\(\s*context: c,\s*locale: LuxLocale\.fallback,\s*child: const AdminDashboardPage\(\)',
-        )),
-      );
+      expect(src, contains('LuxSpanishOnly(child: AdminDashboardPage())'));
     });
   });
 }

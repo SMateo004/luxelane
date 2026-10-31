@@ -237,14 +237,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           path: LuxRoutes.admin,
           // El panel sigue en español (decisión 3), también sus textos de
           // Material, aunque la app esté en otro idioma.
-          pageBuilder: (c, s) => _fade(
-            Localizations.override(
-              context: c,
-              locale: LuxLocale.fallback,
-              child: const AdminDashboardPage(),
-            ),
-            s,
-          ),
+          pageBuilder: (c, s) =>
+              _fade(const LuxSpanishOnly(child: AdminDashboardPage()), s),
         ),
         GoRoute(
           path: LuxRoutes.driverActiveRide,
