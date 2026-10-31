@@ -250,7 +250,8 @@ const CASES: Record<string, Case> = {
   registerDocumentUpload: {
     schema: uploadSchema, valid: { type: 'license_front', version: 1, expiresAt: 1_900_000_000_000 },
     wrongType: { type: 'license_front', version: '1' },
-    extreme: [{ type: 'selfie', version: 1 }, { type: 'license_front', version: 0 }, { type: 'license_front', version: 1_000_000 }],
+    extreme: [{ type: 'selfie', version: 1 }, { type: 'license_front', version: 0 }, { type: 'license_front', version: 1_000_000 },
+      { type: 'license_front', version: 21 }],
   },
   adminGetDocumentUrl: {
     schema: docUrlSchema, valid: { driverId: ID, type: 'national_id_front' },

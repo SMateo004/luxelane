@@ -95,6 +95,13 @@ describe('driverDocs/{uid}/{tipo}/{versión}', () => {
     await assertFails(put('chofer', 'driverDocs/chofer/license_front/abc'));
   });
 
+  // A10: como mucho 20 versiones por documento (igual que el servidor).
+  test('versión máxima 20: la 20 entra, la 21 no', async () => {
+    await assertSucceeds(put('chofer', 'driverDocs/chofer/vehicle_photo_front/20'));
+    await assertFails(put('chofer', 'driverDocs/chofer/vehicle_photo_back/21'));
+    await assertFails(put('chofer', 'driverDocs/chofer/vehicle_photo_left/100'));
+  });
+
   test('ruta fuera de driverDocs, denegada', async () => {
     await assertFails(put('chofer', 'otros/chofer/license_front/1'));
     await assertFails(put('chofer', 'chofer/foto.jpg'));

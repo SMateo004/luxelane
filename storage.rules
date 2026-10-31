@@ -43,7 +43,7 @@ service firebase.storage {
       // sobrescribe ni con create; update y delete, denegados).
       allow create: if resource == null && isDriver(uid) &&
         (type in photoTypes() || type in pdfTypes()) &&
-        version.matches('^[1-9][0-9]{0,5}$') &&
+        version.matches('^([1-9]|1[0-9]|20)$') &&
         validFile(type);
       allow read, update, delete: if false;
     }

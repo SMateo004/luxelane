@@ -397,9 +397,12 @@ export async function getDriverApplication(deps: RegDeps, uid: string | undefine
 // Subida (registerDocumentUpload)
 // ---------------------------------------------------------------------------
 
+/** Versiones por documento (A10): igual que storage.rules. */
+export const MAX_DOC_VERSION = 20;
+
 export const uploadSchema = z.strictObject({
   type: z.enum(DOC_TYPES),
-  version: z.number().int().min(1).max(999_999),
+  version: z.number().int().min(1).max(MAX_DOC_VERSION),
   /** Vencimiento del documento, ms UTC (obligatorio si el tipo vence). */
   expiresAt: z.number().int().positive().max(4_102_444_800_000).optional(),
 });
