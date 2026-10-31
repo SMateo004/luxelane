@@ -214,40 +214,49 @@ flutter run --dart-define-from-file=env.local.json
 
 ---
 
-## Preferencias del pasajero (cierre/preferencias): NO desplegar todavía
+## Preferencias del pasajero (cierre/preferencias, Partes A y B)
 
-**Ni las reglas ni las functions de esta rama se despliegan hasta terminar
-la Parte B** (apps y panel). Solo está hecha la Parte A (servidor, reglas,
-modelo).
+Partes A (servidor, reglas) y B (apps y panel) hechas; se despliegan juntas,
+con los idiomas (que llevan la Parte A dentro), en este orden.
 
-Qué pasaría con las apps actuales:
+### Pasos manuales previos (responsable)
+- `config/ops.playlistHosts` en la consola: lista de hosts permitidos para la
+  lista de música, en minúsculas y sin `https://` (p. ej. `["musica.ejemplo.com"]`).
+  Sin ella (o vacía) la app no ofrece el campo y el servidor rechaza cualquier
+  URL. No la escribe `adminUpdateConfig` (y como escribe con merge, no la borra).
+- Retención de las copias por reserva y de la nota: pendiente del abogado
+  (auditoría, sección K). `deleteAccount` ya borra las copias del usuario.
+- Revisión nativa de los textos nuevos (`lib/l10n/src/preferences.json` y los
+  de perfil, reserva y panel).
 
-- **Reglas** (`ridePreferences` y `tripPreferences` pasan a campos
-  privilegiados de `users/{uid}`): la app actual del pasajero manda
-  `ridePreferences` en cada guardado del perfil (`updateUser`). Si las
-  cambió, el guardado entero se rechaza (también el nombre y el teléfono).
-- **Functions** (`createBooking` ya no copia `riderPreferences` a la
-  reserva; la copia va a `bookings/{id}/driverView/preferences`): la app
-  actual del chófer deja de ver las preferencias en las reservas nuevas,
-  porque las lee de la reserva. Esto ocurre al desplegar functions, aunque
-  las reglas no se suban.
+### Orden
+1. **Functions**: `updatePreferences` y `getPreferenceOptions`; `createBooking`
+   con `preferences` y la copia en `bookings/{id}/driverView/preferences` (sin
+   ellas, copia las del perfil y traduce las antiguas `ridePreferences`);
+   `openRequests.preferredDriverLanguages`; `deleteAccount` borra las copias.
+   Desde aquí la reserva ya no lleva `riderPreferences`.
+2. **Apps** (pasajero y chófer) y el panel, publicados.
+3. **`minAppVersion`** a la versión de este paso: la app anterior del chófer no
+   ve preferencias (las leía de la reserva) y la del pasajero, tras las
+   reglas, no podría guardar su perfil si cambia las preferencias antiguas.
+4. **Reglas al final**: `tripPreferences`, `ridePreferences` y `locale` solo
+   los escribe el servidor; `driverView` lo leen el pasajero dueño, el admin y
+   el chófer asignado y activo entre `confirmed` e `in_progress`.
 
-Lo que tiene que traer la Parte B antes de desplegar (B0):
-
-1. deleteAccount borra las copias `driverView` de las reservas del usuario.
-2. Las apps dejan de enviar `ridePreferences` en `updateUser` y de leerlas
-   de la reserva; el perfil usa `updatePreferences`.
-3. La app del chófer lee `bookings/{id}/driverView/preferences`.
-
-Orden previsto al terminar la Parte B: functions → apps publicadas →
-`minAppVersion` → reglas al final. Paso manual previo: el responsable fija
-`config/ops.playlistHosts` en la consola (lista de hosts permitidos; sin
-ella, el campo de la lista de música no se ofrece y el servidor lo rechaza).
+### Qué ve una app anterior
+- **Pasajero**: reserva igual (no manda `preferences`; el servidor copia las
+  del perfil). Su perfil muestra el grupo antiguo de estilo de viaje; tras las
+  reglas, cambiarlo hace fallar todo el guardado del perfil (también nombre y
+  teléfono): por eso `minAppVersion` va antes de las reglas.
+- **Chófer**: deja de ver las preferencias desde el paso 1 (ya no van en la
+  reserva). Necesita la app nueva.
+- **Panel**: el detalle de la reserva sin preferencias hasta publicar el panel
+  nuevo.
 
 ## Idiomas (cierre/idiomas): es, en y pt en las apps del pasajero y del chófer
 
-**Esta rama lleva dentro la Parte A de preferencias**: no se despliega hasta
-cerrar su B0 (ver «Preferencias del pasajero», arriba). Cuando se pueda:
+**Esta rama lleva dentro la Parte A de preferencias**: se despliega con las
+preferencias, en el orden de «Preferencias del pasajero» (arriba):
 
 ### Orden
 1. **Functions.** `updatePreferences` acepta `locale` y `localeSource`; los
