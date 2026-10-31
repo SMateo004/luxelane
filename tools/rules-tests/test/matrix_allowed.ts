@@ -43,11 +43,8 @@ export const ALLOWED: Record<string, Cells> = {
   'driverProfiles/{uid}': {
     asig: {
       leer: { why: 'el chófer lee su perfil' },
-      crear: { why: 'alta del chófer: crea su propio perfil sin verificación ni valoración' },
-      actualizar: { why: 'cambia disponibilidad y ubicación; licencia y vehículo, solo antes de verificar (H4)' },
+      actualizar: { why: 'cambia disponibilidad y ubicación; licencia y vehículo van por el registro del servidor (A10)' },
     },
-    libre: { crear: { why: 'alta del chófer: crea su propio perfil' } },
-    nover: { crear: { why: 'alta del chófer: crea su propio perfil' } },
     bloq: {
       leer: { why: 'el chófer lee su perfil' },
       actualizar: { why: 'con la cuenta bloqueada solo puede dejar de estar disponible (isAvailable y online en false), H10' },
@@ -193,7 +190,6 @@ export const ALLOWED: Record<string, Cells> = {
       actualizar: { why: 'cambia color y foto' },
     },
     libre: { crear: { why: 'registra su vehículo, inactivo' } },
-    nover: { crear: { why: 'alta: registra su vehículo, inactivo' } },
     bloq: {
       leer: { why: 've su vehículo' },
       listar: { why: 'su vehículo por consulta' },

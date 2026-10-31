@@ -47,8 +47,9 @@ describe('licencia tras la verificación (H4)', () => {
     await assertFails(updateDoc(profile('admin', 'asig'), change));
   });
 
-  test.each(LICENSE_CHANGES)('antes de verificar, el chófer aún corrige %s', async (_f, change) => {
-    await assertSucceeds(updateDoc(profile('nover', 'nover'), change));
+  // A10: antes de verificar, el aspirante corrige con saveDriverStep, no desde el cliente.
+  test.each(LICENSE_CHANGES)('antes de verificar, el aspirante no corrige %s desde el cliente', async (_f, change) => {
+    await assertFails(updateDoc(profile('nover', 'nover'), change));
   });
 
   test('el chófer verificado sigue cambiando su disponibilidad', async () => {
@@ -96,12 +97,13 @@ describe('campos del perfil del chófer (A8.5)', () => {
     await assertFails(updateDoc(profile('nover', 'nover'), { documentsVerified: true }));
   });
 
-  test('el alta solo admite sus campos y su propio userId', async () => {
+  // A10: el alta la hace el servidor; desde el cliente, ni con los campos permitidos.
+  test('el alta no se hace desde el cliente', async () => {
     await env.withSecurityRulesDisabled((ctx) => deleteDoc(doc(ctx.firestore(), 'driverProfiles', 'nover')));
     const base = { userId: 'nover', licenseNumber: 'LIC', licenseExpiry: Timestamp.fromDate(new Date(2030, 0, 1)), vehicleId: 'v_nover' };
     await assertFails(setDoc(profile('nover', 'nover'), { ...base, documentPhotoUrl: 'x' }));
     await assertFails(setDoc(profile('nover', 'nover'), { ...base, userId: 'asig' }));
-    await assertSucceeds(setDoc(profile('nover', 'nover'), base));
+    await assertFails(setDoc(profile('nover', 'nover'), base));
   });
 
   test('el chófer verificado sigue publicando disponibilidad y ubicación', async () => {

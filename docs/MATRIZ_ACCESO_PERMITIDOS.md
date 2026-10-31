@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-153 celdas permitidas, 2 con ⚠.
+149 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
@@ -55,16 +55,7 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 **chófer verif. asignado**
 
 - leer: el chófer lee su perfil.
-- crear: alta del chófer: crea su propio perfil sin verificación ni valoración.
-- actualizar: cambia disponibilidad y ubicación; licencia y vehículo, solo antes de verificar (H4).
-
-**chófer verif. no asignado**
-
-- crear: alta del chófer: crea su propio perfil.
-
-**chófer no verificado**
-
-- crear: alta del chófer: crea su propio perfil.
+- actualizar: cambia disponibilidad y ubicación; licencia y vehículo van por el registro del servidor (A10).
 
 **usuario bloqueado**
 
@@ -359,10 +350,6 @@ Ninguna celda permitida.
 **chófer verif. no asignado**
 
 - crear: registra su vehículo, inactivo.
-
-**chófer no verificado**
-
-- crear: alta: registra su vehículo, inactivo.
 
 **usuario bloqueado**
 

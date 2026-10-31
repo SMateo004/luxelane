@@ -94,10 +94,10 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ isAvailable: false }),
     expect: {
-      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNNSN', admin: 'SSNNN',
+      ...allRoles(none), asig: 'SNNSN', bloq: 'SNNSN', admin: 'SSNNN',
     },
-    note: 'Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer ' +
-      '(los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).',
+    note: 'Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia: ya no desde el cliente, ' +
+      'la hace el servidor (startDriverApplication, saveDriverStep, A10).',
   },
   {
     name: 'driverApplications/{uid}',
@@ -388,9 +388,10 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ color: 'Negro' }),
     expect: {
-      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNNN', admin: 'SSNNN',
+      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', bloq: 'SSNNN', admin: 'SSNNN',
     },
-    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).',
+    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8) ' +
+      'y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).',
   },
   {
     name: 'pricingRules/{id}',

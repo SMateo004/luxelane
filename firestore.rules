@@ -170,14 +170,17 @@ service cloud.firestore {
       // Lista blanca (A8.5): el dueño solo escribe estos campos; cualquier
       // otro (verificación, valoración, documentos, fotos, datos de pago
       // que se añadan) es del admin o del servidor.
-      allow create: if isOwner(uid) && isDriver() && isActiveUser() &&
-        request.resource.data.keys().hasOnly(driverOwnerFields()) &&
-        request.resource.data.get('userId', uid) == uid;
+      // El perfil lo crea el servidor (startDriverApplication, saveDriverStep,
+      // A10): desde el cliente, ni el aspirante ni nadie lo crea.
+      allow create: if false;
       // Verificar y cambiar datos sensibles: adminVerifyDriver y
       // adminUpdateDriverSensitive (Parte A).
       allow update: if (isOwner(uid) && isDriver() && (
         onlyGoingOffline() || (
           isActiveUser() &&
+          // Aspirante sin verificar (A10): solo puede quedar fuera de línea;
+          // licencia, vehículo y ubicación van por el registro del servidor.
+          resource.data.get('documentsVerified', false) == true &&
           // Documentos obligatorios vencidos con el bloqueo activo
           // (config/ops.blockOnExpiredDocs): no se pone en línea hasta
           // renovarlos o hasta que el admin lo autorice. Lo marca el servidor.
@@ -543,7 +546,9 @@ service cloud.firestore {
         (isAuthenticated() && resource.data.driverId == request.auth.uid);
       // Un chófer bloqueado no registra vehículos (matriz, H8).
       // Lo registra el chófer en su alta; el panel no crea vehículos (A8.2).
-      allow create: if (isDriver() && isActiveUser() &&
+      // El aspirante sin verificar (A10) registra su vehículo con
+      // saveDriverStep (placa única, colores de la lista), no desde aquí.
+      allow create: if (isDriver() && isActiveUser() && isVerifiedDriver() &&
           isOwner(request.resource.data.driverId) &&
           request.resource.data.isActive == false);
       // Activar o desactivar un vehículo es decisión del admin. Placa,
@@ -552,7 +557,7 @@ service cloud.firestore {
       // Activar y corregir datos del admin: adminSetVehicleActive y
       // adminUpdateDriverSensitive (Parte A).
       // Un chófer bloqueado tampoco cambia color ni foto (D1).
-      allow update: if isDriver() && isActiveUser() &&
+      allow update: if isDriver() && isActiveUser() && isVerifiedDriver() &&
         resource.data.driverId == request.auth.uid &&
         onlyUpdating(['color', 'photoUrl']);
       allow delete: if false;

@@ -33,7 +33,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 |---|---|---|---|---|---|---|---|---|---|
 | `users/{uid}` | sí | · · · · · | L · · A · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · | L Li · · · |
 | `users/{uid}/notifications` | nueva | · · · · · | L Li · A B | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A B | L Li · · · |
-| `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · C A · | · · C · · | · · C · · | L · · A · | L Li · · · |
+| `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · · A · | · · · · · | · · · · · | L · · A · | L Li · · · |
 | `driverApplications/{uid}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · | L · · · · | L Li · · · |
 | `driverApplications/{uid}/documents` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · | L Li · · · |
 | `driverApplications/{uid}/private` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
@@ -59,7 +59,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `bookings/{id}/payment` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `paymentRefs/{ref}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `paymentOperations/{key}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
-| `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · C · · | L Li · · · | L Li · · · |
+| `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · · · · | L Li · · · | L Li · · · |
 | `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · |
 | `config/global` | nueva | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · |
 | `config/finance` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · |
@@ -72,7 +72,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 
 - `users/{uid}`: Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.
 - `users/{uid}/notifications`: Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.
-- `driverProfiles/{uid}`: Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer (los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).
+- `driverProfiles/{uid}`: Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia: ya no desde el cliente, la hace el servidor (startDriverApplication, saveDriverStep, A10).
 - `driverApplications/{uid}`: Solicitud de chófer de nover (bloqueado: la suya). Estado y paso; la escribe el servidor (saveDriverStep, revisión del admin).
 - `driverApplications/{uid}/documents`: Estado de cada documento (versión, vencimiento, motivo de rechazo). Lo escribe el servidor.
 - `driverApplications/{uid}/private`: Datos personales (cédula, licencia) y del vehículo: solo el admin. El chófer los recupera con getDriverApplication.
@@ -98,7 +98,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `bookings/{id}/payment`: Estado del pago de activa (A1): lo escribe solo el servidor; lo leen ana y el admin. El chófer asignado (asig) no lo lee: por eso no va en la reserva.
 - `paymentRefs/{ref}`: Unicidad de la referencia del pago (A1): solo el servidor.
 - `paymentOperations/{key}`: Números de operación ya usados en una confirmación (A4): solo el servidor.
-- `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).
+- `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8) y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).
 - `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión). Las escribe adminUpdatePricingRule (Parte A), sin campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).
 - `config/global`: Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Los ajustes del panel van por adminUpdateConfig (Parte A). Nadie la borra (H9).
 - `config/finance`: Comisión y parámetros internos: el admin la lee; la comisión se cambia con adminUpdateConfig (entre 0 y 100, Parte A). Nadie la borra.

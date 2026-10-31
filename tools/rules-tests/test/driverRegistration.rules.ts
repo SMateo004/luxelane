@@ -2,7 +2,7 @@
 // escribe el servidor; el chófer lee su estado; con documentos obligatorios
 // vencidos y el bloqueo activo (docsBlocked), no se pone en línea ni acepta.
 import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
 
 let env: RulesTestEnvironment;
@@ -80,4 +80,35 @@ describe('bloqueo en línea por documentos vencidos (docsBlocked)', () => {
     await assertSucceeds(updateDoc(doc(db('libre'), 'bookings', 'pend'),
       { driverId: 'libre', status: 'confirmed', updatedAt: Timestamp.now() }));
   });
+});
+
+// A10: un aspirante (role driver, documentsVerified false) solo sube su
+// solicitud; perfil y vehículo los escribe el servidor (saveDriverStep).
+describe('aspirante sin verificar (A10)', () => {
+  test('no crea su perfil de chófer desde el cliente (lo crea el servidor)', async () => {
+    await env.withSecurityRulesDisabled((ctx) => deleteDoc(doc(ctx.firestore(), 'driverProfiles', 'nover')));
+    await assertFails(setDoc(doc(db('nover'), 'driverProfiles', 'nover'),
+      { userId: 'nover', licenseNumber: 'LIC-FICTICIA', isAvailable: false }));
+  });
+
+  test('no se pone en línea ni cambia licencia, vehículo o ubicación; sí puede quedar fuera de línea', async () => {
+    const ref = doc(db('nover'), 'driverProfiles', 'nover');
+    await assertFails(updateDoc(ref, { isAvailable: true, online: true }));
+    await assertFails(updateDoc(ref, { licenseNumber: 'LIC-OTRA' }));
+    await assertFails(updateDoc(ref, { vehicleId: 'v-otro' }));
+    await assertFails(updateDoc(ref, { currentLocation: { lat: -17.7, lng: -63.1 } }));
+    await assertSucceeds(updateDoc(ref, { isAvailable: false, online: false }));
+  });
+
+  test('no registra ni cambia vehículos desde el cliente; el chófer verificado sí cambia color y foto', async () => {
+    await assertFails(setDoc(doc(db('nover'), 'vehicles', 'nuevo-nover'),
+      { driverId: 'nover', make: 'Marca', model: 'Modelo', plate: 'FIC123', isActive: false }));
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'vehicles', 'borrador-nover'),
+      { driverId: 'nover', make: 'Marca', model: 'Modelo', plate: 'FIC124', isActive: false, color: 'black' }));
+    await assertFails(updateDoc(doc(db('nover'), 'vehicles', 'borrador-nover'), { color: 'Morado' }));
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'vehicles', 'v-asig'),
+      { driverId: 'asig', make: 'Marca', model: 'Modelo', plate: 'FIC125', isActive: true, color: 'black' }));
+    await assertSucceeds(updateDoc(doc(db('asig'), 'vehicles', 'v-asig'), { color: 'Negro' }));
+  });
+
 });
