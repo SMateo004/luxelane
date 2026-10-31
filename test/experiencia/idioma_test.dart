@@ -40,6 +40,10 @@ void main() {
       expect(src, contains('localizationsDelegates: LuxLocale.delegates'),
           reason: f);
       expect(src, contains('ValueListenableBuilder<LocaleChoice>'), reason: f);
+      if (f.endsWith('/app.dart')) {
+        expect(src, contains('LuxLocale.appLocale(choice, admin: admin)'),
+            reason: 'con sesión de admin, la app entera en español');
+      }
       expect(
           src, contains('localeListResolutionCallback: LuxLocale.resolveList'),
           reason: f);

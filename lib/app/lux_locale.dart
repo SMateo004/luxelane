@@ -52,6 +52,15 @@ abstract final class LuxLocale {
   static LocaleChoice choiceOf(String? code) => LocaleChoice.values
       .firstWhere((c) => c.name == code, orElse: () => LocaleChoice.system);
 
+  /// Idioma de MaterialApp: con sesión de admin, siempre español (el panel
+  /// y todos sus diálogos, que cuelgan del navegador raíz, decisión 3); si
+  /// no, la elección del perfil o, con «Sistema», null (el del teléfono).
+  static Locale? appLocale(LocaleChoice choice, {required bool admin}) => admin
+      ? fallback
+      : choice == LocaleChoice.system
+          ? null
+          : Locale(choice.name);
+
   /// Para MaterialApp.localeListResolutionCallback.
   static Locale resolveList(List<Locale>? device, Iterable<Locale> _) =>
       fromDevice(device);
