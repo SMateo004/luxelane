@@ -191,7 +191,7 @@ class _TripCard extends StatelessWidget {
                   children: [
                     Text(
                       _title,
-                      maxLines: 1,
+                      maxLines: luxMaxLines(context, 1),
                       overflow: TextOverflow.ellipsis,
                       style: LuxTypography.titleLarge.copyWith(
                         color:
@@ -201,7 +201,7 @@ class _TripCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       _from,
-                      maxLines: 1,
+                      maxLines: luxMaxLines(context, 1),
                       overflow: TextOverflow.ellipsis,
                       style: LuxTypography.caption.copyWith(fontSize: 12),
                     ),
@@ -219,33 +219,50 @@ class _TripCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: LuxSpacing.sm + 4),
-          Row(
+          // En una fila si cabe; si no (letra grande), la acción baja a su
+          // propia línea en vez de recortar la clase del vehículo (B4).
+          OverflowBar(
+            alignment: _cta != null
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.start,
+            overflowSpacing: LuxSpacing.xs,
             children: [
-              TripStatusChip(booking: booking),
-              const SizedBox(width: LuxSpacing.sm),
-              Expanded(
-                child: Text(
-                  booking.vehicleClass.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: LuxTypography.caption.copyWith(fontSize: 12),
-                ),
-              ),
-              if (_cta != null) ...[
-                Text(
-                  _cta!,
-                  style: LuxTypography.caption.copyWith(
-                    color: LuxColors.sapphire,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TripStatusChip(booking: booking),
+                  const SizedBox(width: LuxSpacing.sm),
+                  Flexible(
+                    child: Text(
+                      booking.vehicleClass.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
                   ),
+                ],
+              ),
+              if (_cta != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        _cta!,
+                        style: LuxTypography.caption.copyWith(
+                          color: LuxColors.sapphire,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      size: 16,
+                      color: LuxColors.sapphire,
+                    ),
+                  ],
                 ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  size: 16,
-                  color: LuxColors.sapphire,
-                ),
-              ],
             ],
           ),
         ],

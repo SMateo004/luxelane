@@ -48,7 +48,12 @@ class BookingPaymentView extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: LuxColors.bg,
         appBar: AppBar(
-          title: Text(context.l10n.paymentBookingTitle),
+          // Con la letra grande el título se achica hasta caber en la barra
+          // en vez de cortarse («Pagamento da sua reserva», B4).
+          title: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(context.l10n.paymentBookingTitle),
+          ),
           leading: IconButton(
             tooltip: context.l10n.paymentViewTrip,
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),

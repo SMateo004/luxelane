@@ -693,7 +693,7 @@ class _BottomPanel extends StatelessWidget {
                         context.l10n.ridePreferencesKnown(
                           notes.take(3).join(' · ').toLowerCase(),
                         ),
-                        maxLines: 2,
+                        maxLines: luxMaxLines(context, 2),
                         overflow: TextOverflow.ellipsis,
                         style: LuxTypography.caption.copyWith(fontSize: 12),
                       ),

@@ -1354,7 +1354,8 @@ class _BookingScreenState extends State<BookingScreen> {
           ],
           const SizedBox(height: 20),
           SizedBox(
-            height: _mobileCardWidth > 168 ? 400 : 340,
+            height: (_mobileCardWidth > 168 ? 400 : 340) +
+                _vehicleCardTextGrowth(context),
             child: ListView.separated(
               controller: _cardsCtrl,
               scrollDirection: Axis.horizontal,
@@ -1865,6 +1866,16 @@ class _WebTopBar extends StatelessWidget {
 }
 
 // ── VEHICLE CARD ──────────────────────────────────────────────────────────────
+
+/// Alto, a tamaño normal, del texto de la franja inferior de una tarjeta
+/// (nombre, descripción y precio).
+const _kVehicleCardText = 60.0;
+
+/// Lo que crece ese texto con la letra del sistema: la tarjeta tiene alto
+/// fijo (carrusel horizontal) y al 200 % la franja se salía por abajo (B4).
+double _vehicleCardTextGrowth(BuildContext context) =>
+    MediaQuery.textScalerOf(context).scale(_kVehicleCardText) -
+    _kVehicleCardText;
 
 class _VehicleCard extends StatefulWidget {
   const _VehicleCard({

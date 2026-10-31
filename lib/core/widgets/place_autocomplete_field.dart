@@ -372,6 +372,9 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                 ),
                 decoration: InputDecoration(
                   hintText: widget.hint ?? widget.label,
+                  // Con la letra grande la ayuda pasa a dos líneas en vez de
+                  // cortarse («Para onde você vai?», B4).
+                  hintMaxLines: luxMaxLines(context, 1),
                   hintStyle: TextStyle(
                     color: _hintColor,
                     fontSize: widget.bare ? 15 : 13,

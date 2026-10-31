@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/widgets/lux_text_scale.dart';
 import '../../../../l10n/l10n.dart';
 import '../bloc/auth_bloc.dart';
 
@@ -27,9 +28,13 @@ class GoogleSignInButton extends StatelessWidget {
           return Semantics(
             button: true,
             label: label,
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
+            // Alto mínimo, no fijo: con la letra grande el texto pasa a dos
+            // líneas y el botón crece («Continuar com o Google», B4).
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: double.infinity,
+                minHeight: 52,
+              ),
               child: OutlinedButton(
                 onPressed: loading
                     ? null
@@ -58,8 +63,9 @@ class GoogleSignInButton extends StatelessWidget {
                     Flexible(
                       child: Text(
                         label,
-                        maxLines: 1,
+                        maxLines: luxMaxLines(context, 1),
                         overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: _kSans,
                           fontSize: 13.5,

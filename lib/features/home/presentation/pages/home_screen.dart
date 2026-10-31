@@ -618,7 +618,11 @@ class _MobileBottomPanel extends StatelessWidget {
                         color: LuxColors.inkTertiary,
                       ),
                       const SizedBox(width: 4),
-                      Text(p, style: LuxTypography.caption),
+                      // Con la letra grande la promesa se parte en líneas
+                      // en vez de salirse de la pantalla (B4).
+                      Flexible(
+                        child: Text(p, style: LuxTypography.caption),
+                      ),
                     ],
                   ),
               ],
