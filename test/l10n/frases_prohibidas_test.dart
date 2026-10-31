@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 const _porIdioma = <String, Map<String, String>>{
   'es': {
     'garantías': r'garantiz',
+    // promesas_test.dart no las ve: «\b» tras «á» no es límite en Dart.
+    'te contactarán': r'te\s+(contactamos|contactaremos|llamar[aá]|llamaremos)',
   },
   'en': {
     'garantías': r'guarantee',
@@ -25,7 +27,7 @@ const _porIdioma = <String, Map<String, String>>{
     'atención 24/7': r'24\s*/\s*7|around\s+the\s+clock',
     'propina incluida': r'\btips?\b|gratuity',
     'verificación de antecedentes': r'background\s+check|trained\s+in',
-    'te contactarán': r'will\s+(contact|call)\s+you',
+    'te contactarán': r'will\s+(contact|call)\s+you|get\s+back\s+to\s+you',
     'cobertura mundial':
         r'worldwide|all\s+over\s+the\s+world|global\s+coverage',
     'puntualidad garantizada': r'punctuality',
@@ -46,7 +48,7 @@ const _porIdioma = <String, Map<String, String>>{
     'espera gratuita': r'espera\s+(gr[aá]tis|gratuita)|minutos\s+de\s+espera',
     'seguimiento de vuelo':
         r'(acompanhamento|monitoramento)\s+(do\s+|de\s+)?voo|acompanhamos\s+seu\s+voo',
-    'atención 24/7': r'24\s*/\s*7|24\s+horas',
+    'atención 24/7': r'24\s*/\s*7|24\s+horas\s+por\s+dia|dia\s+e\s+noite',
     'propina incluida': r'gorjeta',
     'verificación de antecedentes': r'antecedentes|treinados\s+em',
     'te contactarán':
@@ -63,13 +65,23 @@ const _porIdioma = <String, Map<String, String>>{
   },
 };
 
+/// Compromisos que ya estaban en español y que decide el responsable (no se
+/// cambian al traducir): se excluyen aquí, con su motivo, y un test fija la
+/// lista para que no crezca sin querer.
+const _pendientesDeDecision = <String, String>{
+  'incidentCancelRequestedBody':
+      'tras cancelar un SOS, «Central te llamará»: depende de quién atiende (D23)',
+  'businessLead': '«te contactamos en menos de un día hábil» a empresas',
+};
+
 /// Textos de un idioma: los valores del .arb y los del catálogo del servidor.
 List<String> _texts(String locale) {
   final arb = jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
       as Map<String, dynamic>;
   final out = [
     for (final e in arb.entries)
-      if (!e.key.startsWith('@')) '${e.key}: ${e.value}',
+      if (!e.key.startsWith('@') && !_pendientesDeDecision.containsKey(e.key))
+        '${e.key}: ${e.value}',
   ];
   final server = File('../functions/src/i18n.ts').existsSync()
       ? File('../functions/src/i18n.ts')
@@ -94,6 +106,11 @@ void main() {
       });
     }
   }
+
+  test('compromisos pendientes de decisión: solo estos', () {
+    expect(_pendientesDeDecision.keys.toList()..sort(),
+        ['businessLead', 'incidentCancelRequestedBody']);
+  });
 
   test('la comprobación detecta una promesa en inglés y en portugués', () {
     expect(
