@@ -8,5 +8,6 @@
   "languageTitle": "Language",
   "languageSystem": "System",
   "languageSystemDetail": "Uses your phone's language: {language}",
-  "languageSaveError": "Your language could not be saved to your account. It will be used on this device."
+  "languageSaveError": "Your language could not be saved to your account. It will be used on this device.",
+  "legalSpanishOnlyNotice": "This document is currently available in Spanish only."
 }

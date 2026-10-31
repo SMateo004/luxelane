@@ -153,6 +153,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo guardar el idioma en tu cuenta. Se usará en este dispositivo.'**
   String get languageSaveError;
+
+  /// Aviso sobre las páginas legales (términos, privacidad) cuando la app está en inglés o portugués: el texto legal sigue en español hasta que el abogado entregue las traducciones. En español no se muestra.
+  ///
+  /// In es, this message translates to:
+  /// **'Este documento solo está disponible en español por ahora.'**
+  String get legalSpanishOnlyNotice;
 }
 
 class _AppLocalizationsDelegate

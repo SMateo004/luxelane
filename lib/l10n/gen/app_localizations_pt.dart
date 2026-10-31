@@ -37,4 +37,8 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get languageSaveError =>
       'Não foi possível salvar o idioma na sua conta. Ele será usado neste dispositivo.';
+
+  @override
+  String get legalSpanishOnlyNotice =>
+      'No momento, este documento está disponível apenas em espanhol.';
 }

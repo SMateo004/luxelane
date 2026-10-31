@@ -41,5 +41,9 @@
   "languageSaveError": "No se pudo guardar el idioma en tu cuenta. Se usará en este dispositivo.",
   "@languageSaveError": {
     "description": "Aviso si el idioma no se guardó en el servidor; la app ya cambió de idioma."
+  },
+  "legalSpanishOnlyNotice": "Este documento solo está disponible en español por ahora.",
+  "@legalSpanishOnlyNotice": {
+    "description": "Aviso sobre las páginas legales (términos, privacidad) cuando la app está en inglés o portugués: el texto legal sigue en español hasta que el abogado entregue las traducciones. En español no se muestra."
   }
 }

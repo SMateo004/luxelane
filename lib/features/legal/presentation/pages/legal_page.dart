@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/lux_info_page.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
 
 enum LegalDoc { terms, privacy }
+
+class _SpanishOnlyNotice extends StatelessWidget {
+  const _SpanishOnlyNotice({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          border: Border.all(color: LD.ink.withValues(alpha: 0.2)),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(text, style: bodyText(size: 14.5)),
+      );
+}
 
 /// Términos y condiciones y política de privacidad.
 ///
@@ -26,6 +43,12 @@ class LegalPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // El texto legal sigue en español hasta tener la traducción del
+          // abogado (decisión 3): en inglés o portugués, un aviso sobrio.
+          if (context.l10n.localeName != 'es') ...[
+            _SpanishOnlyNotice(text: context.l10n.legalSpanishOnlyNotice),
+            const SizedBox(height: 18),
+          ],
           for (final (heading, body) in sections) ...[
             Text(
               heading,
