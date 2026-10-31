@@ -4,6 +4,68 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/registro-chofer, Parte A (A1–A9, commit 1821d5b, 2026-10-31)
+
+Desde cierre/integracion 0c8d1c8 (con idiomas y preferencias). Flutter
+3.29.3, Node 22, emuladores de Firestore, Storage y Auth con `demo-luxelane`.
+Reglas e integración se ejecutan sin las variables de proxy de la sesión
+(`env -u HTTPS_PROXY ...`): con ellas, las reglas de Storage no llegan al
+emulador de Firestore (`firestore.get` devuelve null).
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           109 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           290 archivos, 0 cambiados       0
+flutter test                                  pasa           854/854                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           624/624 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1847/1847 (27 de 27 suites)     0
+npm run test:integration (demo-luxelane)      pasa           426/426 (47 de 47 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+La Parte A no toca Flutter (el número de tests de Flutter no cambia). En una
+ejecución anterior de integración en esta rama falló una vez
+`cancel_booking.int.ts` (test preexistente, intermitente: depende de que la
+marca de tiempo contenga «7299»); en esta ejecución pasa. No se ha corregido.
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de 0c8d1c8 y Storage cerrado (`allow read, write: if
+false`, lo que equivale a no tener reglas) con los tests de 1821d5b, código
+de salida 1:
+
+```
+Test Suites: 3 failed, 24 passed, 27 total
+Tests:       23 failed, 1824 passed, 1847 total
+
+● bloqueo en línea por documentos vencidos (docsBlocked) › bloqueado no acepta una reserva pagada
+● bloqueo en línea por documentos vencidos (docsBlocked) › sin bloqueo se pone en línea; con bloqueo, no
+● driverApplications › el chófer lee su estado y el motivo de rechazo, no sus datos personales ni las rutas
+● driverApplications › otro chófer o un pasajero no la leen; el admin sí
+● driverApplications/{uid} › admin › leer
+● driverApplications/{uid} › admin › listar
+● driverApplications/{uid} › bloq › leer
+● driverApplications/{uid} › nover › leer
+● driverApplications/{uid}/documentFiles › admin › leer
+● driverApplications/{uid}/documentFiles › admin › listar
+● driverApplications/{uid}/documents › admin › leer
+● driverApplications/{uid}/documents › admin › listar
+● driverApplications/{uid}/documents › bloq › leer
+● driverApplications/{uid}/documents › bloq › listar
+● driverApplications/{uid}/documents › nover › leer
+● driverApplications/{uid}/documents › nover › listar
+● driverApplications/{uid}/private › admin › leer
+● driverApplications/{uid}/private › admin › listar
+● driverDocAccessLogs/{id} › admin › leer
+● driverDocAccessLogs/{id} › admin › listar
+● driverDocs/{uid}/{tipo}/{versión} › el chófer dueño sube su documento
+● driverDocs/{uid}/{tipo}/{versión} › el dueño no sobrescribe, no lee y no borra
+● driverDocs/{uid}/{tipo}/{versión} › tipo de archivo no permitido
+```
+
 ## cierre/integracion tras fusionar cierre/preferencias, Parte B (commit 43f0e67, 2026-10-31)
 
 Fusión `git merge --no-ff cierre/preferencias` (hasta c74300d) en un
