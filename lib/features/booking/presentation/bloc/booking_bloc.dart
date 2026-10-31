@@ -7,7 +7,6 @@ import 'package:rxdart/rxdart.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
-import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../l10n/l10n.dart';
@@ -287,7 +286,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       flightType: event.flightType,
       pickupAirport: event.pickupAirport,
       hours: event.hours,
-    ).withRequestedPreferences(event.preferences);
+      requestedPreferences: event.preferences,
+    );
     final result = await _repo.createBooking(
       booking,
       quotedPrice: event.quotedPrice,

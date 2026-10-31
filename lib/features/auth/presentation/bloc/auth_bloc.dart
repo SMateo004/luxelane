@@ -120,6 +120,8 @@ class AuthAuthenticated extends AuthState {
         user.displayName,
         user.phone,
         user.photoUrl,
+        user.tripPreferences,
+        user.locale,
       ];
 }
 

@@ -491,6 +491,7 @@ class Booking {
     required this.createdAt,
     required this.updatedAt,
     this.notes,
+    this.requestedPreferences,
     this.guest,
     this.flightNumber,
     this.flightType,
@@ -531,6 +532,11 @@ class Booking {
 
   /// Notas libres del solicitante.
   final String? notes;
+
+  /// Solo al crear: preferencias de este viaje que el pasajero cambió al
+  /// reservar (createBooking.preferences; el servidor guarda su copia en
+  /// driverView). La reserva no las lleva: no se leen de Firestore.
+  final TripPreferences? requestedPreferences;
 
   /// Pasajero, si la reserva es para otra persona.
   final BookingGuest? guest;
@@ -721,6 +727,7 @@ class Booking {
     double? finalPrice,
     String? paymentId,
     DateTime? updatedAt,
+    TripPreferences? requestedPreferences,
   }) =>
       Booking(
         id: id,
@@ -738,6 +745,7 @@ class Booking {
         createdAt: createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         notes: notes,
+        requestedPreferences: requestedPreferences ?? this.requestedPreferences,
         guest: guest,
         flightNumber: flightNumber,
         flightType: flightType,

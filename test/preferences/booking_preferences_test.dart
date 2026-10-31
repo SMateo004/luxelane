@@ -116,7 +116,7 @@ void main() {
         needs: [PracticalNeed.boardingAssistance],
         note: 'Hola',
       );
-      final b = _booking().withRequestedPreferences(trip);
+      final b = _booking().copyWith(requestedPreferences: trip);
       expect(bookingRequestData(b)['preferences'], trip.toJson());
       expect(bookingRequestData(b, quote: true).containsKey('preferences'),
           isFalse);
