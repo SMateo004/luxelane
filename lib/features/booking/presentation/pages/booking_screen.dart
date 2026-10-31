@@ -734,9 +734,9 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     const SizedBox(height: LuxSpacing.sm),
-                    const Text(
+                    Text(
                       '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 11,
                         color: _kTextTertiary,
@@ -1202,13 +1202,13 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: LuxSpacing.md),
 
         // ── All fees included ───────────────────────────────────────────
-        const Row(
+        Row(
           children: [
-            Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
-            SizedBox(width: LuxSpacing.sm),
+            const Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
+            const SizedBox(width: LuxSpacing.sm),
             Text(
               LuxPromise.fixedPrice,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: kSans,
                 fontSize: 12,
                 color: _kTextSub,

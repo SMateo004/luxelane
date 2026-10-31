@@ -4,6 +4,8 @@
 /// comprueba que coinciden.
 library;
 
+import '../../l10n/l10n.dart';
+
 /// Todo lo que el chófer escribe en driverProfiles/{uid}; el resto
 /// (documentsVerified, rating, ratingCount, totalRides…) es del admin o del
 /// servidor.
@@ -32,5 +34,4 @@ const kEditableVehicleFields = ['color', 'photoUrl'];
 
 /// Sigue siendo `const` porque el perfil lo usa en un `const Text`; el texto
 /// traducido es L10n.current.commonLockedDocuments.
-const kLockedDocumentsMessage =
-    'Para cambiar estos datos, contacta con central.'; // i18n-ignore: const en español, traducido en commonLockedDocuments
+String get kLockedDocumentsMessage => L10n.current.commonLockedDocuments;

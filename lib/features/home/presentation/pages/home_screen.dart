@@ -605,7 +605,7 @@ class _MobileBottomPanel extends StatelessWidget {
               spacing: LuxSpacing.md,
               runSpacing: 4,
               children: [
-                for (final p in const [
+                for (final p in [
                   LuxPromise.fixedPrice,
                   LuxPromise.chauffeurs,
                 ])

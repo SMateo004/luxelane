@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_theme.dart';
-import '../../../../core/config/driver_documents.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
@@ -70,9 +69,13 @@ class DriverDocumentsGroup extends StatelessWidget {
           ],
         ),
         if (locked)
-          const Padding(
-            padding: EdgeInsets.only(top: LuxSpacing.xs, left: LuxSpacing.xs),
-            child: Text(kLockedDocumentsMessage, style: LuxTypography.caption),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: LuxSpacing.xs, left: LuxSpacing.xs),
+            child: Text(
+              context.l10n.commonLockedDocuments,
+              style: LuxTypography.caption,
+            ),
           ),
       ],
     );

@@ -15,16 +15,11 @@ abstract class LuxPromise {
   // ni «discreción y privacidad absolutas»: no están respaldados
   // (test/experiencia/promesas_test.dart lo vigila).
   //
-  // Siguen siendo `const` en español porque otras pantallas los usan en
-  // expresiones const; el texto traducido está en L10n (commonPromise…).
-  static const fixedPrice =
-      'Precio fijo al reservar'; // i18n-ignore: const en español, traducido en commonPromiseFixedPrice
-  static const fixedPriceLong =
-      'El precio que ves al confirmar lo calcula Luxelane para tu trayecto.'; // i18n-ignore: const en español, traducido en commonPromiseFixedPriceLong
-  static const chauffeurs =
-      'Chóferes con documentos verificados'; // i18n-ignore: const en español, traducido en commonPromiseChauffeurs
-  static const chauffeursLong =
-      'Luxelane revisa los documentos de cada chófer antes de que reciba viajes.'; // i18n-ignore: const en español, traducido en commonPromiseChauffeursLong
+  // Textos en el idioma activo (commonPromise… en lib/l10n/src/common.json).
+  static String get fixedPrice => L10n.current.commonPromiseFixedPrice;
+  static String get fixedPriceLong => L10n.current.commonPromiseFixedPriceLong;
+  static String get chauffeurs => L10n.current.commonPromiseChauffeurs;
+  static String get chauffeursLong => L10n.current.commonPromiseChauffeursLong;
 }
 
 /// A promise rendered as an icon + short line (and optional detail).
@@ -35,31 +30,24 @@ class LuxAssurance {
   final String title;
   final String? detail;
 
-  static const LuxAssurance fixedPrice = _PromiseAssurance(
-    Icons.lock_outline_rounded,
-    LuxPromise.fixedPrice,
-    LuxPromise.fixedPriceLong,
-  );
-  static const LuxAssurance chauffeurs = _PromiseAssurance(
-    Icons.verified_user_outlined,
-    LuxPromise.chauffeurs,
-    LuxPromise.chauffeursLong,
-  );
+  static const LuxAssurance fixedPrice =
+      _PromiseAssurance(Icons.lock_outline_rounded, isFixedPrice: true);
+  static const LuxAssurance chauffeurs =
+      _PromiseAssurance(Icons.verified_user_outlined, isFixedPrice: false);
 }
 
 /// Las dos promesas fijas, const y con el texto en el idioma activo.
 class _PromiseAssurance extends LuxAssurance {
-  const _PromiseAssurance(super.icon, super.title, [super.detail]);
+  const _PromiseAssurance(IconData icon, {required this.isFixedPrice})
+      : super(icon, '');
 
-  bool get _isFixedPrice => super.title == LuxPromise.fixedPrice;
-
-  @override
-  String get title => _isFixedPrice
-      ? L10n.current.commonPromiseFixedPrice
-      : L10n.current.commonPromiseChauffeurs;
+  final bool isFixedPrice;
 
   @override
-  String? get detail => _isFixedPrice
-      ? L10n.current.commonPromiseFixedPriceLong
-      : L10n.current.commonPromiseChauffeursLong;
+  String get title =>
+      isFixedPrice ? LuxPromise.fixedPrice : LuxPromise.chauffeurs;
+
+  @override
+  String? get detail =>
+      isFixedPrice ? LuxPromise.fixedPriceLong : LuxPromise.chauffeursLong;
 }
