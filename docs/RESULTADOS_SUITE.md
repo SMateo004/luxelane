@@ -4,6 +4,72 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/registro-chofer, A10 (alta del aspirante, commit 67ad375, 2026-10-31)
+
+Sobre la Parte A (796b748). Emuladores de Firestore, Storage y Auth con
+`demo-luxelane`; reglas e integración sin las variables de proxy de la sesión.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           109 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           290 archivos, 0 cambiados       0
+flutter test                                  pasa           854/854                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           633/633 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1851/1851 (27 de 27 suites)     0
+npm run test:integration (demo-luxelane)      pasa           436/436 (48 de 48 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+### Los tests nuevos fallan sin el cambio
+
+Reglas de 796b748 (Firestore y Storage) con los tests de 67ad375, código de
+salida 1:
+
+```
+Test Suites: 5 failed, 22 passed, 27 total
+Tests:       13 failed, 1838 passed, 1851 total
+
+● alta y activación de /vehicles › el aspirante sin verificar no crea su vehículo desde el cliente; el verificado sí, inactivo
+● aspirante sin verificar (A10) › no crea su perfil de chófer desde el cliente (lo crea el servidor)
+● aspirante sin verificar (A10) › no registra ni cambia vehículos desde el cliente; el chófer verificado sí cambia color y foto
+● aspirante sin verificar (A10) › no se pone en línea ni cambia licencia, vehículo o ubicación; sí puede quedar fuera de línea
+● campos del perfil del chófer (A8.5) › el alta no se hace desde el cliente
+● chófer verificado con isActive == false › su perfil (H10) › no crea un perfil nuevo
+● driverProfiles/{uid} › asig › crear
+● driverProfiles/{uid} › libre › crear
+● driverProfiles/{uid} › nover › crear
+● licencia tras la verificación (H4) › antes de verificar, el aspirante no corrige licenseExpiry desde el cliente
+● licencia tras la verificación (H4) › antes de verificar, el aspirante no corrige licenseNumber desde el cliente
+● licencia tras la verificación (H4) › antes de verificar, el aspirante no corrige vehicleId desde el cliente
+● vehicles/{id} › nover › crear
+```
+
+storage.rules de 796b748 con test/storage.rules.ts de 67ad375, código de salida 1:
+
+```
+✕ versión máxima 20: la 20 entra, la 21 no
+Tests:       1 failed, 10 passed, 11 total
+```
+
+Servidor sin el rechazo `driver_account` (función vaciada a mano, restaurada
+después), driver_start.int.ts, código de salida 1:
+
+```
+✕ ensureStripeCustomer y listPaymentMethods rechazan a un chófer, aunque tuviera cliente de cuando era pasajero
+Expected: "driver_account"
+Received: "ok"
+Tests:       1 failed, 9 passed, 10 total
+```
+
+Los demás tests de driver_start.int.ts no compilan sin `startDriverApplication`;
+el de índices (deploy_config.test.ts) y el caso `version: 21` de
+callable_schemas.test.ts fallan sin sus cambios (la entrada no existía y el
+esquema admitía hasta 999 999). cancel_booking.int.ts: arreglo de un test
+intermitente, sin test que falle de forma determinista.
+
 ## cierre/registro-chofer, Parte A (A1–A9, commit 1821d5b, 2026-10-31)
 
 Desde cierre/integracion 0c8d1c8 (con idiomas y preferencias). Flutter
