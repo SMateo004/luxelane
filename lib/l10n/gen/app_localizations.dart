@@ -2308,19 +2308,19 @@ abstract class AppLocalizations {
   /// **'SCROLL'**
   String get homeWebBookScroll;
 
-  /// Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.
+  /// Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva. Se envía siempre en español (lo lee central); en/pt no se usan.
   ///
   /// In es, this message translates to:
   /// **'SOS. Reserva #{id}.'**
   String incidentSmsHeader(String id);
 
-  /// SMS de SOS: enlace de mapa a la última ubicación.
+  /// SMS de SOS: enlace de mapa a la última ubicación. Se envía siempre en español (lo lee central); en/pt no se usan.
   ///
   /// In es, this message translates to:
   /// **'Ubicación: {link}'**
   String incidentSmsLocation(String link);
 
-  /// SMS de SOS cuando no hay ubicación.
+  /// SMS de SOS cuando no hay ubicación. Se envía siempre en español (lo lee central); en/pt no se usan.
   ///
   /// In es, this message translates to:
   /// **'Ubicación no disponible.'**

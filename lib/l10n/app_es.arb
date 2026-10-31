@@ -1700,7 +1700,7 @@
   },
   "incidentSmsHeader": "SOS. Reserva #{id}.",
   "@incidentSmsHeader": {
-    "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.",
+    "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva. Se envía siempre en español (lo lee central); en/pt no se usan.",
     "placeholders": {
       "id": {
         "type": "String",
@@ -1710,7 +1710,7 @@
   },
   "incidentSmsLocation": "Ubicación: {link}",
   "@incidentSmsLocation": {
-    "description": "SMS de SOS: enlace de mapa a la última ubicación.",
+    "description": "SMS de SOS: enlace de mapa a la última ubicación. Se envía siempre en español (lo lee central); en/pt no se usan.",
     "placeholders": {
       "link": {
         "type": "String",
@@ -1720,7 +1720,7 @@
   },
   "incidentSmsNoLocation": "Ubicación no disponible.",
   "@incidentSmsNoLocation": {
-    "description": "SMS de SOS cuando no hay ubicación."
+    "description": "SMS de SOS cuando no hay ubicación. Se envía siempre en español (lo lee central); en/pt no se usan."
   },
   "incidentNoNumbersHelp": "Contacta con las autoridades locales.",
   "@incidentNoNumbersHelp": {

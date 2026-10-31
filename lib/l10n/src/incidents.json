@@ -1,6 +1,6 @@
 {
   "incidentSmsHeader": {
-    "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.",
+    "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva. Se envía siempre en español (lo lee central); en/pt no se usan.",
     "es": "SOS. Reserva #{id}.",
     "en": "SOS. Booking #{id}.",
     "pt": "SOS. Reserva #{id}.",
@@ -12,7 +12,7 @@
     }
   },
   "incidentSmsLocation": {
-    "description": "SMS de SOS: enlace de mapa a la última ubicación.",
+    "description": "SMS de SOS: enlace de mapa a la última ubicación. Se envía siempre en español (lo lee central); en/pt no se usan.",
     "es": "Ubicación: {link}",
     "en": "Location: {link}",
     "pt": "Localização: {link}",
@@ -24,7 +24,7 @@
     }
   },
   "incidentSmsNoLocation": {
-    "description": "SMS de SOS cuando no hay ubicación.",
+    "description": "SMS de SOS cuando no hay ubicación. Se envía siempre en español (lo lee central); en/pt no se usan.",
     "es": "Ubicación no disponible.",
     "en": "Location not available.",
     "pt": "Localização indisponível."

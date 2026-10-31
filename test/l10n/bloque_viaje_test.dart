@@ -69,7 +69,7 @@ void main() {
       sosTitle: 'Notify our operations team?',
       sosSend: 'Notify operations team',
       sosCancel: 'Cancel',
-      sms: 'SOS. Booking #ABC123. Location not available.',
+      sms: 'SOS. Reserva #ABC123. Ubicación no disponible.',
       sosError: 'The help button works during the trip.',
     ),
     'pt': (
@@ -87,7 +87,7 @@ void main() {
       sosTitle: 'Avisar a central?',
       sosSend: 'Avisar a central',
       sosCancel: 'Cancelar',
-      sms: 'SOS. Reserva #ABC123. Localização indisponível.',
+      sms: 'SOS. Reserva #ABC123. Ubicación no disponible.',
       sosError: 'O botão de ajuda funciona durante a viagem.',
     ),
   };
@@ -160,7 +160,7 @@ void main() {
         expect(hits, 1);
       });
 
-      test('SMS y errores del SOS', () {
+      test('SMS (a central, siempre en español) y errores del SOS', () {
         expect(incidentSmsBody('ABC123'), c.sms);
         final f = incidentFailureFor('failed-precondition', {
           'reason': 'outside_window',

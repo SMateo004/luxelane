@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show Locale;
 
 import '../../../l10n/l10n.dart';
 
@@ -6,9 +7,11 @@ import '../../../l10n/l10n.dart';
 String mapLink(double lat, double lng) =>
     'https://maps.google.com/?q=${lat.toStringAsFixed(6)},${lng.toStringAsFixed(6)}';
 
-/// Texto del SMS que la persona solo tiene que enviar a central.
+/// Texto del SMS que la persona solo tiene que enviar a central. Siempre en
+/// español: lo lee central, que trabaja en español como el panel, sea cual
+/// sea el idioma de la app.
 String incidentSmsBody(String bookingShortId, {double? lat, double? lng}) {
-  final t = L10n.current;
+  final t = lookupAppLocalizations(const Locale('es'));
   return [
     t.incidentSmsHeader(bookingShortId),
     if (lat != null && lng != null)
