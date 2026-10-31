@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 
 import '../../features/home/presentation/pages/home_design.dart';
-import '../design/lux_promise.dart';
+import '../../l10n/l10n.dart';
 import '../di/injection.dart';
 import '../enums/enums.dart';
 import '../models/booking_form_data.dart';
@@ -81,7 +81,9 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
       initial: current != null && ServiceArea.hasCoords(current)
           ? LatLng(current.lat, current.lng)
           : _santaCruz,
-      title: origin ? 'Seleccionar lugar de recogida' : 'Seleccionar destino',
+      title: origin
+          ? context.l10n.commonSelectPickupPlace
+          : context.l10n.commonSelectDestination,
     );
     if (!mounted || picked == null) return;
     origin ? _setOrigin(picked) : _setDestination(picked);
@@ -94,10 +96,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
     setState(() {
       _origin = p;
       if (stale) _destination = null;
-      _error = stale
-          ? 'El destino estaba en otra ciudad. Elige uno en la ciudad de '
-              'recogida.'
-          : null;
+      _error = stale ? context.l10n.commonDestinationWasOtherCity : null;
     });
   }
 
@@ -118,17 +117,17 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
       initialDate: _date.isBefore(now) ? now : _date,
       firstDate: DateTime(now.year, now.month, now.day),
       lastDate: now.add(const Duration(days: 365)),
-      helpText: 'FECHA DE RECOGIDA',
-      cancelText: 'Cancelar',
-      confirmText: 'Siguiente',
+      helpText: context.l10n.commonPickupDateUpper,
+      cancelText: context.l10n.commonCancel,
+      confirmText: context.l10n.commonNext,
     );
     if (d == null || !mounted) return;
     final t = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(_date),
-      helpText: 'HORA DE RECOGIDA',
-      cancelText: 'Cancelar',
-      confirmText: 'Listo',
+      helpText: context.l10n.commonPickupTimeUpper,
+      cancelText: context.l10n.commonCancel,
+      confirmText: context.l10n.commonDone,
     );
     if (t == null || !mounted) return;
     var picked = DateTime(d.year, d.month, d.day, t.hour, t.minute);
@@ -143,7 +142,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
 
   Future<void> _submit() async {
     if (_origin == null) {
-      setState(() => _error = 'Indica dónde te recogemos.');
+      setState(() => _error = context.l10n.commonPickupMissing);
       return;
     }
     final originError = ServiceArea.originError(_origin!);
@@ -155,14 +154,13 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
     if (later != null) {
       setState(() {
         _date = later;
-        _error = 'Esa hora ya no da tiempo: la movimos a '
-            '${_formatDate(later)}. Revísala y continúa.';
+        _error = context.l10n.commonPickupMovedLater(_formatDate(later));
       });
       return;
     }
     if (_needsDestination && _destination == null) {
       setState(
-        () => _error = 'Indica tu destino para calcular el precio fijo.',
+        () => _error = context.l10n.commonDestinationMissing,
       );
       return;
     }
@@ -211,15 +209,15 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final airport = widget.mode == LuxBookingMode.airport;
-    final originHint = airport
-        ? 'Recogida — aeropuerto, hotel o dirección'
-        : 'Recogida — dirección, hotel o lugar';
+    final originHint =
+        airport ? l10n.commonPickupHintAirport : l10n.commonPickupHint;
     final destHint = airport
-        ? 'Destino — aeropuerto, hotel o dirección'
+        ? l10n.commonDestinationHintAirport
         : _service == ServiceType.byTheHour
-            ? 'Destino (opcional)'
-            : 'Destino — dirección, hotel o lugar';
+            ? l10n.commonDestinationOptional
+            : l10n.commonDestinationHint;
 
     return Theme(
       data: Theme.of(context).copyWith(brightness: Brightness.light),
@@ -242,14 +240,17 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'RESERVA TU CHÓFER',
+              l10n.commonBookYourChauffeur,
               style: uiLabel(size: 10, color: LD.sph, spacing: 3),
             ),
             const SizedBox(height: 18),
 
             if (widget.mode != LuxBookingMode.immediate) ...[
               _Segmented(
-                options: const ['Solo ida', 'Por horas'],
+                options: [
+                  l10n.commonServiceOneWay,
+                  l10n.commonServiceByTheHour
+                ],
                 index: _service == ServiceType.oneWay ? 0 : 1,
                 onChanged: (i) => setState(() {
                   _service =
@@ -261,7 +262,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             ],
 
             PlaceAutocompleteField(
-              label: 'Recogida',
+              label: l10n.commonPickup,
               hint: originHint,
               prefixIcon: Icons.trip_origin_rounded,
               initialValue: _origin,
@@ -270,7 +271,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             ),
             _MapLink(onTap: () => _pickFromMap(origin: true)),
             PlaceAutocompleteField(
-              label: 'Destino',
+              label: l10n.commonDestination,
               hint: destHint,
               prefixIcon: Icons.place_outlined,
               initialValue: _destination,
@@ -282,7 +283,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
 
             if (widget.mode == LuxBookingMode.immediate) ...[
               _Segmented(
-                options: const ['Ahora', 'Programar'],
+                options: [l10n.commonNow, l10n.commonSchedule],
                 index: _asap ? 0 : 1,
                 onChanged: (i) {
                   if (i == 0) {
@@ -299,7 +300,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
               _FieldTile(
                 icon: Icons.event_outlined,
                 label: _formatDate(_date),
-                trailing: 'Cambiar',
+                trailing: l10n.commonChange,
                 onTap: _pickDateTime,
               ),
               const SizedBox(height: 12),
@@ -356,20 +357,20 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
                           color: Colors.white,
                         ),
                       )
-                    : const Row(
+                    : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'VER VEHÍCULOS Y PRECIOS',
-                            style: TextStyle(
+                            l10n.commonSeeVehiclesAndPrices,
+                            style: const TextStyle(
                               fontFamily: kSans,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.8,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          Icon(Icons.arrow_forward_rounded, size: 16),
+                          const SizedBox(width: 10),
+                          const Icon(Icons.arrow_forward_rounded, size: 16),
                         ],
                       ),
               ),
@@ -377,15 +378,15 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             const SizedBox(height: 12),
             // Lowers the perceived commitment of the first click.
             Text(
-              'Sin compromiso: verás el precio final antes de confirmar.',
+              l10n.commonNoCommitment,
               textAlign: TextAlign.center,
               style: uiLabel(size: 11, color: LD.ink3, spacing: 0.2),
             ),
             const SizedBox(height: 20),
             Container(height: 1, color: LD.border),
             const SizedBox(height: 18),
-            const _Assurance(LuxPromise.fixedPrice),
-            const _Assurance(LuxPromise.chauffeurs),
+            _Assurance(l10n.commonPromiseFixedPrice),
+            _Assurance(l10n.commonPromiseChauffeurs),
           ],
         ),
       ),
@@ -470,7 +471,7 @@ class _MapLink extends StatelessWidget {
           ),
           icon: const Icon(Icons.map_outlined, size: 13),
           label: Text(
-            'Elegir en el mapa',
+            context.l10n.commonChooseOnMap,
             style: uiLabel(size: 10.5, color: LD.sph, spacing: 0.3),
           ),
         ),
@@ -549,16 +550,20 @@ class _HoursStepper extends StatelessWidget {
         children: [
           const Icon(Icons.hourglass_empty_rounded, size: 16, color: LD.ink3),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text(
-              'Duración',
-              style: TextStyle(fontFamily: kSans, fontSize: 13, color: LD.ink),
+              context.l10n.commonDuration,
+              style: const TextStyle(
+                fontFamily: kSans,
+                fontSize: 13,
+                color: LD.ink,
+              ),
             ),
           ),
           btn(
             Icons.remove_rounded,
             hours > 2 ? () => onChanged(hours - 1) : null,
-            'Menos horas',
+            context.l10n.commonFewerHours,
           ),
           SizedBox(
             width: 44,
@@ -576,7 +581,7 @@ class _HoursStepper extends StatelessWidget {
           btn(
             Icons.add_rounded,
             hours < 24 ? () => onChanged(hours + 1) : null,
-            'Más horas',
+            context.l10n.commonMoreHours,
           ),
         ],
       ),

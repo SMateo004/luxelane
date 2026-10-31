@@ -8,7 +8,8 @@ import '../l10n/l10n.dart';
 /// sistema salían en inglés («Sun, Oct 25», E11).
 /// Título de las dos apps: el mismo de web/index.html y del manifest (E26;
 /// antes «Luxelane Driver» en inglés y «luxelane» en el manifest).
-const kAppTitle = 'Luxelane — Servicio de chófer ejecutivo';
+const kAppTitle =
+    'Luxelane — Servicio de chófer ejecutivo'; // i18n-ignore: título de index.html y del manifest (titulo_test); en la app, commonAppTitle
 
 /// Lo que elige el usuario en el perfil. `system`: el del teléfono.
 enum LocaleChoice { system, es, en, pt }
@@ -21,7 +22,11 @@ abstract final class LuxLocale {
   static const codes = ['es', 'en', 'pt'];
 
   /// Nombre de cada idioma en su propia lengua: igual en los tres idiomas.
-  static const endonyms = {'es': 'Español', 'en': 'English', 'pt': 'Português'};
+  static const endonyms = {
+    'es': 'Español', // i18n-ignore: nombre del idioma en su lengua
+    'en': 'English', // i18n-ignore: nombre del idioma en su lengua
+    'pt': 'Português', // i18n-ignore: nombre del idioma en su lengua
+  };
 
   static const delegates = <LocalizationsDelegate<Object>>[
     AppLocalizations.delegate,

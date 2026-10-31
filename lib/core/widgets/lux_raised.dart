@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/lux_motion.dart';
 import '../../features/home/presentation/pages/home_design.dart';
+import '../../l10n/l10n.dart';
 import 'lux_focus.dart';
 
 /// Botones de Luxelane: superficies planas y silenciosas. Sin degradados ni
@@ -267,7 +268,7 @@ class _LuxLoadingDotsState extends State<LuxLoadingDots>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando',
+        label: context.l10n.commonLoading,
         child: AnimatedBuilder(
           animation: _c,
           builder: (_, __) => Row(

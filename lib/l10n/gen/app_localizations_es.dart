@@ -403,6 +403,643 @@ class AppLocalizationsEs extends AppLocalizations {
   String get businessSubmit => 'Enviar solicitud';
 
   @override
+  String get commonLockedDocuments =>
+      'Para cambiar estos datos, contacta con central.';
+
+  @override
+  String get commonStartupErrorTitle => 'No pudimos iniciar la app';
+
+  @override
+  String get commonStartupErrorBody =>
+      'Cierra la app y vuelve a abrirla en unos minutos.';
+
+  @override
+  String commonSeatingPassengers(int count) {
+    return '$count pasajeros';
+  }
+
+  @override
+  String get commonSeatingMaxDetail => 'Capacidad máxima';
+
+  @override
+  String get commonSeatingRoomierDetail => 'Más espacio para cada uno';
+
+  @override
+  String get commonSeatingChildSeat => 'Con asiento infantil';
+
+  @override
+  String get commonSeatingChildSeatDetail => 'Bajo solicitud previa';
+
+  @override
+  String get commonHighlightBusiness1 =>
+      'Sedán ejecutivo, discreto y silencioso';
+
+  @override
+  String get commonHighlightBusiness2 => 'Asientos traseros en cuero para tres';
+
+  @override
+  String get commonHighlightBusiness3 =>
+      'Maletero para tres maletas facturadas';
+
+  @override
+  String get commonHighlightSuv1 => 'SUV ejecutiva, posición de manejo elevada';
+
+  @override
+  String get commonHighlightSuv2 => 'Cabina amplia para cuatro pasajeros';
+
+  @override
+  String get commonHighlightSuv3 => 'Maletero para cuatro maletas facturadas';
+
+  @override
+  String get commonHighlightVan1 => 'Van ejecutiva para grupos y familias';
+
+  @override
+  String get commonHighlightVan2 => 'Hasta siete pasajeros en tres filas';
+
+  @override
+  String get commonHighlightVan3 => 'Espacio para dos maletas facturadas';
+
+  @override
+  String get commonHighlightFirst1 => 'Sedán insignia, nuestro máximo nivel';
+
+  @override
+  String get commonHighlightFirst2 => 'Plazas traseras con apoyabrazos central';
+
+  @override
+  String get commonHighlightTwoCheckedBags =>
+      'Maletero para dos maletas facturadas';
+
+  @override
+  String get commonHighlightElectric1 => 'Sedán ejecutivo totalmente eléctrico';
+
+  @override
+  String get commonHighlightElectric2 => 'Silencioso y sin emisiones';
+
+  @override
+  String get commonLuggageCabinOne => 'maleta de mano';
+
+  @override
+  String get commonLuggageCheckedOne => 'maleta facturada';
+
+  @override
+  String get commonLuggageOversizeOne => 'maleta extra grande';
+
+  @override
+  String get commonLuggageCabinMany => 'maletas de mano';
+
+  @override
+  String get commonLuggageCheckedMany => 'maletas facturadas';
+
+  @override
+  String get commonLuggageOversizeMany => 'maletas extra grandes';
+
+  @override
+  String get commonLuggageCabinSize => 'Hasta 55 × 40 × 20 cm';
+
+  @override
+  String get commonLuggageCheckedSize => 'Hasta 75 × 50 × 30 cm';
+
+  @override
+  String get commonLuggageOversizeSize => 'Más de 80 cm';
+
+  @override
+  String get commonPromiseFixedPrice => 'Precio fijo al reservar';
+
+  @override
+  String get commonPromiseFixedPriceLong =>
+      'El precio que ves al confirmar lo calcula Luxelane para tu trayecto.';
+
+  @override
+  String get commonPromiseChauffeurs => 'Chóferes con documentos verificados';
+
+  @override
+  String get commonPromiseChauffeursLong =>
+      'Luxelane revisa los documentos de cada chófer antes de que reciba viajes.';
+
+  @override
+  String get commonVehicleElectric => 'Eléctrico';
+
+  @override
+  String get commonVehicleBusinessDescription => 'Sedán ejecutivo';
+
+  @override
+  String get commonVehicleSuvDescription => 'SUV ejecutiva, más espacio';
+
+  @override
+  String get commonVehicleFirstDescription => 'Sedán insignia';
+
+  @override
+  String get commonVehicleVanDescription => 'Van ejecutiva para grupos';
+
+  @override
+  String get commonVehicleElectricDescription => 'Sedán ejecutivo eléctrico';
+
+  @override
+  String get commonServiceOneWay => 'Solo ida';
+
+  @override
+  String get commonServiceByTheHour => 'Por horas';
+
+  @override
+  String get commonServiceOneWayDescription =>
+      'Traslado a precio fijo a tu destino';
+
+  @override
+  String get commonServiceByTheHourDescription =>
+      'Chófer a tu disposición por un tiempo determinado';
+
+  @override
+  String get commonStatusPending => 'Pendiente';
+
+  @override
+  String get commonStatusConfirmed => 'Confirmado';
+
+  @override
+  String get commonStatusDriverArriving => 'En camino';
+
+  @override
+  String get commonStatusDriverArrived => 'Chófer llegó';
+
+  @override
+  String get commonStatusVerified => 'Verificada';
+
+  @override
+  String get commonStatusInProgress => 'En progreso';
+
+  @override
+  String get commonStatusCompleted => 'Completado';
+
+  @override
+  String get commonStatusCancelled => 'Cancelado';
+
+  @override
+  String get commonStatusNoShow => 'No se presentó';
+
+  @override
+  String get commonCabinCool => 'Fresca';
+
+  @override
+  String get commonCabinMild => 'Templada';
+
+  @override
+  String get commonCabinWarm => 'Cálida';
+
+  @override
+  String get commonPrefOpenDoor => 'Abrir la puerta';
+
+  @override
+  String get commonPrefLuggageHelp => 'Ayuda con el equipaje';
+
+  @override
+  String commonPrefCabin(String temperature, String hint) {
+    return 'Cabina $temperature ($hint)';
+  }
+
+  @override
+  String get commonPrefQuiet => 'Viaje en silencio';
+
+  @override
+  String get commonPrefNoMusic => 'Sin música';
+
+  @override
+  String get commonCancelReasonChangedPlans => 'Cambié de planes';
+
+  @override
+  String get commonCancelReasonOtherTransport => 'Encontré otro transporte';
+
+  @override
+  String get commonCancelReasonDriverLate => 'El chófer tarda demasiado';
+
+  @override
+  String get commonReasonOther => 'Otro motivo';
+
+  @override
+  String get commonReleaseReasonVehicle => 'Problema con el vehículo';
+
+  @override
+  String get commonReleaseReasonEmergency => 'Emergencia personal';
+
+  @override
+  String get commonReleaseReasonUnsafe => 'Condiciones inseguras';
+
+  @override
+  String get commonReleaseReasonSchedule => 'Conflicto de horario';
+
+  @override
+  String get commonFeeBasisNoPolicy => 'Sin política de cancelación';
+
+  @override
+  String get commonFeeBasisPolicyInvalid => 'Política inválida (sin recargo)';
+
+  @override
+  String get commonFeeBasisPaymentFailed => 'Falló el pago';
+
+  @override
+  String get commonFeeBasisNoDriver => 'Sin chófer asignado';
+
+  @override
+  String get commonFeeBasisGrace => 'Dentro del plazo tras reservar';
+
+  @override
+  String get commonFeeBasisEarly => 'Con antelación suficiente';
+
+  @override
+  String get commonFeeBasisLate => 'Tarde (aplica recargo)';
+
+  @override
+  String get commonFeeBasisNoShowAdmin =>
+      'No se presentó (decisión de central)';
+
+  @override
+  String get commonPickupArea => 'Zona de recogida';
+
+  @override
+  String get commonDropoffArea => 'Zona de destino';
+
+  @override
+  String get commonTariffNegative => 'Los importes no pueden ser negativos';
+
+  @override
+  String get commonTariffZeroTransfer => 'Un traslado no puede costar Bs0';
+
+  @override
+  String get commonTariffHourlyPrice =>
+      'El servicio por horas necesita un precio por hora';
+
+  @override
+  String get commonLocationNotificationTitle => 'Luxelane · estás conectado';
+
+  @override
+  String get commonLocationNotificationText =>
+      'Compartimos tu ubicación para asignarte viajes y guiar al pasajero.';
+
+  @override
+  String get commonLocationChannelName => 'Ubicación del chófer';
+
+  @override
+  String get commonPricingLoading =>
+      'Cargando las tarifas vigentes… inténtalo en unos segundos.';
+
+  @override
+  String get commonPricingMaintenance =>
+      'Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.';
+
+  @override
+  String commonPricingUnavailable(String vehicleClass, String serviceType) {
+    return '$vehicleClass no está disponible para \"$serviceType\" en este momento.';
+  }
+
+  @override
+  String get commonPromptEnjoyJourney => 'Disfruta el trayecto.';
+
+  @override
+  String get commonPromptChauffeurWaiting => 'Tu chófer ya te espera.';
+
+  @override
+  String get commonPromptChauffeurOnTheWay => 'Tu chófer va en camino.';
+
+  @override
+  String get commonPromptNextTripSoon => 'Tu próximo trayecto está cerca.';
+
+  @override
+  String get commonPromptMorning => '¿A dónde empieza tu día?';
+
+  @override
+  String get commonPromptMidday => '¿A dónde te llevamos?';
+
+  @override
+  String get commonPromptAfternoon => '¿Cerramos el día en calma?';
+
+  @override
+  String get commonPromptEvening => '¿Volvemos con calma?';
+
+  @override
+  String get commonPromptLateNight => 'Estamos aquí a cualquier hora.';
+
+  @override
+  String get commonFlightDomestic => 'Nacional';
+
+  @override
+  String get commonFlightInternational => 'Internacional';
+
+  @override
+  String get commonAirportDomesticExit => 'Salida de llegadas nacionales';
+
+  @override
+  String get commonAirportInternationalExit =>
+      'Salida de llegadas internacionales';
+
+  @override
+  String get commonOriginNoCoords =>
+      'No pudimos ubicar la recogida en el mapa. Elige otra dirección.';
+
+  @override
+  String commonOriginOutsideArea(String cities) {
+    return 'Por ahora operamos en $cities. Elige una recogida en una de esas ciudades.';
+  }
+
+  @override
+  String commonDestinationOtherCity(String city) {
+    return 'El destino debe estar en $city, la misma ciudad de la recogida.';
+  }
+
+  @override
+  String get commonDestinationSameCity =>
+      'El destino debe estar en la misma ciudad que la recogida.';
+
+  @override
+  String get commonFlightNumberMissing =>
+      'Indica tu número de vuelo para recogerte a tiempo.';
+
+  @override
+  String get commonFlightNumberInvalid =>
+      'Número de vuelo no válido. Ejemplo: OB 760 o Z8 315.';
+
+  @override
+  String get commonAppTitle => 'Luxelane — Servicio de chófer ejecutivo';
+
+  @override
+  String get commonTabBook => 'Reservar';
+
+  @override
+  String get commonTabMyTrips => 'Mis viajes';
+
+  @override
+  String get commonTabProfile => 'Perfil';
+
+  @override
+  String get commonSignIn => 'Iniciar sesión';
+
+  @override
+  String get commonMyProfile => 'Mi perfil';
+
+  @override
+  String get commonNotFoundTitle => 'Este camino no existe.';
+
+  @override
+  String get commonNotFoundBody => 'Te llevamos de vuelta al inicio.';
+
+  @override
+  String get commonNotFoundBack => 'VOLVER AL INICIO';
+
+  @override
+  String get commonUpdateTitleDriver => 'Actualiza la app para seguir';
+
+  @override
+  String get commonUpdateTitleRider => 'Actualiza la app para reservar';
+
+  @override
+  String get commonUpdateBodyWeb =>
+      'Hay una versión nueva de la web. Recarga la página para seguir reservando.';
+
+  @override
+  String get commonUpdateBodyApp =>
+      'Hay una versión nueva de la app. Actualízala para seguir reservando.';
+
+  @override
+  String get commonUpdateGoToStore => 'Ir a la tienda';
+
+  @override
+  String get commonGotIt => 'Entendido';
+
+  @override
+  String get commonEmailNotVerifiedTitle => 'Verifica tu correo para reservar';
+
+  @override
+  String get commonEmailNotVerifiedBody =>
+      'Por seguridad, solo se puede reservar con el correo verificado. Abre el enlace que te enviamos o pide uno nuevo.';
+
+  @override
+  String get commonNotNow => 'Ahora no';
+
+  @override
+  String get commonVerifyMyEmail => 'Verificar mi correo';
+
+  @override
+  String get commonErrorTitle => 'Algo salió mal';
+
+  @override
+  String get commonErrorBody =>
+      'Hemos sido notificados y estamos trabajando en una solución.';
+
+  @override
+  String get commonTryAgain => 'Intentar de nuevo';
+
+  @override
+  String get commonOfflineBanner =>
+      'Sin conexión. Lo que ves puede no estar al día.';
+
+  @override
+  String get commonLoading => 'Cargando';
+
+  @override
+  String get commonDone => 'Listo';
+
+  @override
+  String commonStepOf(int step, int total) {
+    return 'Etapa $step de $total';
+  }
+
+  @override
+  String get commonSlideToConfirm => 'Desliza para confirmar';
+
+  @override
+  String commonUpTo(int count) {
+    return 'Hasta $count';
+  }
+
+  @override
+  String commonHoursTotal(int hours) {
+    return '${hours}h en total';
+  }
+
+  @override
+  String get commonFixedPriceLower => 'precio fijo';
+
+  @override
+  String get commonRiderStyle => 'ESTILO DEL PASAJERO';
+
+  @override
+  String get commonConfirmBooking => 'Confirmar reserva';
+
+  @override
+  String get commonFixedPriceUpper => 'PRECIO FIJO';
+
+  @override
+  String get commonMapUnavailable => 'Mapa no disponible';
+
+  @override
+  String get commonMapUnavailableDetail =>
+      'El mapa no se puede mostrar ahora. Los datos del viaje siguen aquí.';
+
+  @override
+  String get commonPointOnMap => 'Punto elegido en el mapa';
+
+  @override
+  String get commonSelectLocation => 'Seleccionar ubicación';
+
+  @override
+  String get commonMoveMapToChoose => 'Mueve el mapa para elegir el lugar';
+
+  @override
+  String get commonSelectedLocation => 'UBICACIÓN SELECCIONADA';
+
+  @override
+  String get commonConfirmUpper => 'CONFIRMAR';
+
+  @override
+  String get commonAddressNotFound =>
+      'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.';
+
+  @override
+  String get commonSelectPickupPlace => 'Seleccionar lugar de recogida';
+
+  @override
+  String get commonSelectDestination => 'Seleccionar destino';
+
+  @override
+  String get commonDestinationWasOtherCity =>
+      'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.';
+
+  @override
+  String get commonPickupDateUpper => 'FECHA DE RECOGIDA';
+
+  @override
+  String get commonPickupTimeUpper => 'HORA DE RECOGIDA';
+
+  @override
+  String get commonCancel => 'Cancelar';
+
+  @override
+  String get commonNext => 'Siguiente';
+
+  @override
+  String get commonPickupMissing => 'Indica dónde te recogemos.';
+
+  @override
+  String commonPickupMovedLater(String when) {
+    return 'Esa hora ya no da tiempo: la movimos a $when. Revísala y continúa.';
+  }
+
+  @override
+  String get commonDestinationMissing =>
+      'Indica tu destino para calcular el precio fijo.';
+
+  @override
+  String get commonPickupHintAirport =>
+      'Recogida — aeropuerto, hotel o dirección';
+
+  @override
+  String get commonPickupHint => 'Recogida — dirección, hotel o lugar';
+
+  @override
+  String get commonDestinationHintAirport =>
+      'Destino — aeropuerto, hotel o dirección';
+
+  @override
+  String get commonDestinationOptional => 'Destino (opcional)';
+
+  @override
+  String get commonDestinationHint => 'Destino — dirección, hotel o lugar';
+
+  @override
+  String get commonBookYourChauffeur => 'RESERVA TU CHÓFER';
+
+  @override
+  String get commonPickup => 'Recogida';
+
+  @override
+  String get commonDestination => 'Destino';
+
+  @override
+  String get commonNow => 'Ahora';
+
+  @override
+  String get commonSchedule => 'Programar';
+
+  @override
+  String get commonChange => 'Cambiar';
+
+  @override
+  String get commonSeeVehiclesAndPrices => 'VER VEHÍCULOS Y PRECIOS';
+
+  @override
+  String get commonNoCommitment =>
+      'Sin compromiso: verás el precio final antes de confirmar.';
+
+  @override
+  String get commonChooseOnMap => 'Elegir en el mapa';
+
+  @override
+  String get commonDuration => 'Duración';
+
+  @override
+  String get commonFewerHours => 'Menos horas';
+
+  @override
+  String get commonMoreHours => 'Más horas';
+
+  @override
+  String get commonServiceAirportTransfer => 'Traslado al aeropuerto';
+
+  @override
+  String get commonServiceHourly => 'Chófer por horas';
+
+  @override
+  String get commonServiceImmediate => 'Recogida inmediata';
+
+  @override
+  String get commonHomeLinkLabel => 'Luxelane, inicio';
+
+  @override
+  String get commonFleet => 'Flota';
+
+  @override
+  String get commonForBusiness => 'Para empresas';
+
+  @override
+  String get commonServicesUpper => 'SERVICIOS';
+
+  @override
+  String get commonBookUpper => 'RESERVAR';
+
+  @override
+  String get commonBookATripUpper => 'RESERVAR UN VIAJE';
+
+  @override
+  String get commonMenu => 'Menú';
+
+  @override
+  String get commonCloseMenu => 'Cerrar menú';
+
+  @override
+  String get commonClose => 'Cerrar';
+
+  @override
+  String get commonServices => 'Servicios';
+
+  @override
+  String get commonFooterTagline =>
+      'Servicio de chófer privado para quienes valoran su tiempo, su privacidad y cada detalle del camino.';
+
+  @override
+  String get commonDriveWithUs => 'Conduce con nosotros';
+
+  @override
+  String get commonTerms => 'Términos y condiciones';
+
+  @override
+  String get commonPrivacy => 'Política de privacidad';
+
+  @override
+  String get commonOurPromise => 'Nuestra promesa';
+
+  @override
+  String commonCopyright(String year) {
+    return '© $year Luxelane. Todos los derechos reservados.';
+  }
+
+  @override
   String get formatToday => 'Hoy';
 
   @override
@@ -983,6 +1620,206 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get driverNavProfile => 'Perfil';
+
+  @override
+  String get errorTooManyAttempts =>
+      'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+
+  @override
+  String get errorSessionExpired =>
+      'Tu sesión expiró. Vuelve a iniciar sesión.';
+
+  @override
+  String get errorMfaRequired =>
+      'Activa la verificación en dos pasos (Perfil) y vuelve a iniciar sesión para continuar.';
+
+  @override
+  String get errorReauthRequired =>
+      'Por seguridad, vuelve a iniciar sesión para continuar.';
+
+  @override
+  String get errorNoConnection =>
+      'Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.';
+
+  @override
+  String get errorReauthWrongPassword => 'La contraseña no coincide.';
+
+  @override
+  String get errorReauthUserMismatch =>
+      'Usa la misma cuenta con la que entraste.';
+
+  @override
+  String get errorReauthFailed =>
+      'No pudimos confirmar tu identidad. Inténtalo de nuevo.';
+
+  @override
+  String get errorInvalidArgument => 'Revisa los datos e inténtalo de nuevo.';
+
+  @override
+  String get errorPermissionDenied => 'No tienes permiso para hacer esto.';
+
+  @override
+  String get errorFailedPrecondition =>
+      'Esto no se puede hacer en este momento.';
+
+  @override
+  String get errorNotFound => 'No encontramos el registro.';
+
+  @override
+  String get errorGeneric => 'No se pudo completar. Inténtalo de nuevo.';
+
+  @override
+  String get errorDeleteActiveBookings =>
+      'Tienes viajes activos o reservados. Cancélalos o espera a que terminen antes de eliminar tu cuenta.';
+
+  @override
+  String get errorDeleteAdminAccount =>
+      'Las cuentas de administración se eliminan desde la consola.';
+
+  @override
+  String get errorDeleteAccountFailed =>
+      'No pudimos eliminar tu cuenta. Inténtalo de nuevo.';
+
+  @override
+  String get errorTermsOutdated =>
+      'Los términos se acaban de actualizar. Vuelve a abrirlos y acéptalos de nuevo.';
+
+  @override
+  String get errorAcceptTermsFailed =>
+      'No pudimos registrar tu aceptación. Inténtalo de nuevo.';
+
+  @override
+  String get errorBusinessLeadTooMany =>
+      'Ya recibimos varias solicitudes desde aquí. Inténtalo más tarde o escríbenos.';
+
+  @override
+  String get errorBusinessLeadInvalid => 'Revisa los datos del formulario.';
+
+  @override
+  String get errorBusinessLeadFailed =>
+      'No pudimos enviar tu solicitud. Inténtalo de nuevo.';
+
+  @override
+  String get errorBadCredentials => 'Correo o contraseña incorrectos.';
+
+  @override
+  String errorPasswordResetSent(String email) {
+    return 'Si hay una cuenta con $email, te enviamos un enlace para restablecer tu contraseña. Revisa también el correo no deseado.';
+  }
+
+  @override
+  String get errorLoginFailed =>
+      'No pudimos iniciar sesión. Inténtalo de nuevo.';
+
+  @override
+  String get errorRegisterEmailInUse =>
+      'No pudimos crear la cuenta con ese correo. Si ya te registraste, inicia sesión o recupera tu contraseña.';
+
+  @override
+  String get errorInvalidEmail => 'Ese correo no es válido. Revísalo.';
+
+  @override
+  String get errorWeakPassword =>
+      'La contraseña es muy débil: usa al menos 6 caracteres.';
+
+  @override
+  String get errorRegisterFailed =>
+      'No pudimos crear la cuenta. Inténtalo de nuevo.';
+
+  @override
+  String get errorPasswordResetFailed =>
+      'No pudimos enviar el enlace. Inténtalo de nuevo.';
+
+  @override
+  String get errorServerDefault => 'Server error';
+
+  @override
+  String get errorEmailNotVerified => 'Verifica tu correo para poder reservar.';
+
+  @override
+  String get errorTermsRequired =>
+      'Acepta los términos vigentes para poder reservar.';
+
+  @override
+  String get errorAuthDefault => 'Authentication error';
+
+  @override
+  String get errorAuthCancelledDefault => 'Sign-in cancelled';
+
+  @override
+  String get errorNetworkDefault => 'No internet connection';
+
+  @override
+  String get errorNotFoundDefault => 'Resource not found';
+
+  @override
+  String get errorPaymentDefault => 'Payment error';
+
+  @override
+  String get errorPermissionDefault => 'Permission denied';
+
+  @override
+  String get errorPriceChanged => 'El precio de este viaje cambió.';
+
+  @override
+  String get errorCancellationFeeChanged => 'El recargo por cancelar cambió.';
+
+  @override
+  String get errorAppUpdateDriver =>
+      'Actualiza la app para seguir con tus viajes.';
+
+  @override
+  String get errorAppUpdateRider => 'Actualiza la app para reservar.';
+
+  @override
+  String get errorValidationDefault => 'Validation error';
+
+  @override
+  String get errorMfaEnterCode =>
+      'Introduce el código de tu app autenticadora.';
+
+  @override
+  String get errorMfaWrongCode =>
+      'Código incorrecto. Usa el código actual de tu app autenticadora (y revisa que la hora del teléfono sea automática).';
+
+  @override
+  String get errorMfaRecentLogin =>
+      'Por seguridad, cierra sesión, vuelve a entrar y repite el alta.';
+
+  @override
+  String get errorMfaUnverifiedEmail =>
+      'Verifica tu correo antes de activar la verificación en dos pasos.';
+
+  @override
+  String get errorMfaNoConnection =>
+      'Sin conexión. Revisa tu red e inténtalo de nuevo.';
+
+  @override
+  String get errorMfaQrExpired =>
+      'El código QR venció. Empieza el alta de nuevo.';
+
+  @override
+  String get errorMfaNotEnabled =>
+      'La verificación en dos pasos aún no está activada. Avisa a central.';
+
+  @override
+  String get errorMfaNoTotp =>
+      'Tu cuenta no tiene una app autenticadora registrada. Contacta con central.';
+
+  @override
+  String get errorMfaFailed =>
+      'No se pudo completar la verificación. Inténtalo de nuevo.';
+
+  @override
+  String get errorAccountBlocked =>
+      'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
+
+  @override
+  String get errorDriverSuspended => 'Cuenta suspendida. Contacta con central.';
+
+  @override
+  String get errorAppCheckFailed =>
+      'No se pudo verificar la app. Actualízala o inténtalo más tarde.';
 
   @override
   String get homePickOriginTitle => 'Seleccionar lugar de recogida';

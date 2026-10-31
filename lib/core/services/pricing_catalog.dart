@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
 
@@ -120,15 +121,13 @@ class PricingCatalog extends ChangeNotifier {
   /// Motivo legible por el que no se puede reservar, o null si se puede.
   String? unavailableReason(VehicleClass vc, ServiceType st) {
     if (!isReady) {
-      return 'Cargando las tarifas vigentes… inténtalo en unos segundos.';
+      return L10n.current.commonPricingLoading;
     }
     if (_maintenance) {
-      return 'Las reservas están en pausa por mantenimiento. '
-          'Vuelve a intentarlo en unos minutos.';
+      return L10n.current.commonPricingMaintenance;
     }
     if (ruleFor(vc, st)?.isActive == false) {
-      return '${vc.label} no está disponible para "${st.label}" '
-          'en este momento.';
+      return L10n.current.commonPricingUnavailable(vc.label, st.label);
     }
     return null;
   }

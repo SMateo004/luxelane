@@ -796,6 +796,1176 @@ abstract class AppLocalizations {
   /// **'Enviar solicitud'**
   String get businessSubmit;
 
+  /// Nota bajo los datos del vehículo del chófer que no puede editar él mismo.
+  ///
+  /// In es, this message translates to:
+  /// **'Para cambiar estos datos, contacta con central.'**
+  String get commonLockedDocuments;
+
+  /// Título de la pantalla que sustituye a la app cuando no se pudo iniciar.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos iniciar la app'**
+  String get commonStartupErrorTitle;
+
+  /// Texto bajo «No pudimos iniciar la app».
+  ///
+  /// In es, this message translates to:
+  /// **'Cierra la app y vuelve a abrirla en unos minutos.'**
+  String get commonStartupErrorBody;
+
+  /// Opción de asientos de un vehículo: número de pasajeros (siempre 2 o más).
+  ///
+  /// In es, this message translates to:
+  /// **'{count} pasajeros'**
+  String commonSeatingPassengers(int count);
+
+  /// Detalle de la opción con todos los asientos ocupados.
+  ///
+  /// In es, this message translates to:
+  /// **'Capacidad máxima'**
+  String get commonSeatingMaxDetail;
+
+  /// Detalle de la opción con un pasajero menos que el máximo.
+  ///
+  /// In es, this message translates to:
+  /// **'Más espacio para cada uno'**
+  String get commonSeatingRoomierDetail;
+
+  /// Opción de asientos con silla para niños.
+  ///
+  /// In es, this message translates to:
+  /// **'Con asiento infantil'**
+  String get commonSeatingChildSeat;
+
+  /// Detalle de la opción con asiento infantil: hay que pedirlo antes.
+  ///
+  /// In es, this message translates to:
+  /// **'Bajo solicitud previa'**
+  String get commonSeatingChildSeatDetail;
+
+  /// Detalle de Business Class en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán ejecutivo, discreto y silencioso'**
+  String get commonHighlightBusiness1;
+
+  /// Detalle de Business Class en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Asientos traseros en cuero para tres'**
+  String get commonHighlightBusiness2;
+
+  /// Detalle de Business Class en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Maletero para tres maletas facturadas'**
+  String get commonHighlightBusiness3;
+
+  /// Detalle de Business SUV en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'SUV ejecutiva, posición de manejo elevada'**
+  String get commonHighlightSuv1;
+
+  /// Detalle de Business SUV en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cabina amplia para cuatro pasajeros'**
+  String get commonHighlightSuv2;
+
+  /// Detalle de Business SUV en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Maletero para cuatro maletas facturadas'**
+  String get commonHighlightSuv3;
+
+  /// Detalle de Business Van en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Van ejecutiva para grupos y familias'**
+  String get commonHighlightVan1;
+
+  /// Detalle de Business Van en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta siete pasajeros en tres filas'**
+  String get commonHighlightVan2;
+
+  /// Detalle de Business Van en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Espacio para dos maletas facturadas'**
+  String get commonHighlightVan3;
+
+  /// Detalle de First Class en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán insignia, nuestro máximo nivel'**
+  String get commonHighlightFirst1;
+
+  /// Detalle de First Class en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Plazas traseras con apoyabrazos central'**
+  String get commonHighlightFirst2;
+
+  /// Detalle de First Class y Eléctrico en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Maletero para dos maletas facturadas'**
+  String get commonHighlightTwoCheckedBags;
+
+  /// Detalle de la clase Eléctrico en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán ejecutivo totalmente eléctrico'**
+  String get commonHighlightElectric1;
+
+  /// Detalle de la clase Eléctrico en la galería del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Silencioso y sin emisiones'**
+  String get commonHighlightElectric2;
+
+  /// Tipo de equipaje en singular, tras la cifra («1 maleta de mano»).
+  ///
+  /// In es, this message translates to:
+  /// **'maleta de mano'**
+  String get commonLuggageCabinOne;
+
+  /// Tipo de equipaje en singular, tras la cifra («1 maleta facturada»).
+  ///
+  /// In es, this message translates to:
+  /// **'maleta facturada'**
+  String get commonLuggageCheckedOne;
+
+  /// Tipo de equipaje en singular, tras la cifra («1 maleta extra grande»).
+  ///
+  /// In es, this message translates to:
+  /// **'maleta extra grande'**
+  String get commonLuggageOversizeOne;
+
+  /// Tipo de equipaje en plural, tras la cifra («2 maletas de mano»).
+  ///
+  /// In es, this message translates to:
+  /// **'maletas de mano'**
+  String get commonLuggageCabinMany;
+
+  /// Tipo de equipaje en plural, tras la cifra («2 maletas facturadas»).
+  ///
+  /// In es, this message translates to:
+  /// **'maletas facturadas'**
+  String get commonLuggageCheckedMany;
+
+  /// Tipo de equipaje en plural, tras la cifra («2 maletas extra grandes»).
+  ///
+  /// In es, this message translates to:
+  /// **'maletas extra grandes'**
+  String get commonLuggageOversizeMany;
+
+  /// Medidas de una maleta de mano.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta 55 × 40 × 20 cm'**
+  String get commonLuggageCabinSize;
+
+  /// Medidas de una maleta facturada.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta 75 × 50 × 30 cm'**
+  String get commonLuggageCheckedSize;
+
+  /// Medidas de una maleta extra grande.
+  ///
+  /// In es, this message translates to:
+  /// **'Más de 80 cm'**
+  String get commonLuggageOversizeSize;
+
+  /// Promesa del servicio (frase corta): el precio queda fijo al reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo al reservar'**
+  String get commonPromiseFixedPrice;
+
+  /// Promesa del servicio (detalle): quién calcula el precio fijo. No es una garantía.
+  ///
+  /// In es, this message translates to:
+  /// **'El precio que ves al confirmar lo calcula Luxelane para tu trayecto.'**
+  String get commonPromiseFixedPriceLong;
+
+  /// Promesa del servicio (frase corta): los chóferes tienen los documentos verificados.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes con documentos verificados'**
+  String get commonPromiseChauffeurs;
+
+  /// Promesa del servicio (detalle): Luxelane revisa los documentos de cada chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane revisa los documentos de cada chófer antes de que reciba viajes.'**
+  String get commonPromiseChauffeursLong;
+
+  /// Nombre de la clase de vehículo eléctrica (las demás clases son nombres de producto y no se traducen).
+  ///
+  /// In es, this message translates to:
+  /// **'Eléctrico'**
+  String get commonVehicleElectric;
+
+  /// Descripción corta de Business Class (sin marca ni modelo).
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán ejecutivo'**
+  String get commonVehicleBusinessDescription;
+
+  /// Descripción corta de Business SUV.
+  ///
+  /// In es, this message translates to:
+  /// **'SUV ejecutiva, más espacio'**
+  String get commonVehicleSuvDescription;
+
+  /// Descripción corta de First Class.
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán insignia'**
+  String get commonVehicleFirstDescription;
+
+  /// Descripción corta de Business Van.
+  ///
+  /// In es, this message translates to:
+  /// **'Van ejecutiva para grupos'**
+  String get commonVehicleVanDescription;
+
+  /// Descripción corta de la clase Eléctrico.
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán ejecutivo eléctrico'**
+  String get commonVehicleElectricDescription;
+
+  /// Tipo de servicio: traslado de un punto a otro.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo ida'**
+  String get commonServiceOneWay;
+
+  /// Tipo de servicio: chófer por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Por horas'**
+  String get commonServiceByTheHour;
+
+  /// Descripción del servicio «Solo ida».
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado a precio fijo a tu destino'**
+  String get commonServiceOneWayDescription;
+
+  /// Descripción del servicio «Por horas».
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer a tu disposición por un tiempo determinado'**
+  String get commonServiceByTheHourDescription;
+
+  /// Estado de una reserva: aún sin chófer o sin pagar.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get commonStatusPending;
+
+  /// Estado de una reserva: confirmada.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmado'**
+  String get commonStatusConfirmed;
+
+  /// Estado de una reserva: el chófer va hacia la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'En camino'**
+  String get commonStatusDriverArriving;
+
+  /// Estado de una reserva: el chófer llegó a la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer llegó'**
+  String get commonStatusDriverArrived;
+
+  /// Estado de una reserva: el chófer comprobó el código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificada'**
+  String get commonStatusVerified;
+
+  /// Estado de una reserva: el viaje está en curso.
+  ///
+  /// In es, this message translates to:
+  /// **'En progreso'**
+  String get commonStatusInProgress;
+
+  /// Estado de una reserva: viaje terminado.
+  ///
+  /// In es, this message translates to:
+  /// **'Completado'**
+  String get commonStatusCompleted;
+
+  /// Estado de una reserva: cancelada.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get commonStatusCancelled;
+
+  /// Estado de una reserva: el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'No se presentó'**
+  String get commonStatusNoShow;
+
+  /// Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula.
+  ///
+  /// In es, this message translates to:
+  /// **'Fresca'**
+  String get commonCabinCool;
+
+  /// Preferencia de temperatura de la cabina (22 °C).
+  ///
+  /// In es, this message translates to:
+  /// **'Templada'**
+  String get commonCabinMild;
+
+  /// Preferencia de temperatura de la cabina (24 °C).
+  ///
+  /// In es, this message translates to:
+  /// **'Cálida'**
+  String get commonCabinWarm;
+
+  /// Indicación para el chófer según las preferencias del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir la puerta'**
+  String get commonPrefOpenDoor;
+
+  /// Indicación para el chófer según las preferencias del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con el equipaje'**
+  String get commonPrefLuggageHelp;
+
+  /// Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.
+  ///
+  /// In es, this message translates to:
+  /// **'Cabina {temperature} ({hint})'**
+  String commonPrefCabin(String temperature, String hint);
+
+  /// Indicación para el chófer: el pasajero prefiere no conversar.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje en silencio'**
+  String get commonPrefQuiet;
+
+  /// Indicación para el chófer: sin música.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin música'**
+  String get commonPrefNoMusic;
+
+  /// Motivo del pasajero para cancelar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambié de planes'**
+  String get commonCancelReasonChangedPlans;
+
+  /// Motivo del pasajero para cancelar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Encontré otro transporte'**
+  String get commonCancelReasonOtherTransport;
+
+  /// Motivo del pasajero para cancelar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer tarda demasiado'**
+  String get commonCancelReasonDriverLate;
+
+  /// Motivo genérico (cancelar del pasajero o liberar del chófer).
+  ///
+  /// In es, this message translates to:
+  /// **'Otro motivo'**
+  String get commonReasonOther;
+
+  /// Motivo del chófer para liberar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Problema con el vehículo'**
+  String get commonReleaseReasonVehicle;
+
+  /// Motivo del chófer para liberar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Emergencia personal'**
+  String get commonReleaseReasonEmergency;
+
+  /// Motivo del chófer para liberar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Condiciones inseguras'**
+  String get commonReleaseReasonUnsafe;
+
+  /// Motivo del chófer para liberar una reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Conflicto de horario'**
+  String get commonReleaseReasonSchedule;
+
+  /// Panel: por qué no hubo retención al cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin política de cancelación'**
+  String get commonFeeBasisNoPolicy;
+
+  /// Panel: por qué no hubo retención al cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Política inválida (sin recargo)'**
+  String get commonFeeBasisPolicyInvalid;
+
+  /// Panel: la reserva se canceló porque falló el pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Falló el pago'**
+  String get commonFeeBasisPaymentFailed;
+
+  /// Panel: por qué no hubo retención al cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin chófer asignado'**
+  String get commonFeeBasisNoDriver;
+
+  /// Panel: se canceló dentro del plazo gratuito tras reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'Dentro del plazo tras reservar'**
+  String get commonFeeBasisGrace;
+
+  /// Panel: se canceló con antelación suficiente.
+  ///
+  /// In es, this message translates to:
+  /// **'Con antelación suficiente'**
+  String get commonFeeBasisEarly;
+
+  /// Panel: se canceló tarde y hubo retención.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarde (aplica recargo)'**
+  String get commonFeeBasisLate;
+
+  /// Panel: central decidió que el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'No se presentó (decisión de central)'**
+  String get commonFeeBasisNoShowAdmin;
+
+  /// Nombre por defecto de la zona aproximada de recogida de una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Zona de recogida'**
+  String get commonPickupArea;
+
+  /// Nombre por defecto de la zona aproximada de destino de una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Zona de destino'**
+  String get commonDropoffArea;
+
+  /// Panel: error al validar una tarifa.
+  ///
+  /// In es, this message translates to:
+  /// **'Los importes no pueden ser negativos'**
+  String get commonTariffNegative;
+
+  /// Panel: error al validar una tarifa de solo ida sin precio.
+  ///
+  /// In es, this message translates to:
+  /// **'Un traslado no puede costar Bs0'**
+  String get commonTariffZeroTransfer;
+
+  /// Panel: error al validar una tarifa por horas sin precio por hora.
+  ///
+  /// In es, this message translates to:
+  /// **'El servicio por horas necesita un precio por hora'**
+  String get commonTariffHourlyPrice;
+
+  /// App del chófer (Android): título de la notificación fija mientras comparte la ubicación.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane · estás conectado'**
+  String get commonLocationNotificationTitle;
+
+  /// App del chófer (Android): texto de la notificación fija mientras comparte la ubicación.
+  ///
+  /// In es, this message translates to:
+  /// **'Compartimos tu ubicación para asignarte viajes y guiar al pasajero.'**
+  String get commonLocationNotificationText;
+
+  /// App del chófer (Android): nombre del canal de la notificación de ubicación en los ajustes del teléfono.
+  ///
+  /// In es, this message translates to:
+  /// **'Ubicación del chófer'**
+  String get commonLocationChannelName;
+
+  /// Por qué aún no se puede reservar: las tarifas se están cargando.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando las tarifas vigentes… inténtalo en unos segundos.'**
+  String get commonPricingLoading;
+
+  /// Por qué no se puede reservar: las reservas están en pausa.
+  ///
+  /// In es, this message translates to:
+  /// **'Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.'**
+  String get commonPricingMaintenance;
+
+  /// Por qué no se puede reservar: la clase no está disponible para ese tipo de servicio.
+  ///
+  /// In es, this message translates to:
+  /// **'{vehicleClass} no está disponible para \"{serviceType}\" en este momento.'**
+  String commonPricingUnavailable(String vehicleClass, String serviceType);
+
+  /// Frase bajo el saludo del inicio: el viaje está en curso.
+  ///
+  /// In es, this message translates to:
+  /// **'Disfruta el trayecto.'**
+  String get commonPromptEnjoyJourney;
+
+  /// Frase bajo el saludo del inicio: el chófer llegó a la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer ya te espera.'**
+  String get commonPromptChauffeurWaiting;
+
+  /// Frase bajo el saludo del inicio: el chófer va hacia la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer va en camino.'**
+  String get commonPromptChauffeurOnTheWay;
+
+  /// Frase bajo el saludo del inicio: el próximo viaje es en menos de dos horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu próximo trayecto está cerca.'**
+  String get commonPromptNextTripSoon;
+
+  /// Frase bajo el saludo del inicio, de 5 a 11 h.
+  ///
+  /// In es, this message translates to:
+  /// **'¿A dónde empieza tu día?'**
+  String get commonPromptMorning;
+
+  /// Frase bajo el saludo del inicio, de 11 a 15 h.
+  ///
+  /// In es, this message translates to:
+  /// **'¿A dónde te llevamos?'**
+  String get commonPromptMidday;
+
+  /// Frase bajo el saludo del inicio, de 15 a 20 h.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cerramos el día en calma?'**
+  String get commonPromptAfternoon;
+
+  /// Frase bajo el saludo del inicio, de 20 a 1 h.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Volvemos con calma?'**
+  String get commonPromptEvening;
+
+  /// Frase bajo el saludo del inicio, de 1 a 5 h. Sin prometer atención a toda hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Estamos aquí a cualquier hora.'**
+  String get commonPromptLateNight;
+
+  /// Tipo de vuelo: llega desde dentro de Bolivia.
+  ///
+  /// In es, this message translates to:
+  /// **'Nacional'**
+  String get commonFlightDomestic;
+
+  /// Tipo de vuelo: llega desde el extranjero.
+  ///
+  /// In es, this message translates to:
+  /// **'Internacional'**
+  String get commonFlightInternational;
+
+  /// Para el chófer: por dónde sale el pasajero de un vuelo nacional.
+  ///
+  /// In es, this message translates to:
+  /// **'Salida de llegadas nacionales'**
+  String get commonAirportDomesticExit;
+
+  /// Para el chófer: por dónde sale el pasajero de un vuelo internacional.
+  ///
+  /// In es, this message translates to:
+  /// **'Salida de llegadas internacionales'**
+  String get commonAirportInternationalExit;
+
+  /// Error: la dirección de recogida no tiene coordenadas.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos ubicar la recogida en el mapa. Elige otra dirección.'**
+  String get commonOriginNoCoords;
+
+  /// Error: la recogida está fuera de las ciudades donde se opera (lista de ciudades separadas por comas).
+  ///
+  /// In es, this message translates to:
+  /// **'Por ahora operamos en {cities}. Elige una recogida en una de esas ciudades.'**
+  String commonOriginOutsideArea(String cities);
+
+  /// Error: el destino está en otra ciudad que la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'El destino debe estar en {city}, la misma ciudad de la recogida.'**
+  String commonDestinationOtherCity(String city);
+
+  /// Error: el destino está lejos de una recogida que no está en una ciudad conocida.
+  ///
+  /// In es, this message translates to:
+  /// **'El destino debe estar en la misma ciudad que la recogida.'**
+  String get commonDestinationSameCity;
+
+  /// Error: falta el número de vuelo en una recogida en el aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica tu número de vuelo para recogerte a tiempo.'**
+  String get commonFlightNumberMissing;
+
+  /// Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen).
+  ///
+  /// In es, this message translates to:
+  /// **'Número de vuelo no válido. Ejemplo: OB 760 o Z8 315.'**
+  String get commonFlightNumberInvalid;
+
+  /// Título de la app en la pestaña del navegador y el selector de apps (en español, el mismo de index.html y del manifest).
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane — Servicio de chófer ejecutivo'**
+  String get commonAppTitle;
+
+  /// Pestaña de la app del pasajero: reservar un viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar'**
+  String get commonTabBook;
+
+  /// Pestaña de la app del pasajero: lista de viajes.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis viajes'**
+  String get commonTabMyTrips;
+
+  /// Pestaña de la app del pasajero: perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get commonTabProfile;
+
+  /// Enlace de la cabecera web para iniciar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get commonSignIn;
+
+  /// Etiqueta de lector de pantalla del botón del avatar en la cabecera web.
+  ///
+  /// In es, this message translates to:
+  /// **'Mi perfil'**
+  String get commonMyProfile;
+
+  /// Página de una ruta que no existe: título.
+  ///
+  /// In es, this message translates to:
+  /// **'Este camino no existe.'**
+  String get commonNotFoundTitle;
+
+  /// Página de una ruta que no existe: texto bajo el título.
+  ///
+  /// In es, this message translates to:
+  /// **'Te llevamos de vuelta al inicio.'**
+  String get commonNotFoundBody;
+
+  /// Botón (en mayúsculas) de la página de una ruta que no existe.
+  ///
+  /// In es, this message translates to:
+  /// **'VOLVER AL INICIO'**
+  String get commonNotFoundBack;
+
+  /// Título del aviso de versión antigua en la app del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualiza la app para seguir'**
+  String get commonUpdateTitleDriver;
+
+  /// Título del aviso de versión antigua en la app del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualiza la app para reservar'**
+  String get commonUpdateTitleRider;
+
+  /// Texto del aviso de versión antigua en la web.
+  ///
+  /// In es, this message translates to:
+  /// **'Hay una versión nueva de la web. Recarga la página para seguir reservando.'**
+  String get commonUpdateBodyWeb;
+
+  /// Texto del aviso de versión antigua en el móvil.
+  ///
+  /// In es, this message translates to:
+  /// **'Hay una versión nueva de la app. Actualízala para seguir reservando.'**
+  String get commonUpdateBodyApp;
+
+  /// Botón del aviso de versión antigua: abre la tienda de apps.
+  ///
+  /// In es, this message translates to:
+  /// **'Ir a la tienda'**
+  String get commonUpdateGoToStore;
+
+  /// Botón para cerrar un aviso.
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido'**
+  String get commonGotIt;
+
+  /// Título del aviso al reservar sin el correo verificado.
+  ///
+  /// In es, this message translates to:
+  /// **'Verifica tu correo para reservar'**
+  String get commonEmailNotVerifiedTitle;
+
+  /// Texto del aviso al reservar sin el correo verificado.
+  ///
+  /// In es, this message translates to:
+  /// **'Por seguridad, solo se puede reservar con el correo verificado. Abre el enlace que te enviamos o pide uno nuevo.'**
+  String get commonEmailNotVerifiedBody;
+
+  /// Botón para posponer una acción.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora no'**
+  String get commonNotNow;
+
+  /// Botón que lleva a la pantalla de verificar el correo.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificar mi correo'**
+  String get commonVerifyMyEmail;
+
+  /// Pantalla de error inesperado: título.
+  ///
+  /// In es, this message translates to:
+  /// **'Algo salió mal'**
+  String get commonErrorTitle;
+
+  /// Pantalla de error inesperado: texto bajo el título.
+  ///
+  /// In es, this message translates to:
+  /// **'Hemos sido notificados y estamos trabajando en una solución.'**
+  String get commonErrorBody;
+
+  /// Botón para reintentar.
+  ///
+  /// In es, this message translates to:
+  /// **'Intentar de nuevo'**
+  String get commonTryAgain;
+
+  /// Franja que aparece sin conexión: los datos pueden estar desactualizados.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión. Lo que ves puede no estar al día.'**
+  String get commonOfflineBanner;
+
+  /// Etiqueta de lector de pantalla mientras algo carga.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando'**
+  String get commonLoading;
+
+  /// «Listo»: etiqueta de lector de pantalla de la animación de éxito y botón para cerrar el selector de hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Listo'**
+  String get commonDone;
+
+  /// Etiqueta de lector de pantalla de la barra de progreso del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Etapa {step} de {total}'**
+  String commonStepOf(int step, int total);
+
+  /// Indicación de lector de pantalla del botón deslizable de confirmar.
+  ///
+  /// In es, this message translates to:
+  /// **'Desliza para confirmar'**
+  String get commonSlideToConfirm;
+
+  /// Capacidad de un vehículo en su tarjeta, junto al icono de persona («Hasta 3»).
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {count}'**
+  String commonUpTo(int count);
+
+  /// Bajo el precio de un servicio por horas: horas contratadas en total («2h en total»).
+  ///
+  /// In es, this message translates to:
+  /// **'{hours}h en total'**
+  String commonHoursTotal(int hours);
+
+  /// Bajo el precio de un traslado (en minúscula).
+  ///
+  /// In es, this message translates to:
+  /// **'precio fijo'**
+  String get commonFixedPriceLower;
+
+  /// Encabezado (en mayúsculas) de las preferencias del pasajero que ve el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'ESTILO DEL PASAJERO'**
+  String get commonRiderStyle;
+
+  /// Botón por defecto de la barra de precio: confirmar la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar reserva'**
+  String get commonConfirmBooking;
+
+  /// Encabezado (en mayúsculas) del importe en la barra de precio.
+  ///
+  /// In es, this message translates to:
+  /// **'PRECIO FIJO'**
+  String get commonFixedPriceUpper;
+
+  /// Título en lugar del mapa cuando no se puede mostrar.
+  ///
+  /// In es, this message translates to:
+  /// **'Mapa no disponible'**
+  String get commonMapUnavailable;
+
+  /// Texto bajo «Mapa no disponible».
+  ///
+  /// In es, this message translates to:
+  /// **'El mapa no se puede mostrar ahora. Los datos del viaje siguen aquí.'**
+  String get commonMapUnavailableDetail;
+
+  /// Nombre de un punto elegido en el mapa cuando no se pudo obtener su dirección.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto elegido en el mapa'**
+  String get commonPointOnMap;
+
+  /// Título por defecto del mapa para elegir un lugar.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar ubicación'**
+  String get commonSelectLocation;
+
+  /// Texto inicial del mapa para elegir un lugar, antes de tener una dirección.
+  ///
+  /// In es, this message translates to:
+  /// **'Mueve el mapa para elegir el lugar'**
+  String get commonMoveMapToChoose;
+
+  /// Encabezado (en mayúsculas) de la dirección elegida en el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'UBICACIÓN SELECCIONADA'**
+  String get commonSelectedLocation;
+
+  /// Botón (en mayúsculas) para confirmar el lugar elegido en el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'CONFIRMAR'**
+  String get commonConfirmUpper;
+
+  /// Aviso al elegir una dirección sugerida que no tiene coordenadas.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.'**
+  String get commonAddressNotFound;
+
+  /// Título del mapa al elegir la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar lugar de recogida'**
+  String get commonSelectPickupPlace;
+
+  /// Título del mapa al elegir el destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar destino'**
+  String get commonSelectDestination;
+
+  /// Aviso al cambiar la recogida: se quitó un destino que estaba en otra ciudad.
+  ///
+  /// In es, this message translates to:
+  /// **'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.'**
+  String get commonDestinationWasOtherCity;
+
+  /// Encabezado (en mayúsculas) del calendario para elegir el día de la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'FECHA DE RECOGIDA'**
+  String get commonPickupDateUpper;
+
+  /// Encabezado (en mayúsculas) del reloj para elegir la hora de la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'HORA DE RECOGIDA'**
+  String get commonPickupTimeUpper;
+
+  /// Botón para cancelar o cerrar sin cambios.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get commonCancel;
+
+  /// Botón para pasar al paso siguiente.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get commonNext;
+
+  /// Error al buscar vehículos sin indicar la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica dónde te recogemos.'**
+  String get commonPickupMissing;
+
+  /// Aviso: la hora elegida ya no daba tiempo y se movió (fecha y hora nuevas, ya formateadas).
+  ///
+  /// In es, this message translates to:
+  /// **'Esa hora ya no da tiempo: la movimos a {when}. Revísala y continúa.'**
+  String commonPickupMovedLater(String when);
+
+  /// Error al buscar vehículos de un traslado sin destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica tu destino para calcular el precio fijo.'**
+  String get commonDestinationMissing;
+
+  /// Ayuda del campo de recogida en la página de traslados al aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida — aeropuerto, hotel o dirección'**
+  String get commonPickupHintAirport;
+
+  /// Ayuda del campo de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida — dirección, hotel o lugar'**
+  String get commonPickupHint;
+
+  /// Ayuda del campo de destino en la página de traslados al aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino — aeropuerto, hotel o dirección'**
+  String get commonDestinationHintAirport;
+
+  /// Ayuda del campo de destino en el servicio por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino (opcional)'**
+  String get commonDestinationOptional;
+
+  /// Ayuda del campo de destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino — dirección, hotel o lugar'**
+  String get commonDestinationHint;
+
+  /// Encabezado (en mayúsculas) de la tarjeta de reserva de las páginas de servicios.
+  ///
+  /// In es, this message translates to:
+  /// **'RESERVA TU CHÓFER'**
+  String get commonBookYourChauffeur;
+
+  /// Etiqueta del campo de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida'**
+  String get commonPickup;
+
+  /// Etiqueta del campo de destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get commonDestination;
+
+  /// Opción: recogida lo antes posible (sin hora programada). No promete un plazo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora'**
+  String get commonNow;
+
+  /// Opción: programar la recogida para una fecha y hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Programar'**
+  String get commonSchedule;
+
+  /// Acción (se muestra en mayúsculas) para cambiar la fecha y hora elegidas.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar'**
+  String get commonChange;
+
+  /// Botón (en mayúsculas) de la tarjeta de reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'VER VEHÍCULOS Y PRECIOS'**
+  String get commonSeeVehiclesAndPrices;
+
+  /// Nota bajo el botón de la tarjeta de reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin compromiso: verás el precio final antes de confirmar.'**
+  String get commonNoCommitment;
+
+  /// Enlace bajo un campo de dirección para elegir el lugar en el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir en el mapa'**
+  String get commonChooseOnMap;
+
+  /// Etiqueta del selector de horas del servicio por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get commonDuration;
+
+  /// Consejo del botón «−» del selector de horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Menos horas'**
+  String get commonFewerHours;
+
+  /// Consejo del botón «+» del selector de horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Más horas'**
+  String get commonMoreHours;
+
+  /// Servicio de la web (menú y pie de página).
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado al aeropuerto'**
+  String get commonServiceAirportTransfer;
+
+  /// Servicio de la web (menú y pie de página).
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer por horas'**
+  String get commonServiceHourly;
+
+  /// Servicio de la web (menú y pie de página): recogida sin programar. Sin prometer un plazo.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida inmediata'**
+  String get commonServiceImmediate;
+
+  /// Etiqueta de lector de pantalla del logotipo de la cabecera web (lleva al inicio).
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane, inicio'**
+  String get commonHomeLinkLabel;
+
+  /// Enlace de la web a la sección de la flota.
+  ///
+  /// In es, this message translates to:
+  /// **'Flota'**
+  String get commonFleet;
+
+  /// Enlace de la web a la página para empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Para empresas'**
+  String get commonForBusiness;
+
+  /// Menú (en mayúsculas) de servicios de la cabecera web.
+  ///
+  /// In es, this message translates to:
+  /// **'SERVICIOS'**
+  String get commonServicesUpper;
+
+  /// Botón corto (en mayúsculas) de la cabecera web en pantallas estrechas.
+  ///
+  /// In es, this message translates to:
+  /// **'RESERVAR'**
+  String get commonBookUpper;
+
+  /// Botón (en mayúsculas) de la cabecera web y del menú móvil.
+  ///
+  /// In es, this message translates to:
+  /// **'RESERVAR UN VIAJE'**
+  String get commonBookATripUpper;
+
+  /// Consejo del botón que abre el menú en la web móvil.
+  ///
+  /// In es, this message translates to:
+  /// **'Menú'**
+  String get commonMenu;
+
+  /// Etiqueta de lector de pantalla para cerrar el menú tocando fuera.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar menú'**
+  String get commonCloseMenu;
+
+  /// Consejo de un botón para cerrar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar'**
+  String get commonClose;
+
+  /// Título de la lista de servicios (menú móvil y pie de página).
+  ///
+  /// In es, this message translates to:
+  /// **'Servicios'**
+  String get commonServices;
+
+  /// Frase de la marca en el pie de página de la web.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio de chófer privado para quienes valoran su tiempo, su privacidad y cada detalle del camino.'**
+  String get commonFooterTagline;
+
+  /// Enlace del pie de página para chóferes que quieren unirse.
+  ///
+  /// In es, this message translates to:
+  /// **'Conduce con nosotros'**
+  String get commonDriveWithUs;
+
+  /// Enlace del pie de página a los términos (la página legal sigue en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Términos y condiciones'**
+  String get commonTerms;
+
+  /// Enlace del pie de página a la política de privacidad (la página legal sigue en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Política de privacidad'**
+  String get commonPrivacy;
+
+  /// Título de la columna de promesas del pie de página.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuestra promesa'**
+  String get commonOurPromise;
+
+  /// Línea final del pie de página con el año.
+  ///
+  /// In es, this message translates to:
+  /// **'© {year} Luxelane. Todos los derechos reservados.'**
+  String commonCopyright(String year);
+
   /// Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»).
   ///
   /// In es, this message translates to:
@@ -1779,6 +2949,336 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Perfil'**
   String get driverNavProfile;
+
+  /// Error: el servidor o Firebase limitó los intentos.
+  ///
+  /// In es, this message translates to:
+  /// **'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.'**
+  String get errorTooManyAttempts;
+
+  /// Error: la sesión ya no es válida y hay que volver a entrar.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu sesión expiró. Vuelve a iniciar sesión.'**
+  String get errorSessionExpired;
+
+  /// Error: la acción exige la verificación en dos pasos activada (se activa en Perfil).
+  ///
+  /// In es, this message translates to:
+  /// **'Activa la verificación en dos pasos (Perfil) y vuelve a iniciar sesión para continuar.'**
+  String get errorMfaRequired;
+
+  /// Error: la acción exige haber iniciado sesión hace poco.
+  ///
+  /// In es, this message translates to:
+  /// **'Por seguridad, vuelve a iniciar sesión para continuar.'**
+  String get errorReauthRequired;
+
+  /// Error: no hay conexión con el servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.'**
+  String get errorNoConnection;
+
+  /// Error al volver a identificarse: la contraseña no es la de la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'La contraseña no coincide.'**
+  String get errorReauthWrongPassword;
+
+  /// Error al volver a identificarse con otra cuenta distinta de la actual.
+  ///
+  /// In es, this message translates to:
+  /// **'Usa la misma cuenta con la que entraste.'**
+  String get errorReauthUserMismatch;
+
+  /// Error genérico al volver a identificarse.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos confirmar tu identidad. Inténtalo de nuevo.'**
+  String get errorReauthFailed;
+
+  /// Error genérico: el servidor rechazó los datos enviados.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los datos e inténtalo de nuevo.'**
+  String get errorInvalidArgument;
+
+  /// Error genérico: la cuenta no tiene permiso para la acción.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes permiso para hacer esto.'**
+  String get errorPermissionDenied;
+
+  /// Error genérico: la acción no se puede hacer en el estado actual.
+  ///
+  /// In es, this message translates to:
+  /// **'Esto no se puede hacer en este momento.'**
+  String get errorFailedPrecondition;
+
+  /// Error genérico: el documento pedido no existe.
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos el registro.'**
+  String get errorNotFound;
+
+  /// Error genérico de último recurso.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar. Inténtalo de nuevo.'**
+  String get errorGeneric;
+
+  /// Error al eliminar la cuenta: tiene viajes activos o reservados.
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes viajes activos o reservados. Cancélalos o espera a que terminen antes de eliminar tu cuenta.'**
+  String get errorDeleteActiveBookings;
+
+  /// Error al eliminar la cuenta: es de administración.
+  ///
+  /// In es, this message translates to:
+  /// **'Las cuentas de administración se eliminan desde la consola.'**
+  String get errorDeleteAdminAccount;
+
+  /// Error genérico al eliminar la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos eliminar tu cuenta. Inténtalo de nuevo.'**
+  String get errorDeleteAccountFailed;
+
+  /// Error al aceptar los términos: cambiaron mientras se leían.
+  ///
+  /// In es, this message translates to:
+  /// **'Los términos se acaban de actualizar. Vuelve a abrirlos y acéptalos de nuevo.'**
+  String get errorTermsOutdated;
+
+  /// Error genérico al registrar la aceptación de los términos.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos registrar tu aceptación. Inténtalo de nuevo.'**
+  String get errorAcceptTermsFailed;
+
+  /// Error del formulario de empresas: demasiadas solicitudes desde el mismo lugar.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya recibimos varias solicitudes desde aquí. Inténtalo más tarde o escríbenos.'**
+  String get errorBusinessLeadTooMany;
+
+  /// Error del formulario de empresas: datos no válidos.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los datos del formulario.'**
+  String get errorBusinessLeadInvalid;
+
+  /// Error genérico al enviar el formulario de empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos enviar tu solicitud. Inténtalo de nuevo.'**
+  String get errorBusinessLeadFailed;
+
+  /// Error al iniciar sesión: el mismo texto si no hay cuenta o la contraseña no es correcta.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo o contraseña incorrectos.'**
+  String get errorBadCredentials;
+
+  /// Respuesta al pedir restablecer la contraseña: la misma haya o no cuenta con ese correo.
+  ///
+  /// In es, this message translates to:
+  /// **'Si hay una cuenta con {email}, te enviamos un enlace para restablecer tu contraseña. Revisa también el correo no deseado.'**
+  String errorPasswordResetSent(String email);
+
+  /// Error genérico al iniciar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos iniciar sesión. Inténtalo de nuevo.'**
+  String get errorLoginFailed;
+
+  /// Error al registrarse con un correo que quizá ya tiene cuenta (sin confirmarlo).
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos crear la cuenta con ese correo. Si ya te registraste, inicia sesión o recupera tu contraseña.'**
+  String get errorRegisterEmailInUse;
+
+  /// Error: el correo escrito no tiene un formato válido.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese correo no es válido. Revísalo.'**
+  String get errorInvalidEmail;
+
+  /// Error al registrarse: contraseña demasiado corta.
+  ///
+  /// In es, this message translates to:
+  /// **'La contraseña es muy débil: usa al menos 6 caracteres.'**
+  String get errorWeakPassword;
+
+  /// Error genérico al crear la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos crear la cuenta. Inténtalo de nuevo.'**
+  String get errorRegisterFailed;
+
+  /// Error genérico al enviar el enlace para restablecer la contraseña.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos enviar el enlace. Inténtalo de nuevo.'**
+  String get errorPasswordResetFailed;
+
+  /// Mensaje por defecto de un fallo del servidor sin texto propio (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Server error'**
+  String get errorServerDefault;
+
+  /// Error al reservar: el correo de la cuenta no está verificado.
+  ///
+  /// In es, this message translates to:
+  /// **'Verifica tu correo para poder reservar.'**
+  String get errorEmailNotVerified;
+
+  /// Error al reservar: falta aceptar los términos vigentes.
+  ///
+  /// In es, this message translates to:
+  /// **'Acepta los términos vigentes para poder reservar.'**
+  String get errorTermsRequired;
+
+  /// Mensaje por defecto de un fallo de autenticación sin texto propio (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Authentication error'**
+  String get errorAuthDefault;
+
+  /// Mensaje por defecto cuando la persona cierra la ventana de inicio de sesión (no se muestra como error; el original ya estaba en inglés).
+  ///
+  /// In es, this message translates to:
+  /// **'Sign-in cancelled'**
+  String get errorAuthCancelledDefault;
+
+  /// Mensaje por defecto de un fallo de red sin texto propio (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'No internet connection'**
+  String get errorNetworkDefault;
+
+  /// Mensaje por defecto cuando no existe un documento (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Resource not found'**
+  String get errorNotFoundDefault;
+
+  /// Mensaje por defecto de un fallo de pago sin texto propio (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Payment error'**
+  String get errorPaymentDefault;
+
+  /// Mensaje por defecto de un fallo de permisos sin texto propio (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Permission denied'**
+  String get errorPermissionDefault;
+
+  /// Error al reservar: el servidor calculó otro precio y hay que confirmarlo.
+  ///
+  /// In es, this message translates to:
+  /// **'El precio de este viaje cambió.'**
+  String get errorPriceChanged;
+
+  /// Error al cancelar: la retención por cancelar cambió mientras se decidía.
+  ///
+  /// In es, this message translates to:
+  /// **'El recargo por cancelar cambió.'**
+  String get errorCancellationFeeChanged;
+
+  /// Error en la app del chófer: la versión es demasiado antigua para avanzar un viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualiza la app para seguir con tus viajes.'**
+  String get errorAppUpdateDriver;
+
+  /// Error en la app del pasajero: la versión es demasiado antigua para reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualiza la app para reservar.'**
+  String get errorAppUpdateRider;
+
+  /// Mensaje por defecto de un fallo de validación sin texto propio (el original ya estaba en inglés y se conserva igual en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Validation error'**
+  String get errorValidationDefault;
+
+  /// Segundo paso del inicio de sesión: pide el código de la app autenticadora (TOTP).
+  ///
+  /// In es, this message translates to:
+  /// **'Introduce el código de tu app autenticadora.'**
+  String get errorMfaEnterCode;
+
+  /// Error de verificación en dos pasos: el código no es válido.
+  ///
+  /// In es, this message translates to:
+  /// **'Código incorrecto. Usa el código actual de tu app autenticadora (y revisa que la hora del teléfono sea automática).'**
+  String get errorMfaWrongCode;
+
+  /// Error al dar de alta la verificación en dos pasos: hace falta un inicio de sesión reciente.
+  ///
+  /// In es, this message translates to:
+  /// **'Por seguridad, cierra sesión, vuelve a entrar y repite el alta.'**
+  String get errorMfaRecentLogin;
+
+  /// Error al dar de alta la verificación en dos pasos sin el correo verificado.
+  ///
+  /// In es, this message translates to:
+  /// **'Verifica tu correo antes de activar la verificación en dos pasos.'**
+  String get errorMfaUnverifiedEmail;
+
+  /// Error de verificación en dos pasos: sin conexión.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión. Revisa tu red e inténtalo de nuevo.'**
+  String get errorMfaNoConnection;
+
+  /// Error de verificación en dos pasos: venció el alta (código QR).
+  ///
+  /// In es, this message translates to:
+  /// **'El código QR venció. Empieza el alta de nuevo.'**
+  String get errorMfaQrExpired;
+
+  /// Error: la verificación en dos pasos no está habilitada en el proyecto.
+  ///
+  /// In es, this message translates to:
+  /// **'La verificación en dos pasos aún no está activada. Avisa a central.'**
+  String get errorMfaNotEnabled;
+
+  /// Error: la cuenta no tiene app autenticadora para el segundo paso.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta no tiene una app autenticadora registrada. Contacta con central.'**
+  String get errorMfaNoTotp;
+
+  /// Error genérico de la verificación en dos pasos.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar la verificación. Inténtalo de nuevo.'**
+  String get errorMfaFailed;
+
+  /// Error al entrar: la cuenta del pasajero está bloqueada desde el panel.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.'**
+  String get errorAccountBlocked;
+
+  /// Error al entrar: la cuenta del chófer está suspendida.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta suspendida. Contacta con central.'**
+  String get errorDriverSuspended;
+
+  /// Error: el servidor exige verificar la app (App Check) y no se pudo.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo verificar la app. Actualízala o inténtalo más tarde.'**
+  String get errorAppCheckFailed;
 
   /// Título del mapa para elegir el punto de recogida.
   ///

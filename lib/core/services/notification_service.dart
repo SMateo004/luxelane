@@ -73,7 +73,7 @@ class NotificationService {
   void _onForegroundMessage(RemoteMessage message) {
     if (kDebugMode) {
       debugPrint(
-        '[FCM] foreground: ${message.notification?.title} — ${message.notification?.body}',
+        '[FCM] foreground: ${message.notification?.title} — ${message.notification?.body}', // i18n-ignore: registro de depuración
       );
     }
   }

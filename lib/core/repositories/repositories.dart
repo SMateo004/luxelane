@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:dartz/dartz.dart';
 
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../error/failures.dart';
 import '../models/booking_payment.dart';
@@ -11,11 +12,10 @@ import '../models/models.dart';
 // ---------------------------------------------------------------------------
 
 /// Mensaje para una cuenta bloqueada desde el panel admin.
-const kBlockedAccountMessage =
-    'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
+String get kBlockedAccountMessage => L10n.current.errorAccountBlocked;
 
 /// El chófer bloqueado: sin texto técnico, con a quién acudir.
-const kDriverSuspendedMessage = 'Cuenta suspendida. Contacta con central.';
+String get kDriverSuspendedMessage => L10n.current.errorDriverSuspended;
 
 /// El mensaje de bloqueo según el rol de la cuenta.
 String blockedAccountMessage(UserRole role) =>

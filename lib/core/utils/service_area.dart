@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import '../../l10n/l10n.dart';
 import '../models/place_model.dart';
 
 /// A metropolitan area we operate in. A trip must start and end in the same
@@ -18,11 +19,13 @@ class ServiceCity {
 /// Whether a flight lands from inside Bolivia or from abroad; passengers
 /// come out through a different arrivals hall for each.
 enum FlightType {
-  domestic('Nacional'),
-  international('Internacional');
+  domestic,
+  international;
 
-  const FlightType(this.label);
-  final String label;
+  String get label => switch (this) {
+        FlightType.domestic => L10n.current.commonFlightDomestic,
+        FlightType.international => L10n.current.commonFlightInternational,
+      };
 
   static FlightType? fromName(String? name) {
     for (final t in values) {
@@ -39,9 +42,10 @@ class ServiceAirport {
     this.name,
     this.lat,
     this.lng, {
-    this.domesticExit = 'Salida de llegadas nacionales',
-    this.internationalExit = 'Salida de llegadas internacionales',
-  });
+    String? domesticExit,
+    String? internationalExit,
+  })  : _domesticExit = domesticExit,
+        _internationalExit = internationalExit;
 
   final String iata;
   final String name;
@@ -50,8 +54,13 @@ class ServiceAirport {
 
   /// Where the passenger walks out, shown to the driver. Override per airport
   /// with the actual door once confirmed on site.
-  final String domesticExit;
-  final String internationalExit;
+  final String? _domesticExit;
+  final String? _internationalExit;
+
+  String get domesticExit =>
+      _domesticExit ?? L10n.current.commonAirportDomesticExit;
+  String get internationalExit =>
+      _internationalExit ?? L10n.current.commonAirportInternationalExit;
 
   String exitFor(FlightType type) =>
       type == FlightType.domestic ? domesticExit : internationalExit;
@@ -68,69 +77,91 @@ typedef SearchArea = ({double lat, double lng, double radiusMeters});
 /// works the same on web and mobile and needs no extra Maps API calls.
 abstract final class ServiceArea {
   static const cities = <ServiceCity>[
-    ServiceCity('Santa Cruz de la Sierra', -17.7833, -63.1821, 30),
-    ServiceCity('La Paz', -16.5000, -68.1500, 25),
-    ServiceCity('Cochabamba', -17.3895, -66.1568, 25),
-    ServiceCity('Sucre', -19.0333, -65.2627, 35),
-    ServiceCity('Oruro', -17.9647, -67.1060, 20),
-    ServiceCity('Potosí', -19.5836, -65.7531, 20),
-    ServiceCity('Tarija', -21.5355, -64.7296, 20),
-    ServiceCity('Trinidad', -14.8333, -64.9000, 15),
-    ServiceCity('Cobija', -11.0267, -68.7692, 15),
+    ServiceCity(
+      'Santa Cruz de la Sierra', // i18n-ignore: nombre propio
+      -17.7833,
+      -63.1821,
+      30,
+    ),
+    ServiceCity('La Paz', -16.5000, -68.1500, 25), // i18n-ignore: nombre propio
+    ServiceCity(
+        'Cochabamba', -17.3895, -66.1568, 25), // i18n-ignore: nombre propio
+    ServiceCity('Sucre', -19.0333, -65.2627, 35), // i18n-ignore: nombre propio
+    ServiceCity('Oruro', -17.9647, -67.1060, 20), // i18n-ignore: nombre propio
+    ServiceCity('Potosí', -19.5836, -65.7531, 20), // i18n-ignore: nombre propio
+    ServiceCity('Tarija', -21.5355, -64.7296, 20), // i18n-ignore: nombre propio
+    ServiceCity(
+        'Trinidad', -14.8333, -64.9000, 15), // i18n-ignore: nombre propio
+    ServiceCity('Cobija', -11.0267, -68.7692, 15), // i18n-ignore: nombre propio
   ];
 
   static const airports = <ServiceAirport>[
     ServiceAirport(
-      'VVI',
-      'Aeropuerto Internacional Viru Viru',
+      'VVI', // i18n-ignore: nombre propio
+      'Aeropuerto Internacional Viru Viru', // i18n-ignore: nombre propio
       -17.6447,
       -63.1353,
     ),
-    ServiceAirport('SRZ', 'Aeropuerto El Trompillo', -17.8117, -63.1717),
     ServiceAirport(
-      'LPB',
-      'Aeropuerto Internacional El Alto',
+      'SRZ', // i18n-ignore: nombre propio
+      'Aeropuerto El Trompillo', // i18n-ignore: nombre propio
+      -17.8117,
+      -63.1717,
+    ),
+    ServiceAirport(
+      'LPB', // i18n-ignore: nombre propio
+      'Aeropuerto Internacional El Alto', // i18n-ignore: nombre propio
       -16.5131,
       -68.1922,
     ),
     ServiceAirport(
-      'CBB',
-      'Aeropuerto Internacional Jorge Wilstermann',
+      'CBB', // i18n-ignore: nombre propio
+      'Aeropuerto Internacional Jorge Wilstermann', // i18n-ignore: nombre propio
       -17.4211,
       -66.1769,
     ),
     ServiceAirport(
-      'SRE',
-      'Aeropuerto Internacional Alcantarí',
+      'SRE', // i18n-ignore: nombre propio
+      'Aeropuerto Internacional Alcantarí', // i18n-ignore: nombre propio
       -19.2467,
       -65.1494,
     ),
     ServiceAirport(
-      'TJA',
-      'Aeropuerto Capitán Oriel Lea Plaza',
+      'TJA', // i18n-ignore: nombre propio
+      'Aeropuerto Capitán Oriel Lea Plaza', // i18n-ignore: nombre propio
       -21.5558,
       -64.7014,
     ),
     ServiceAirport(
-      'ORU',
-      'Aeropuerto Internacional Juan Mendoza',
+      'ORU', // i18n-ignore: nombre propio
+      'Aeropuerto Internacional Juan Mendoza', // i18n-ignore: nombre propio
       -17.9625,
       -67.0761,
     ),
     ServiceAirport(
-      'POI',
-      'Aeropuerto Capitán Nicolás Rojas',
+      'POI', // i18n-ignore: nombre propio
+      'Aeropuerto Capitán Nicolás Rojas', // i18n-ignore: nombre propio
       -19.5433,
       -65.7236,
     ),
     ServiceAirport(
-      'TDD',
-      'Aeropuerto Teniente Jorge Henrich',
+      'TDD', // i18n-ignore: nombre propio
+      'Aeropuerto Teniente Jorge Henrich', // i18n-ignore: nombre propio
       -14.8186,
       -64.9181,
     ),
-    ServiceAirport('CIJ', 'Aeropuerto Capitán Aníbal Arab', -11.0403, -68.7825),
-    ServiceAirport('UYU', 'Aeropuerto Joya Andina', -20.4464, -66.8486),
+    ServiceAirport(
+      'CIJ', // i18n-ignore: nombre propio
+      'Aeropuerto Capitán Aníbal Arab', // i18n-ignore: nombre propio
+      -11.0403,
+      -68.7825,
+    ),
+    ServiceAirport(
+      'UYU', // i18n-ignore: nombre propio
+      'Aeropuerto Joya Andina', // i18n-ignore: nombre propio
+      -20.4464,
+      -66.8486,
+    ),
   ];
 
   /// Outside every known city, the destination must be this close to the
@@ -192,11 +223,12 @@ abstract final class ServiceArea {
   /// operamos, o no tiene coordenadas reales; null si se puede atender.
   static String? originError(Place origin) {
     if (!hasCoords(origin)) {
-      return 'No pudimos ubicar la recogida en el mapa. Elige otra dirección.';
+      return L10n.current.commonOriginNoCoords;
     }
     if (cityOf(origin) != null || airportFor(origin) != null) return null;
-    return 'Por ahora operamos en ${cities.map((c) => c.name.split(' de ').first).join(', ')}. '
-        'Elige una recogida en una de esas ciudades.';
+    return L10n.current.commonOriginOutsideArea(
+      cities.map((c) => c.name.split(' de ').first).join(', '),
+    );
   }
 
   /// Error to show when [destination] is not in [origin]'s city, else null.
@@ -206,8 +238,7 @@ abstract final class ServiceArea {
     final city = cityOf(origin);
     if (city != null) {
       if (cityOf(destination) == city) return null;
-      return 'El destino debe estar en ${city.name}, la misma ciudad de la '
-          'recogida.';
+      return L10n.current.commonDestinationOtherCity(city.name);
     }
     final km = distanceKm(
       origin.lat,
@@ -216,13 +247,13 @@ abstract final class ServiceArea {
       destination.lng,
     );
     if (km <= fallbackRadiusKm) return null;
-    return 'El destino debe estar en la misma ciudad que la recogida.';
+    return L10n.current.commonDestinationSameCity;
   }
 
   // ── Airports ────────────────────────────────────────────────────────────
 
   static final _airportWord = RegExp(
-    r'\b(aeropuerto|airport|aerodromo|terminal aerea)\b',
+    r'\b(aeropuerto|airport|aerodromo|terminal aerea)\b', // i18n-ignore: patrón de búsqueda
   );
   // Streets and neighbourhoods named after an airport ("Av. Aeropuerto").
   static final _streetPrefix = RegExp(
@@ -303,10 +334,10 @@ abstract final class FlightNumber {
   /// Error to show for [input], or null when it is a valid flight number.
   static String? error(String input) {
     if (input.trim().isEmpty) {
-      return 'Indica tu número de vuelo para recogerte a tiempo.';
+      return L10n.current.commonFlightNumberMissing;
     }
     if (!isValid(input)) {
-      return 'Número de vuelo no válido. Ejemplo: OB 760 o Z8 315.';
+      return L10n.current.commonFlightNumberInvalid;
     }
     return null;
   }

@@ -7,33 +7,37 @@ import '../../core/widgets/lux_site_chrome.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/home/presentation/pages/home_design.dart';
 import '../../features/notifications/presentation/widgets/notification_bell.dart';
+import '../../l10n/l10n.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
   final StatefulNavigationShell navigationShell;
 
-  static const _tabs = [
-    _Tab(
-      icon: Icons.near_me_outlined,
-      activeIcon: Icons.near_me_rounded,
-      label: 'Reservar',
-    ),
-    _Tab(
-      icon: Icons.event_note_outlined,
-      activeIcon: Icons.event_note_rounded,
-      label: 'Mis viajes',
-    ),
-    _Tab(
-      icon: Icons.person_outline,
-      activeIcon: Icons.person_rounded,
-      label: 'Perfil',
-    ),
-  ];
+  static List<_Tab> _tabs(AppLocalizations l10n) => [
+        _Tab(
+          icon: Icons.near_me_outlined,
+          activeIcon: Icons.near_me_rounded,
+          label: l10n.commonTabBook,
+        ),
+        _Tab(
+          icon: Icons.event_note_outlined,
+          activeIcon: Icons.event_note_rounded,
+          label: l10n.commonTabMyTrips,
+        ),
+        _Tab(
+          icon: Icons.person_outline,
+          activeIcon: Icons.person_rounded,
+          label: l10n.commonTabProfile,
+        ),
+      ];
 
   @override
-  Widget build(BuildContext context) => isWeb(context)
-      ? _WebShell(shell: navigationShell, tabs: _tabs)
-      : _MobileShell(shell: navigationShell, tabs: _tabs);
+  Widget build(BuildContext context) {
+    final tabs = _tabs(context.l10n);
+    return isWeb(context)
+        ? _WebShell(shell: navigationShell, tabs: tabs)
+        : _MobileShell(shell: navigationShell, tabs: tabs);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -124,7 +128,7 @@ class _MobileTabItem extends StatelessWidget {
               Text(
                 tab.label.toUpperCase(),
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: LuxTypography.sansFamily,
                   fontSize: 9,
                   letterSpacing: 1.2,
                   fontWeight: active ? FontWeight.w600 : FontWeight.w400,
@@ -218,7 +222,10 @@ class _WebNav extends StatelessWidget {
           ] else ...[
             const LuxServicesMenu(),
             const SizedBox(width: 32),
-            LuxNavLink('Iniciar sesión', onTap: () => context.go('/login')),
+            LuxNavLink(
+              context.l10n.commonSignIn,
+              onTap: () => context.go('/login'),
+            ),
             const SizedBox(width: 24),
             LuxNavCta(onTap: () => context.go('/'), compact: narrow),
           ],
@@ -249,7 +256,7 @@ class _ShellLink extends StatelessWidget {
               Text(
                 label.toUpperCase(),
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: LuxTypography.sansFamily,
                   fontSize: 11,
                   letterSpacing: 1.2,
                   color: active ? Colors.white : Colors.white.withAlpha(150),
@@ -282,7 +289,7 @@ class _AvatarBtn extends StatelessWidget {
     final name = a is AuthAuthenticated ? a.user.displayName : '';
     return Semantics(
       button: true,
-      label: 'Mi perfil',
+      label: context.l10n.commonMyProfile,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
@@ -301,7 +308,7 @@ class _AvatarBtn extends StatelessWidget {
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
-                  fontFamily: 'Cormorant Garamond',
+                  fontFamily: LuxTypography.serifFamily,
                 ),
               ),
             ),

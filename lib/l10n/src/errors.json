@@ -1,0 +1,338 @@
+{
+  "errorTooManyAttempts": {
+    "description": "Error: el servidor o Firebase limitó los intentos.",
+    "es": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+    "en": "Too many attempts. Wait a few minutes and try again.",
+    "pt": "Muitas tentativas. Aguarde alguns minutos e tente novamente."
+  },
+  "errorSessionExpired": {
+    "description": "Error: la sesión ya no es válida y hay que volver a entrar.",
+    "es": "Tu sesión expiró. Vuelve a iniciar sesión.",
+    "en": "Your session has expired. Please sign in again.",
+    "pt": "Sua sessão expirou. Entre novamente."
+  },
+  "errorMfaRequired": {
+    "description": "Error: la acción exige la verificación en dos pasos activada (se activa en Perfil).",
+    "es": "Activa la verificación en dos pasos (Perfil) y vuelve a iniciar sesión para continuar.",
+    "en": "Turn on two-step verification (Profile) and sign in again to continue.",
+    "pt": "Ative a verificação em duas etapas (Perfil) e entre novamente para continuar."
+  },
+  "errorReauthRequired": {
+    "description": "Error: la acción exige haber iniciado sesión hace poco.",
+    "es": "Por seguridad, vuelve a iniciar sesión para continuar.",
+    "en": "For your security, sign in again to continue.",
+    "pt": "Por segurança, entre novamente para continuar."
+  },
+  "errorNoConnection": {
+    "description": "Error: no hay conexión con el servidor.",
+    "es": "Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.",
+    "en": "No connection to the server. Check your network and try again.",
+    "pt": "Sem conexão com o servidor. Verifique sua rede e tente novamente."
+  },
+  "errorReauthWrongPassword": {
+    "description": "Error al volver a identificarse: la contraseña no es la de la cuenta.",
+    "es": "La contraseña no coincide.",
+    "en": "The password does not match.",
+    "pt": "A senha não confere."
+  },
+  "errorReauthUserMismatch": {
+    "description": "Error al volver a identificarse con otra cuenta distinta de la actual.",
+    "es": "Usa la misma cuenta con la que entraste.",
+    "en": "Use the same account you signed in with.",
+    "pt": "Use a mesma conta com que você entrou."
+  },
+  "errorReauthFailed": {
+    "description": "Error genérico al volver a identificarse.",
+    "es": "No pudimos confirmar tu identidad. Inténtalo de nuevo.",
+    "en": "We could not confirm your identity. Please try again.",
+    "pt": "Não foi possível confirmar sua identidade. Tente novamente."
+  },
+  "errorInvalidArgument": {
+    "description": "Error genérico: el servidor rechazó los datos enviados.",
+    "es": "Revisa los datos e inténtalo de nuevo.",
+    "en": "Check the details and try again.",
+    "pt": "Verifique os dados e tente novamente."
+  },
+  "errorPermissionDenied": {
+    "description": "Error genérico: la cuenta no tiene permiso para la acción.",
+    "es": "No tienes permiso para hacer esto.",
+    "en": "You do not have permission to do this.",
+    "pt": "Você não tem permissão para fazer isso."
+  },
+  "errorFailedPrecondition": {
+    "description": "Error genérico: la acción no se puede hacer en el estado actual.",
+    "es": "Esto no se puede hacer en este momento.",
+    "en": "This cannot be done at the moment.",
+    "pt": "Isso não pode ser feito no momento."
+  },
+  "errorNotFound": {
+    "description": "Error genérico: el documento pedido no existe.",
+    "es": "No encontramos el registro.",
+    "en": "We could not find the record.",
+    "pt": "Não encontramos o registro."
+  },
+  "errorGeneric": {
+    "description": "Error genérico de último recurso.",
+    "es": "No se pudo completar. Inténtalo de nuevo.",
+    "en": "This could not be completed. Please try again.",
+    "pt": "Não foi possível concluir. Tente novamente."
+  },
+  "errorDeleteActiveBookings": {
+    "description": "Error al eliminar la cuenta: tiene viajes activos o reservados.",
+    "es": "Tienes viajes activos o reservados. Cancélalos o espera a que terminen antes de eliminar tu cuenta.",
+    "en": "You have active or booked trips. Cancel them or wait until they finish before deleting your account.",
+    "pt": "Você tem viagens ativas ou reservadas. Cancele-as ou aguarde que terminem antes de excluir sua conta."
+  },
+  "errorDeleteAdminAccount": {
+    "description": "Error al eliminar la cuenta: es de administración.",
+    "es": "Las cuentas de administración se eliminan desde la consola.",
+    "en": "Administrator accounts are deleted from the console.",
+    "pt": "Contas de administração são excluídas pelo console."
+  },
+  "errorDeleteAccountFailed": {
+    "description": "Error genérico al eliminar la cuenta.",
+    "es": "No pudimos eliminar tu cuenta. Inténtalo de nuevo.",
+    "en": "We could not delete your account. Please try again.",
+    "pt": "Não foi possível excluir sua conta. Tente novamente."
+  },
+  "errorTermsOutdated": {
+    "description": "Error al aceptar los términos: cambiaron mientras se leían.",
+    "es": "Los términos se acaban de actualizar. Vuelve a abrirlos y acéptalos de nuevo.",
+    "en": "The terms have just been updated. Open them again and accept them once more.",
+    "pt": "Os termos acabaram de ser atualizados. Abra-os novamente e aceite-os outra vez."
+  },
+  "errorAcceptTermsFailed": {
+    "description": "Error genérico al registrar la aceptación de los términos.",
+    "es": "No pudimos registrar tu aceptación. Inténtalo de nuevo.",
+    "en": "We could not record your acceptance. Please try again.",
+    "pt": "Não foi possível registrar sua aceitação. Tente novamente."
+  },
+  "errorBusinessLeadTooMany": {
+    "description": "Error del formulario de empresas: demasiadas solicitudes desde el mismo lugar.",
+    "es": "Ya recibimos varias solicitudes desde aquí. Inténtalo más tarde o escríbenos.",
+    "en": "We have already received several requests from here. Try again later or write to us.",
+    "pt": "Já recebemos várias solicitações daqui. Tente mais tarde ou escreva para nós."
+  },
+  "errorBusinessLeadInvalid": {
+    "description": "Error del formulario de empresas: datos no válidos.",
+    "es": "Revisa los datos del formulario.",
+    "en": "Check the form details.",
+    "pt": "Verifique os dados do formulário."
+  },
+  "errorBusinessLeadFailed": {
+    "description": "Error genérico al enviar el formulario de empresas.",
+    "es": "No pudimos enviar tu solicitud. Inténtalo de nuevo.",
+    "en": "We could not send your request. Please try again.",
+    "pt": "Não foi possível enviar sua solicitação. Tente novamente."
+  },
+  "errorBadCredentials": {
+    "description": "Error al iniciar sesión: el mismo texto si no hay cuenta o la contraseña no es correcta.",
+    "es": "Correo o contraseña incorrectos.",
+    "en": "Incorrect email or password.",
+    "pt": "E-mail ou senha incorretos."
+  },
+  "errorPasswordResetSent": {
+    "description": "Respuesta al pedir restablecer la contraseña: la misma haya o no cuenta con ese correo.",
+    "es": "Si hay una cuenta con {email}, te enviamos un enlace para restablecer tu contraseña. Revisa también el correo no deseado.",
+    "en": "If there is an account with {email}, we sent you a link to reset your password. Check your spam folder as well.",
+    "pt": "Se houver uma conta com {email}, enviamos um link para redefinir sua senha. Verifique também a caixa de spam.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "ana@example.com"
+      }
+    }
+  },
+  "errorLoginFailed": {
+    "description": "Error genérico al iniciar sesión.",
+    "es": "No pudimos iniciar sesión. Inténtalo de nuevo.",
+    "en": "We could not sign you in. Please try again.",
+    "pt": "Não foi possível entrar. Tente novamente."
+  },
+  "errorRegisterEmailInUse": {
+    "description": "Error al registrarse con un correo que quizá ya tiene cuenta (sin confirmarlo).",
+    "es": "No pudimos crear la cuenta con ese correo. Si ya te registraste, inicia sesión o recupera tu contraseña.",
+    "en": "We could not create an account with that email. If you have already signed up, sign in or reset your password.",
+    "pt": "Não foi possível criar a conta com esse e-mail. Se você já se cadastrou, entre ou recupere sua senha."
+  },
+  "errorInvalidEmail": {
+    "description": "Error: el correo escrito no tiene un formato válido.",
+    "es": "Ese correo no es válido. Revísalo.",
+    "en": "That email is not valid. Please check it.",
+    "pt": "Esse e-mail não é válido. Verifique-o."
+  },
+  "errorWeakPassword": {
+    "description": "Error al registrarse: contraseña demasiado corta.",
+    "es": "La contraseña es muy débil: usa al menos 6 caracteres.",
+    "en": "The password is too weak: use at least 6 characters.",
+    "pt": "A senha é muito fraca: use pelo menos 6 caracteres."
+  },
+  "errorRegisterFailed": {
+    "description": "Error genérico al crear la cuenta.",
+    "es": "No pudimos crear la cuenta. Inténtalo de nuevo.",
+    "en": "We could not create the account. Please try again.",
+    "pt": "Não foi possível criar a conta. Tente novamente."
+  },
+  "errorPasswordResetFailed": {
+    "description": "Error genérico al enviar el enlace para restablecer la contraseña.",
+    "es": "No pudimos enviar el enlace. Inténtalo de nuevo.",
+    "en": "We could not send the link. Please try again.",
+    "pt": "Não foi possível enviar o link. Tente novamente."
+  },
+  "errorServerDefault": {
+    "description": "Mensaje por defecto de un fallo del servidor sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "Server error",
+    "en": "Server error",
+    "pt": "Erro do servidor"
+  },
+  "errorEmailNotVerified": {
+    "description": "Error al reservar: el correo de la cuenta no está verificado.",
+    "es": "Verifica tu correo para poder reservar.",
+    "en": "Verify your email to make a booking.",
+    "pt": "Verifique seu e-mail para poder reservar."
+  },
+  "errorTermsRequired": {
+    "description": "Error al reservar: falta aceptar los términos vigentes.",
+    "es": "Acepta los términos vigentes para poder reservar.",
+    "en": "Accept the current terms to make a booking.",
+    "pt": "Aceite os termos vigentes para poder reservar."
+  },
+  "errorAuthDefault": {
+    "description": "Mensaje por defecto de un fallo de autenticación sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "Authentication error",
+    "en": "Authentication error",
+    "pt": "Erro de autenticação"
+  },
+  "errorAuthCancelledDefault": {
+    "description": "Mensaje por defecto cuando la persona cierra la ventana de inicio de sesión (no se muestra como error; el original ya estaba en inglés).",
+    "es": "Sign-in cancelled",
+    "en": "Sign-in cancelled",
+    "pt": "Login cancelado"
+  },
+  "errorNetworkDefault": {
+    "description": "Mensaje por defecto de un fallo de red sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "No internet connection",
+    "en": "No internet connection",
+    "pt": "Sem conexão com a internet"
+  },
+  "errorNotFoundDefault": {
+    "description": "Mensaje por defecto cuando no existe un documento (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "Resource not found",
+    "en": "Resource not found",
+    "pt": "Recurso não encontrado"
+  },
+  "errorPaymentDefault": {
+    "description": "Mensaje por defecto de un fallo de pago sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "Payment error",
+    "en": "Payment error",
+    "pt": "Erro no pagamento"
+  },
+  "errorPermissionDefault": {
+    "description": "Mensaje por defecto de un fallo de permisos sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "Permission denied",
+    "en": "Permission denied",
+    "pt": "Permissão negada"
+  },
+  "errorPriceChanged": {
+    "description": "Error al reservar: el servidor calculó otro precio y hay que confirmarlo.",
+    "es": "El precio de este viaje cambió.",
+    "en": "The price of this trip has changed.",
+    "pt": "O preço desta viagem mudou."
+  },
+  "errorCancellationFeeChanged": {
+    "description": "Error al cancelar: la retención por cancelar cambió mientras se decidía.",
+    "es": "El recargo por cancelar cambió.",
+    "en": "The cancellation fee has changed.",
+    "pt": "A taxa de cancelamento mudou."
+  },
+  "errorAppUpdateDriver": {
+    "description": "Error en la app del chófer: la versión es demasiado antigua para avanzar un viaje.",
+    "es": "Actualiza la app para seguir con tus viajes.",
+    "en": "Update the app to continue with your trips.",
+    "pt": "Atualize o app para continuar com suas viagens."
+  },
+  "errorAppUpdateRider": {
+    "description": "Error en la app del pasajero: la versión es demasiado antigua para reservar.",
+    "es": "Actualiza la app para reservar.",
+    "en": "Update the app to make a booking.",
+    "pt": "Atualize o app para reservar."
+  },
+  "errorValidationDefault": {
+    "description": "Mensaje por defecto de un fallo de validación sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
+    "es": "Validation error",
+    "en": "Validation error",
+    "pt": "Erro de validação"
+  },
+  "errorMfaEnterCode": {
+    "description": "Segundo paso del inicio de sesión: pide el código de la app autenticadora (TOTP).",
+    "es": "Introduce el código de tu app autenticadora.",
+    "en": "Enter the code from your authenticator app.",
+    "pt": "Digite o código do seu app autenticador."
+  },
+  "errorMfaWrongCode": {
+    "description": "Error de verificación en dos pasos: el código no es válido.",
+    "es": "Código incorrecto. Usa el código actual de tu app autenticadora (y revisa que la hora del teléfono sea automática).",
+    "en": "Incorrect code. Use the current code from your authenticator app (and check that your phone's time is set automatically).",
+    "pt": "Código incorreto. Use o código atual do seu app autenticador (e verifique se a hora do celular está automática)."
+  },
+  "errorMfaRecentLogin": {
+    "description": "Error al dar de alta la verificación en dos pasos: hace falta un inicio de sesión reciente.",
+    "es": "Por seguridad, cierra sesión, vuelve a entrar y repite el alta.",
+    "en": "For your security, sign out, sign in again and repeat the setup.",
+    "pt": "Por segurança, saia, entre novamente e repita a configuração."
+  },
+  "errorMfaUnverifiedEmail": {
+    "description": "Error al dar de alta la verificación en dos pasos sin el correo verificado.",
+    "es": "Verifica tu correo antes de activar la verificación en dos pasos.",
+    "en": "Verify your email before turning on two-step verification.",
+    "pt": "Verifique seu e-mail antes de ativar a verificação em duas etapas."
+  },
+  "errorMfaNoConnection": {
+    "description": "Error de verificación en dos pasos: sin conexión.",
+    "es": "Sin conexión. Revisa tu red e inténtalo de nuevo.",
+    "en": "No connection. Check your network and try again.",
+    "pt": "Sem conexão. Verifique sua rede e tente novamente."
+  },
+  "errorMfaQrExpired": {
+    "description": "Error de verificación en dos pasos: venció el alta (código QR).",
+    "es": "El código QR venció. Empieza el alta de nuevo.",
+    "en": "The QR code has expired. Start the setup again.",
+    "pt": "O código QR expirou. Comece a configuração novamente."
+  },
+  "errorMfaNotEnabled": {
+    "description": "Error: la verificación en dos pasos no está habilitada en el proyecto.",
+    "es": "La verificación en dos pasos aún no está activada. Avisa a central.",
+    "en": "Two-step verification is not enabled yet. Let our operations team know.",
+    "pt": "A verificação em duas etapas ainda não está ativada. Avise a central."
+  },
+  "errorMfaNoTotp": {
+    "description": "Error: la cuenta no tiene app autenticadora para el segundo paso.",
+    "es": "Tu cuenta no tiene una app autenticadora registrada. Contacta con central.",
+    "en": "Your account has no authenticator app registered. Contact our operations team.",
+    "pt": "Sua conta não tem um app autenticador registrado. Entre em contato com a central."
+  },
+  "errorMfaFailed": {
+    "description": "Error genérico de la verificación en dos pasos.",
+    "es": "No se pudo completar la verificación. Inténtalo de nuevo.",
+    "en": "The verification could not be completed. Please try again.",
+    "pt": "Não foi possível concluir a verificação. Tente novamente."
+  },
+  "errorAccountBlocked": {
+    "description": "Error al entrar: la cuenta del pasajero está bloqueada desde el panel.",
+    "es": "Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.",
+    "en": "Your account is blocked. Write to our support team if you think this is a mistake.",
+    "pt": "Sua conta está bloqueada. Escreva para o suporte se achar que é um erro."
+  },
+  "errorDriverSuspended": {
+    "description": "Error al entrar: la cuenta del chófer está suspendida.",
+    "es": "Cuenta suspendida. Contacta con central.",
+    "en": "Account suspended. Contact our operations team.",
+    "pt": "Conta suspensa. Entre em contato com a central."
+  },
+  "errorAppCheckFailed": {
+    "description": "Error: el servidor exige verificar la app (App Check) y no se pudo.",
+    "es": "No se pudo verificar la app. Actualízala o inténtalo más tarde.",
+    "en": "The app could not be verified. Update it or try again later.",
+    "pt": "Não foi possível verificar o app. Atualize-o ou tente mais tarde."
+  }
+}

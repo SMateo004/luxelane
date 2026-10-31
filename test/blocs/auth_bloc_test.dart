@@ -84,7 +84,7 @@ void main() {
         const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
       ),
       skip: 2,
-      expect: () => [const AuthError(kDriverSuspendedMessage)],
+      expect: () => [AuthError(kDriverSuspendedMessage)],
     );
 
     test('mensaje de bloqueo por rol', () {
@@ -120,7 +120,7 @@ void main() {
       expect: () => [
         const AuthLoading(),
         AuthAuthenticated(_mockUser),
-        const AuthError(kBlockedAccountMessage),
+        AuthError(kBlockedAccountMessage),
       ],
       verify: (_) => verify(() => repo.logout()).called(1),
     );
@@ -129,13 +129,12 @@ void main() {
       'al abrir la app con la cuenta bloqueada explica el motivo',
       build: () {
         when(() => repo.authStateChanges).thenAnswer(
-          (_) => Stream.error(const AuthFailure(kBlockedAccountMessage)),
+          (_) => Stream.error(AuthFailure(kBlockedAccountMessage)),
         );
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const AuthStarted()),
-      expect: () =>
-          [const AuthLoading(), const AuthError(kBlockedAccountMessage)],
+      expect: () => [const AuthLoading(), AuthError(kBlockedAccountMessage)],
     );
 
     blocTest<AuthBloc, AuthState>(

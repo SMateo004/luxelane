@@ -1,0 +1,1244 @@
+{
+  "commonLockedDocuments": {
+    "description": "Nota bajo los datos del vehículo del chófer que no puede editar él mismo.",
+    "es": "Para cambiar estos datos, contacta con central.",
+    "en": "To change these details, contact our operations team.",
+    "pt": "Para alterar estes dados, entre em contato com a central."
+  },
+  "commonStartupErrorTitle": {
+    "description": "Título de la pantalla que sustituye a la app cuando no se pudo iniciar.",
+    "es": "No pudimos iniciar la app",
+    "en": "We could not start the app",
+    "pt": "Não foi possível iniciar o app"
+  },
+  "commonStartupErrorBody": {
+    "description": "Texto bajo «No pudimos iniciar la app».",
+    "es": "Cierra la app y vuelve a abrirla en unos minutos.",
+    "en": "Close the app and open it again in a few minutes.",
+    "pt": "Feche o app e abra-o novamente em alguns minutos."
+  },
+  "commonSeatingPassengers": {
+    "description": "Opción de asientos de un vehículo: número de pasajeros (siempre 2 o más).",
+    "es": "{count} pasajeros",
+    "en": "{count} passengers",
+    "pt": "{count} passageiros",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "commonSeatingMaxDetail": {
+    "description": "Detalle de la opción con todos los asientos ocupados.",
+    "es": "Capacidad máxima",
+    "en": "Maximum capacity",
+    "pt": "Capacidade máxima"
+  },
+  "commonSeatingRoomierDetail": {
+    "description": "Detalle de la opción con un pasajero menos que el máximo.",
+    "es": "Más espacio para cada uno",
+    "en": "More room for everyone",
+    "pt": "Mais espaço para cada um"
+  },
+  "commonSeatingChildSeat": {
+    "description": "Opción de asientos con silla para niños.",
+    "es": "Con asiento infantil",
+    "en": "With a child seat",
+    "pt": "Com assento infantil"
+  },
+  "commonSeatingChildSeatDetail": {
+    "description": "Detalle de la opción con asiento infantil: hay que pedirlo antes.",
+    "es": "Bajo solicitud previa",
+    "en": "On prior request",
+    "pt": "Mediante solicitação prévia"
+  },
+  "commonHighlightBusiness1": {
+    "description": "Detalle de Business Class en la galería del vehículo.",
+    "es": "Sedán ejecutivo, discreto y silencioso",
+    "en": "Executive sedan, discreet and quiet",
+    "pt": "Sedã executivo, discreto e silencioso"
+  },
+  "commonHighlightBusiness2": {
+    "description": "Detalle de Business Class en la galería del vehículo.",
+    "es": "Asientos traseros en cuero para tres",
+    "en": "Leather rear seats for three",
+    "pt": "Bancos traseiros de couro para três"
+  },
+  "commonHighlightBusiness3": {
+    "description": "Detalle de Business Class en la galería del vehículo.",
+    "es": "Maletero para tres maletas facturadas",
+    "en": "Boot space for three checked bags",
+    "pt": "Porta-malas para três malas despachadas"
+  },
+  "commonHighlightSuv1": {
+    "description": "Detalle de Business SUV en la galería del vehículo.",
+    "es": "SUV ejecutiva, posición de manejo elevada",
+    "en": "Executive SUV with a raised driving position",
+    "pt": "SUV executivo, posição de direção elevada"
+  },
+  "commonHighlightSuv2": {
+    "description": "Detalle de Business SUV en la galería del vehículo.",
+    "es": "Cabina amplia para cuatro pasajeros",
+    "en": "Spacious cabin for four passengers",
+    "pt": "Cabine ampla para quatro passageiros"
+  },
+  "commonHighlightSuv3": {
+    "description": "Detalle de Business SUV en la galería del vehículo.",
+    "es": "Maletero para cuatro maletas facturadas",
+    "en": "Boot space for four checked bags",
+    "pt": "Porta-malas para quatro malas despachadas"
+  },
+  "commonHighlightVan1": {
+    "description": "Detalle de Business Van en la galería del vehículo.",
+    "es": "Van ejecutiva para grupos y familias",
+    "en": "Executive van for groups and families",
+    "pt": "Van executiva para grupos e famílias"
+  },
+  "commonHighlightVan2": {
+    "description": "Detalle de Business Van en la galería del vehículo.",
+    "es": "Hasta siete pasajeros en tres filas",
+    "en": "Up to seven passengers in three rows",
+    "pt": "Até sete passageiros em três fileiras"
+  },
+  "commonHighlightVan3": {
+    "description": "Detalle de Business Van en la galería del vehículo.",
+    "es": "Espacio para dos maletas facturadas",
+    "en": "Room for two checked bags",
+    "pt": "Espaço para duas malas despachadas"
+  },
+  "commonHighlightFirst1": {
+    "description": "Detalle de First Class en la galería del vehículo.",
+    "es": "Sedán insignia, nuestro máximo nivel",
+    "en": "Flagship sedan, our highest level",
+    "pt": "Sedã topo de linha, nosso nível máximo"
+  },
+  "commonHighlightFirst2": {
+    "description": "Detalle de First Class en la galería del vehículo.",
+    "es": "Plazas traseras con apoyabrazos central",
+    "en": "Rear seats with a central armrest",
+    "pt": "Bancos traseiros com apoio de braço central"
+  },
+  "commonHighlightTwoCheckedBags": {
+    "description": "Detalle de First Class y Eléctrico en la galería del vehículo.",
+    "es": "Maletero para dos maletas facturadas",
+    "en": "Boot space for two checked bags",
+    "pt": "Porta-malas para duas malas despachadas"
+  },
+  "commonHighlightElectric1": {
+    "description": "Detalle de la clase Eléctrico en la galería del vehículo.",
+    "es": "Sedán ejecutivo totalmente eléctrico",
+    "en": "Fully electric executive sedan",
+    "pt": "Sedã executivo totalmente elétrico"
+  },
+  "commonHighlightElectric2": {
+    "description": "Detalle de la clase Eléctrico en la galería del vehículo.",
+    "es": "Silencioso y sin emisiones",
+    "en": "Quiet and emission-free",
+    "pt": "Silencioso e sem emissões"
+  },
+  "commonLuggageCabinOne": {
+    "description": "Tipo de equipaje en singular, tras la cifra («1 maleta de mano»).",
+    "es": "maleta de mano",
+    "en": "carry-on bag",
+    "pt": "mala de mão"
+  },
+  "commonLuggageCheckedOne": {
+    "description": "Tipo de equipaje en singular, tras la cifra («1 maleta facturada»).",
+    "es": "maleta facturada",
+    "en": "checked bag",
+    "pt": "mala despachada"
+  },
+  "commonLuggageOversizeOne": {
+    "description": "Tipo de equipaje en singular, tras la cifra («1 maleta extra grande»).",
+    "es": "maleta extra grande",
+    "en": "oversized bag",
+    "pt": "mala extragrande"
+  },
+  "commonLuggageCabinMany": {
+    "description": "Tipo de equipaje en plural, tras la cifra («2 maletas de mano»).",
+    "es": "maletas de mano",
+    "en": "carry-on bags",
+    "pt": "malas de mão"
+  },
+  "commonLuggageCheckedMany": {
+    "description": "Tipo de equipaje en plural, tras la cifra («2 maletas facturadas»).",
+    "es": "maletas facturadas",
+    "en": "checked bags",
+    "pt": "malas despachadas"
+  },
+  "commonLuggageOversizeMany": {
+    "description": "Tipo de equipaje en plural, tras la cifra («2 maletas extra grandes»).",
+    "es": "maletas extra grandes",
+    "en": "oversized bags",
+    "pt": "malas extragrandes"
+  },
+  "commonLuggageCabinSize": {
+    "description": "Medidas de una maleta de mano.",
+    "es": "Hasta 55 × 40 × 20 cm",
+    "en": "Up to 55 × 40 × 20 cm",
+    "pt": "Até 55 × 40 × 20 cm"
+  },
+  "commonLuggageCheckedSize": {
+    "description": "Medidas de una maleta facturada.",
+    "es": "Hasta 75 × 50 × 30 cm",
+    "en": "Up to 75 × 50 × 30 cm",
+    "pt": "Até 75 × 50 × 30 cm"
+  },
+  "commonLuggageOversizeSize": {
+    "description": "Medidas de una maleta extra grande.",
+    "es": "Más de 80 cm",
+    "en": "Over 80 cm",
+    "pt": "Mais de 80 cm"
+  },
+  "commonPromiseFixedPrice": {
+    "description": "Promesa del servicio (frase corta): el precio queda fijo al reservar.",
+    "es": "Precio fijo al reservar",
+    "en": "Fixed price when you book",
+    "pt": "Preço fixo ao reservar"
+  },
+  "commonPromiseFixedPriceLong": {
+    "description": "Promesa del servicio (detalle): quién calcula el precio fijo. No es una garantía.",
+    "es": "El precio que ves al confirmar lo calcula Luxelane para tu trayecto.",
+    "en": "The price you see when you confirm is calculated by Luxelane for your journey.",
+    "pt": "O preço que você vê ao confirmar é calculado pela Luxelane para o seu trajeto."
+  },
+  "commonPromiseChauffeurs": {
+    "description": "Promesa del servicio (frase corta): los chóferes tienen los documentos verificados.",
+    "es": "Chóferes con documentos verificados",
+    "en": "Chauffeurs with verified documents",
+    "pt": "Motoristas com documentos verificados"
+  },
+  "commonPromiseChauffeursLong": {
+    "description": "Promesa del servicio (detalle): Luxelane revisa los documentos de cada chófer.",
+    "es": "Luxelane revisa los documentos de cada chófer antes de que reciba viajes.",
+    "en": "Luxelane reviews each chauffeur's documents before they receive trips.",
+    "pt": "A Luxelane verifica os documentos de cada motorista antes que ele receba viagens."
+  },
+  "commonVehicleElectric": {
+    "description": "Nombre de la clase de vehículo eléctrica (las demás clases son nombres de producto y no se traducen).",
+    "es": "Eléctrico",
+    "en": "Electric",
+    "pt": "Elétrico"
+  },
+  "commonVehicleBusinessDescription": {
+    "description": "Descripción corta de Business Class (sin marca ni modelo).",
+    "es": "Sedán ejecutivo",
+    "en": "Executive sedan",
+    "pt": "Sedã executivo"
+  },
+  "commonVehicleSuvDescription": {
+    "description": "Descripción corta de Business SUV.",
+    "es": "SUV ejecutiva, más espacio",
+    "en": "Executive SUV, more room",
+    "pt": "SUV executivo, mais espaço"
+  },
+  "commonVehicleFirstDescription": {
+    "description": "Descripción corta de First Class.",
+    "es": "Sedán insignia",
+    "en": "Flagship sedan",
+    "pt": "Sedã topo de linha"
+  },
+  "commonVehicleVanDescription": {
+    "description": "Descripción corta de Business Van.",
+    "es": "Van ejecutiva para grupos",
+    "en": "Executive van for groups",
+    "pt": "Van executiva para grupos"
+  },
+  "commonVehicleElectricDescription": {
+    "description": "Descripción corta de la clase Eléctrico.",
+    "es": "Sedán ejecutivo eléctrico",
+    "en": "Electric executive sedan",
+    "pt": "Sedã executivo elétrico"
+  },
+  "commonServiceOneWay": {
+    "description": "Tipo de servicio: traslado de un punto a otro.",
+    "es": "Solo ida",
+    "en": "One way",
+    "pt": "Só ida"
+  },
+  "commonServiceByTheHour": {
+    "description": "Tipo de servicio: chófer por horas.",
+    "es": "Por horas",
+    "en": "By the hour",
+    "pt": "Por hora"
+  },
+  "commonServiceOneWayDescription": {
+    "description": "Descripción del servicio «Solo ida».",
+    "es": "Traslado a precio fijo a tu destino",
+    "en": "Fixed-price transfer to your destination",
+    "pt": "Transfer com preço fixo até o seu destino"
+  },
+  "commonServiceByTheHourDescription": {
+    "description": "Descripción del servicio «Por horas».",
+    "es": "Chófer a tu disposición por un tiempo determinado",
+    "en": "A chauffeur at your disposal for a set time",
+    "pt": "Motorista à sua disposição por um tempo determinado"
+  },
+  "commonStatusPending": {
+    "description": "Estado de una reserva: aún sin chófer o sin pagar.",
+    "es": "Pendiente",
+    "en": "Pending",
+    "pt": "Pendente"
+  },
+  "commonStatusConfirmed": {
+    "description": "Estado de una reserva: confirmada.",
+    "es": "Confirmado",
+    "en": "Confirmed",
+    "pt": "Confirmada"
+  },
+  "commonStatusDriverArriving": {
+    "description": "Estado de una reserva: el chófer va hacia la recogida.",
+    "es": "En camino",
+    "en": "On the way",
+    "pt": "A caminho"
+  },
+  "commonStatusDriverArrived": {
+    "description": "Estado de una reserva: el chófer llegó a la recogida.",
+    "es": "Chófer llegó",
+    "en": "Chauffeur arrived",
+    "pt": "Motorista chegou"
+  },
+  "commonStatusVerified": {
+    "description": "Estado de una reserva: el chófer comprobó el código de recogida.",
+    "es": "Verificada",
+    "en": "Verified",
+    "pt": "Verificada"
+  },
+  "commonStatusInProgress": {
+    "description": "Estado de una reserva: el viaje está en curso.",
+    "es": "En progreso",
+    "en": "In progress",
+    "pt": "Em andamento"
+  },
+  "commonStatusCompleted": {
+    "description": "Estado de una reserva: viaje terminado.",
+    "es": "Completado",
+    "en": "Completed",
+    "pt": "Concluída"
+  },
+  "commonStatusCancelled": {
+    "description": "Estado de una reserva: cancelada.",
+    "es": "Cancelado",
+    "en": "Cancelled",
+    "pt": "Cancelada"
+  },
+  "commonStatusNoShow": {
+    "description": "Estado de una reserva: el pasajero no se presentó.",
+    "es": "No se presentó",
+    "en": "No-show",
+    "pt": "Não comparecimento"
+  },
+  "commonCabinCool": {
+    "description": "Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula.",
+    "es": "Fresca",
+    "en": "Cool",
+    "pt": "Fresca"
+  },
+  "commonCabinMild": {
+    "description": "Preferencia de temperatura de la cabina (22 °C).",
+    "es": "Templada",
+    "en": "Mild",
+    "pt": "Amena"
+  },
+  "commonCabinWarm": {
+    "description": "Preferencia de temperatura de la cabina (24 °C).",
+    "es": "Cálida",
+    "en": "Warm",
+    "pt": "Quente"
+  },
+  "commonPrefOpenDoor": {
+    "description": "Indicación para el chófer según las preferencias del pasajero.",
+    "es": "Abrir la puerta",
+    "en": "Open the door",
+    "pt": "Abrir a porta"
+  },
+  "commonPrefLuggageHelp": {
+    "description": "Indicación para el chófer según las preferencias del pasajero.",
+    "es": "Ayuda con el equipaje",
+    "en": "Help with luggage",
+    "pt": "Ajuda com a bagagem"
+  },
+  "commonPrefCabin": {
+    "description": "Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.",
+    "es": "Cabina {temperature} ({hint})",
+    "en": "Cabin: {temperature} ({hint})",
+    "pt": "Cabine {temperature} ({hint})",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "fresca"
+      },
+      "hint": {
+        "type": "String",
+        "example": "20 °C"
+      }
+    }
+  },
+  "commonPrefQuiet": {
+    "description": "Indicación para el chófer: el pasajero prefiere no conversar.",
+    "es": "Viaje en silencio",
+    "en": "Quiet journey",
+    "pt": "Viagem em silêncio"
+  },
+  "commonPrefNoMusic": {
+    "description": "Indicación para el chófer: sin música.",
+    "es": "Sin música",
+    "en": "No music",
+    "pt": "Sem música"
+  },
+  "commonCancelReasonChangedPlans": {
+    "description": "Motivo del pasajero para cancelar una reserva.",
+    "es": "Cambié de planes",
+    "en": "My plans changed",
+    "pt": "Mudei de planos"
+  },
+  "commonCancelReasonOtherTransport": {
+    "description": "Motivo del pasajero para cancelar una reserva.",
+    "es": "Encontré otro transporte",
+    "en": "I found other transport",
+    "pt": "Encontrei outro transporte"
+  },
+  "commonCancelReasonDriverLate": {
+    "description": "Motivo del pasajero para cancelar una reserva.",
+    "es": "El chófer tarda demasiado",
+    "en": "The chauffeur is taking too long",
+    "pt": "O motorista está demorando muito"
+  },
+  "commonReasonOther": {
+    "description": "Motivo genérico (cancelar del pasajero o liberar del chófer).",
+    "es": "Otro motivo",
+    "en": "Other reason",
+    "pt": "Outro motivo"
+  },
+  "commonReleaseReasonVehicle": {
+    "description": "Motivo del chófer para liberar una reserva.",
+    "es": "Problema con el vehículo",
+    "en": "Vehicle issue",
+    "pt": "Problema com o veículo"
+  },
+  "commonReleaseReasonEmergency": {
+    "description": "Motivo del chófer para liberar una reserva.",
+    "es": "Emergencia personal",
+    "en": "Personal emergency",
+    "pt": "Emergência pessoal"
+  },
+  "commonReleaseReasonUnsafe": {
+    "description": "Motivo del chófer para liberar una reserva.",
+    "es": "Condiciones inseguras",
+    "en": "Unsafe conditions",
+    "pt": "Condições inseguras"
+  },
+  "commonReleaseReasonSchedule": {
+    "description": "Motivo del chófer para liberar una reserva.",
+    "es": "Conflicto de horario",
+    "en": "Schedule conflict",
+    "pt": "Conflito de horário"
+  },
+  "commonFeeBasisNoPolicy": {
+    "description": "Panel: por qué no hubo retención al cancelar.",
+    "es": "Sin política de cancelación",
+    "en": "No cancellation policy",
+    "pt": "Sem política de cancelamento"
+  },
+  "commonFeeBasisPolicyInvalid": {
+    "description": "Panel: por qué no hubo retención al cancelar.",
+    "es": "Política inválida (sin recargo)",
+    "en": "Invalid policy (no fee)",
+    "pt": "Política inválida (sem taxa)"
+  },
+  "commonFeeBasisPaymentFailed": {
+    "description": "Panel: la reserva se canceló porque falló el pago.",
+    "es": "Falló el pago",
+    "en": "Payment failed",
+    "pt": "Falha no pagamento"
+  },
+  "commonFeeBasisNoDriver": {
+    "description": "Panel: por qué no hubo retención al cancelar.",
+    "es": "Sin chófer asignado",
+    "en": "No chauffeur assigned",
+    "pt": "Sem motorista atribuído"
+  },
+  "commonFeeBasisGrace": {
+    "description": "Panel: se canceló dentro del plazo gratuito tras reservar.",
+    "es": "Dentro del plazo tras reservar",
+    "en": "Within the window after booking",
+    "pt": "Dentro do prazo após reservar"
+  },
+  "commonFeeBasisEarly": {
+    "description": "Panel: se canceló con antelación suficiente.",
+    "es": "Con antelación suficiente",
+    "en": "With enough notice",
+    "pt": "Com antecedência suficiente"
+  },
+  "commonFeeBasisLate": {
+    "description": "Panel: se canceló tarde y hubo retención.",
+    "es": "Tarde (aplica recargo)",
+    "en": "Late (fee applies)",
+    "pt": "Tarde (taxa aplicada)"
+  },
+  "commonFeeBasisNoShowAdmin": {
+    "description": "Panel: central decidió que el pasajero no se presentó.",
+    "es": "No se presentó (decisión de central)",
+    "en": "No-show (operations team decision)",
+    "pt": "Não comparecimento (decisão da central)"
+  },
+  "commonPickupArea": {
+    "description": "Nombre por defecto de la zona aproximada de recogida de una solicitud.",
+    "es": "Zona de recogida",
+    "en": "Pickup area",
+    "pt": "Área de embarque"
+  },
+  "commonDropoffArea": {
+    "description": "Nombre por defecto de la zona aproximada de destino de una solicitud.",
+    "es": "Zona de destino",
+    "en": "Destination area",
+    "pt": "Área de destino"
+  },
+  "commonTariffNegative": {
+    "description": "Panel: error al validar una tarifa.",
+    "es": "Los importes no pueden ser negativos",
+    "en": "Amounts cannot be negative",
+    "pt": "Os valores não podem ser negativos"
+  },
+  "commonTariffZeroTransfer": {
+    "description": "Panel: error al validar una tarifa de solo ida sin precio.",
+    "es": "Un traslado no puede costar Bs0",
+    "en": "A transfer cannot cost Bs0",
+    "pt": "Um transfer não pode custar Bs0"
+  },
+  "commonTariffHourlyPrice": {
+    "description": "Panel: error al validar una tarifa por horas sin precio por hora.",
+    "es": "El servicio por horas necesita un precio por hora",
+    "en": "The hourly service needs an hourly price",
+    "pt": "O serviço por hora precisa de um preço por hora"
+  },
+  "commonLocationNotificationTitle": {
+    "description": "App del chófer (Android): título de la notificación fija mientras comparte la ubicación.",
+    "es": "Luxelane · estás conectado",
+    "en": "Luxelane · you are online",
+    "pt": "Luxelane · você está conectado"
+  },
+  "commonLocationNotificationText": {
+    "description": "App del chófer (Android): texto de la notificación fija mientras comparte la ubicación.",
+    "es": "Compartimos tu ubicación para asignarte viajes y guiar al pasajero.",
+    "en": "We share your location to assign you trips and guide the passenger.",
+    "pt": "Compartilhamos sua localização para atribuir viagens e orientar o passageiro."
+  },
+  "commonLocationChannelName": {
+    "description": "App del chófer (Android): nombre del canal de la notificación de ubicación en los ajustes del teléfono.",
+    "es": "Ubicación del chófer",
+    "en": "Chauffeur location",
+    "pt": "Localização do motorista"
+  },
+  "commonPricingLoading": {
+    "description": "Por qué aún no se puede reservar: las tarifas se están cargando.",
+    "es": "Cargando las tarifas vigentes… inténtalo en unos segundos.",
+    "en": "Loading the current rates… try again in a few seconds.",
+    "pt": "Carregando as tarifas vigentes… tente novamente em alguns segundos."
+  },
+  "commonPricingMaintenance": {
+    "description": "Por qué no se puede reservar: las reservas están en pausa.",
+    "es": "Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.",
+    "en": "Bookings are paused for maintenance. Try again in a few minutes.",
+    "pt": "As reservas estão pausadas para manutenção. Tente novamente em alguns minutos."
+  },
+  "commonPricingUnavailable": {
+    "description": "Por qué no se puede reservar: la clase no está disponible para ese tipo de servicio.",
+    "es": "{vehicleClass} no está disponible para \"{serviceType}\" en este momento.",
+    "en": "{vehicleClass} is not available for \"{serviceType}\" at the moment.",
+    "pt": "{vehicleClass} não está disponível para \"{serviceType}\" no momento.",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      },
+      "serviceType": {
+        "type": "String",
+        "example": "Por horas"
+      }
+    }
+  },
+  "commonPromptEnjoyJourney": {
+    "description": "Frase bajo el saludo del inicio: el viaje está en curso.",
+    "es": "Disfruta el trayecto.",
+    "en": "Enjoy the journey.",
+    "pt": "Aproveite o trajeto."
+  },
+  "commonPromptChauffeurWaiting": {
+    "description": "Frase bajo el saludo del inicio: el chófer llegó a la recogida.",
+    "es": "Tu chófer ya te espera.",
+    "en": "Your chauffeur is waiting for you.",
+    "pt": "Seu motorista já está esperando por você."
+  },
+  "commonPromptChauffeurOnTheWay": {
+    "description": "Frase bajo el saludo del inicio: el chófer va hacia la recogida.",
+    "es": "Tu chófer va en camino.",
+    "en": "Your chauffeur is on the way.",
+    "pt": "Seu motorista está a caminho."
+  },
+  "commonPromptNextTripSoon": {
+    "description": "Frase bajo el saludo del inicio: el próximo viaje es en menos de dos horas.",
+    "es": "Tu próximo trayecto está cerca.",
+    "en": "Your next journey is coming up.",
+    "pt": "Seu próximo trajeto está próximo."
+  },
+  "commonPromptMorning": {
+    "description": "Frase bajo el saludo del inicio, de 5 a 11 h.",
+    "es": "¿A dónde empieza tu día?",
+    "en": "Where does your day begin?",
+    "pt": "Onde começa o seu dia?"
+  },
+  "commonPromptMidday": {
+    "description": "Frase bajo el saludo del inicio, de 11 a 15 h.",
+    "es": "¿A dónde te llevamos?",
+    "en": "Where can we take you?",
+    "pt": "Para onde levamos você?"
+  },
+  "commonPromptAfternoon": {
+    "description": "Frase bajo el saludo del inicio, de 15 a 20 h.",
+    "es": "¿Cerramos el día en calma?",
+    "en": "Shall we end the day calmly?",
+    "pt": "Vamos encerrar o dia com calma?"
+  },
+  "commonPromptEvening": {
+    "description": "Frase bajo el saludo del inicio, de 20 a 1 h.",
+    "es": "¿Volvemos con calma?",
+    "en": "Shall we head back calmly?",
+    "pt": "Vamos voltar com calma?"
+  },
+  "commonPromptLateNight": {
+    "description": "Frase bajo el saludo del inicio, de 1 a 5 h. Sin prometer atención a toda hora.",
+    "es": "Estamos aquí a cualquier hora.",
+    "en": "We are here at any hour.",
+    "pt": "Estamos aqui a qualquer hora."
+  },
+  "commonFlightDomestic": {
+    "description": "Tipo de vuelo: llega desde dentro de Bolivia.",
+    "es": "Nacional",
+    "en": "Domestic",
+    "pt": "Nacional"
+  },
+  "commonFlightInternational": {
+    "description": "Tipo de vuelo: llega desde el extranjero.",
+    "es": "Internacional",
+    "en": "International",
+    "pt": "Internacional"
+  },
+  "commonAirportDomesticExit": {
+    "description": "Para el chófer: por dónde sale el pasajero de un vuelo nacional.",
+    "es": "Salida de llegadas nacionales",
+    "en": "Domestic arrivals exit",
+    "pt": "Saída do desembarque nacional"
+  },
+  "commonAirportInternationalExit": {
+    "description": "Para el chófer: por dónde sale el pasajero de un vuelo internacional.",
+    "es": "Salida de llegadas internacionales",
+    "en": "International arrivals exit",
+    "pt": "Saída do desembarque internacional"
+  },
+  "commonOriginNoCoords": {
+    "description": "Error: la dirección de recogida no tiene coordenadas.",
+    "es": "No pudimos ubicar la recogida en el mapa. Elige otra dirección.",
+    "en": "We could not find the pickup on the map. Choose another address.",
+    "pt": "Não foi possível localizar o embarque no mapa. Escolha outro endereço."
+  },
+  "commonOriginOutsideArea": {
+    "description": "Error: la recogida está fuera de las ciudades donde se opera (lista de ciudades separadas por comas).",
+    "es": "Por ahora operamos en {cities}. Elige una recogida en una de esas ciudades.",
+    "en": "For now we operate in {cities}. Choose a pickup in one of those cities.",
+    "pt": "Por enquanto operamos em {cities}. Escolha um embarque em uma dessas cidades.",
+    "placeholders": {
+      "cities": {
+        "type": "String",
+        "example": "Santa Cruz"
+      }
+    }
+  },
+  "commonDestinationOtherCity": {
+    "description": "Error: el destino está en otra ciudad que la recogida.",
+    "es": "El destino debe estar en {city}, la misma ciudad de la recogida.",
+    "en": "The destination must be in {city}, the same city as the pickup.",
+    "pt": "O destino deve estar em {city}, a mesma cidade do embarque.",
+    "placeholders": {
+      "city": {
+        "type": "String",
+        "example": "La Paz"
+      }
+    }
+  },
+  "commonDestinationSameCity": {
+    "description": "Error: el destino está lejos de una recogida que no está en una ciudad conocida.",
+    "es": "El destino debe estar en la misma ciudad que la recogida.",
+    "en": "The destination must be in the same city as the pickup.",
+    "pt": "O destino deve estar na mesma cidade do embarque."
+  },
+  "commonFlightNumberMissing": {
+    "description": "Error: falta el número de vuelo en una recogida en el aeropuerto.",
+    "es": "Indica tu número de vuelo para recogerte a tiempo.",
+    "en": "Enter your flight number so we can pick you up on time.",
+    "pt": "Informe o número do seu voo para buscarmos você a tempo."
+  },
+  "commonFlightNumberInvalid": {
+    "description": "Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen).",
+    "es": "Número de vuelo no válido. Ejemplo: OB 760 o Z8 315.",
+    "en": "Invalid flight number. Example: OB 760 or Z8 315.",
+    "pt": "Número de voo inválido. Exemplo: OB 760 ou Z8 315."
+  },
+  "commonAppTitle": {
+    "description": "Título de la app en la pestaña del navegador y el selector de apps (en español, el mismo de index.html y del manifest).",
+    "es": "Luxelane — Servicio de chófer ejecutivo",
+    "en": "Luxelane — Executive chauffeur service",
+    "pt": "Luxelane — Serviço de motorista executivo"
+  },
+  "commonTabBook": {
+    "description": "Pestaña de la app del pasajero: reservar un viaje.",
+    "es": "Reservar",
+    "en": "Book",
+    "pt": "Reservar"
+  },
+  "commonTabMyTrips": {
+    "description": "Pestaña de la app del pasajero: lista de viajes.",
+    "es": "Mis viajes",
+    "en": "My trips",
+    "pt": "Minhas viagens"
+  },
+  "commonTabProfile": {
+    "description": "Pestaña de la app del pasajero: perfil.",
+    "es": "Perfil",
+    "en": "Profile",
+    "pt": "Perfil"
+  },
+  "commonSignIn": {
+    "description": "Enlace de la cabecera web para iniciar sesión.",
+    "es": "Iniciar sesión",
+    "en": "Sign in",
+    "pt": "Entrar"
+  },
+  "commonMyProfile": {
+    "description": "Etiqueta de lector de pantalla del botón del avatar en la cabecera web.",
+    "es": "Mi perfil",
+    "en": "My profile",
+    "pt": "Meu perfil"
+  },
+  "commonNotFoundTitle": {
+    "description": "Página de una ruta que no existe: título.",
+    "es": "Este camino no existe.",
+    "en": "This page does not exist.",
+    "pt": "Esta página não existe."
+  },
+  "commonNotFoundBody": {
+    "description": "Página de una ruta que no existe: texto bajo el título.",
+    "es": "Te llevamos de vuelta al inicio.",
+    "en": "We will take you back to the home page.",
+    "pt": "Vamos levar você de volta ao início."
+  },
+  "commonNotFoundBack": {
+    "description": "Botón (en mayúsculas) de la página de una ruta que no existe.",
+    "es": "VOLVER AL INICIO",
+    "en": "BACK TO HOME",
+    "pt": "VOLTAR AO INÍCIO"
+  },
+  "commonUpdateTitleDriver": {
+    "description": "Título del aviso de versión antigua en la app del chófer.",
+    "es": "Actualiza la app para seguir",
+    "en": "Update the app to continue",
+    "pt": "Atualize o app para continuar"
+  },
+  "commonUpdateTitleRider": {
+    "description": "Título del aviso de versión antigua en la app del pasajero.",
+    "es": "Actualiza la app para reservar",
+    "en": "Update the app to book",
+    "pt": "Atualize o app para reservar"
+  },
+  "commonUpdateBodyWeb": {
+    "description": "Texto del aviso de versión antigua en la web.",
+    "es": "Hay una versión nueva de la web. Recarga la página para seguir reservando.",
+    "en": "There is a new version of the website. Reload the page to continue booking.",
+    "pt": "Há uma nova versão do site. Recarregue a página para continuar reservando."
+  },
+  "commonUpdateBodyApp": {
+    "description": "Texto del aviso de versión antigua en el móvil.",
+    "es": "Hay una versión nueva de la app. Actualízala para seguir reservando.",
+    "en": "There is a new version of the app. Update it to continue booking.",
+    "pt": "Há uma nova versão do app. Atualize-o para continuar reservando."
+  },
+  "commonUpdateGoToStore": {
+    "description": "Botón del aviso de versión antigua: abre la tienda de apps.",
+    "es": "Ir a la tienda",
+    "en": "Go to the store",
+    "pt": "Ir para a loja"
+  },
+  "commonGotIt": {
+    "description": "Botón para cerrar un aviso.",
+    "es": "Entendido",
+    "en": "Got it",
+    "pt": "Entendi"
+  },
+  "commonEmailNotVerifiedTitle": {
+    "description": "Título del aviso al reservar sin el correo verificado.",
+    "es": "Verifica tu correo para reservar",
+    "en": "Verify your email to book",
+    "pt": "Verifique seu e-mail para reservar"
+  },
+  "commonEmailNotVerifiedBody": {
+    "description": "Texto del aviso al reservar sin el correo verificado.",
+    "es": "Por seguridad, solo se puede reservar con el correo verificado. Abre el enlace que te enviamos o pide uno nuevo.",
+    "en": "For your security, bookings require a verified email. Open the link we sent you or request a new one.",
+    "pt": "Por segurança, só é possível reservar com o e-mail verificado. Abra o link que enviamos ou peça um novo."
+  },
+  "commonNotNow": {
+    "description": "Botón para posponer una acción.",
+    "es": "Ahora no",
+    "en": "Not now",
+    "pt": "Agora não"
+  },
+  "commonVerifyMyEmail": {
+    "description": "Botón que lleva a la pantalla de verificar el correo.",
+    "es": "Verificar mi correo",
+    "en": "Verify my email",
+    "pt": "Verificar meu e-mail"
+  },
+  "commonErrorTitle": {
+    "description": "Pantalla de error inesperado: título.",
+    "es": "Algo salió mal",
+    "en": "Something went wrong",
+    "pt": "Algo deu errado"
+  },
+  "commonErrorBody": {
+    "description": "Pantalla de error inesperado: texto bajo el título.",
+    "es": "Hemos sido notificados y estamos trabajando en una solución.",
+    "en": "We have been notified and are working on a solution.",
+    "pt": "Fomos notificados e estamos trabalhando em uma solução."
+  },
+  "commonTryAgain": {
+    "description": "Botón para reintentar.",
+    "es": "Intentar de nuevo",
+    "en": "Try again",
+    "pt": "Tentar novamente"
+  },
+  "commonOfflineBanner": {
+    "description": "Franja que aparece sin conexión: los datos pueden estar desactualizados.",
+    "es": "Sin conexión. Lo que ves puede no estar al día.",
+    "en": "No connection. What you see may not be up to date.",
+    "pt": "Sem conexão. O que você vê pode não estar atualizado."
+  },
+  "commonLoading": {
+    "description": "Etiqueta de lector de pantalla mientras algo carga.",
+    "es": "Cargando",
+    "en": "Loading",
+    "pt": "Carregando"
+  },
+  "commonDone": {
+    "description": "«Listo»: etiqueta de lector de pantalla de la animación de éxito y botón para cerrar el selector de hora.",
+    "es": "Listo",
+    "en": "Done",
+    "pt": "Pronto"
+  },
+  "commonStepOf": {
+    "description": "Etiqueta de lector de pantalla de la barra de progreso del viaje.",
+    "es": "Etapa {step} de {total}",
+    "en": "Step {step} of {total}",
+    "pt": "Etapa {step} de {total}",
+    "placeholders": {
+      "step": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "commonSlideToConfirm": {
+    "description": "Indicación de lector de pantalla del botón deslizable de confirmar.",
+    "es": "Desliza para confirmar",
+    "en": "Slide to confirm",
+    "pt": "Deslize para confirmar"
+  },
+  "commonUpTo": {
+    "description": "Capacidad de un vehículo en su tarjeta, junto al icono de persona («Hasta 3»).",
+    "es": "Hasta {count}",
+    "en": "Up to {count}",
+    "pt": "Até {count}",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "commonHoursTotal": {
+    "description": "Bajo el precio de un servicio por horas: horas contratadas en total («2h en total»).",
+    "es": "{hours}h en total",
+    "en": "{hours}h in total",
+    "pt": "{hours}h no total",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "commonFixedPriceLower": {
+    "description": "Bajo el precio de un traslado (en minúscula).",
+    "es": "precio fijo",
+    "en": "fixed price",
+    "pt": "preço fixo"
+  },
+  "commonRiderStyle": {
+    "description": "Encabezado (en mayúsculas) de las preferencias del pasajero que ve el chófer.",
+    "es": "ESTILO DEL PASAJERO",
+    "en": "PASSENGER PREFERENCES",
+    "pt": "PREFERÊNCIAS DO PASSAGEIRO"
+  },
+  "commonConfirmBooking": {
+    "description": "Botón por defecto de la barra de precio: confirmar la reserva.",
+    "es": "Confirmar reserva",
+    "en": "Confirm booking",
+    "pt": "Confirmar reserva"
+  },
+  "commonFixedPriceUpper": {
+    "description": "Encabezado (en mayúsculas) del importe en la barra de precio.",
+    "es": "PRECIO FIJO",
+    "en": "FIXED PRICE",
+    "pt": "PREÇO FIXO"
+  },
+  "commonMapUnavailable": {
+    "description": "Título en lugar del mapa cuando no se puede mostrar.",
+    "es": "Mapa no disponible",
+    "en": "Map unavailable",
+    "pt": "Mapa indisponível"
+  },
+  "commonMapUnavailableDetail": {
+    "description": "Texto bajo «Mapa no disponible».",
+    "es": "El mapa no se puede mostrar ahora. Los datos del viaje siguen aquí.",
+    "en": "The map cannot be shown right now. Your trip details are still here.",
+    "pt": "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui."
+  },
+  "commonPointOnMap": {
+    "description": "Nombre de un punto elegido en el mapa cuando no se pudo obtener su dirección.",
+    "es": "Punto elegido en el mapa",
+    "en": "Point chosen on the map",
+    "pt": "Ponto escolhido no mapa"
+  },
+  "commonSelectLocation": {
+    "description": "Título por defecto del mapa para elegir un lugar.",
+    "es": "Seleccionar ubicación",
+    "en": "Select location",
+    "pt": "Selecionar local"
+  },
+  "commonMoveMapToChoose": {
+    "description": "Texto inicial del mapa para elegir un lugar, antes de tener una dirección.",
+    "es": "Mueve el mapa para elegir el lugar",
+    "en": "Move the map to choose the place",
+    "pt": "Mova o mapa para escolher o local"
+  },
+  "commonSelectedLocation": {
+    "description": "Encabezado (en mayúsculas) de la dirección elegida en el mapa.",
+    "es": "UBICACIÓN SELECCIONADA",
+    "en": "SELECTED LOCATION",
+    "pt": "LOCAL SELECIONADO"
+  },
+  "commonConfirmUpper": {
+    "description": "Botón (en mayúsculas) para confirmar el lugar elegido en el mapa.",
+    "es": "CONFIRMAR",
+    "en": "CONFIRM",
+    "pt": "CONFIRMAR"
+  },
+  "commonAddressNotFound": {
+    "description": "Aviso al elegir una dirección sugerida que no tiene coordenadas.",
+    "es": "No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.",
+    "en": "We could not locate that address. Try another one or choose it on the map.",
+    "pt": "Não foi possível localizar esse endereço. Tente outro ou escolha-o no mapa."
+  },
+  "commonSelectPickupPlace": {
+    "description": "Título del mapa al elegir la recogida.",
+    "es": "Seleccionar lugar de recogida",
+    "en": "Select pickup point",
+    "pt": "Selecionar ponto de embarque"
+  },
+  "commonSelectDestination": {
+    "description": "Título del mapa al elegir el destino.",
+    "es": "Seleccionar destino",
+    "en": "Select destination",
+    "pt": "Selecionar destino"
+  },
+  "commonDestinationWasOtherCity": {
+    "description": "Aviso al cambiar la recogida: se quitó un destino que estaba en otra ciudad.",
+    "es": "El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.",
+    "en": "The destination was in another city. Choose one in the pickup city.",
+    "pt": "O destino estava em outra cidade. Escolha um na cidade de embarque."
+  },
+  "commonPickupDateUpper": {
+    "description": "Encabezado (en mayúsculas) del calendario para elegir el día de la recogida.",
+    "es": "FECHA DE RECOGIDA",
+    "en": "PICKUP DATE",
+    "pt": "DATA DE EMBARQUE"
+  },
+  "commonPickupTimeUpper": {
+    "description": "Encabezado (en mayúsculas) del reloj para elegir la hora de la recogida.",
+    "es": "HORA DE RECOGIDA",
+    "en": "PICKUP TIME",
+    "pt": "HORÁRIO DE EMBARQUE"
+  },
+  "commonCancel": {
+    "description": "Botón para cancelar o cerrar sin cambios.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "commonNext": {
+    "description": "Botón para pasar al paso siguiente.",
+    "es": "Siguiente",
+    "en": "Next",
+    "pt": "Próximo"
+  },
+  "commonPickupMissing": {
+    "description": "Error al buscar vehículos sin indicar la recogida.",
+    "es": "Indica dónde te recogemos.",
+    "en": "Tell us where to pick you up.",
+    "pt": "Informe onde buscamos você."
+  },
+  "commonPickupMovedLater": {
+    "description": "Aviso: la hora elegida ya no daba tiempo y se movió (fecha y hora nuevas, ya formateadas).",
+    "es": "Esa hora ya no da tiempo: la movimos a {when}. Revísala y continúa.",
+    "en": "There is no longer enough time for that pickup: we moved it to {when}. Check it and continue.",
+    "pt": "Não há mais tempo para esse horário: mudamos para {when}. Confira e continue.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      }
+    }
+  },
+  "commonDestinationMissing": {
+    "description": "Error al buscar vehículos de un traslado sin destino.",
+    "es": "Indica tu destino para calcular el precio fijo.",
+    "en": "Enter your destination to calculate the fixed price.",
+    "pt": "Informe seu destino para calcular o preço fixo."
+  },
+  "commonPickupHintAirport": {
+    "description": "Ayuda del campo de recogida en la página de traslados al aeropuerto.",
+    "es": "Recogida — aeropuerto, hotel o dirección",
+    "en": "Pickup — airport, hotel or address",
+    "pt": "Embarque — aeroporto, hotel ou endereço"
+  },
+  "commonPickupHint": {
+    "description": "Ayuda del campo de recogida.",
+    "es": "Recogida — dirección, hotel o lugar",
+    "en": "Pickup — address, hotel or place",
+    "pt": "Embarque — endereço, hotel ou local"
+  },
+  "commonDestinationHintAirport": {
+    "description": "Ayuda del campo de destino en la página de traslados al aeropuerto.",
+    "es": "Destino — aeropuerto, hotel o dirección",
+    "en": "Destination — airport, hotel or address",
+    "pt": "Destino — aeroporto, hotel ou endereço"
+  },
+  "commonDestinationOptional": {
+    "description": "Ayuda del campo de destino en el servicio por horas.",
+    "es": "Destino (opcional)",
+    "en": "Destination (optional)",
+    "pt": "Destino (opcional)"
+  },
+  "commonDestinationHint": {
+    "description": "Ayuda del campo de destino.",
+    "es": "Destino — dirección, hotel o lugar",
+    "en": "Destination — address, hotel or place",
+    "pt": "Destino — endereço, hotel ou local"
+  },
+  "commonBookYourChauffeur": {
+    "description": "Encabezado (en mayúsculas) de la tarjeta de reserva de las páginas de servicios.",
+    "es": "RESERVA TU CHÓFER",
+    "en": "BOOK YOUR CHAUFFEUR",
+    "pt": "RESERVE SEU MOTORISTA"
+  },
+  "commonPickup": {
+    "description": "Etiqueta del campo de recogida.",
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque"
+  },
+  "commonDestination": {
+    "description": "Etiqueta del campo de destino.",
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino"
+  },
+  "commonNow": {
+    "description": "Opción: recogida lo antes posible (sin hora programada). No promete un plazo.",
+    "es": "Ahora",
+    "en": "Now",
+    "pt": "Agora"
+  },
+  "commonSchedule": {
+    "description": "Opción: programar la recogida para una fecha y hora.",
+    "es": "Programar",
+    "en": "Schedule",
+    "pt": "Agendar"
+  },
+  "commonChange": {
+    "description": "Acción (se muestra en mayúsculas) para cambiar la fecha y hora elegidas.",
+    "es": "Cambiar",
+    "en": "Change",
+    "pt": "Alterar"
+  },
+  "commonSeeVehiclesAndPrices": {
+    "description": "Botón (en mayúsculas) de la tarjeta de reserva.",
+    "es": "VER VEHÍCULOS Y PRECIOS",
+    "en": "SEE VEHICLES AND PRICES",
+    "pt": "VER VEÍCULOS E PREÇOS"
+  },
+  "commonNoCommitment": {
+    "description": "Nota bajo el botón de la tarjeta de reserva.",
+    "es": "Sin compromiso: verás el precio final antes de confirmar.",
+    "en": "No commitment: you will see the final price before you confirm.",
+    "pt": "Sem compromisso: você verá o preço final antes de confirmar."
+  },
+  "commonChooseOnMap": {
+    "description": "Enlace bajo un campo de dirección para elegir el lugar en el mapa.",
+    "es": "Elegir en el mapa",
+    "en": "Choose on the map",
+    "pt": "Escolher no mapa"
+  },
+  "commonDuration": {
+    "description": "Etiqueta del selector de horas del servicio por horas.",
+    "es": "Duración",
+    "en": "Duration",
+    "pt": "Duração"
+  },
+  "commonFewerHours": {
+    "description": "Consejo del botón «−» del selector de horas.",
+    "es": "Menos horas",
+    "en": "Fewer hours",
+    "pt": "Menos horas"
+  },
+  "commonMoreHours": {
+    "description": "Consejo del botón «+» del selector de horas.",
+    "es": "Más horas",
+    "en": "More hours",
+    "pt": "Mais horas"
+  },
+  "commonServiceAirportTransfer": {
+    "description": "Servicio de la web (menú y pie de página).",
+    "es": "Traslado al aeropuerto",
+    "en": "Airport transfer",
+    "pt": "Transfer para o aeroporto"
+  },
+  "commonServiceHourly": {
+    "description": "Servicio de la web (menú y pie de página).",
+    "es": "Chófer por horas",
+    "en": "Hourly chauffeur",
+    "pt": "Motorista por hora"
+  },
+  "commonServiceImmediate": {
+    "description": "Servicio de la web (menú y pie de página): recogida sin programar. Sin prometer un plazo.",
+    "es": "Recogida inmediata",
+    "en": "Immediate pickup",
+    "pt": "Embarque imediato"
+  },
+  "commonHomeLinkLabel": {
+    "description": "Etiqueta de lector de pantalla del logotipo de la cabecera web (lleva al inicio).",
+    "es": "Luxelane, inicio",
+    "en": "Luxelane, home",
+    "pt": "Luxelane, início"
+  },
+  "commonFleet": {
+    "description": "Enlace de la web a la sección de la flota.",
+    "es": "Flota",
+    "en": "Fleet",
+    "pt": "Frota"
+  },
+  "commonForBusiness": {
+    "description": "Enlace de la web a la página para empresas.",
+    "es": "Para empresas",
+    "en": "For business",
+    "pt": "Para empresas"
+  },
+  "commonServicesUpper": {
+    "description": "Menú (en mayúsculas) de servicios de la cabecera web.",
+    "es": "SERVICIOS",
+    "en": "SERVICES",
+    "pt": "SERVIÇOS"
+  },
+  "commonBookUpper": {
+    "description": "Botón corto (en mayúsculas) de la cabecera web en pantallas estrechas.",
+    "es": "RESERVAR",
+    "en": "BOOK",
+    "pt": "RESERVAR"
+  },
+  "commonBookATripUpper": {
+    "description": "Botón (en mayúsculas) de la cabecera web y del menú móvil.",
+    "es": "RESERVAR UN VIAJE",
+    "en": "BOOK A TRIP",
+    "pt": "RESERVAR UMA VIAGEM"
+  },
+  "commonMenu": {
+    "description": "Consejo del botón que abre el menú en la web móvil.",
+    "es": "Menú",
+    "en": "Menu",
+    "pt": "Menu"
+  },
+  "commonCloseMenu": {
+    "description": "Etiqueta de lector de pantalla para cerrar el menú tocando fuera.",
+    "es": "Cerrar menú",
+    "en": "Close menu",
+    "pt": "Fechar menu"
+  },
+  "commonClose": {
+    "description": "Consejo de un botón para cerrar.",
+    "es": "Cerrar",
+    "en": "Close",
+    "pt": "Fechar"
+  },
+  "commonServices": {
+    "description": "Título de la lista de servicios (menú móvil y pie de página).",
+    "es": "Servicios",
+    "en": "Services",
+    "pt": "Serviços"
+  },
+  "commonFooterTagline": {
+    "description": "Frase de la marca en el pie de página de la web.",
+    "es": "Servicio de chófer privado para quienes valoran su tiempo, su privacidad y cada detalle del camino.",
+    "en": "A private chauffeur service for those who value their time, their privacy and every detail of the journey.",
+    "pt": "Serviço de motorista particular para quem valoriza seu tempo, sua privacidade e cada detalhe do caminho."
+  },
+  "commonDriveWithUs": {
+    "description": "Enlace del pie de página para chóferes que quieren unirse.",
+    "es": "Conduce con nosotros",
+    "en": "Drive with us",
+    "pt": "Dirija conosco"
+  },
+  "commonTerms": {
+    "description": "Enlace del pie de página a los términos (la página legal sigue en español).",
+    "es": "Términos y condiciones",
+    "en": "Terms and conditions",
+    "pt": "Termos e condições"
+  },
+  "commonPrivacy": {
+    "description": "Enlace del pie de página a la política de privacidad (la página legal sigue en español).",
+    "es": "Política de privacidad",
+    "en": "Privacy policy",
+    "pt": "Política de privacidade"
+  },
+  "commonOurPromise": {
+    "description": "Título de la columna de promesas del pie de página.",
+    "es": "Nuestra promesa",
+    "en": "Our promise",
+    "pt": "Nossa promessa"
+  },
+  "commonCopyright": {
+    "description": "Línea final del pie de página con el año.",
+    "es": "© {year} Luxelane. Todos los derechos reservados.",
+    "en": "© {year} Luxelane. All rights reserved.",
+    "pt": "© {year} Luxelane. Todos os direitos reservados.",
+    "placeholders": {
+      "year": {
+        "type": "String",
+        "example": "2026"
+      }
+    }
+  }
+}

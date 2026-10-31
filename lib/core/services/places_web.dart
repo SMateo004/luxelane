@@ -13,7 +13,7 @@ import '../models/place_model.dart';
 const _sczLat = -17.7833;
 const _sczLng = -63.1821;
 
-void _dbg(String msg) {
+void _log(String msg) {
   // ignore: avoid_print
   print('[Places] $msg');
 }
@@ -74,24 +74,24 @@ Future<List<PlaceSuggestion>> webAutocomplete(
   try {
     final google = js.context['google'];
     if (google == null) {
-      _dbg('google not loaded');
+      _log('google not loaded');
       return [];
     }
     final maps = _prop(google, 'maps');
     if (maps == null) {
-      _dbg('maps not loaded');
+      _log('maps not loaded');
       return [];
     }
     final places = _prop(maps, 'places');
     if (places == null) {
-      _dbg('places not loaded');
+      _log('places not loaded');
       return [];
     }
 
     // ── New Places API (AutocompleteSuggestion) — required for post-Mar-2025 keys ──
     final newApiClass = _prop(places, 'AutocompleteSuggestion');
     if (newApiClass != null) {
-      _dbg('Using new AutocompleteSuggestion API');
+      _log('Using new AutocompleteSuggestion API');
       return await _newAutocomplete(
         input,
         lat,
@@ -104,7 +104,7 @@ Future<List<PlaceSuggestion>> webAutocomplete(
     }
 
     // ── Legacy fallback (AutocompleteService) — only for older API keys ──
-    _dbg('Falling back to legacy AutocompleteService');
+    _log('Falling back to legacy AutocompleteService');
     return await _legacyAutocomplete(
       input,
       lat,
@@ -115,7 +115,7 @@ Future<List<PlaceSuggestion>> webAutocomplete(
       places,
     );
   } catch (e) {
-    _dbg('webAutocomplete top error: $e');
+    _log('webAutocomplete top error: $e');
     return [];
   }
 }
@@ -190,10 +190,10 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
       );
     }
 
-    _dbg('New API returned ${results.length} suggestions');
+    _log('New API returned ${results.length} suggestions');
     return results;
   } catch (e) {
-    _dbg('_newAutocomplete error: $e');
+    _log('_newAutocomplete error: $e');
     return [];
   }
 }
@@ -249,7 +249,7 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
             completer.complete([]);
           }
         } else {
-          _dbg('Legacy autocomplete status: $status');
+          _log('Legacy autocomplete status: $status');
           completer.complete([]);
         }
       }),
@@ -260,7 +260,7 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
       onTimeout: () => [],
     );
   } catch (e) {
-    _dbg('_legacyAutocomplete error: $e');
+    _log('_legacyAutocomplete error: $e');
     return [];
   }
 }
@@ -278,7 +278,8 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
 
     // Try Geocoder first as it's often more reliable for coordinates than PlacesService
     // especially regarding API restrictions.
-    final geocoder = js.JsObject(maps['Geocoder'] as js.JsFunction);
+    final geocoder = js.JsObject(
+        maps['Geocoder'] as js.JsFunction); // i18n-ignore: nombre de la API
 
     geocoder.callMethod('geocode', [
       js.JsObject.jsify({'placeId': placeId}),
@@ -299,7 +300,7 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
         } else {
           // If PlaceId geocoding fails, try address string geocoding if provided
           if (address != null && address.isNotEmpty) {
-            _dbg('Geocode by ID failed. Trying address string: $address');
+            _log('Geocode by ID failed. Trying address string: $address');
             geocoder.callMethod('geocode', [
               js.JsObject.jsify({'address': address}),
               js.allowInterop((dynamic results2, dynamic status2) {
@@ -341,7 +342,7 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
       onTimeout: () => null,
     );
   } catch (e) {
-    _dbg('webPlaceDetails top error: $e');
+    _log('webPlaceDetails top error: $e');
     return null;
   }
 }
@@ -355,7 +356,8 @@ Future<Place?> webReverseGeocode(double lat, double lng) async {
     final maps = google['maps'] as js.JsObject?;
     if (maps == null) return null;
 
-    final geocoder = js.JsObject(maps['Geocoder'] as js.JsFunction);
+    final geocoder = js.JsObject(
+        maps['Geocoder'] as js.JsFunction); // i18n-ignore: nombre de la API
     final completer = Completer<Place?>();
 
     geocoder.callMethod('geocode', [
@@ -402,8 +404,9 @@ Future<RouteInfo?> webGetRoute({
 
     final service = js.JsObject(maps['DirectionsService'] as js.JsFunction);
     final completer = Completer<RouteInfo?>();
+    const driving = 'DRIVING'; // i18n-ignore: valor de la API
     final travelMode =
-        ((maps['TravelMode'] as js.JsObject)['DRIVING']) as dynamic;
+        ((maps['TravelMode'] as js.JsObject)[driving]) as dynamic;
 
     service.callMethod('route', [
       js.JsObject.jsify({

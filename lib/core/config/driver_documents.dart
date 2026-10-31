@@ -30,5 +30,7 @@ const kLockedVehicleFields = ['plate', 'class', 'make', 'model', 'year'];
 /// Lo único del vehículo que el chófer edita.
 const kEditableVehicleFields = ['color', 'photoUrl'];
 
+/// Sigue siendo `const` porque el perfil lo usa en un `const Text`; el texto
+/// traducido es L10n.current.commonLockedDocuments.
 const kLockedDocumentsMessage =
-    'Para cambiar estos datos, contacta con central.';
+    'Para cambiar estos datos, contacta con central.'; // i18n-ignore: const en español, traducido en commonLockedDocuments

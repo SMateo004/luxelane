@@ -492,6 +492,858 @@
   "@businessSubmit": {
     "description": "Botón para enviar la solicitud de empresa."
   },
+  "commonLockedDocuments": "Para cambiar estos datos, contacta con central.",
+  "@commonLockedDocuments": {
+    "description": "Nota bajo los datos del vehículo del chófer que no puede editar él mismo."
+  },
+  "commonStartupErrorTitle": "No pudimos iniciar la app",
+  "@commonStartupErrorTitle": {
+    "description": "Título de la pantalla que sustituye a la app cuando no se pudo iniciar."
+  },
+  "commonStartupErrorBody": "Cierra la app y vuelve a abrirla en unos minutos.",
+  "@commonStartupErrorBody": {
+    "description": "Texto bajo «No pudimos iniciar la app»."
+  },
+  "commonSeatingPassengers": "{count} pasajeros",
+  "@commonSeatingPassengers": {
+    "description": "Opción de asientos de un vehículo: número de pasajeros (siempre 2 o más).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "commonSeatingMaxDetail": "Capacidad máxima",
+  "@commonSeatingMaxDetail": {
+    "description": "Detalle de la opción con todos los asientos ocupados."
+  },
+  "commonSeatingRoomierDetail": "Más espacio para cada uno",
+  "@commonSeatingRoomierDetail": {
+    "description": "Detalle de la opción con un pasajero menos que el máximo."
+  },
+  "commonSeatingChildSeat": "Con asiento infantil",
+  "@commonSeatingChildSeat": {
+    "description": "Opción de asientos con silla para niños."
+  },
+  "commonSeatingChildSeatDetail": "Bajo solicitud previa",
+  "@commonSeatingChildSeatDetail": {
+    "description": "Detalle de la opción con asiento infantil: hay que pedirlo antes."
+  },
+  "commonHighlightBusiness1": "Sedán ejecutivo, discreto y silencioso",
+  "@commonHighlightBusiness1": {
+    "description": "Detalle de Business Class en la galería del vehículo."
+  },
+  "commonHighlightBusiness2": "Asientos traseros en cuero para tres",
+  "@commonHighlightBusiness2": {
+    "description": "Detalle de Business Class en la galería del vehículo."
+  },
+  "commonHighlightBusiness3": "Maletero para tres maletas facturadas",
+  "@commonHighlightBusiness3": {
+    "description": "Detalle de Business Class en la galería del vehículo."
+  },
+  "commonHighlightSuv1": "SUV ejecutiva, posición de manejo elevada",
+  "@commonHighlightSuv1": {
+    "description": "Detalle de Business SUV en la galería del vehículo."
+  },
+  "commonHighlightSuv2": "Cabina amplia para cuatro pasajeros",
+  "@commonHighlightSuv2": {
+    "description": "Detalle de Business SUV en la galería del vehículo."
+  },
+  "commonHighlightSuv3": "Maletero para cuatro maletas facturadas",
+  "@commonHighlightSuv3": {
+    "description": "Detalle de Business SUV en la galería del vehículo."
+  },
+  "commonHighlightVan1": "Van ejecutiva para grupos y familias",
+  "@commonHighlightVan1": {
+    "description": "Detalle de Business Van en la galería del vehículo."
+  },
+  "commonHighlightVan2": "Hasta siete pasajeros en tres filas",
+  "@commonHighlightVan2": {
+    "description": "Detalle de Business Van en la galería del vehículo."
+  },
+  "commonHighlightVan3": "Espacio para dos maletas facturadas",
+  "@commonHighlightVan3": {
+    "description": "Detalle de Business Van en la galería del vehículo."
+  },
+  "commonHighlightFirst1": "Sedán insignia, nuestro máximo nivel",
+  "@commonHighlightFirst1": {
+    "description": "Detalle de First Class en la galería del vehículo."
+  },
+  "commonHighlightFirst2": "Plazas traseras con apoyabrazos central",
+  "@commonHighlightFirst2": {
+    "description": "Detalle de First Class en la galería del vehículo."
+  },
+  "commonHighlightTwoCheckedBags": "Maletero para dos maletas facturadas",
+  "@commonHighlightTwoCheckedBags": {
+    "description": "Detalle de First Class y Eléctrico en la galería del vehículo."
+  },
+  "commonHighlightElectric1": "Sedán ejecutivo totalmente eléctrico",
+  "@commonHighlightElectric1": {
+    "description": "Detalle de la clase Eléctrico en la galería del vehículo."
+  },
+  "commonHighlightElectric2": "Silencioso y sin emisiones",
+  "@commonHighlightElectric2": {
+    "description": "Detalle de la clase Eléctrico en la galería del vehículo."
+  },
+  "commonLuggageCabinOne": "maleta de mano",
+  "@commonLuggageCabinOne": {
+    "description": "Tipo de equipaje en singular, tras la cifra («1 maleta de mano»)."
+  },
+  "commonLuggageCheckedOne": "maleta facturada",
+  "@commonLuggageCheckedOne": {
+    "description": "Tipo de equipaje en singular, tras la cifra («1 maleta facturada»)."
+  },
+  "commonLuggageOversizeOne": "maleta extra grande",
+  "@commonLuggageOversizeOne": {
+    "description": "Tipo de equipaje en singular, tras la cifra («1 maleta extra grande»)."
+  },
+  "commonLuggageCabinMany": "maletas de mano",
+  "@commonLuggageCabinMany": {
+    "description": "Tipo de equipaje en plural, tras la cifra («2 maletas de mano»)."
+  },
+  "commonLuggageCheckedMany": "maletas facturadas",
+  "@commonLuggageCheckedMany": {
+    "description": "Tipo de equipaje en plural, tras la cifra («2 maletas facturadas»)."
+  },
+  "commonLuggageOversizeMany": "maletas extra grandes",
+  "@commonLuggageOversizeMany": {
+    "description": "Tipo de equipaje en plural, tras la cifra («2 maletas extra grandes»)."
+  },
+  "commonLuggageCabinSize": "Hasta 55 × 40 × 20 cm",
+  "@commonLuggageCabinSize": {
+    "description": "Medidas de una maleta de mano."
+  },
+  "commonLuggageCheckedSize": "Hasta 75 × 50 × 30 cm",
+  "@commonLuggageCheckedSize": {
+    "description": "Medidas de una maleta facturada."
+  },
+  "commonLuggageOversizeSize": "Más de 80 cm",
+  "@commonLuggageOversizeSize": {
+    "description": "Medidas de una maleta extra grande."
+  },
+  "commonPromiseFixedPrice": "Precio fijo al reservar",
+  "@commonPromiseFixedPrice": {
+    "description": "Promesa del servicio (frase corta): el precio queda fijo al reservar."
+  },
+  "commonPromiseFixedPriceLong": "El precio que ves al confirmar lo calcula Luxelane para tu trayecto.",
+  "@commonPromiseFixedPriceLong": {
+    "description": "Promesa del servicio (detalle): quién calcula el precio fijo. No es una garantía."
+  },
+  "commonPromiseChauffeurs": "Chóferes con documentos verificados",
+  "@commonPromiseChauffeurs": {
+    "description": "Promesa del servicio (frase corta): los chóferes tienen los documentos verificados."
+  },
+  "commonPromiseChauffeursLong": "Luxelane revisa los documentos de cada chófer antes de que reciba viajes.",
+  "@commonPromiseChauffeursLong": {
+    "description": "Promesa del servicio (detalle): Luxelane revisa los documentos de cada chófer."
+  },
+  "commonVehicleElectric": "Eléctrico",
+  "@commonVehicleElectric": {
+    "description": "Nombre de la clase de vehículo eléctrica (las demás clases son nombres de producto y no se traducen)."
+  },
+  "commonVehicleBusinessDescription": "Sedán ejecutivo",
+  "@commonVehicleBusinessDescription": {
+    "description": "Descripción corta de Business Class (sin marca ni modelo)."
+  },
+  "commonVehicleSuvDescription": "SUV ejecutiva, más espacio",
+  "@commonVehicleSuvDescription": {
+    "description": "Descripción corta de Business SUV."
+  },
+  "commonVehicleFirstDescription": "Sedán insignia",
+  "@commonVehicleFirstDescription": {
+    "description": "Descripción corta de First Class."
+  },
+  "commonVehicleVanDescription": "Van ejecutiva para grupos",
+  "@commonVehicleVanDescription": {
+    "description": "Descripción corta de Business Van."
+  },
+  "commonVehicleElectricDescription": "Sedán ejecutivo eléctrico",
+  "@commonVehicleElectricDescription": {
+    "description": "Descripción corta de la clase Eléctrico."
+  },
+  "commonServiceOneWay": "Solo ida",
+  "@commonServiceOneWay": {
+    "description": "Tipo de servicio: traslado de un punto a otro."
+  },
+  "commonServiceByTheHour": "Por horas",
+  "@commonServiceByTheHour": {
+    "description": "Tipo de servicio: chófer por horas."
+  },
+  "commonServiceOneWayDescription": "Traslado a precio fijo a tu destino",
+  "@commonServiceOneWayDescription": {
+    "description": "Descripción del servicio «Solo ida»."
+  },
+  "commonServiceByTheHourDescription": "Chófer a tu disposición por un tiempo determinado",
+  "@commonServiceByTheHourDescription": {
+    "description": "Descripción del servicio «Por horas»."
+  },
+  "commonStatusPending": "Pendiente",
+  "@commonStatusPending": {
+    "description": "Estado de una reserva: aún sin chófer o sin pagar."
+  },
+  "commonStatusConfirmed": "Confirmado",
+  "@commonStatusConfirmed": {
+    "description": "Estado de una reserva: confirmada."
+  },
+  "commonStatusDriverArriving": "En camino",
+  "@commonStatusDriverArriving": {
+    "description": "Estado de una reserva: el chófer va hacia la recogida."
+  },
+  "commonStatusDriverArrived": "Chófer llegó",
+  "@commonStatusDriverArrived": {
+    "description": "Estado de una reserva: el chófer llegó a la recogida."
+  },
+  "commonStatusVerified": "Verificada",
+  "@commonStatusVerified": {
+    "description": "Estado de una reserva: el chófer comprobó el código de recogida."
+  },
+  "commonStatusInProgress": "En progreso",
+  "@commonStatusInProgress": {
+    "description": "Estado de una reserva: el viaje está en curso."
+  },
+  "commonStatusCompleted": "Completado",
+  "@commonStatusCompleted": {
+    "description": "Estado de una reserva: viaje terminado."
+  },
+  "commonStatusCancelled": "Cancelado",
+  "@commonStatusCancelled": {
+    "description": "Estado de una reserva: cancelada."
+  },
+  "commonStatusNoShow": "No se presentó",
+  "@commonStatusNoShow": {
+    "description": "Estado de una reserva: el pasajero no se presentó."
+  },
+  "commonCabinCool": "Fresca",
+  "@commonCabinCool": {
+    "description": "Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula."
+  },
+  "commonCabinMild": "Templada",
+  "@commonCabinMild": {
+    "description": "Preferencia de temperatura de la cabina (22 °C)."
+  },
+  "commonCabinWarm": "Cálida",
+  "@commonCabinWarm": {
+    "description": "Preferencia de temperatura de la cabina (24 °C)."
+  },
+  "commonPrefOpenDoor": "Abrir la puerta",
+  "@commonPrefOpenDoor": {
+    "description": "Indicación para el chófer según las preferencias del pasajero."
+  },
+  "commonPrefLuggageHelp": "Ayuda con el equipaje",
+  "@commonPrefLuggageHelp": {
+    "description": "Indicación para el chófer según las preferencias del pasajero."
+  },
+  "commonPrefCabin": "Cabina {temperature} ({hint})",
+  "@commonPrefCabin": {
+    "description": "Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "fresca"
+      },
+      "hint": {
+        "type": "String",
+        "example": "20 °C"
+      }
+    }
+  },
+  "commonPrefQuiet": "Viaje en silencio",
+  "@commonPrefQuiet": {
+    "description": "Indicación para el chófer: el pasajero prefiere no conversar."
+  },
+  "commonPrefNoMusic": "Sin música",
+  "@commonPrefNoMusic": {
+    "description": "Indicación para el chófer: sin música."
+  },
+  "commonCancelReasonChangedPlans": "Cambié de planes",
+  "@commonCancelReasonChangedPlans": {
+    "description": "Motivo del pasajero para cancelar una reserva."
+  },
+  "commonCancelReasonOtherTransport": "Encontré otro transporte",
+  "@commonCancelReasonOtherTransport": {
+    "description": "Motivo del pasajero para cancelar una reserva."
+  },
+  "commonCancelReasonDriverLate": "El chófer tarda demasiado",
+  "@commonCancelReasonDriverLate": {
+    "description": "Motivo del pasajero para cancelar una reserva."
+  },
+  "commonReasonOther": "Otro motivo",
+  "@commonReasonOther": {
+    "description": "Motivo genérico (cancelar del pasajero o liberar del chófer)."
+  },
+  "commonReleaseReasonVehicle": "Problema con el vehículo",
+  "@commonReleaseReasonVehicle": {
+    "description": "Motivo del chófer para liberar una reserva."
+  },
+  "commonReleaseReasonEmergency": "Emergencia personal",
+  "@commonReleaseReasonEmergency": {
+    "description": "Motivo del chófer para liberar una reserva."
+  },
+  "commonReleaseReasonUnsafe": "Condiciones inseguras",
+  "@commonReleaseReasonUnsafe": {
+    "description": "Motivo del chófer para liberar una reserva."
+  },
+  "commonReleaseReasonSchedule": "Conflicto de horario",
+  "@commonReleaseReasonSchedule": {
+    "description": "Motivo del chófer para liberar una reserva."
+  },
+  "commonFeeBasisNoPolicy": "Sin política de cancelación",
+  "@commonFeeBasisNoPolicy": {
+    "description": "Panel: por qué no hubo retención al cancelar."
+  },
+  "commonFeeBasisPolicyInvalid": "Política inválida (sin recargo)",
+  "@commonFeeBasisPolicyInvalid": {
+    "description": "Panel: por qué no hubo retención al cancelar."
+  },
+  "commonFeeBasisPaymentFailed": "Falló el pago",
+  "@commonFeeBasisPaymentFailed": {
+    "description": "Panel: la reserva se canceló porque falló el pago."
+  },
+  "commonFeeBasisNoDriver": "Sin chófer asignado",
+  "@commonFeeBasisNoDriver": {
+    "description": "Panel: por qué no hubo retención al cancelar."
+  },
+  "commonFeeBasisGrace": "Dentro del plazo tras reservar",
+  "@commonFeeBasisGrace": {
+    "description": "Panel: se canceló dentro del plazo gratuito tras reservar."
+  },
+  "commonFeeBasisEarly": "Con antelación suficiente",
+  "@commonFeeBasisEarly": {
+    "description": "Panel: se canceló con antelación suficiente."
+  },
+  "commonFeeBasisLate": "Tarde (aplica recargo)",
+  "@commonFeeBasisLate": {
+    "description": "Panel: se canceló tarde y hubo retención."
+  },
+  "commonFeeBasisNoShowAdmin": "No se presentó (decisión de central)",
+  "@commonFeeBasisNoShowAdmin": {
+    "description": "Panel: central decidió que el pasajero no se presentó."
+  },
+  "commonPickupArea": "Zona de recogida",
+  "@commonPickupArea": {
+    "description": "Nombre por defecto de la zona aproximada de recogida de una solicitud."
+  },
+  "commonDropoffArea": "Zona de destino",
+  "@commonDropoffArea": {
+    "description": "Nombre por defecto de la zona aproximada de destino de una solicitud."
+  },
+  "commonTariffNegative": "Los importes no pueden ser negativos",
+  "@commonTariffNegative": {
+    "description": "Panel: error al validar una tarifa."
+  },
+  "commonTariffZeroTransfer": "Un traslado no puede costar Bs0",
+  "@commonTariffZeroTransfer": {
+    "description": "Panel: error al validar una tarifa de solo ida sin precio."
+  },
+  "commonTariffHourlyPrice": "El servicio por horas necesita un precio por hora",
+  "@commonTariffHourlyPrice": {
+    "description": "Panel: error al validar una tarifa por horas sin precio por hora."
+  },
+  "commonLocationNotificationTitle": "Luxelane · estás conectado",
+  "@commonLocationNotificationTitle": {
+    "description": "App del chófer (Android): título de la notificación fija mientras comparte la ubicación."
+  },
+  "commonLocationNotificationText": "Compartimos tu ubicación para asignarte viajes y guiar al pasajero.",
+  "@commonLocationNotificationText": {
+    "description": "App del chófer (Android): texto de la notificación fija mientras comparte la ubicación."
+  },
+  "commonLocationChannelName": "Ubicación del chófer",
+  "@commonLocationChannelName": {
+    "description": "App del chófer (Android): nombre del canal de la notificación de ubicación en los ajustes del teléfono."
+  },
+  "commonPricingLoading": "Cargando las tarifas vigentes… inténtalo en unos segundos.",
+  "@commonPricingLoading": {
+    "description": "Por qué aún no se puede reservar: las tarifas se están cargando."
+  },
+  "commonPricingMaintenance": "Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.",
+  "@commonPricingMaintenance": {
+    "description": "Por qué no se puede reservar: las reservas están en pausa."
+  },
+  "commonPricingUnavailable": "{vehicleClass} no está disponible para \"{serviceType}\" en este momento.",
+  "@commonPricingUnavailable": {
+    "description": "Por qué no se puede reservar: la clase no está disponible para ese tipo de servicio.",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      },
+      "serviceType": {
+        "type": "String",
+        "example": "Por horas"
+      }
+    }
+  },
+  "commonPromptEnjoyJourney": "Disfruta el trayecto.",
+  "@commonPromptEnjoyJourney": {
+    "description": "Frase bajo el saludo del inicio: el viaje está en curso."
+  },
+  "commonPromptChauffeurWaiting": "Tu chófer ya te espera.",
+  "@commonPromptChauffeurWaiting": {
+    "description": "Frase bajo el saludo del inicio: el chófer llegó a la recogida."
+  },
+  "commonPromptChauffeurOnTheWay": "Tu chófer va en camino.",
+  "@commonPromptChauffeurOnTheWay": {
+    "description": "Frase bajo el saludo del inicio: el chófer va hacia la recogida."
+  },
+  "commonPromptNextTripSoon": "Tu próximo trayecto está cerca.",
+  "@commonPromptNextTripSoon": {
+    "description": "Frase bajo el saludo del inicio: el próximo viaje es en menos de dos horas."
+  },
+  "commonPromptMorning": "¿A dónde empieza tu día?",
+  "@commonPromptMorning": {
+    "description": "Frase bajo el saludo del inicio, de 5 a 11 h."
+  },
+  "commonPromptMidday": "¿A dónde te llevamos?",
+  "@commonPromptMidday": {
+    "description": "Frase bajo el saludo del inicio, de 11 a 15 h."
+  },
+  "commonPromptAfternoon": "¿Cerramos el día en calma?",
+  "@commonPromptAfternoon": {
+    "description": "Frase bajo el saludo del inicio, de 15 a 20 h."
+  },
+  "commonPromptEvening": "¿Volvemos con calma?",
+  "@commonPromptEvening": {
+    "description": "Frase bajo el saludo del inicio, de 20 a 1 h."
+  },
+  "commonPromptLateNight": "Estamos aquí a cualquier hora.",
+  "@commonPromptLateNight": {
+    "description": "Frase bajo el saludo del inicio, de 1 a 5 h. Sin prometer atención a toda hora."
+  },
+  "commonFlightDomestic": "Nacional",
+  "@commonFlightDomestic": {
+    "description": "Tipo de vuelo: llega desde dentro de Bolivia."
+  },
+  "commonFlightInternational": "Internacional",
+  "@commonFlightInternational": {
+    "description": "Tipo de vuelo: llega desde el extranjero."
+  },
+  "commonAirportDomesticExit": "Salida de llegadas nacionales",
+  "@commonAirportDomesticExit": {
+    "description": "Para el chófer: por dónde sale el pasajero de un vuelo nacional."
+  },
+  "commonAirportInternationalExit": "Salida de llegadas internacionales",
+  "@commonAirportInternationalExit": {
+    "description": "Para el chófer: por dónde sale el pasajero de un vuelo internacional."
+  },
+  "commonOriginNoCoords": "No pudimos ubicar la recogida en el mapa. Elige otra dirección.",
+  "@commonOriginNoCoords": {
+    "description": "Error: la dirección de recogida no tiene coordenadas."
+  },
+  "commonOriginOutsideArea": "Por ahora operamos en {cities}. Elige una recogida en una de esas ciudades.",
+  "@commonOriginOutsideArea": {
+    "description": "Error: la recogida está fuera de las ciudades donde se opera (lista de ciudades separadas por comas).",
+    "placeholders": {
+      "cities": {
+        "type": "String",
+        "example": "Santa Cruz"
+      }
+    }
+  },
+  "commonDestinationOtherCity": "El destino debe estar en {city}, la misma ciudad de la recogida.",
+  "@commonDestinationOtherCity": {
+    "description": "Error: el destino está en otra ciudad que la recogida.",
+    "placeholders": {
+      "city": {
+        "type": "String",
+        "example": "La Paz"
+      }
+    }
+  },
+  "commonDestinationSameCity": "El destino debe estar en la misma ciudad que la recogida.",
+  "@commonDestinationSameCity": {
+    "description": "Error: el destino está lejos de una recogida que no está en una ciudad conocida."
+  },
+  "commonFlightNumberMissing": "Indica tu número de vuelo para recogerte a tiempo.",
+  "@commonFlightNumberMissing": {
+    "description": "Error: falta el número de vuelo en una recogida en el aeropuerto."
+  },
+  "commonFlightNumberInvalid": "Número de vuelo no válido. Ejemplo: OB 760 o Z8 315.",
+  "@commonFlightNumberInvalid": {
+    "description": "Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen)."
+  },
+  "commonAppTitle": "Luxelane — Servicio de chófer ejecutivo",
+  "@commonAppTitle": {
+    "description": "Título de la app en la pestaña del navegador y el selector de apps (en español, el mismo de index.html y del manifest)."
+  },
+  "commonTabBook": "Reservar",
+  "@commonTabBook": {
+    "description": "Pestaña de la app del pasajero: reservar un viaje."
+  },
+  "commonTabMyTrips": "Mis viajes",
+  "@commonTabMyTrips": {
+    "description": "Pestaña de la app del pasajero: lista de viajes."
+  },
+  "commonTabProfile": "Perfil",
+  "@commonTabProfile": {
+    "description": "Pestaña de la app del pasajero: perfil."
+  },
+  "commonSignIn": "Iniciar sesión",
+  "@commonSignIn": {
+    "description": "Enlace de la cabecera web para iniciar sesión."
+  },
+  "commonMyProfile": "Mi perfil",
+  "@commonMyProfile": {
+    "description": "Etiqueta de lector de pantalla del botón del avatar en la cabecera web."
+  },
+  "commonNotFoundTitle": "Este camino no existe.",
+  "@commonNotFoundTitle": {
+    "description": "Página de una ruta que no existe: título."
+  },
+  "commonNotFoundBody": "Te llevamos de vuelta al inicio.",
+  "@commonNotFoundBody": {
+    "description": "Página de una ruta que no existe: texto bajo el título."
+  },
+  "commonNotFoundBack": "VOLVER AL INICIO",
+  "@commonNotFoundBack": {
+    "description": "Botón (en mayúsculas) de la página de una ruta que no existe."
+  },
+  "commonUpdateTitleDriver": "Actualiza la app para seguir",
+  "@commonUpdateTitleDriver": {
+    "description": "Título del aviso de versión antigua en la app del chófer."
+  },
+  "commonUpdateTitleRider": "Actualiza la app para reservar",
+  "@commonUpdateTitleRider": {
+    "description": "Título del aviso de versión antigua en la app del pasajero."
+  },
+  "commonUpdateBodyWeb": "Hay una versión nueva de la web. Recarga la página para seguir reservando.",
+  "@commonUpdateBodyWeb": {
+    "description": "Texto del aviso de versión antigua en la web."
+  },
+  "commonUpdateBodyApp": "Hay una versión nueva de la app. Actualízala para seguir reservando.",
+  "@commonUpdateBodyApp": {
+    "description": "Texto del aviso de versión antigua en el móvil."
+  },
+  "commonUpdateGoToStore": "Ir a la tienda",
+  "@commonUpdateGoToStore": {
+    "description": "Botón del aviso de versión antigua: abre la tienda de apps."
+  },
+  "commonGotIt": "Entendido",
+  "@commonGotIt": {
+    "description": "Botón para cerrar un aviso."
+  },
+  "commonEmailNotVerifiedTitle": "Verifica tu correo para reservar",
+  "@commonEmailNotVerifiedTitle": {
+    "description": "Título del aviso al reservar sin el correo verificado."
+  },
+  "commonEmailNotVerifiedBody": "Por seguridad, solo se puede reservar con el correo verificado. Abre el enlace que te enviamos o pide uno nuevo.",
+  "@commonEmailNotVerifiedBody": {
+    "description": "Texto del aviso al reservar sin el correo verificado."
+  },
+  "commonNotNow": "Ahora no",
+  "@commonNotNow": {
+    "description": "Botón para posponer una acción."
+  },
+  "commonVerifyMyEmail": "Verificar mi correo",
+  "@commonVerifyMyEmail": {
+    "description": "Botón que lleva a la pantalla de verificar el correo."
+  },
+  "commonErrorTitle": "Algo salió mal",
+  "@commonErrorTitle": {
+    "description": "Pantalla de error inesperado: título."
+  },
+  "commonErrorBody": "Hemos sido notificados y estamos trabajando en una solución.",
+  "@commonErrorBody": {
+    "description": "Pantalla de error inesperado: texto bajo el título."
+  },
+  "commonTryAgain": "Intentar de nuevo",
+  "@commonTryAgain": {
+    "description": "Botón para reintentar."
+  },
+  "commonOfflineBanner": "Sin conexión. Lo que ves puede no estar al día.",
+  "@commonOfflineBanner": {
+    "description": "Franja que aparece sin conexión: los datos pueden estar desactualizados."
+  },
+  "commonLoading": "Cargando",
+  "@commonLoading": {
+    "description": "Etiqueta de lector de pantalla mientras algo carga."
+  },
+  "commonDone": "Listo",
+  "@commonDone": {
+    "description": "«Listo»: etiqueta de lector de pantalla de la animación de éxito y botón para cerrar el selector de hora."
+  },
+  "commonStepOf": "Etapa {step} de {total}",
+  "@commonStepOf": {
+    "description": "Etiqueta de lector de pantalla de la barra de progreso del viaje.",
+    "placeholders": {
+      "step": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "commonSlideToConfirm": "Desliza para confirmar",
+  "@commonSlideToConfirm": {
+    "description": "Indicación de lector de pantalla del botón deslizable de confirmar."
+  },
+  "commonUpTo": "Hasta {count}",
+  "@commonUpTo": {
+    "description": "Capacidad de un vehículo en su tarjeta, junto al icono de persona («Hasta 3»).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "commonHoursTotal": "{hours}h en total",
+  "@commonHoursTotal": {
+    "description": "Bajo el precio de un servicio por horas: horas contratadas en total («2h en total»).",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "commonFixedPriceLower": "precio fijo",
+  "@commonFixedPriceLower": {
+    "description": "Bajo el precio de un traslado (en minúscula)."
+  },
+  "commonRiderStyle": "ESTILO DEL PASAJERO",
+  "@commonRiderStyle": {
+    "description": "Encabezado (en mayúsculas) de las preferencias del pasajero que ve el chófer."
+  },
+  "commonConfirmBooking": "Confirmar reserva",
+  "@commonConfirmBooking": {
+    "description": "Botón por defecto de la barra de precio: confirmar la reserva."
+  },
+  "commonFixedPriceUpper": "PRECIO FIJO",
+  "@commonFixedPriceUpper": {
+    "description": "Encabezado (en mayúsculas) del importe en la barra de precio."
+  },
+  "commonMapUnavailable": "Mapa no disponible",
+  "@commonMapUnavailable": {
+    "description": "Título en lugar del mapa cuando no se puede mostrar."
+  },
+  "commonMapUnavailableDetail": "El mapa no se puede mostrar ahora. Los datos del viaje siguen aquí.",
+  "@commonMapUnavailableDetail": {
+    "description": "Texto bajo «Mapa no disponible»."
+  },
+  "commonPointOnMap": "Punto elegido en el mapa",
+  "@commonPointOnMap": {
+    "description": "Nombre de un punto elegido en el mapa cuando no se pudo obtener su dirección."
+  },
+  "commonSelectLocation": "Seleccionar ubicación",
+  "@commonSelectLocation": {
+    "description": "Título por defecto del mapa para elegir un lugar."
+  },
+  "commonMoveMapToChoose": "Mueve el mapa para elegir el lugar",
+  "@commonMoveMapToChoose": {
+    "description": "Texto inicial del mapa para elegir un lugar, antes de tener una dirección."
+  },
+  "commonSelectedLocation": "UBICACIÓN SELECCIONADA",
+  "@commonSelectedLocation": {
+    "description": "Encabezado (en mayúsculas) de la dirección elegida en el mapa."
+  },
+  "commonConfirmUpper": "CONFIRMAR",
+  "@commonConfirmUpper": {
+    "description": "Botón (en mayúsculas) para confirmar el lugar elegido en el mapa."
+  },
+  "commonAddressNotFound": "No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.",
+  "@commonAddressNotFound": {
+    "description": "Aviso al elegir una dirección sugerida que no tiene coordenadas."
+  },
+  "commonSelectPickupPlace": "Seleccionar lugar de recogida",
+  "@commonSelectPickupPlace": {
+    "description": "Título del mapa al elegir la recogida."
+  },
+  "commonSelectDestination": "Seleccionar destino",
+  "@commonSelectDestination": {
+    "description": "Título del mapa al elegir el destino."
+  },
+  "commonDestinationWasOtherCity": "El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.",
+  "@commonDestinationWasOtherCity": {
+    "description": "Aviso al cambiar la recogida: se quitó un destino que estaba en otra ciudad."
+  },
+  "commonPickupDateUpper": "FECHA DE RECOGIDA",
+  "@commonPickupDateUpper": {
+    "description": "Encabezado (en mayúsculas) del calendario para elegir el día de la recogida."
+  },
+  "commonPickupTimeUpper": "HORA DE RECOGIDA",
+  "@commonPickupTimeUpper": {
+    "description": "Encabezado (en mayúsculas) del reloj para elegir la hora de la recogida."
+  },
+  "commonCancel": "Cancelar",
+  "@commonCancel": {
+    "description": "Botón para cancelar o cerrar sin cambios."
+  },
+  "commonNext": "Siguiente",
+  "@commonNext": {
+    "description": "Botón para pasar al paso siguiente."
+  },
+  "commonPickupMissing": "Indica dónde te recogemos.",
+  "@commonPickupMissing": {
+    "description": "Error al buscar vehículos sin indicar la recogida."
+  },
+  "commonPickupMovedLater": "Esa hora ya no da tiempo: la movimos a {when}. Revísala y continúa.",
+  "@commonPickupMovedLater": {
+    "description": "Aviso: la hora elegida ya no daba tiempo y se movió (fecha y hora nuevas, ya formateadas).",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      }
+    }
+  },
+  "commonDestinationMissing": "Indica tu destino para calcular el precio fijo.",
+  "@commonDestinationMissing": {
+    "description": "Error al buscar vehículos de un traslado sin destino."
+  },
+  "commonPickupHintAirport": "Recogida — aeropuerto, hotel o dirección",
+  "@commonPickupHintAirport": {
+    "description": "Ayuda del campo de recogida en la página de traslados al aeropuerto."
+  },
+  "commonPickupHint": "Recogida — dirección, hotel o lugar",
+  "@commonPickupHint": {
+    "description": "Ayuda del campo de recogida."
+  },
+  "commonDestinationHintAirport": "Destino — aeropuerto, hotel o dirección",
+  "@commonDestinationHintAirport": {
+    "description": "Ayuda del campo de destino en la página de traslados al aeropuerto."
+  },
+  "commonDestinationOptional": "Destino (opcional)",
+  "@commonDestinationOptional": {
+    "description": "Ayuda del campo de destino en el servicio por horas."
+  },
+  "commonDestinationHint": "Destino — dirección, hotel o lugar",
+  "@commonDestinationHint": {
+    "description": "Ayuda del campo de destino."
+  },
+  "commonBookYourChauffeur": "RESERVA TU CHÓFER",
+  "@commonBookYourChauffeur": {
+    "description": "Encabezado (en mayúsculas) de la tarjeta de reserva de las páginas de servicios."
+  },
+  "commonPickup": "Recogida",
+  "@commonPickup": {
+    "description": "Etiqueta del campo de recogida."
+  },
+  "commonDestination": "Destino",
+  "@commonDestination": {
+    "description": "Etiqueta del campo de destino."
+  },
+  "commonNow": "Ahora",
+  "@commonNow": {
+    "description": "Opción: recogida lo antes posible (sin hora programada). No promete un plazo."
+  },
+  "commonSchedule": "Programar",
+  "@commonSchedule": {
+    "description": "Opción: programar la recogida para una fecha y hora."
+  },
+  "commonChange": "Cambiar",
+  "@commonChange": {
+    "description": "Acción (se muestra en mayúsculas) para cambiar la fecha y hora elegidas."
+  },
+  "commonSeeVehiclesAndPrices": "VER VEHÍCULOS Y PRECIOS",
+  "@commonSeeVehiclesAndPrices": {
+    "description": "Botón (en mayúsculas) de la tarjeta de reserva."
+  },
+  "commonNoCommitment": "Sin compromiso: verás el precio final antes de confirmar.",
+  "@commonNoCommitment": {
+    "description": "Nota bajo el botón de la tarjeta de reserva."
+  },
+  "commonChooseOnMap": "Elegir en el mapa",
+  "@commonChooseOnMap": {
+    "description": "Enlace bajo un campo de dirección para elegir el lugar en el mapa."
+  },
+  "commonDuration": "Duración",
+  "@commonDuration": {
+    "description": "Etiqueta del selector de horas del servicio por horas."
+  },
+  "commonFewerHours": "Menos horas",
+  "@commonFewerHours": {
+    "description": "Consejo del botón «−» del selector de horas."
+  },
+  "commonMoreHours": "Más horas",
+  "@commonMoreHours": {
+    "description": "Consejo del botón «+» del selector de horas."
+  },
+  "commonServiceAirportTransfer": "Traslado al aeropuerto",
+  "@commonServiceAirportTransfer": {
+    "description": "Servicio de la web (menú y pie de página)."
+  },
+  "commonServiceHourly": "Chófer por horas",
+  "@commonServiceHourly": {
+    "description": "Servicio de la web (menú y pie de página)."
+  },
+  "commonServiceImmediate": "Recogida inmediata",
+  "@commonServiceImmediate": {
+    "description": "Servicio de la web (menú y pie de página): recogida sin programar. Sin prometer un plazo."
+  },
+  "commonHomeLinkLabel": "Luxelane, inicio",
+  "@commonHomeLinkLabel": {
+    "description": "Etiqueta de lector de pantalla del logotipo de la cabecera web (lleva al inicio)."
+  },
+  "commonFleet": "Flota",
+  "@commonFleet": {
+    "description": "Enlace de la web a la sección de la flota."
+  },
+  "commonForBusiness": "Para empresas",
+  "@commonForBusiness": {
+    "description": "Enlace de la web a la página para empresas."
+  },
+  "commonServicesUpper": "SERVICIOS",
+  "@commonServicesUpper": {
+    "description": "Menú (en mayúsculas) de servicios de la cabecera web."
+  },
+  "commonBookUpper": "RESERVAR",
+  "@commonBookUpper": {
+    "description": "Botón corto (en mayúsculas) de la cabecera web en pantallas estrechas."
+  },
+  "commonBookATripUpper": "RESERVAR UN VIAJE",
+  "@commonBookATripUpper": {
+    "description": "Botón (en mayúsculas) de la cabecera web y del menú móvil."
+  },
+  "commonMenu": "Menú",
+  "@commonMenu": {
+    "description": "Consejo del botón que abre el menú en la web móvil."
+  },
+  "commonCloseMenu": "Cerrar menú",
+  "@commonCloseMenu": {
+    "description": "Etiqueta de lector de pantalla para cerrar el menú tocando fuera."
+  },
+  "commonClose": "Cerrar",
+  "@commonClose": {
+    "description": "Consejo de un botón para cerrar."
+  },
+  "commonServices": "Servicios",
+  "@commonServices": {
+    "description": "Título de la lista de servicios (menú móvil y pie de página)."
+  },
+  "commonFooterTagline": "Servicio de chófer privado para quienes valoran su tiempo, su privacidad y cada detalle del camino.",
+  "@commonFooterTagline": {
+    "description": "Frase de la marca en el pie de página de la web."
+  },
+  "commonDriveWithUs": "Conduce con nosotros",
+  "@commonDriveWithUs": {
+    "description": "Enlace del pie de página para chóferes que quieren unirse."
+  },
+  "commonTerms": "Términos y condiciones",
+  "@commonTerms": {
+    "description": "Enlace del pie de página a los términos (la página legal sigue en español)."
+  },
+  "commonPrivacy": "Política de privacidad",
+  "@commonPrivacy": {
+    "description": "Enlace del pie de página a la política de privacidad (la página legal sigue en español)."
+  },
+  "commonOurPromise": "Nuestra promesa",
+  "@commonOurPromise": {
+    "description": "Título de la columna de promesas del pie de página."
+  },
+  "commonCopyright": "© {year} Luxelane. Todos los derechos reservados.",
+  "@commonCopyright": {
+    "description": "Línea final del pie de página con el año.",
+    "placeholders": {
+      "year": {
+        "type": "String",
+        "example": "2026"
+      }
+    }
+  },
   "formatToday": "Hoy",
   "@formatToday": {
     "description": "Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»)."
@@ -1301,6 +2153,232 @@
   "driverNavProfile": "Perfil",
   "@driverNavProfile": {
     "description": "Pestaña de la app del chófer: perfil."
+  },
+  "errorTooManyAttempts": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+  "@errorTooManyAttempts": {
+    "description": "Error: el servidor o Firebase limitó los intentos."
+  },
+  "errorSessionExpired": "Tu sesión expiró. Vuelve a iniciar sesión.",
+  "@errorSessionExpired": {
+    "description": "Error: la sesión ya no es válida y hay que volver a entrar."
+  },
+  "errorMfaRequired": "Activa la verificación en dos pasos (Perfil) y vuelve a iniciar sesión para continuar.",
+  "@errorMfaRequired": {
+    "description": "Error: la acción exige la verificación en dos pasos activada (se activa en Perfil)."
+  },
+  "errorReauthRequired": "Por seguridad, vuelve a iniciar sesión para continuar.",
+  "@errorReauthRequired": {
+    "description": "Error: la acción exige haber iniciado sesión hace poco."
+  },
+  "errorNoConnection": "Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.",
+  "@errorNoConnection": {
+    "description": "Error: no hay conexión con el servidor."
+  },
+  "errorReauthWrongPassword": "La contraseña no coincide.",
+  "@errorReauthWrongPassword": {
+    "description": "Error al volver a identificarse: la contraseña no es la de la cuenta."
+  },
+  "errorReauthUserMismatch": "Usa la misma cuenta con la que entraste.",
+  "@errorReauthUserMismatch": {
+    "description": "Error al volver a identificarse con otra cuenta distinta de la actual."
+  },
+  "errorReauthFailed": "No pudimos confirmar tu identidad. Inténtalo de nuevo.",
+  "@errorReauthFailed": {
+    "description": "Error genérico al volver a identificarse."
+  },
+  "errorInvalidArgument": "Revisa los datos e inténtalo de nuevo.",
+  "@errorInvalidArgument": {
+    "description": "Error genérico: el servidor rechazó los datos enviados."
+  },
+  "errorPermissionDenied": "No tienes permiso para hacer esto.",
+  "@errorPermissionDenied": {
+    "description": "Error genérico: la cuenta no tiene permiso para la acción."
+  },
+  "errorFailedPrecondition": "Esto no se puede hacer en este momento.",
+  "@errorFailedPrecondition": {
+    "description": "Error genérico: la acción no se puede hacer en el estado actual."
+  },
+  "errorNotFound": "No encontramos el registro.",
+  "@errorNotFound": {
+    "description": "Error genérico: el documento pedido no existe."
+  },
+  "errorGeneric": "No se pudo completar. Inténtalo de nuevo.",
+  "@errorGeneric": {
+    "description": "Error genérico de último recurso."
+  },
+  "errorDeleteActiveBookings": "Tienes viajes activos o reservados. Cancélalos o espera a que terminen antes de eliminar tu cuenta.",
+  "@errorDeleteActiveBookings": {
+    "description": "Error al eliminar la cuenta: tiene viajes activos o reservados."
+  },
+  "errorDeleteAdminAccount": "Las cuentas de administración se eliminan desde la consola.",
+  "@errorDeleteAdminAccount": {
+    "description": "Error al eliminar la cuenta: es de administración."
+  },
+  "errorDeleteAccountFailed": "No pudimos eliminar tu cuenta. Inténtalo de nuevo.",
+  "@errorDeleteAccountFailed": {
+    "description": "Error genérico al eliminar la cuenta."
+  },
+  "errorTermsOutdated": "Los términos se acaban de actualizar. Vuelve a abrirlos y acéptalos de nuevo.",
+  "@errorTermsOutdated": {
+    "description": "Error al aceptar los términos: cambiaron mientras se leían."
+  },
+  "errorAcceptTermsFailed": "No pudimos registrar tu aceptación. Inténtalo de nuevo.",
+  "@errorAcceptTermsFailed": {
+    "description": "Error genérico al registrar la aceptación de los términos."
+  },
+  "errorBusinessLeadTooMany": "Ya recibimos varias solicitudes desde aquí. Inténtalo más tarde o escríbenos.",
+  "@errorBusinessLeadTooMany": {
+    "description": "Error del formulario de empresas: demasiadas solicitudes desde el mismo lugar."
+  },
+  "errorBusinessLeadInvalid": "Revisa los datos del formulario.",
+  "@errorBusinessLeadInvalid": {
+    "description": "Error del formulario de empresas: datos no válidos."
+  },
+  "errorBusinessLeadFailed": "No pudimos enviar tu solicitud. Inténtalo de nuevo.",
+  "@errorBusinessLeadFailed": {
+    "description": "Error genérico al enviar el formulario de empresas."
+  },
+  "errorBadCredentials": "Correo o contraseña incorrectos.",
+  "@errorBadCredentials": {
+    "description": "Error al iniciar sesión: el mismo texto si no hay cuenta o la contraseña no es correcta."
+  },
+  "errorPasswordResetSent": "Si hay una cuenta con {email}, te enviamos un enlace para restablecer tu contraseña. Revisa también el correo no deseado.",
+  "@errorPasswordResetSent": {
+    "description": "Respuesta al pedir restablecer la contraseña: la misma haya o no cuenta con ese correo.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "ana@example.com"
+      }
+    }
+  },
+  "errorLoginFailed": "No pudimos iniciar sesión. Inténtalo de nuevo.",
+  "@errorLoginFailed": {
+    "description": "Error genérico al iniciar sesión."
+  },
+  "errorRegisterEmailInUse": "No pudimos crear la cuenta con ese correo. Si ya te registraste, inicia sesión o recupera tu contraseña.",
+  "@errorRegisterEmailInUse": {
+    "description": "Error al registrarse con un correo que quizá ya tiene cuenta (sin confirmarlo)."
+  },
+  "errorInvalidEmail": "Ese correo no es válido. Revísalo.",
+  "@errorInvalidEmail": {
+    "description": "Error: el correo escrito no tiene un formato válido."
+  },
+  "errorWeakPassword": "La contraseña es muy débil: usa al menos 6 caracteres.",
+  "@errorWeakPassword": {
+    "description": "Error al registrarse: contraseña demasiado corta."
+  },
+  "errorRegisterFailed": "No pudimos crear la cuenta. Inténtalo de nuevo.",
+  "@errorRegisterFailed": {
+    "description": "Error genérico al crear la cuenta."
+  },
+  "errorPasswordResetFailed": "No pudimos enviar el enlace. Inténtalo de nuevo.",
+  "@errorPasswordResetFailed": {
+    "description": "Error genérico al enviar el enlace para restablecer la contraseña."
+  },
+  "errorServerDefault": "Server error",
+  "@errorServerDefault": {
+    "description": "Mensaje por defecto de un fallo del servidor sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorEmailNotVerified": "Verifica tu correo para poder reservar.",
+  "@errorEmailNotVerified": {
+    "description": "Error al reservar: el correo de la cuenta no está verificado."
+  },
+  "errorTermsRequired": "Acepta los términos vigentes para poder reservar.",
+  "@errorTermsRequired": {
+    "description": "Error al reservar: falta aceptar los términos vigentes."
+  },
+  "errorAuthDefault": "Authentication error",
+  "@errorAuthDefault": {
+    "description": "Mensaje por defecto de un fallo de autenticación sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorAuthCancelledDefault": "Sign-in cancelled",
+  "@errorAuthCancelledDefault": {
+    "description": "Mensaje por defecto cuando la persona cierra la ventana de inicio de sesión (no se muestra como error; el original ya estaba en inglés)."
+  },
+  "errorNetworkDefault": "No internet connection",
+  "@errorNetworkDefault": {
+    "description": "Mensaje por defecto de un fallo de red sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorNotFoundDefault": "Resource not found",
+  "@errorNotFoundDefault": {
+    "description": "Mensaje por defecto cuando no existe un documento (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorPaymentDefault": "Payment error",
+  "@errorPaymentDefault": {
+    "description": "Mensaje por defecto de un fallo de pago sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorPermissionDefault": "Permission denied",
+  "@errorPermissionDefault": {
+    "description": "Mensaje por defecto de un fallo de permisos sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorPriceChanged": "El precio de este viaje cambió.",
+  "@errorPriceChanged": {
+    "description": "Error al reservar: el servidor calculó otro precio y hay que confirmarlo."
+  },
+  "errorCancellationFeeChanged": "El recargo por cancelar cambió.",
+  "@errorCancellationFeeChanged": {
+    "description": "Error al cancelar: la retención por cancelar cambió mientras se decidía."
+  },
+  "errorAppUpdateDriver": "Actualiza la app para seguir con tus viajes.",
+  "@errorAppUpdateDriver": {
+    "description": "Error en la app del chófer: la versión es demasiado antigua para avanzar un viaje."
+  },
+  "errorAppUpdateRider": "Actualiza la app para reservar.",
+  "@errorAppUpdateRider": {
+    "description": "Error en la app del pasajero: la versión es demasiado antigua para reservar."
+  },
+  "errorValidationDefault": "Validation error",
+  "@errorValidationDefault": {
+    "description": "Mensaje por defecto de un fallo de validación sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
+  },
+  "errorMfaEnterCode": "Introduce el código de tu app autenticadora.",
+  "@errorMfaEnterCode": {
+    "description": "Segundo paso del inicio de sesión: pide el código de la app autenticadora (TOTP)."
+  },
+  "errorMfaWrongCode": "Código incorrecto. Usa el código actual de tu app autenticadora (y revisa que la hora del teléfono sea automática).",
+  "@errorMfaWrongCode": {
+    "description": "Error de verificación en dos pasos: el código no es válido."
+  },
+  "errorMfaRecentLogin": "Por seguridad, cierra sesión, vuelve a entrar y repite el alta.",
+  "@errorMfaRecentLogin": {
+    "description": "Error al dar de alta la verificación en dos pasos: hace falta un inicio de sesión reciente."
+  },
+  "errorMfaUnverifiedEmail": "Verifica tu correo antes de activar la verificación en dos pasos.",
+  "@errorMfaUnverifiedEmail": {
+    "description": "Error al dar de alta la verificación en dos pasos sin el correo verificado."
+  },
+  "errorMfaNoConnection": "Sin conexión. Revisa tu red e inténtalo de nuevo.",
+  "@errorMfaNoConnection": {
+    "description": "Error de verificación en dos pasos: sin conexión."
+  },
+  "errorMfaQrExpired": "El código QR venció. Empieza el alta de nuevo.",
+  "@errorMfaQrExpired": {
+    "description": "Error de verificación en dos pasos: venció el alta (código QR)."
+  },
+  "errorMfaNotEnabled": "La verificación en dos pasos aún no está activada. Avisa a central.",
+  "@errorMfaNotEnabled": {
+    "description": "Error: la verificación en dos pasos no está habilitada en el proyecto."
+  },
+  "errorMfaNoTotp": "Tu cuenta no tiene una app autenticadora registrada. Contacta con central.",
+  "@errorMfaNoTotp": {
+    "description": "Error: la cuenta no tiene app autenticadora para el segundo paso."
+  },
+  "errorMfaFailed": "No se pudo completar la verificación. Inténtalo de nuevo.",
+  "@errorMfaFailed": {
+    "description": "Error genérico de la verificación en dos pasos."
+  },
+  "errorAccountBlocked": "Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.",
+  "@errorAccountBlocked": {
+    "description": "Error al entrar: la cuenta del pasajero está bloqueada desde el panel."
+  },
+  "errorDriverSuspended": "Cuenta suspendida. Contacta con central.",
+  "@errorDriverSuspended": {
+    "description": "Error al entrar: la cuenta del chófer está suspendida."
+  },
+  "errorAppCheckFailed": "No se pudo verificar la app. Actualízala o inténtalo más tarde.",
+  "@errorAppCheckFailed": {
+    "description": "Error: el servidor exige verificar la app (App Check) y no se pudo."
   },
   "homePickOriginTitle": "Seleccionar lugar de recogida",
   "@homePickOriginTitle": {

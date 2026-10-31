@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import 'place_model.dart';
 
@@ -128,13 +129,18 @@ class User {
 // ---------------------------------------------------------------------------
 
 enum CabinTemperature {
-  cool('Fresca', '20 °C'),
-  mild('Templada', '22 °C'),
-  warm('Cálida', '24 °C');
+  cool('20 °C'),
+  mild('22 °C'),
+  warm('24 °C');
 
-  const CabinTemperature(this.label, this.hint);
-  final String label;
+  const CabinTemperature(this.hint);
   final String hint;
+
+  String get label => switch (this) {
+        CabinTemperature.cool => L10n.current.commonCabinCool,
+        CabinTemperature.mild => L10n.current.commonCabinMild,
+        CabinTemperature.warm => L10n.current.commonCabinWarm,
+      };
 }
 
 /// Lo que el pasajero prefiere en cada viaje. Se guarda en su perfil, se
@@ -169,12 +175,15 @@ class RidePreferences {
 
   /// Indicaciones breves para el chófer, en el orden en que las aplicará.
   List<String> get driverNotes => [
-        if (openDoor) 'Abrir la puerta',
-        if (luggageHelp) 'Ayuda con el equipaje',
+        if (openDoor) L10n.current.commonPrefOpenDoor,
+        if (luggageHelp) L10n.current.commonPrefLuggageHelp,
         if (temperature != null)
-          'Cabina ${temperature!.label.toLowerCase()} (${temperature!.hint})',
-        if (quiet) 'Viaje en silencio',
-        if (!music) 'Sin música',
+          L10n.current.commonPrefCabin(
+            temperature!.label.toLowerCase(),
+            temperature!.hint,
+          ),
+        if (quiet) L10n.current.commonPrefQuiet,
+        if (!music) L10n.current.commonPrefNoMusic,
       ];
 
   factory RidePreferences.fromJson(Object? raw) {
@@ -343,7 +352,8 @@ class Vehicle {
           (e) => e.name == j['class'],
           orElse: () => VehicleClass.business,
         ),
-        color: j['color'] as String? ?? 'Black',
+        color: j['color'] as String? ??
+            'Black', // i18n-ignore: valor guardado en Firestore
         photoUrl: j['photoUrl'] as String?,
         capacity: j['capacity'] as int? ?? 3,
         isActive: j['isActive'] as bool? ?? true,
@@ -1124,32 +1134,32 @@ class CancellationQuote {
 }
 
 /// Motivos del pasajero para cancelar (cancellation.ts, RIDER_CANCEL_REASONS).
-const kRiderCancelReasons = <String, String>{
-  'changed_plans': 'Cambié de planes',
-  'other_transport': 'Encontré otro transporte',
-  'driver_late': 'El chófer tarda demasiado',
-  'other': 'Otro motivo',
-};
+Map<String, String> get kRiderCancelReasons => {
+      'changed_plans': L10n.current.commonCancelReasonChangedPlans,
+      'other_transport': L10n.current.commonCancelReasonOtherTransport,
+      'driver_late': L10n.current.commonCancelReasonDriverLate,
+      'other': L10n.current.commonReasonOther,
+    };
 
 /// Motivos del chófer para liberar (cancellation.ts, DRIVER_RELEASE_REASONS).
-const kDriverReleaseReasons = <String, String>{
-  'vehicle_issue': 'Problema con el vehículo',
-  'personal_emergency': 'Emergencia personal',
-  'unsafe_conditions': 'Condiciones inseguras',
-  'schedule_conflict': 'Conflicto de horario',
-  'other': 'Otro motivo',
-};
+Map<String, String> get kDriverReleaseReasons => {
+      'vehicle_issue': L10n.current.commonReleaseReasonVehicle,
+      'personal_emergency': L10n.current.commonReleaseReasonEmergency,
+      'unsafe_conditions': L10n.current.commonReleaseReasonUnsafe,
+      'schedule_conflict': L10n.current.commonReleaseReasonSchedule,
+      'other': L10n.current.commonReasonOther,
+    };
 
 /// Texto del panel para el porqué del recargo (cancellationFeeBasis).
 String cancellationBasisLabel(String? basis) => switch (basis) {
-      'no_policy' => 'Sin política de cancelación',
-      'policy_invalid' => 'Política inválida (sin recargo)',
-      'payment_failed' => 'Falló el pago',
-      'no_driver' => 'Sin chófer asignado',
-      'grace' => 'Dentro del plazo tras reservar',
-      'early' => 'Con antelación suficiente',
-      'late' => 'Tarde (aplica recargo)',
-      'no_show_admin' => 'No se presentó (decisión de central)',
+      'no_policy' => L10n.current.commonFeeBasisNoPolicy,
+      'policy_invalid' => L10n.current.commonFeeBasisPolicyInvalid,
+      'payment_failed' => L10n.current.commonFeeBasisPaymentFailed,
+      'no_driver' => L10n.current.commonFeeBasisNoDriver,
+      'grace' => L10n.current.commonFeeBasisGrace,
+      'early' => L10n.current.commonFeeBasisEarly,
+      'late' => L10n.current.commonFeeBasisLate,
+      'no_show_admin' => L10n.current.commonFeeBasisNoShowAdmin,
       null => '—',
       _ => basis,
     };
@@ -1222,8 +1232,8 @@ class OpenRequest {
   /// Chóferes que la liberaron: a ellos no se les vuelve a ofrecer (E18).
   final List<String> releasedBy;
 
-  String get pickupLabel => pickupArea ?? 'Zona de recogida';
-  String get dropoffLabel => dropoffArea ?? 'Zona de destino';
+  String get pickupLabel => pickupArea ?? L10n.current.commonPickupArea;
+  String get dropoffLabel => dropoffArea ?? L10n.current.commonDropoffArea;
 
   static Place? _approx(Object? j, String label) {
     if (j is! Map) return null;
@@ -1263,11 +1273,11 @@ class OpenRequest {
       dropoffArea: dropoffArea,
       pickupApprox: _approx(
         j['pickupApprox'],
-        pickupArea ?? 'Zona de recogida',
+        pickupArea ?? L10n.current.commonPickupArea,
       ),
       dropoffApprox: _approx(
         j['dropoffApprox'],
-        dropoffArea ?? 'Zona de destino',
+        dropoffArea ?? L10n.current.commonDropoffArea,
       ),
       tripKm: (j['tripKm'] as num?)?.toDouble(),
       releasedBy:
@@ -1460,16 +1470,16 @@ class PricingRule {
       minimumPriceUsd,
     ];
     if (values.any((v) => v.isNaN || v < 0)) {
-      errors.add('Los importes no pueden ser negativos');
+      errors.add(L10n.current.commonTariffNegative);
     }
     if (serviceType == ServiceType.oneWay &&
         basePriceUsd == 0 &&
         pricePerKmUsd == 0 &&
         minimumPriceUsd == 0) {
-      errors.add('Un traslado no puede costar Bs0');
+      errors.add(L10n.current.commonTariffZeroTransfer);
     }
     if (serviceType == ServiceType.byTheHour && pricePerHourUsd <= 0) {
-      errors.add('El servicio por horas necesita un precio por hora');
+      errors.add(L10n.current.commonTariffHourlyPrice);
     }
     return errors;
   }

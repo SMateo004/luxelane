@@ -122,6 +122,9 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         valueListenable: _locale,
         builder: (context, choice, _) => MaterialApp.router(
           title: kAppTitle,
+          // En la pestaña del navegador y el selector de apps, en el idioma
+          // activo (en español es el mismo kAppTitle).
+          onGenerateTitle: (context) => context.l10n.commonAppTitle,
           debugShowCheckedModeBanner: false,
           locale: choice == LocaleChoice.system ? null : Locale(choice.name),
           localeListResolutionCallback: LuxLocale.resolveList,

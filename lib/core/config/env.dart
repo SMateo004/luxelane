@@ -1,7 +1,10 @@
 enum Env { dev, prod }
 
 abstract class AppConfig {
-  static const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
+  static const String _env = String.fromEnvironment(
+    'ENV', // i18n-ignore: nombre de variable
+    defaultValue: 'dev',
+  );
 
   /// Google Maps key for the web and the Places/Directions calls. It only
   /// comes from `--dart-define=GOOGLE_MAPS_KEY=...` (or

@@ -27,6 +27,7 @@ import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
 import '../../features/business/presentation/pages/business_page.dart';
 import '../../features/legal/presentation/pages/legal_page.dart';
+import '../../l10n/l10n.dart';
 import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../lux_locale.dart';
@@ -430,15 +431,15 @@ class _NotFoundPage extends StatelessWidget {
                 const LuxelaneWordmark(),
                 const SizedBox(height: 48),
                 Text(
-                  'Este camino no existe.',
+                  context.l10n.commonNotFoundTitle,
                   textAlign: TextAlign.center,
                   style: LuxTypography.displayMedium.copyWith(
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Te llevamos de vuelta al inicio.',
+                Text(
+                  context.l10n.commonNotFoundBody,
                   textAlign: TextAlign.center,
                   style: LuxTypography.bodyMedium,
                 ),
@@ -447,7 +448,7 @@ class _NotFoundPage extends StatelessWidget {
                   width: 240,
                   child: ElevatedButton(
                     onPressed: () => context.go('/'),
-                    child: const Text('VOLVER AL INICIO'),
+                    child: Text(context.l10n.commonNotFoundBack),
                   ),
                 ),
               ],

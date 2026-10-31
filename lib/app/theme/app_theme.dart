@@ -86,8 +86,12 @@ abstract class LuxElevation {
 }
 
 abstract class LuxTypography {
-  static const _serif = 'Cormorant Garamond';
-  static const _sans = 'Montserrat';
+  static const _serif = 'Cormorant Garamond'; // i18n-ignore: nombre de fuente
+  static const _sans = 'Montserrat'; // i18n-ignore: nombre de fuente
+
+  /// Familias de letra para los estilos que no salen de un TextStyle de aquí.
+  static const serifFamily = _serif;
+  static const sansFamily = _sans;
 
   static const displayLarge = TextStyle(
     fontFamily: _serif,
@@ -436,7 +440,7 @@ ThemeData get luxTheme {
       unselectedIconTheme: IconThemeData(color: LuxColors.inkTertiary),
       selectedLabelTextStyle: LuxTypography.labelLarge,
       unselectedLabelTextStyle: TextStyle(
-        fontFamily: 'Montserrat',
+        fontFamily: LuxTypography.sansFamily,
         fontSize: 11,
         color: LuxColors.inkTertiary,
       ),

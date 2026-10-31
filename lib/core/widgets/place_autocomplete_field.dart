@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
@@ -80,7 +81,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   Color get _suggSecondary => LuxColors.inkTertiary;
   Color get _suggIcon => LuxColors.sapphire;
 
-  void _dbg(String msg) => debugPrint('[PAF] $msg');
+  void _log(String msg) => debugPrint('[PAF] $msg');
 
   @override
   void initState() {
@@ -149,7 +150,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       sessionToken: _token,
       restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs),
     );
-    _dbg('autocomplete("$q") → ${res.length} results');
+    _log('autocomplete("$q") → ${res.length} results');
     if (!mounted) return;
     setState(() {
       _suggestions = res;
@@ -185,11 +186,11 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       // Sin coordenadas no se puede recoger ni calcular el precio: mejor
       // pedir otra dirección que guardar un lugar en (0,0).
       if (place == null) {
-        _dbg('Place details failed for: ${s.description}');
+        _log('Place details failed for: ${s.description}');
         _ctrl.text = widget.initialValue?.displayName ?? '';
         showLuxSnackbar(
           context,
-          'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
+          context.l10n.commonAddressNotFound,
           isError: true,
         );
         return;
@@ -208,7 +209,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       _ctrl.text = place.displayName;
       widget.onPlaceSelected?.call(picked);
     } catch (e) {
-      _dbg('Error in _pick: $e');
+      _log('Error in _pick: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -306,7 +307,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                                       style: TextStyle(
                                         color: primary,
                                         fontSize: 13,
-                                        fontFamily: 'Montserrat',
+                                        fontFamily: LuxTypography.sansFamily,
                                         fontWeight: FontWeight.w400,
                                       ),
                                       maxLines: 1,
@@ -318,7 +319,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                                         style: TextStyle(
                                           color: secondary,
                                           fontSize: 11,
-                                          fontFamily: 'Montserrat',
+                                          fontFamily: LuxTypography.sansFamily,
                                           fontWeight: FontWeight.w300,
                                         ),
                                         maxLines: 1,
@@ -366,7 +367,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                 style: TextStyle(
                   color: _textColor,
                   fontSize: widget.bare ? 15 : 13,
-                  fontFamily: 'Montserrat',
+                  fontFamily: LuxTypography.sansFamily,
                   fontWeight: widget.bare ? FontWeight.w500 : FontWeight.w400,
                 ),
                 decoration: InputDecoration(
@@ -374,7 +375,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   hintStyle: TextStyle(
                     color: _hintColor,
                     fontSize: widget.bare ? 15 : 13,
-                    fontFamily: 'Montserrat',
+                    fontFamily: LuxTypography.sansFamily,
                     fontWeight: FontWeight.w300,
                   ),
                   // glass mode: explicitly clear any theme-injected fill

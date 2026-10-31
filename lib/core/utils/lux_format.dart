@@ -24,7 +24,7 @@ abstract class LuxFormat {
     final rest = abs % 100;
     final decimals = rest == 0 ? '' : '${symbols.DECIMAL_SEP}${_two(rest)}';
     // Espacio que no se parte: «Bs» y la cifra nunca quedan en dos líneas.
-    return '${cents < 0 ? '-' : ''}Bs $whole$decimals';
+    return '${cents < 0 ? '-' : ''}Bs $whole$decimals'; // i18n-ignore: formato del importe
   }
 
   /// «18:30» en español y portugués; «6:30 PM» en inglés.
@@ -32,7 +32,7 @@ abstract class LuxFormat {
     final l = locale ?? L10n.code;
     L10n.ensureDateSymbols();
     return l == 'en'
-        ? DateFormat('h:mm a', 'en').format(d)
+        ? DateFormat('h:mm a', 'en').format(d) // i18n-ignore: patrón de intl
         : DateFormat('HH:mm', l).format(d);
   }
 
@@ -49,7 +49,7 @@ abstract class LuxFormat {
     final label = switch (diff) {
       0 => t.formatToday,
       1 => t.formatTomorrow,
-      _ => DateFormat('EEE d MMM', l).format(d),
+      _ => DateFormat('EEE d MMM', l).format(d), // i18n-ignore: patrón de intl
     };
     return '$label · ${time(d, locale: l)}';
   }

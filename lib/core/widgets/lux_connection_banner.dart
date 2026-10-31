@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 
 /// Aviso global de «sin conexión» encima de cualquier pantalla. Antes, sin
 /// red, viajes, perfil, panel y chófer mostraban datos en caché sin
@@ -79,7 +80,7 @@ class _LuxConnectionBannerState extends State<LuxConnectionBanner> {
                     const SizedBox(width: LuxSpacing.sm),
                     Expanded(
                       child: Text(
-                        'Sin conexión. Lo que ves puede no estar al día.',
+                        context.l10n.commonOfflineBanner,
                         style: LuxTypography.bodyMedium.copyWith(
                           color: LuxColors.onAccent,
                         ),

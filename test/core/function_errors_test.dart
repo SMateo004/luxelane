@@ -11,7 +11,7 @@ Map<String, Object> d(String code, String reason) =>
 
 void main() {
   group('functionErrorMessage: un mensaje en español por código', () {
-    const codes = {
+    final codes = {
       'invalid-argument': 'Revisa los datos e inténtalo de nuevo.',
       'unauthenticated': kSessionExpiredMessage,
       'permission-denied': 'No tienes permiso para hacer esto.',
