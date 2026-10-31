@@ -155,7 +155,9 @@ describe('retención con config/ops.cancellationPolicy (pagos, A7)', () => {
     // Ni la reserva ni el evento (los lee el chófer) llevan importes.
     const b = (await doc('bookings/b1'))!;
     for (const k of ['cancellationFee', 'amountRetained', 'refundDue']) expect(b).not.toHaveProperty(k);
-    const cancelEvent = (await events('b1')).find((e) => e.to === 'cancelled');
+    // Sin `at`: es serverTimestamp (hora real del emulador, no el reloj fijo
+    // del test) y sus dígitos podían contener el importe por azar.
+    const { at: _at, ...cancelEvent } = (await events('b1')).find((e) => e.to === 'cancelled')!;
     expect(JSON.stringify(cancelEvent)).not.toContain(String(retained));
   });
 
