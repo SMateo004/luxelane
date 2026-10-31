@@ -1113,6 +1113,7 @@ class OpenRequest {
     this.dropoffApprox,
     this.tripKm,
     this.releasedBy = const [],
+    this.preferredDriverLanguages = const [],
   });
 
   /// Mismo id que la reserva.
@@ -1140,6 +1141,17 @@ class OpenRequest {
 
   /// Chóferes que la liberaron: a ellos no se les vuelve a ofrecer (E18).
   final List<String> releasedBy;
+
+  /// Idiomas que el pasajero prefiere en su chófer: lo único de sus
+  /// preferencias que se ve antes de aceptar (sin datos personales).
+  final List<DriverLanguage> preferredDriverLanguages;
+
+  /// «Idiomas: Español, Inglés», o null si no indicó ninguno.
+  String? get languagesSummary => preferredDriverLanguages.isEmpty
+      ? null
+      : L10n.current.prefsLanguagesSummary(
+          preferredDriverLanguages.map((l) => l.label).join(', '),
+        );
 
   String get pickupLabel => pickupArea ?? L10n.current.commonPickupArea;
   String get dropoffLabel => dropoffArea ?? L10n.current.commonDropoffArea;
@@ -1191,6 +1203,12 @@ class OpenRequest {
       tripKm: (j['tripKm'] as num?)?.toDouble(),
       releasedBy:
           (j['releasedBy'] as List?)?.whereType<String>().toList() ?? const [],
+      preferredDriverLanguages: [
+        for (final l in DriverLanguage.values)
+          if ((j['preferredDriverLanguages'] as List?)?.contains(l.name) ??
+              false)
+            l,
+      ],
     );
   }
 }

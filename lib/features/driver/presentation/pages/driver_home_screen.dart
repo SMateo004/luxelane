@@ -1093,6 +1093,15 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 textAlign: TextAlign.center,
                 style: LuxTypography.caption.copyWith(fontSize: 12),
               ),
+              // Lo único de las preferencias antes de aceptar: los idiomas.
+              if (b.languagesSummary case final langs?) ...[
+                const SizedBox(height: LuxSpacing.xs),
+                Text(
+                  langs,
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.caption,
+                ),
+              ],
               const SizedBox(height: 20),
               LuxButton(
                 label: l10n.driverAcceptTrip,

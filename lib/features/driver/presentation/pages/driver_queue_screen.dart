@@ -148,12 +148,38 @@ class _RequestCard extends StatelessWidget {
               ),
             ],
           ),
+          if (r.languagesSummary case final langs?) ...[
+            const SizedBox(height: LuxSpacing.xs),
+            _LanguagesLine(text: langs),
+          ],
           const SizedBox(height: LuxSpacing.md),
           _JobActions(bookingId: r.id, isPending: true),
         ],
       ),
     );
   }
+}
+
+/// Idiomas que prefiere el pasajero, antes de aceptar (solo eso de sus
+/// preferencias: el resto se ve al aceptar, en la ventana del viaje).
+class _LanguagesLine extends StatelessWidget {
+  const _LanguagesLine({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          const ExcludeSemantics(
+            child: Icon(
+              Icons.translate_rounded,
+              size: 14,
+              color: LuxColors.inkSecondary,
+            ),
+          ),
+          const SizedBox(width: LuxSpacing.xs),
+          Expanded(child: Text(text, style: LuxTypography.caption)),
+        ],
+      );
 }
 
 class _JobCard extends StatelessWidget {
