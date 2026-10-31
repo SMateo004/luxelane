@@ -4,6 +4,50 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/idiomas, Parte B (B1–B7, commit 5d01638, 2026-10-31)
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           109 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           272 archivos, 0 cambiados       0
+flutter test                                  pasa           780/780                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           555/555 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (demo-luxelane)            pasa           1631/1631 (25 de 25 suites)     0
+npm run test:integration (demo-luxelane)      pasa           400/400 (45 de 45 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+capturas por idioma (B5)                      pasa           126/126                         0
+```
+
+analyze baja de 121 a 109 avisos informativos: desaparecen `prefer_const`
+de widgets que tenían textos fijos; ninguno nuevo (listas comparadas).
+La Parte B no cambia `firestore.rules` ni functions: la salida de las
+reglas anteriores con los tests nuevos es la de la Parte A (abajo).
+
+Trinquete de textos fijos: 1180 → 0 (apps del pasajero y del chófer) y
+278 → 0 (vigilados: core y app); 108 `i18n-ignore` con motivo.
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                     Archivo de tests                          Sin el cambio
+B1 autenticación          bloque_auth_test.dart                     12 de 12 fallan
+B1 inicio y servicios     bloque_inicio_test.dart                   falla (6 de 6 en su versión de 6)
+B1 reserva                bloque_reserva_test.dart                  3 de 3 fallan
+B1 pago y comprobante     bloque_pagos_test.dart                    6 de 6 fallan
+B1 viaje / incidentes     bloque_viaje_test.dart                    fallan en los dos bloques
+B1 Mis viajes/perfil/av.  bloque_perfil_test.dart                   4 / 6 / 4 fallan
+B1 chófer                 bloque_chofer_test.dart                   6 de 6 fallan
+B1 comunes y errores      bloque_comunes_test.dart                  6 fallan
+B1 textos compartidos     textos_compartidos_test.dart              falla (const en español)
+B1.0 formato              formato_test.dart                         no compila sin el cambio
+B2 aviso legal            legal_aviso_test.dart                     2 de 3 fallan
+B4 texto grande           texto_grande_idiomas_test.dart            falla sin cada arreglo
+B4 frases prohibidas      frases_prohibidas_test.dart               prueba nueva (casos sintéticos)
+```
+
 ## cierre/idiomas, Parte A (A1–A7, commit c9e8a1c, 2026-10-30)
 
 ```
