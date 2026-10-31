@@ -4270,6 +4270,38 @@
   "@prefsNoteHint": {
     "description": "Ejemplo dentro del campo de la nota para el chófer."
   },
+  "prefsTripTitle": "Preferencias de este viaje",
+  "@prefsTripTitle": {
+    "description": "Reserva: título del paso opcional con las preferencias de este viaje."
+  },
+  "prefsTripFromProfile": "Las de tu perfil.",
+  "@prefsTripFromProfile": {
+    "description": "Reserva: las preferencias mostradas son las del perfil."
+  },
+  "prefsTripChanged": "Cambiadas solo para este viaje.",
+  "@prefsTripChanged": {
+    "description": "Reserva: las preferencias se cambiaron solo para este viaje."
+  },
+  "prefsTripEdit": "Cambiar para este viaje",
+  "@prefsTripEdit": {
+    "description": "Reserva: botón para cambiar las preferencias de este viaje."
+  },
+  "prefsTripSkip": "Omitir",
+  "@prefsTripSkip": {
+    "description": "Reserva: cerrar las preferencias de este viaje sin cambiar nada."
+  },
+  "prefsTripReset": "Usar las de mi perfil",
+  "@prefsTripReset": {
+    "description": "Reserva: volver a las preferencias del perfil."
+  },
+  "prefsTripApply": "Usar en este viaje",
+  "@prefsTripApply": {
+    "description": "Reserva: botón para usar las preferencias elegidas en este viaje."
+  },
+  "prefsTripEmpty": "Sin preferencias para este viaje.",
+  "@prefsTripEmpty": {
+    "description": "Reserva: no hay preferencias para este viaje."
+  },
   "profileSaveError": "No pudimos guardar los cambios. Inténtalo de nuevo.",
   "@profileSaveError": {
     "description": "Aviso de error si no se guardaron los cambios del perfil."
@@ -4687,16 +4719,6 @@
   "rideBackHome": "Volver al inicio",
   "@rideBackHome": {
     "description": "Etiqueta de lector de pantalla del botón que vuelve al inicio."
-  },
-  "ridePreferencesKnown": "Tu chófer conoce tu estilo: {preferences}",
-  "@ridePreferencesKnown": {
-    "description": "Bajo el titular: preferencias del pasajero que ve su chófer.",
-    "placeholders": {
-      "preferences": {
-        "type": "String",
-        "example": "silencio · temperatura fresca"
-      }
-    }
   },
   "rideAssigningTitle": "Asignando a tu chófer",
   "@rideAssigningTitle": {

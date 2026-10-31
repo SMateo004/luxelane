@@ -323,18 +323,6 @@
     "en": "Back to home",
     "pt": "Voltar ao início"
   },
-  "ridePreferencesKnown": {
-    "description": "Bajo el titular: preferencias del pasajero que ve su chófer.",
-    "es": "Tu chófer conoce tu estilo: {preferences}",
-    "en": "Your chauffeur knows your style: {preferences}",
-    "pt": "Seu motorista conhece seu estilo: {preferences}",
-    "placeholders": {
-      "preferences": {
-        "type": "String",
-        "example": "silencio · temperatura fresca"
-      }
-    }
-  },
   "rideAssigningTitle": {
     "description": "Tarjeta mientras se asigna chófer: título.",
     "es": "Asignando a tu chófer",

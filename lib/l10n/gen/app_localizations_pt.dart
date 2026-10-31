@@ -3254,6 +3254,30 @@ class AppLocalizationsPt extends AppLocalizations {
   String get prefsNoteHint => 'Por exemplo, onde esperar por você';
 
   @override
+  String get prefsTripTitle => 'Preferências desta viagem';
+
+  @override
+  String get prefsTripFromProfile => 'As do seu perfil.';
+
+  @override
+  String get prefsTripChanged => 'Alteradas só para esta viagem.';
+
+  @override
+  String get prefsTripEdit => 'Alterar para esta viagem';
+
+  @override
+  String get prefsTripSkip => 'Pular';
+
+  @override
+  String get prefsTripReset => 'Usar as do meu perfil';
+
+  @override
+  String get prefsTripApply => 'Usar nesta viagem';
+
+  @override
+  String get prefsTripEmpty => 'Sem preferências para esta viagem.';
+
+  @override
   String get profileSaveError =>
       'Não foi possível salvar as alterações. Tente novamente.';
 
@@ -3558,11 +3582,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get rideBackHome => 'Voltar ao início';
-
-  @override
-  String ridePreferencesKnown(String preferences) {
-    return 'Seu motorista conhece seu estilo: $preferences';
-  }
 
   @override
   String get rideAssigningTitle => 'Designando seu motorista';

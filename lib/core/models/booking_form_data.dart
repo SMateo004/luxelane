@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../enums/enums.dart';
-import 'place_model.dart';
+import 'models.dart';
 
 /// Antelación mínima de una recogida programada.
 const kMinPickupLead = Duration(minutes: 15);
@@ -52,4 +52,20 @@ class BookingFormData {
         polylinePoints: route.polylinePoints,
         preferredClass: preferredClass,
       );
+}
+
+final _requestedPreferences = Expando<TripPreferences>('tripPreferences');
+
+/// Preferencias de este viaje que el pasajero cambió al reservar: van en
+/// createBooking.preferences y el servidor las copia en driverView. Booking
+/// no las guarda (no están en la reserva); sin ellas, el servidor copia las
+/// del perfil.
+extension BookingRequestedPreferences on Booking {
+  TripPreferences? get requestedPreferences => _requestedPreferences[this];
+
+  /// La misma reserva con [preferences] para createBooking.
+  Booking withRequestedPreferences(TripPreferences? preferences) {
+    _requestedPreferences[this] = preferences;
+    return this;
+  }
 }

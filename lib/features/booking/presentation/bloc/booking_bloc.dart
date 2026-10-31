@@ -7,6 +7,7 @@ import 'package:rxdart/rxdart.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
+import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../l10n/l10n.dart';
@@ -40,6 +41,7 @@ class BookingCreateRequested extends BookingEvent {
     this.hours,
     this.quotedPrice,
     required this.requestId,
+    this.preferences,
   });
   final Place origin;
   final Place destination;
@@ -65,6 +67,10 @@ class BookingCreateRequested extends BookingEvent {
   /// nuevo, así el servidor nunca crea dos reservas.
   final String requestId;
 
+  /// Preferencias de este viaje si el pasajero las cambió al reservar; null
+  /// para que el servidor copie las del perfil.
+  final TripPreferences? preferences;
+
   /// La misma solicitud con el precio nuevo, tras confirmarlo el pasajero.
   BookingCreateRequested withQuotedPrice(double price) =>
       BookingCreateRequested(
@@ -85,6 +91,7 @@ class BookingCreateRequested extends BookingEvent {
         hours: hours,
         quotedPrice: price,
         requestId: requestId,
+        preferences: preferences,
       );
 
   @override
@@ -280,7 +287,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       flightType: event.flightType,
       pickupAirport: event.pickupAirport,
       hours: event.hours,
-    );
+    ).withRequestedPreferences(event.preferences);
     final result = await _repo.createBooking(
       booking,
       quotedPrice: event.quotedPrice,

@@ -3234,6 +3234,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prefsNoteHint => 'For example, where to wait for you';
 
   @override
+  String get prefsTripTitle => 'Preferences for this trip';
+
+  @override
+  String get prefsTripFromProfile => 'From your profile.';
+
+  @override
+  String get prefsTripChanged => 'Changed for this trip only.';
+
+  @override
+  String get prefsTripEdit => 'Change for this trip';
+
+  @override
+  String get prefsTripSkip => 'Skip';
+
+  @override
+  String get prefsTripReset => 'Use my profile\'s';
+
+  @override
+  String get prefsTripApply => 'Use for this trip';
+
+  @override
+  String get prefsTripEmpty => 'No preferences for this trip.';
+
+  @override
   String get profileSaveError =>
       'We couldn\'t save your changes. Please try again.';
 
@@ -3538,11 +3562,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideBackHome => 'Back to home';
-
-  @override
-  String ridePreferencesKnown(String preferences) {
-    return 'Your chauffeur knows your style: $preferences';
-  }
 
   @override
   String get rideAssigningTitle => 'Assigning your chauffeur';

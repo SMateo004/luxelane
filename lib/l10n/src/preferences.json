@@ -316,5 +316,53 @@
     "es": "Por ejemplo, dónde esperarte",
     "en": "For example, where to wait for you",
     "pt": "Por exemplo, onde esperar por você"
+  },
+  "prefsTripTitle": {
+    "description": "Reserva: título del paso opcional con las preferencias de este viaje.",
+    "es": "Preferencias de este viaje",
+    "en": "Preferences for this trip",
+    "pt": "Preferências desta viagem"
+  },
+  "prefsTripFromProfile": {
+    "description": "Reserva: las preferencias mostradas son las del perfil.",
+    "es": "Las de tu perfil.",
+    "en": "From your profile.",
+    "pt": "As do seu perfil."
+  },
+  "prefsTripChanged": {
+    "description": "Reserva: las preferencias se cambiaron solo para este viaje.",
+    "es": "Cambiadas solo para este viaje.",
+    "en": "Changed for this trip only.",
+    "pt": "Alteradas só para esta viagem."
+  },
+  "prefsTripEdit": {
+    "description": "Reserva: botón para cambiar las preferencias de este viaje.",
+    "es": "Cambiar para este viaje",
+    "en": "Change for this trip",
+    "pt": "Alterar para esta viagem"
+  },
+  "prefsTripSkip": {
+    "description": "Reserva: cerrar las preferencias de este viaje sin cambiar nada.",
+    "es": "Omitir",
+    "en": "Skip",
+    "pt": "Pular"
+  },
+  "prefsTripReset": {
+    "description": "Reserva: volver a las preferencias del perfil.",
+    "es": "Usar las de mi perfil",
+    "en": "Use my profile's",
+    "pt": "Usar as do meu perfil"
+  },
+  "prefsTripApply": {
+    "description": "Reserva: botón para usar las preferencias elegidas en este viaje.",
+    "es": "Usar en este viaje",
+    "en": "Use for this trip",
+    "pt": "Usar nesta viagem"
+  },
+  "prefsTripEmpty": {
+    "description": "Reserva: no hay preferencias para este viaje.",
+    "es": "Sin preferencias para este viaje.",
+    "en": "No preferences for this trip.",
+    "pt": "Sem preferências para esta viagem."
   }
 }

@@ -5770,6 +5770,54 @@ abstract class AppLocalizations {
   /// **'Por ejemplo, dónde esperarte'**
   String get prefsNoteHint;
 
+  /// Reserva: título del paso opcional con las preferencias de este viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias de este viaje'**
+  String get prefsTripTitle;
+
+  /// Reserva: las preferencias mostradas son las del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Las de tu perfil.'**
+  String get prefsTripFromProfile;
+
+  /// Reserva: las preferencias se cambiaron solo para este viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiadas solo para este viaje.'**
+  String get prefsTripChanged;
+
+  /// Reserva: botón para cambiar las preferencias de este viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar para este viaje'**
+  String get prefsTripEdit;
+
+  /// Reserva: cerrar las preferencias de este viaje sin cambiar nada.
+  ///
+  /// In es, this message translates to:
+  /// **'Omitir'**
+  String get prefsTripSkip;
+
+  /// Reserva: volver a las preferencias del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar las de mi perfil'**
+  String get prefsTripReset;
+
+  /// Reserva: botón para usar las preferencias elegidas en este viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar en este viaje'**
+  String get prefsTripApply;
+
+  /// Reserva: no hay preferencias para este viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin preferencias para este viaje.'**
+  String get prefsTripEmpty;
+
   /// Aviso de error si no se guardaron los cambios del perfil.
   ///
   /// In es, this message translates to:
@@ -6285,12 +6333,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Volver al inicio'**
   String get rideBackHome;
-
-  /// Bajo el titular: preferencias del pasajero que ve su chófer.
-  ///
-  /// In es, this message translates to:
-  /// **'Tu chófer conoce tu estilo: {preferences}'**
-  String ridePreferencesKnown(String preferences);
 
   /// Tarjeta mientras se asigna chófer: título.
   ///

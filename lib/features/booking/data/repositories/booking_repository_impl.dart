@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
+import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../l10n/l10n.dart';
@@ -356,6 +357,9 @@ Map<String, dynamic> bookingRequestData(
       if (b.flightType != null) 'flightType': b.flightType,
       if (b.notes?.trim().isNotEmpty == true) 'notes': b.notes!.trim(),
       if (b.guest != null) 'guest': b.guest!.toJson()..remove('email'),
+      // Solo si el pasajero las cambió: sin ellas, las del perfil.
+      if (b.requestedPreferences != null)
+        'preferences': b.requestedPreferences!.toJson(),
       if (quotedPrice != null) 'quotedPrice': quotedPrice,
       if (requestId != null) 'requestId': requestId,
       // La web solo paga por QR: el servidor no le crea reservas sin ese
@@ -382,7 +386,12 @@ Failure bookingFailureFor(String code, Object? details) {
     );
   }
   final t = L10n.current;
+  final fields = d['fields'] is List ? d['fields'] as List : const [];
   return ServerFailure(switch (reason) {
+    // Preferencias de este viaje (createBooking.preferences).
+    'playlist_not_allowed' => t.prefsErrorPlaylist,
+    'invalid_request' when fields.contains('preferences.note') =>
+      t.prefsErrorNote,
     'pricing_unavailable' => t.bookingErrorPricingUnavailable,
     'out_of_area' => t.bookingErrorOutOfArea,
     'class_unavailable' => t.bookingErrorClassUnavailable,

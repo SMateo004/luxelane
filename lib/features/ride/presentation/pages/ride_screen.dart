@@ -695,16 +695,16 @@ class _BottomPanel extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(
-                      Icons.verified_outlined,
+                      Icons.visibility_outlined,
                       size: 14,
                       color: LuxColors.sapphire,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        context.l10n.ridePreferencesKnown(
-                          notes.take(3).join(' · ').toLowerCase(),
-                        ),
+                        // Sin promesas: el chófer las ve, nada más.
+                        '${context.l10n.prefsDriverWillSee} '
+                        '${notes.take(3).join(' · ')}',
                         maxLines: luxMaxLines(context, 2),
                         overflow: TextOverflow.ellipsis,
                         style: LuxTypography.caption.copyWith(fontSize: 12),

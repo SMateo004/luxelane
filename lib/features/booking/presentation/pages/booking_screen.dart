@@ -30,7 +30,9 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../auth/presentation/widgets/terms_required_dialog.dart';
 import '../../../home/presentation/pages/home_design.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../bloc/booking_bloc.dart';
+import '../widgets/trip_preferences_step.dart';
 import '../widgets/vehicle_details.dart';
 import '../widgets/vehicle_visuals.dart';
 
@@ -78,6 +80,10 @@ class _BookingScreenState extends State<BookingScreen> {
   int _passengers = 1;
   int _luggage = 0;
   String _notes = '';
+
+  /// Preferencias de este viaje si el pasajero las cambió; null: no se
+  /// envía nada y el servidor copia las del perfil.
+  TripPreferences? _tripPrefs;
   String _flight = '';
   FlightType? _flightType;
   bool _flightAttempted = false; // show the flight errors only after a try
@@ -526,9 +532,32 @@ class _BookingScreenState extends State<BookingScreen> {
                 ? ServiceArea.airportFor(_formData!.origin)?.iata
                 : null,
             hours: _service == ServiceType.byTheHour ? _hours : null,
+            preferences: _tripPrefs,
           ),
         );
   }
+
+  /// Las del perfil: las del ProfileBloc si ya las cargó (están al día tras
+  /// guardarlas), si no las de la sesión. Sin sesión, ninguna.
+  TripPreferences get _profilePrefs {
+    final auth = context.read<AuthBloc>().state;
+    if (auth is! AuthAuthenticated) return TripPreferences.empty;
+    try {
+      final p = context.read<ProfileBloc>().state;
+      if (p is ProfileLoaded && p.user.id == auth.user.id) {
+        return p.user.tripPreferences;
+      }
+    } on ProviderNotFoundException {
+      // Sin ProfileBloc (p. ej. la web sin perfil abierto): la sesión.
+    }
+    return auth.user.tripPreferences;
+  }
+
+  Widget _tripPreferencesStep() => TripPreferencesStep(
+        profile: _profilePrefs,
+        trip: _tripPrefs,
+        onChanged: (p) => setState(() => _tripPrefs = p),
+      );
 
   void _selectVehicle(VehicleClass vc) {
     setState(() {
@@ -1195,6 +1224,8 @@ class _BookingScreenState extends State<BookingScreen> {
 
         ..._bookForOptions(),
         const SizedBox(height: LuxSpacing.md),
+        _tripPreferencesStep(),
+        const SizedBox(height: LuxSpacing.md),
         const _PayNextNote(),
 
         const SizedBox(height: 20),
@@ -1436,6 +1467,9 @@ class _BookingScreenState extends State<BookingScreen> {
             maxLines: 3,
             onChanged: (v) => _notes = v,
           ),
+          // Opcional: sin tocarlo, las del perfil.
+          const SizedBox(height: LuxSpacing.lg),
+          _tripPreferencesStep(),
         ],
       );
 
@@ -1550,6 +1584,13 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
               if (_notes.isNotEmpty)
                 _SummaryRow(context.l10n.bookingSummaryNotes, _notes),
+              if (_tripPrefs != null)
+                _SummaryRow(
+                  context.l10n.prefsScreenTitle,
+                  _tripPrefs!.summary.isEmpty
+                      ? context.l10n.prefsTripEmpty
+                      : _tripPrefs!.summary.join(' · '),
+                ),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
