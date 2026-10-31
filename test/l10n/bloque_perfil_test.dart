@@ -13,6 +13,8 @@ import 'package:luxelane/core/repositories/repositories.dart';
 import 'package:luxelane/core/services/locale_sync.dart';
 import 'package:luxelane/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:luxelane/features/booking/presentation/bloc/booking_bloc.dart';
+import 'package:luxelane/features/notifications/presentation/bloc/notification_bloc.dart';
+import 'package:luxelane/features/notifications/presentation/widgets/notification_bell.dart';
 import 'package:luxelane/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:luxelane/features/profile/presentation/pages/profile_screen.dart';
 import 'package:luxelane/features/profile/presentation/widgets/driver_documents_group.dart';
@@ -26,6 +28,10 @@ class _MockAuthBloc extends MockBloc<AuthEvent, AuthState>
 
 class _MockBookingBloc extends MockBloc<BookingEvent, BookingState>
     implements BookingBloc {}
+
+class _MockNotificationBloc
+    extends MockBloc<NotificationEvent, NotificationState>
+    implements NotificationBloc {}
 
 class _Users extends Mock implements UserRepository {}
 
@@ -138,6 +144,10 @@ void main() {
       vehicle: 'Business Class · plate ABC123',
       colour: 'Colour',
       updated: 'Profile updated',
+      inbox: 'Notifications',
+      markAll: 'Mark all as read',
+      minutes: '5m ago',
+      inboxEmpty: 'No notifications yet',
     ),
     const Locale('pt'): (
       title: 'Minhas viagens',
@@ -161,6 +171,10 @@ void main() {
       vehicle: 'Business Class · placa ABC123',
       colour: 'Cor',
       updated: 'Perfil atualizado',
+      inbox: 'Notificações',
+      markAll: 'Marcar tudo como lido',
+      minutes: 'Há 5m',
+      inboxEmpty: 'Ainda não há notificações',
     ),
   };
 
@@ -292,6 +306,55 @@ void main() {
         final saved = await bloc.stream
             .firstWhere((s) => s is ProfileLoaded && s.message != null);
         expect((saved as ProfileLoaded).message, t.updated);
+      });
+
+      Future<void> openInbox(
+          WidgetTester tester, List<AppNotification> items) async {
+        final inbox = _MockNotificationBloc();
+        whenListen(inbox, const Stream<NotificationState>.empty(),
+            initialState: NotificationLoaded(
+              notifications: items,
+              unreadCount: items.where((n) => !n.isRead).length,
+            ));
+        await tester.pumpWidget(app(
+          locale,
+          BlocProvider<NotificationBloc>.value(
+            value: inbox,
+            child: const Scaffold(body: Center(child: NotificationBell())),
+          ),
+          auth: authBloc(),
+        ));
+        expect(find.byTooltip(t.inbox), findsOneWidget);
+        await tester.tap(find.byType(NotificationBell));
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('bandeja de avisos', (tester) async {
+        // El título y el texto los escribe el servidor en el idioma de la
+        // cuenta: la app los muestra tal cual.
+        await openInbox(tester, [
+          AppNotification(
+            id: 'n1',
+            userId: 'ana',
+            title: 'Server title',
+            body: 'Server body',
+            type: 'booking_confirmed',
+            isRead: false,
+            createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
+          ),
+        ]);
+        expect(find.text(t.inbox), findsOneWidget);
+        expect(find.text(t.markAll), findsOneWidget);
+        expect(find.text(t.minutes), findsOneWidget);
+        expect(find.text('Server title'), findsOneWidget);
+        expect(find.text('Notificaciones'), findsNothing);
+        expect(find.text('Hace 5m'), findsNothing);
+      });
+
+      testWidgets('bandeja vacía', (tester) async {
+        await openInbox(tester, const []);
+        expect(find.text(t.inboxEmpty), findsOneWidget);
+        expect(find.text('Aún no hay notificaciones'), findsNothing);
       });
     });
   }

@@ -1,0 +1,50 @@
+{
+  "notificationsTitle": {
+    "description": "Título de la bandeja de avisos y texto de ayuda de la campana.",
+    "es": "Notificaciones",
+    "en": "Notifications",
+    "pt": "Notificações"
+  },
+  "notificationsMarkAllRead": {
+    "description": "Botón de la bandeja para marcar todos los avisos como leídos.",
+    "es": "Marcar todo como leído",
+    "en": "Mark all as read",
+    "pt": "Marcar tudo como lido"
+  },
+  "notificationsEmpty": {
+    "description": "Bandeja de avisos vacía.",
+    "es": "Aún no hay notificaciones",
+    "en": "No notifications yet",
+    "pt": "Ainda não há notificações"
+  },
+  "notificationsNow": {
+    "description": "Hora de un aviso de hace menos de un minuto.",
+    "es": "Ahora",
+    "en": "Now",
+    "pt": "Agora"
+  },
+  "notificationsMinutesAgo": {
+    "description": "Hora de un aviso de hace menos de una hora: minutos transcurridos (abreviado «m»).",
+    "es": "Hace {minutes}m",
+    "en": "{minutes}m ago",
+    "pt": "Há {minutes}m",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "notificationsHoursAgo": {
+    "description": "Hora de un aviso de hace menos de un día: horas transcurridas (abreviado «h»).",
+    "es": "Hace {hours}h",
+    "en": "{hours}h ago",
+    "pt": "Há {hours}h",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  }
+}

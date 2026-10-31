@@ -1,7 +1,6 @@
 {
   "trinquete": {
-    "lib/features/booking": 158,
-    "lib/features/notifications": 9
+    "lib/features/booking": 158
   },
   "vigilados": {}
 }

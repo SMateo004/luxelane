@@ -2287,6 +2287,28 @@ class AppLocalizationsPt extends AppLocalizations {
       'No momento, este documento está disponível apenas em espanhol.';
 
   @override
+  String get notificationsTitle => 'Notificações';
+
+  @override
+  String get notificationsMarkAllRead => 'Marcar tudo como lido';
+
+  @override
+  String get notificationsEmpty => 'Ainda não há notificações';
+
+  @override
+  String get notificationsNow => 'Agora';
+
+  @override
+  String notificationsMinutesAgo(int minutes) {
+    return 'Há ${minutes}m';
+  }
+
+  @override
+  String notificationsHoursAgo(int hours) {
+    return 'Há ${hours}h';
+  }
+
+  @override
   String get paymentOurFault =>
       'Não foi possível concluir o pagamento por um problema nosso. Tente novamente em alguns minutos.';
 

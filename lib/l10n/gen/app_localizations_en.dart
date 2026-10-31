@@ -2269,6 +2269,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'This document is currently available in Spanish only.';
 
   @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get notificationsNow => 'Now';
+
+  @override
+  String notificationsMinutesAgo(int minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String notificationsHoursAgo(int hours) {
+    return '${hours}h ago';
+  }
+
+  @override
   String get paymentOurFault =>
       'We could not complete the payment due to an issue on our side. Please try again in a few minutes.';
 

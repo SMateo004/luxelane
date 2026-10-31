@@ -4090,6 +4090,42 @@ abstract class AppLocalizations {
   /// **'Este documento solo está disponible en español por ahora.'**
   String get legalSpanishOnlyNotice;
 
+  /// Título de la bandeja de avisos y texto de ayuda de la campana.
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones'**
+  String get notificationsTitle;
+
+  /// Botón de la bandeja para marcar todos los avisos como leídos.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar todo como leído'**
+  String get notificationsMarkAllRead;
+
+  /// Bandeja de avisos vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay notificaciones'**
+  String get notificationsEmpty;
+
+  /// Hora de un aviso de hace menos de un minuto.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora'**
+  String get notificationsNow;
+
+  /// Hora de un aviso de hace menos de una hora: minutos transcurridos (abreviado «m»).
+  ///
+  /// In es, this message translates to:
+  /// **'Hace {minutes}m'**
+  String notificationsMinutesAgo(int minutes);
+
+  /// Hora de un aviso de hace menos de un día: horas transcurridas (abreviado «h»).
+  ///
+  /// In es, this message translates to:
+  /// **'Hace {hours}h'**
+  String notificationsHoursAgo(int hours);
+
   /// Error de pago por un fallo del servidor; no culpa a la persona.
   ///
   /// In es, this message translates to:

@@ -2994,6 +2994,42 @@
   "@legalSpanishOnlyNotice": {
     "description": "Aviso sobre las páginas legales (términos, privacidad) cuando la app está en inglés o portugués: el texto legal sigue en español hasta que el abogado entregue las traducciones. En español no se muestra."
   },
+  "notificationsTitle": "Notificaciones",
+  "@notificationsTitle": {
+    "description": "Título de la bandeja de avisos y texto de ayuda de la campana."
+  },
+  "notificationsMarkAllRead": "Marcar todo como leído",
+  "@notificationsMarkAllRead": {
+    "description": "Botón de la bandeja para marcar todos los avisos como leídos."
+  },
+  "notificationsEmpty": "Aún no hay notificaciones",
+  "@notificationsEmpty": {
+    "description": "Bandeja de avisos vacía."
+  },
+  "notificationsNow": "Ahora",
+  "@notificationsNow": {
+    "description": "Hora de un aviso de hace menos de un minuto."
+  },
+  "notificationsMinutesAgo": "Hace {minutes}m",
+  "@notificationsMinutesAgo": {
+    "description": "Hora de un aviso de hace menos de una hora: minutos transcurridos (abreviado «m»).",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "notificationsHoursAgo": "Hace {hours}h",
+  "@notificationsHoursAgo": {
+    "description": "Hora de un aviso de hace menos de un día: horas transcurridas (abreviado «h»).",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
   "paymentOurFault": "No pudimos completar el pago por un problema nuestro. Inténtalo de nuevo en unos minutos.",
   "@paymentOurFault": {
     "description": "Error de pago por un fallo del servidor; no culpa a la persona."
