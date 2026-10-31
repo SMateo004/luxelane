@@ -1,5 +1,7 @@
 {
   "@@locale": "pt",
+  "adminPrefsEmpty": "Sem preferências para esta viagem",
+  "adminPrefsLoadingLabel": "Carregando as preferências da viagem",
   "authLoginTitle": "Entrar",
   "authLoginWelcomeBack": "Bem-vindo de volta à Luxelane.",
   "authHomeLinkSemantics": "Luxelane, ir para o início",

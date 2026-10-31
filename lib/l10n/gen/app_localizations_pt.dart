@@ -9,6 +9,12 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
+  String get adminPrefsEmpty => 'Sem preferências para esta viagem';
+
+  @override
+  String get adminPrefsLoadingLabel => 'Carregando as preferências da viagem';
+
+  @override
   String get authLoginTitle => 'Entrar';
 
   @override

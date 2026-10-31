@@ -1,5 +1,13 @@
 {
   "@@locale": "es",
+  "adminPrefsEmpty": "Sin preferencias para este viaje",
+  "@adminPrefsEmpty": {
+    "description": "Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje."
+  },
+  "adminPrefsLoadingLabel": "Cargando las preferencias del viaje",
+  "@adminPrefsLoadingLabel": {
+    "description": "Panel de admin: etiqueta de accesibilidad mientras se cargan las preferencias de la reserva."
+  },
   "authLoginTitle": "Iniciar sesión",
   "@authLoginTitle": {
     "description": "Título de la pantalla de inicio de sesión (web) y botón principal para entrar."

@@ -1,5 +1,7 @@
 {
   "@@locale": "en",
+  "adminPrefsEmpty": "No preferences for this trip",
+  "adminPrefsLoadingLabel": "Loading trip preferences",
   "authLoginTitle": "Sign in",
   "authLoginWelcomeBack": "Welcome back to Luxelane.",
   "authHomeLinkSemantics": "Luxelane, go to home",

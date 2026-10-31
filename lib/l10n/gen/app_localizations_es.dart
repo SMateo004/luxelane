@@ -9,6 +9,12 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get adminPrefsEmpty => 'Sin preferencias para este viaje';
+
+  @override
+  String get adminPrefsLoadingLabel => 'Cargando las preferencias del viaje';
+
+  @override
   String get authLoginTitle => 'Iniciar sesión';
 
   @override

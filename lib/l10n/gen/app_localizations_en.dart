@@ -9,6 +9,12 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get adminPrefsEmpty => 'No preferences for this trip';
+
+  @override
+  String get adminPrefsLoadingLabel => 'Loading trip preferences';
+
+  @override
   String get authLoginTitle => 'Sign in';
 
   @override

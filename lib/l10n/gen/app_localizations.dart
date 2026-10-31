@@ -100,6 +100,18 @@ abstract class AppLocalizations {
     Locale('pt')
   ];
 
+  /// Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin preferencias para este viaje'**
+  String get adminPrefsEmpty;
+
+  /// Panel de admin: etiqueta de accesibilidad mientras se cargan las preferencias de la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando las preferencias del viaje'**
+  String get adminPrefsLoadingLabel;
+
   /// Título de la pantalla de inicio de sesión (web) y botón principal para entrar.
   ///
   /// In es, this message translates to:
