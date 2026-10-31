@@ -162,11 +162,11 @@ class _TripPreferencesEditorState extends State<TripPreferencesEditor> {
                         color: LuxColors.inkTertiary,
                       ),
                       helperText: t.prefsPlaylistHelp,
-                      helperMaxLines: 3,
+                      helperMaxLines: _helpLines(context),
                       errorText: playlistLooksValid(_playlist.text)
                           ? null
                           : t.prefsPlaylistInvalid,
-                      errorMaxLines: 3,
+                      errorMaxLines: _helpLines(context),
                     ),
                     onChanged: (s) => _set(
                       _v.copyWith(playlistUrl: s, clearPlaylist: s.isEmpty),
@@ -210,8 +210,9 @@ class _TripPreferencesEditorState extends State<TripPreferencesEditor> {
             style: LuxTypography.bodyLarge,
             decoration: InputDecoration(
               hintText: t.prefsNoteHint,
-              helperText: t.prefsNoteWarning,
-              helperMaxLines: 3,
+              // Comparte la fila con el contador: como widget ocupa las
+              // líneas que necesite y la advertencia nunca se corta.
+              helper: Text(t.prefsNoteWarning, style: _helperStyle(context)),
             ),
             onChanged: (s) => _set(_v.copyWith(note: s, clearNote: s.isEmpty)),
           ),
@@ -229,6 +230,23 @@ class _TripPreferencesEditorState extends State<TripPreferencesEditor> {
           _v.copyWith(needs: _toggle(PracticalNeed.values, _v.needs, n)),
         ),
       );
+}
+
+/// Líneas de una ayuda o un error bajo un campo: tres a tamaño normal y
+/// más con la letra grande, para que la advertencia nunca se corte.
+int _helpLines(BuildContext context) {
+  const lines = 3;
+  final size = LuxTypography.caption.fontSize!;
+  return (lines * MediaQuery.textScalerOf(context).scale(size) / size).ceil();
+}
+
+/// El estilo de la ayuda bajo un campo, el mismo que da el tema a
+/// helperText (Material 3: bodySmall en onSurfaceVariant).
+TextStyle? _helperStyle(BuildContext context) {
+  final theme = Theme.of(context);
+  return theme.inputDecorationTheme.helperStyle ??
+      theme.textTheme.bodySmall
+          ?.copyWith(color: theme.colorScheme.onSurfaceVariant);
 }
 
 class _Section extends StatelessWidget {
