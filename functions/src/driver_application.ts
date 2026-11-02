@@ -27,7 +27,7 @@ import { SNIFF_BYTES, sniffType, SniffedType } from './file_sniff';
 import { AppLocale, localeOf, notice, NoticeType } from './i18n';
 import { AuthAdmin, requireVerifiedEmail } from './identity';
 import { logger } from './logger';
-import { opsConfig } from './ops_config';
+import { opsConfig, securityConfig } from './ops_config';
 import { docId, parseInput } from './schemas';
 
 // ---------------------------------------------------------------------------
@@ -378,9 +378,9 @@ export async function saveDriverStep(deps: RegDeps, uid: string | undefined, dat
 export async function getDriverApplication(deps: RegDeps, uid: string | undefined) {
   const id = await requireDriver(deps.db, uid);
   const db = deps.db;
-  const [app, priv, docs, ops] = await Promise.all([
+  const [app, priv, docs, ops, security] = await Promise.all([
     appRef(db, id).get(), privateRef(db, id).get(), appRef(db, id).collection('documents').get(),
-    opsConfig(db, nowMs(deps)),
+    opsConfig(db, nowMs(deps)), securityConfig(db),
   ]);
   const p = priv.data() ?? {};
   const personal = p.personal ? { ...p.personal, licenseExpiry: (p.personal.licenseExpiry as admin.firestore.Timestamp)?.toMillis?.() ?? null } : null;
@@ -389,6 +389,9 @@ export async function getDriverApplication(deps: RegDeps, uid: string | undefine
     status: app.data()?.status ?? 'draft',
     step: app.data()?.step ?? 'personal',
     requirementsConfigured: readRequirements(ops) !== null,
+    // La app no lee config/security: con esto pide el TOTP antes del envío y
+    // antes de ponerse en línea (A10.3).
+    mfaEnforced: security.mfaEnforced === true,
     requirements: readRequirements(ops) ?? [],
     personal,
     vehicle: v ? { make: v.make, model: v.model, year: v.year, color: v.color, colorOther: v.colorOther ?? null,

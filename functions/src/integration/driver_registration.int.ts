@@ -135,7 +135,7 @@ describe('solicitud completa', () => {
   it('reanudable: getDriverApplication devuelve lo guardado y el estado', async () => {
     await saveDriverStep(deps, 'carlos', PERSONAL);
     const a = await getDriverApplication(deps, 'carlos');
-    expect(a).toMatchObject({ status: 'draft', step: 'vehicle', requirementsConfigured: true,
+    expect(a).toMatchObject({ status: 'draft', step: 'vehicle', requirementsConfigured: true, mfaEnforced: false,
       personal: { fullName: 'Chófer De Prueba', licenseExpiry: PERSONAL.licenseExpiry } });
   });
 });
@@ -359,6 +359,7 @@ describe('acceso y permisos', () => {
       auth: { uid: 'carlos', token: { role: 'driver', auth_time: now, firebase: { sign_in_provider: 'password' } } } }));
     expect(noFactor.reason).toBe('mfa_required');
     expect((await app())?.status).toBe('draft');
+    expect((await getDriverApplication(deps, 'carlos')).mfaEnforced).toBe(true);
     const ok = await (submitFn as unknown as Runnable).run({ ...base, auth: { uid: 'carlos',
       token: { role: 'driver', auth_time: now, firebase: { sign_in_provider: 'password', sign_in_second_factor: 'totp' } } } });
     expect(ok).toEqual({ status: 'submitted' });
