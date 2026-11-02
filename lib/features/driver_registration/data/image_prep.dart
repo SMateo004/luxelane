@@ -75,15 +75,18 @@ class DeviceImagePrep extends ImagePrep {
 
   @override
   Future<Uint8List> compressWithoutMetadata(Uint8List bytes) =>
-      // keepExif false (por defecto, explícito aquí): la orientación se
-      // aplica a los píxeles y se descartan los metadatos.
       FlutterImageCompress.compressWithList(
         bytes,
         minWidth: kTargetSidePx,
         minHeight: kTargetSidePx,
         quality: kJpegQuality,
+        // Explícitos aunque sean los valores por defecto: JPEG, orientación
+        // aplicada a los píxeles y SIN EXIF (ubicación incluida).
+        // ignore: avoid_redundant_argument_values
         format: CompressFormat.jpeg,
+        // ignore: avoid_redundant_argument_values
         keepExif: false,
+        // ignore: avoid_redundant_argument_values
         autoCorrectionAngle: true,
       );
 }

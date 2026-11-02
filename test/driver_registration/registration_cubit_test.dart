@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/driver_registration/data/driver_registration_repository.dart';
 import 'package:luxelane/features/driver_registration/data/image_prep.dart';
@@ -56,7 +55,7 @@ void main() {
   });
 
   test('carga y abre el primer paso pendiente (reanudable)', () async {
-    repo.data = fakeApplication(personal: true, vehicle: false);
+    repo.data = fakeApplication(vehicle: false);
     final c = cubit();
     await c.load();
     expect(c.state.page, RegistrationStep.vehicle);
@@ -125,7 +124,7 @@ void main() {
     ]);
     final c = cubit();
     await c.load();
-    final exp = DateTime(2031, 5, 1);
+    final exp = DateTime(2031, 5, 2);
     expect(
         await c.uploadPhoto(DriverDocType.licenseFront, photo, expiresAt: exp),
         isTrue);

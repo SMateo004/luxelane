@@ -27,6 +27,9 @@ String driverAppErrorMessage(String code, Object? details) {
     'steps_incomplete' => t.adminDrvAppErrStepsIncomplete,
     'document_not_found' || 'driver_not_found' => t.adminDrvAppErrNotFound,
     'invalid_request' => t.adminDrvAppErrInvalid,
+    // El resto de motivos del registro: el catálogo común (B1).
+    final r? when kRegistrationReasons.contains(r) =>
+      registrationErrorMessage(code, details),
     _ => switch (code) {
         'permission-denied' => t.adminDrvAppErrPermission,
         'not-found' => t.adminDrvAppErrNotFound,

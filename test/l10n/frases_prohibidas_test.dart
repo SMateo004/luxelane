@@ -19,7 +19,8 @@ const _porIdioma = <String, Map<String, String>>{
     // ni una comparación de rostro; nada de identidad «verificada».
     'verificación de identidad':
         r'verificaci[oó]n\s+de\s+(la\s+)?identidad|identidad\s+verificada|verificamos\s+(tu\s+)?identidad',
-    'biometría': r'biom[eé]tric|prueba\s+de\s+vida|reconocimiento\s+facial|comparaci[oó]n\s+(de\s+)?(rostro|cara)',
+    'biometría':
+        r'biom[eé]tric|prueba\s+de\s+vida|reconocimiento\s+facial|comparaci[oó]n\s+(de\s+)?(rostro|cara)',
   },
   'en': {
     'garantías': r'guarantee',
@@ -49,7 +50,8 @@ const _porIdioma = <String, Map<String, String>>{
     'chóferes multilingües': r'multilingual',
     'verificación de identidad':
         r'identity\s+verification|verif\w*\s+(your\s+)?identity|identity\s+(is\s+)?verified',
-    'biometría': r'biometric|liveness|proof\s+of\s+life|facial\s+recognition|face\s+(match|comparison)',
+    'biometría':
+        r'biometric|liveness|proof\s+of\s+life|facial\s+recognition|face\s+(match|comparison)',
   },
   'pt': {
     'garantías': r'garanti',
@@ -79,7 +81,8 @@ const _porIdioma = <String, Map<String, String>>{
     'chóferes multilingües': r'multil[ií]ngue',
     'verificación de identidad':
         r'verifica[cç][aã]o\s+de\s+identidade|identidade\s+verificada|verificamos\s+(a\s+sua\s+|sua\s+)?identidade',
-    'biometría': r'biom[eé]tric|prova\s+de\s+vida|reconhecimento\s+facial|compara[cç][aã]o\s+(de\s+)?rosto',
+    'biometría':
+        r'biom[eé]tric|prova\s+de\s+vida|reconhecimento\s+facial|compara[cç][aã]o\s+(de\s+)?rosto',
   },
 };
 

@@ -147,7 +147,7 @@ void main() {
       );
       final f = r.fold((f) => f, (_) => null)!;
       expect(f.message, contains('No se puede aprobar'));
-      expect(f.message, contains('Certificado de antecedentes'));
+      expect(f.message, contains(DriverDocType.criminalRecord.label));
       expect(f.message, contains('Licencia de conducir (anverso)'));
       expect(f.needsReauth, isFalse);
     });
