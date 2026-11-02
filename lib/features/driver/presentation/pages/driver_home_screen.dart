@@ -17,7 +17,9 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/pages/mfa_enroll_page.dart';
 import '../../../auth/presentation/widgets/mfa_reminder_banner.dart';
+import '../../../driver_registration/data/driver_registration_repository.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
 import '../bloc/driver_bloc.dart';
@@ -94,7 +96,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       showNotices: false,
       child: BlocConsumer<DriverBloc, DriverState>(
         listenWhen: (prev, curr) {
-          if (curr is DriverOnboardingRequired) return true;
+          if (curr is DriverOnboardingRequired ||
+              curr is DriverApplicationStartRequired) {
+            return true;
+          }
           if (curr is! DriverLoaded) return false;
           final prevId = prev is DriverLoaded ? prev.currentRequest?.id : null;
           final currId = curr.currentRequest?.id;
@@ -105,7 +110,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               curr.noticeSeq != prevSeq;
         },
         listener: (context, state) {
-          if (state is DriverOnboardingRequired) {
+          if (state is DriverOnboardingRequired ||
+              state is DriverApplicationStartRequired) {
             context.go('/driver/onboarding');
             return;
           }
@@ -283,6 +289,8 @@ class _IdlePanel extends StatelessWidget {
             onChanged: (v) => _toggle(context, v),
           ),
         ),
+        // Con mfaEnforced no se conecta sin el segundo factor (A10.3).
+        if (state.mfaBlock != null) item(_MfaBlockNotice(state: state)),
         // Lo que impide recibir viajes, dicho claramente.
         if (!state.profile.documentsVerified)
           item(
@@ -348,6 +356,34 @@ class _IdlePanel extends StatelessWidget {
             ),
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// No puede conectarse sin el segundo factor: lo activa o vuelve a entrar.
+class _MfaBlockNotice extends StatelessWidget {
+  const _MfaBlockNotice({required this.state});
+  final DriverLoaded state;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.l10n;
+    final enroll = state.mfaBlock == SecondFactorState.none;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Notice(enroll ? t.regOnlineNeedsMfa : t.regOnlineNeedsMfaSignIn),
+        const SizedBox(height: LuxSpacing.sm),
+        LuxOutlinedButton(
+          key: const ValueKey('driver-mfa-block-action'),
+          label: enroll ? t.regOnlineMfaAction : t.regSignOut,
+          onPressed: () => enroll
+              ? Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => MfaEnrollPage(accountName: state.user.email),
+                ))
+              : context.read<AuthBloc>().add(const LogoutRequested()),
+        ),
       ],
     );
   }

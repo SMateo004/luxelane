@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 /// Modo emuladores (solo para revisar la app en local, Parte A de
 /// experiencia): se activa al compilar con `--dart-define=USE_EMULATORS=true`.
@@ -19,6 +20,8 @@ const kEmulatorOptions = FirebaseOptions(
   messagingSenderId: '000000000000',
   projectId: kEmulatorProjectId,
   authDomain: '$kEmulatorProjectId.firebaseapp.com',
+  // El bucket por defecto del emulador de Storage (documentos de chófer).
+  storageBucket: '$kEmulatorProjectId.appspot.com',
 );
 
 /// Las opciones con las que arranca la app. [real] solo se evalúa fuera del
@@ -38,9 +41,10 @@ FirebaseOptions startupOptions(
   return emulator;
 }
 
-/// Conecta Auth, Firestore y Functions a los emuladores locales.
+/// Conecta Auth, Firestore, Functions y Storage a los emuladores locales.
 Future<void> connectEmulators() async {
   await FirebaseAuth.instance.useAuthEmulator(kEmulatorHost, 9099);
   FirebaseFirestore.instance.useFirestoreEmulator(kEmulatorHost, 8080);
   FirebaseFunctions.instance.useFunctionsEmulator(kEmulatorHost, 5001);
+  await FirebaseStorage.instance.useStorageEmulator(kEmulatorHost, 9199);
 }

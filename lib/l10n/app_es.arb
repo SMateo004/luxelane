@@ -2264,81 +2264,13 @@
   "@driverQueueConnectToAccept": {
     "description": "Botón deshabilitado: el chófer está desconectado."
   },
-  "driverOnboardingDefaultColor": "Negro",
-  "@driverOnboardingDefaultColor": {
-    "description": "Color del vehículo que viene escrito por defecto en el registro (editable)."
-  },
-  "driverOnboardingVehicleError": "No se pudo registrar el vehículo. Revisa los datos e inténtalo de nuevo.",
-  "@driverOnboardingVehicleError": {
-    "description": "Error al registrar el vehículo."
-  },
-  "driverOnboardingLicenseError": "No se pudo guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.",
-  "@driverOnboardingLicenseError": {
-    "description": "Error al guardar la licencia."
-  },
-  "driverOnboardingGenericError": "No se pudo completar el registro. Inténtalo de nuevo.",
-  "@driverOnboardingGenericError": {
-    "description": "Error general del registro del chófer."
-  },
   "driverSignOut": "Cerrar sesión",
   "@driverSignOut": {
     "description": "Botón para cerrar sesión."
   },
-  "driverOnboardingVehicleTitle": "Tu vehículo",
-  "@driverOnboardingVehicleTitle": {
-    "description": "Título del paso 1 del registro."
-  },
-  "driverOnboardingVehicleSubtitle": "Registra el vehículo que vas a conducir.",
-  "@driverOnboardingVehicleSubtitle": {
-    "description": "Texto del paso 1 del registro."
-  },
   "driverContinue": "Continuar",
   "@driverContinue": {
     "description": "Botón para pasar al siguiente paso."
-  },
-  "driverOnboardingLicenseTitle": "Licencia de conducir",
-  "@driverOnboardingLicenseTitle": {
-    "description": "Título del paso 2 del registro."
-  },
-  "driverOnboardingLicenseSubtitle": "Tus documentos serán revisados antes de que puedas aceptar viajes.",
-  "@driverOnboardingLicenseSubtitle": {
-    "description": "Texto del paso 2 del registro."
-  },
-  "driverOnboardingReviewNotice": "Un administrador verificará tus documentos antes de que puedas conectarte.",
-  "@driverOnboardingReviewNotice": {
-    "description": "Aviso del paso 2: un administrador revisa los documentos."
-  },
-  "driverOnboardingBack": "Atrás",
-  "@driverOnboardingBack": {
-    "description": "Botón para volver al paso anterior."
-  },
-  "driverOnboardingSubmit": "Enviar",
-  "@driverOnboardingSubmit": {
-    "description": "Botón para enviar el registro."
-  },
-  "driverOnboardingClass": "Categoría del vehículo",
-  "@driverOnboardingClass": {
-    "description": "Etiqueta del selector de clase del vehículo."
-  },
-  "driverOnboardingMake": "Marca",
-  "@driverOnboardingMake": {
-    "description": "Campo: marca del vehículo."
-  },
-  "driverOnboardingModel": "Modelo",
-  "@driverOnboardingModel": {
-    "description": "Campo: modelo del vehículo."
-  },
-  "driverOnboardingPlate": "Placa",
-  "@driverOnboardingPlate": {
-    "description": "Campo: placa (matrícula) del vehículo."
-  },
-  "driverOnboardingYear": "Año",
-  "@driverOnboardingYear": {
-    "description": "Campo: año del vehículo."
-  },
-  "driverOnboardingColor": "Color",
-  "@driverOnboardingColor": {
-    "description": "Campo: color del vehículo."
   },
   "driverFieldRequired": "Requerido",
   "@driverFieldRequired": {
@@ -2347,26 +2279,6 @@
   "driverFieldInvalid": "Inválido",
   "@driverFieldInvalid": {
     "description": "Error de valor no válido (año)."
-  },
-  "driverOnboardingLicenseNumber": "Número de licencia",
-  "@driverOnboardingLicenseNumber": {
-    "description": "Campo: número de licencia de conducir."
-  },
-  "driverOnboardingLicenseExpiry": "Fecha de vencimiento (MM/AAAA)",
-  "@driverOnboardingLicenseExpiry": {
-    "description": "Campo: vencimiento de la licencia, con el formato mes/año."
-  },
-  "driverOnboardingExpiryFormat": "Usa MM/AAAA",
-  "@driverOnboardingExpiryFormat": {
-    "description": "Error: el vencimiento no tiene el formato mes/año."
-  },
-  "driverOnboardingInvalidMonth": "Mes inválido",
-  "@driverOnboardingInvalidMonth": {
-    "description": "Error: mes fuera de 1–12."
-  },
-  "driverOnboardingLicenseExpired": "Licencia vencida",
-  "@driverOnboardingLicenseExpired": {
-    "description": "Error: la licencia ya venció."
   },
   "driverEarningsTitle": "Ganancias",
   "@driverEarningsTitle": {
@@ -2688,6 +2600,480 @@
   "@driverNavProfile": {
     "description": "Pestaña de la app del chófer: perfil."
   },
+  "regIntroTitle": "Conducir con Luxelane",
+  "@regIntroTitle": {
+    "description": "Registro de chófer (app del chófer): título de la pantalla previa a abrir la solicitud."
+  },
+  "regIntroBody": "Para registrarte como chófer, esta cuenta pasa a ser una cuenta de chófer.",
+  "@regIntroBody": {
+    "description": "Registro de chófer (app del chófer): qué cambia al abrir la solicitud."
+  },
+  "regIntroPointOneWay": "La cuenta deja de ser de pasajero y no se vuelve a usar para reservar viajes.",
+  "@regIntroPointOneWay": {
+    "description": "Registro de chófer (app del chófer): la cuenta no vuelve a ser de pasajero."
+  },
+  "regIntroPointBookings": "Si ya hiciste reservas como pasajero con este correo, crea otra cuenta con un correo distinto para registrarte como chófer.",
+  "@regIntroPointBookings": {
+    "description": "Registro de chófer (app del chófer): quien ya tiene reservas usa otro correo."
+  },
+  "regIntroPointReview": "Después completarás tus datos, los de tu vehículo y tus documentos. Luxelane los revisa antes de habilitarte.",
+  "@regIntroPointReview": {
+    "description": "Registro de chófer (app del chófer): qué viene después."
+  },
+  "regIntroStart": "Convertir en cuenta de chófer",
+  "@regIntroStart": {
+    "description": "Registro de chófer (app del chófer): botón para convertir la cuenta."
+  },
+  "regIntroConfirmTitle": "¿Convertir esta cuenta?",
+  "@regIntroConfirmTitle": {
+    "description": "Registro de chófer (app del chófer): título de la confirmación."
+  },
+  "regIntroConfirmBody": "Esta cuenta ya no se podrá usar como pasajero. No se puede deshacer.",
+  "@regIntroConfirmBody": {
+    "description": "Registro de chófer (app del chófer): texto de la confirmación."
+  },
+  "regIntroConfirmYes": "Sí, convertir",
+  "@regIntroConfirmYes": {
+    "description": "Registro de chófer (app del chófer): confirmar la conversión."
+  },
+  "regCancel": "Cancelar",
+  "@regCancel": {
+    "description": "Registro de chófer (app del chófer): cancelar."
+  },
+  "regSignOut": "Cerrar sesión",
+  "@regSignOut": {
+    "description": "Registro de chófer (app del chófer): cerrar sesión desde el registro."
+  },
+  "regTitle": "Tu solicitud de chófer",
+  "@regTitle": {
+    "description": "Registro de chófer (app del chófer): título de la pantalla de la solicitud."
+  },
+  "regStepOf": "Paso {current} de {total}: {title}",
+  "@regStepOf": {
+    "description": "Registro de chófer (app del chófer): encabezado del paso actual.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "regProgressLabel": "Progreso de la solicitud: paso {current} de {total}",
+  "@regProgressLabel": {
+    "description": "Registro de chófer (app del chófer): etiqueta de accesibilidad de la barra de progreso.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "regStepPersonal": "Tus datos",
+  "@regStepPersonal": {
+    "description": "Registro de chófer (app del chófer): título del paso de datos personales."
+  },
+  "regStepVehicle": "Tu vehículo",
+  "@regStepVehicle": {
+    "description": "Registro de chófer (app del chófer): título del paso del vehículo."
+  },
+  "regStepDocuments": "Documentos",
+  "@regStepDocuments": {
+    "description": "Registro de chófer (app del chófer): título del paso de documentos."
+  },
+  "regStepSecurity": "Verificación en dos pasos",
+  "@regStepSecurity": {
+    "description": "Registro de chófer (app del chófer): título del paso del segundo factor."
+  },
+  "regStepSummary": "Resumen y envío",
+  "@regStepSummary": {
+    "description": "Registro de chófer (app del chófer): título del paso final."
+  },
+  "regBack": "Atrás",
+  "@regBack": {
+    "description": "Registro de chófer (app del chófer): volver al paso anterior."
+  },
+  "regContinue": "Continuar",
+  "@regContinue": {
+    "description": "Registro de chófer (app del chófer): ir al paso siguiente."
+  },
+  "regSaveContinue": "Guardar y continuar",
+  "@regSaveContinue": {
+    "description": "Registro de chófer (app del chófer): guardar el paso y seguir."
+  },
+  "regRetry": "Reintentar",
+  "@regRetry": {
+    "description": "Registro de chófer (app del chófer): reintentar la carga."
+  },
+  "regSaving": "Guardando…",
+  "@regSaving": {
+    "description": "Registro de chófer (app del chófer): etiqueta mientras se guarda."
+  },
+  "regFullName": "Nombre completo",
+  "@regFullName": {
+    "description": "Registro de chófer (app del chófer): campo nombre completo."
+  },
+  "regNationalId": "Número de documento de identidad",
+  "@regNationalId": {
+    "description": "Registro de chófer (app del chófer): campo número de documento de identidad."
+  },
+  "regLicenseNumber": "Número de licencia de conducir",
+  "@regLicenseNumber": {
+    "description": "Registro de chófer (app del chófer): campo número de licencia."
+  },
+  "regLicenseExpiry": "Vencimiento de la licencia",
+  "@regLicenseExpiry": {
+    "description": "Registro de chófer (app del chófer): campo vencimiento de la licencia."
+  },
+  "regPickDate": "Elegir fecha",
+  "@regPickDate": {
+    "description": "Registro de chófer (app del chófer): botón para elegir una fecha."
+  },
+  "regFieldRequired": "Completa este campo",
+  "@regFieldRequired": {
+    "description": "Registro de chófer (app del chófer): validación: campo vacío."
+  },
+  "regFullNameInvalid": "Escribe tu nombre completo (2 a 120 caracteres)",
+  "@regFullNameInvalid": {
+    "description": "Registro de chófer (app del chófer): validación del nombre."
+  },
+  "regIdInvalid": "Usa solo letras, números y guiones (4 a 20)",
+  "@regIdInvalid": {
+    "description": "Registro de chófer (app del chófer): validación de un número de documento."
+  },
+  "regDateInFuture": "Elige una fecha posterior a hoy",
+  "@regDateInFuture": {
+    "description": "Registro de chófer (app del chófer): validación: la fecha debe ser futura."
+  },
+  "regPrivacyNote": "Tus números de documento solo los ve el equipo de Luxelane que revisa la solicitud.",
+  "@regPrivacyNote": {
+    "description": "Registro de chófer (app del chófer): quién ve los números de documento."
+  },
+  "regMake": "Marca",
+  "@regMake": {
+    "description": "Registro de chófer (app del chófer): campo marca."
+  },
+  "regModel": "Modelo",
+  "@regModel": {
+    "description": "Registro de chófer (app del chófer): campo modelo."
+  },
+  "regYear": "Año",
+  "@regYear": {
+    "description": "Registro de chófer (app del chófer): campo año."
+  },
+  "regYearInvalid": "Año entre {min} y {max}",
+  "@regYearInvalid": {
+    "description": "Registro de chófer (app del chófer): validación del año.",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "regTextInvalid": "Entre 1 y 40 caracteres",
+  "@regTextInvalid": {
+    "description": "Registro de chófer (app del chófer): validación de marca o modelo."
+  },
+  "regColor": "Color",
+  "@regColor": {
+    "description": "Registro de chófer (app del chófer): campo color."
+  },
+  "regColorOtherText": "Escribe el color",
+  "@regColorOtherText": {
+    "description": "Registro de chófer (app del chófer): campo color libre."
+  },
+  "regColorOtherInvalid": "Entre 1 y 20 caracteres",
+  "@regColorOtherInvalid": {
+    "description": "Registro de chófer (app del chófer): validación del color libre."
+  },
+  "regPlate": "Placa",
+  "@regPlate": {
+    "description": "Registro de chófer (app del chófer): campo placa."
+  },
+  "regPlateInvalid": "Solo letras y números (4 a 10)",
+  "@regPlateInvalid": {
+    "description": "Registro de chófer (app del chófer): validación de la placa."
+  },
+  "regBodyType": "Tipo de vehículo",
+  "@regBodyType": {
+    "description": "Registro de chófer (app del chófer): campo tipo de vehículo."
+  },
+  "regPassengers": "Pasajeros",
+  "@regPassengers": {
+    "description": "Registro de chófer (app del chófer): campo pasajeros."
+  },
+  "regVehicleClass": "Clase de servicio",
+  "@regVehicleClass": {
+    "description": "Registro de chófer (app del chófer): campo clase de servicio."
+  },
+  "regVehicleChangeNote": "Si cambias de vehículo después de la aprobación, el nuevo queda en revisión hasta que Luxelane lo apruebe.",
+  "@regVehicleChangeNote": {
+    "description": "Registro de chófer (app del chófer): qué pasa al cambiar de vehículo tras aprobar."
+  },
+  "regDocsIntro": "Sube cada documento con una foto nítida, con buena luz y sin reflejos.",
+  "@regDocsIntro": {
+    "description": "Registro de chófer (app del chófer): consejo general para las fotos."
+  },
+  "regDocsNotConfigured": "Luxelane aún no definió qué documentos se piden. Puedes completar tus datos; el envío se habilita cuando estén definidos.",
+  "@regDocsNotConfigured": {
+    "description": "Registro de chófer (app del chófer): aviso cuando no hay requisitos configurados."
+  },
+  "regDocRequired": "Obligatorio",
+  "@regDocRequired": {
+    "description": "Registro de chófer (app del chófer): etiqueta de documento obligatorio."
+  },
+  "regDocOptional": "Opcional",
+  "@regDocOptional": {
+    "description": "Registro de chófer (app del chófer): etiqueta de documento opcional."
+  },
+  "regDocExpires": "Vence: {date}",
+  "@regDocExpires": {
+    "description": "Registro de chófer (app del chófer): fecha de vencimiento de un documento.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "regDocRejectedReason": "Motivo: {reason}",
+  "@regDocRejectedReason": {
+    "description": "Registro de chófer (app del chófer): motivo de rechazo de un documento.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "regDocUpload": "Subir",
+  "@regDocUpload": {
+    "description": "Registro de chófer (app del chófer): subir un documento."
+  },
+  "regDocReupload": "Volver a subir",
+  "@regDocReupload": {
+    "description": "Registro de chófer (app del chófer): volver a subir un documento."
+  },
+  "regDocUploading": "Subiendo…",
+  "@regDocUploading": {
+    "description": "Registro de chófer (app del chófer): etiqueta mientras se sube."
+  },
+  "regWebUploadBlocked": "Los documentos y las fotos se suben desde la app de Luxelane en tu teléfono. Aquí puedes completar tus datos y los del vehículo.",
+  "@regWebUploadBlocked": {
+    "description": "Registro de chófer (app del chófer): en la web no se suben documentos ni fotos."
+  },
+  "regUploadFailed": "No se pudo subir la foto. Revisa tu conexión y vuelve a intentarlo.",
+  "@regUploadFailed": {
+    "description": "Registro de chófer (app del chófer): fallo al subir la foto."
+  },
+  "regPhotoTooSmall": "La foto tiene poca resolución. Tómala más cerca y con buena luz.",
+  "@regPhotoTooSmall": {
+    "description": "Registro de chófer (app del chófer): la foto tiene poca resolución."
+  },
+  "regPhotoUnreadable": "No pudimos leer la foto. Vuelve a tomarla.",
+  "@regPhotoUnreadable": {
+    "description": "Registro de chófer (app del chófer): no se pudo leer la foto."
+  },
+  "regHelpIdDocument": "Apoya el documento en una superficie lisa, con buena luz y sin reflejos. Que se vean las cuatro esquinas y que el texto se lea.",
+  "@regHelpIdDocument": {
+    "description": "Registro de chófer (app del chófer): ayuda: documento de identidad o licencia."
+  },
+  "regHelpPaper": "Fotografía la hoja completa, de frente y sin sombras.",
+  "@regHelpPaper": {
+    "description": "Registro de chófer (app del chófer): ayuda: certificados y documentos en papel."
+  },
+  "regHelpProfile": "Tu cara de frente, sin gafas de sol ni gorra, con fondo claro.",
+  "@regHelpProfile": {
+    "description": "Registro de chófer (app del chófer): ayuda: foto de perfil."
+  },
+  "regHelpLive": "Se toma en el momento con la cámara frontal. Mira a la cámara con buena luz.",
+  "@regHelpLive": {
+    "description": "Registro de chófer (app del chófer): ayuda: foto en vivo."
+  },
+  "regHelpVehicle": "El vehículo completo desde este lado, con buena luz.",
+  "@regHelpVehicle": {
+    "description": "Registro de chófer (app del chófer): ayuda: fotos exteriores del vehículo."
+  },
+  "regHelpInterior": "El interior completo desde este punto, con buena luz.",
+  "@regHelpInterior": {
+    "description": "Registro de chófer (app del chófer): ayuda: fotos del interior."
+  },
+  "regHelpPlate": "La placa de frente, completa y legible.",
+  "@regHelpPlate": {
+    "description": "Registro de chófer (app del chófer): ayuda: foto de la placa."
+  },
+  "regFrameHint": "La cámara se abre a pantalla completa: encuadra como en este marco.",
+  "@regFrameHint": {
+    "description": "Registro de chófer (app del chófer): aviso del marco de encuadre (la cámara del sistema se abre a pantalla completa)."
+  },
+  "regFrameLabel": "Guía de encuadre",
+  "@regFrameLabel": {
+    "description": "Registro de chófer (app del chófer): etiqueta de accesibilidad del marco de encuadre."
+  },
+  "regTakePhoto": "Tomar foto",
+  "@regTakePhoto": {
+    "description": "Registro de chófer (app del chófer): abrir la cámara."
+  },
+  "regFromGallery": "Elegir de la galería",
+  "@regFromGallery": {
+    "description": "Registro de chófer (app del chófer): elegir de la galería."
+  },
+  "regLiveCameraOnly": "Esta foto solo se toma con la cámara, no desde la galería.",
+  "@regLiveCameraOnly": {
+    "description": "Registro de chófer (app del chófer): la foto en vivo solo admite cámara."
+  },
+  "regReviewTitle": "Revisa la foto",
+  "@regReviewTitle": {
+    "description": "Registro de chófer (app del chófer): título de la revisión de la foto."
+  },
+  "regReviewHint": "Comprueba que se lea bien y que no esté cortada.",
+  "@regReviewHint": {
+    "description": "Registro de chófer (app del chófer): qué comprobar antes de usar la foto."
+  },
+  "regPhotoPreviewLabel": "Vista previa de la foto",
+  "@regPhotoPreviewLabel": {
+    "description": "Registro de chófer (app del chófer): etiqueta de accesibilidad de la vista previa."
+  },
+  "regRetake": "Repetir",
+  "@regRetake": {
+    "description": "Registro de chófer (app del chófer): repetir la foto."
+  },
+  "regUsePhoto": "Usar esta foto",
+  "@regUsePhoto": {
+    "description": "Registro de chófer (app del chófer): usar la foto."
+  },
+  "regExpiryNeeded": "Fecha de vencimiento del documento",
+  "@regExpiryNeeded": {
+    "description": "Registro de chófer (app del chófer): fecha de vencimiento del documento."
+  },
+  "regExpiryRequired": "Indica la fecha de vencimiento",
+  "@regExpiryRequired": {
+    "description": "Registro de chófer (app del chófer): falta la fecha de vencimiento."
+  },
+  "regPhotoCancelled": "No se tomó ninguna foto.",
+  "@regPhotoCancelled": {
+    "description": "Registro de chófer (app del chófer): no se tomó ninguna foto."
+  },
+  "regCameraUnavailable": "No se pudo abrir la cámara. Revisa los permisos de la app.",
+  "@regCameraUnavailable": {
+    "description": "Registro de chófer (app del chófer): no se pudo abrir la cámara o la galería."
+  },
+  "regSecurityBody": "Para enviar la solicitud y, después, conectarte, tu cuenta necesita la verificación en dos pasos con una app autenticadora.",
+  "@regSecurityBody": {
+    "description": "Registro de chófer (app del chófer): por qué se pide el segundo factor."
+  },
+  "regSecurityEnroll": "Activar la verificación en dos pasos",
+  "@regSecurityEnroll": {
+    "description": "Registro de chófer (app del chófer): abrir el alta del segundo factor."
+  },
+  "regSecurityReady": "La verificación en dos pasos está activa en esta sesión.",
+  "@regSecurityReady": {
+    "description": "Registro de chófer (app del chófer): el segundo factor está listo."
+  },
+  "regSecuritySignInAgain": "Ya la tienes activada. Cierra sesión y vuelve a entrar con el código de tu app autenticadora para continuar.",
+  "@regSecuritySignInAgain": {
+    "description": "Registro de chófer (app del chófer): activado pero la sesión no lo usó."
+  },
+  "regSecurityCheck": "Comprobar de nuevo",
+  "@regSecurityCheck": {
+    "description": "Registro de chófer (app del chófer): volver a comprobar el segundo factor."
+  },
+  "regSecurityNeededToSubmit": "Antes de enviar, activa la verificación en dos pasos.",
+  "@regSecurityNeededToSubmit": {
+    "description": "Registro de chófer (app del chófer): falta el segundo factor para enviar."
+  },
+  "regSummaryIntro": "Revisa tu solicitud antes de enviarla.",
+  "@regSummaryIntro": {
+    "description": "Registro de chófer (app del chófer): introducción del resumen."
+  },
+  "regSummaryPersonal": "Datos personales",
+  "@regSummaryPersonal": {
+    "description": "Registro de chófer (app del chófer): sección datos personales del resumen."
+  },
+  "regSummaryVehicle": "Vehículo",
+  "@regSummaryVehicle": {
+    "description": "Registro de chófer (app del chófer): sección vehículo del resumen."
+  },
+  "regSummaryDocs": "Documentos obligatorios listos: {done} de {total}",
+  "@regSummaryDocs": {
+    "description": "Registro de chófer (app del chófer): progreso de documentos obligatorios.",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "regSummaryMissing": "Faltan: {list}",
+  "@regSummaryMissing": {
+    "description": "Registro de chófer (app del chófer): documentos que faltan.",
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "regSummaryIncomplete": "Completa tus datos y los del vehículo para poder enviar.",
+  "@regSummaryIncomplete": {
+    "description": "Registro de chófer (app del chófer): faltan pasos."
+  },
+  "regEdit": "Editar",
+  "@regEdit": {
+    "description": "Registro de chófer (app del chófer): editar una sección."
+  },
+  "regSubmit": "Enviar solicitud",
+  "@regSubmit": {
+    "description": "Registro de chófer (app del chófer): enviar la solicitud."
+  },
+  "regSubmitted": "Solicitud enviada.",
+  "@regSubmitted": {
+    "description": "Registro de chófer (app del chófer): aviso tras enviar."
+  },
+  "regStatusReviewTitle": "Solicitud en revisión",
+  "@regStatusReviewTitle": {
+    "description": "Registro de chófer (app del chófer): solicitud enviada o en revisión."
+  },
+  "regStatusReviewBody": "Luxelane está revisando tu solicitud. Recibirás un aviso en la app cuando haya una respuesta.",
+  "@regStatusReviewBody": {
+    "description": "Registro de chófer (app del chófer): qué pasa mientras se revisa (sin plazos)."
+  },
+  "regStatusNeedsChanges": "Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.",
+  "@regStatusNeedsChanges": {
+    "description": "Registro de chófer (app del chófer): Luxelane pidió cambios."
+  },
+  "regStatusRejectedTitle": "Solicitud no aprobada",
+  "@regStatusRejectedTitle": {
+    "description": "Registro de chófer (app del chófer): solicitud rechazada."
+  },
+  "regStatusRejectedBody": "Esta solicitud no fue aprobada y está cerrada.",
+  "@regStatusRejectedBody": {
+    "description": "Registro de chófer (app del chófer): la solicitud está cerrada."
+  },
+  "regRefresh": "Actualizar",
+  "@regRefresh": {
+    "description": "Registro de chófer (app del chófer): actualizar el estado."
+  },
+  "regOnlineNeedsMfa": "Para conectarte, activa la verificación en dos pasos.",
+  "@regOnlineNeedsMfa": {
+    "description": "Registro de chófer (app del chófer): no se conecta sin segundo factor (mfaEnforced)."
+  },
+  "regOnlineNeedsMfaSignIn": "Para conectarte, cierra sesión y vuelve a entrar con el código de tu app autenticadora.",
+  "@regOnlineNeedsMfaSignIn": {
+    "description": "Registro de chófer (app del chófer): tiene segundo factor pero la sesión no lo usó."
+  },
+  "regOnlineMfaAction": "Activar",
+  "@regOnlineMfaAction": {
+    "description": "Registro de chófer (app del chófer): botón del aviso para activar el segundo factor."
+  },
   "regDocTypeProfilePhoto": "Foto de perfil",
   "@regDocTypeProfilePhoto": {
     "description": "Registro de chófer: nombre del documento de tipo profile_photo (app del chófer y panel)."
@@ -2712,7 +3098,7 @@
   "@regDocTypeLicenseBack": {
     "description": "Registro de chófer: nombre del documento de tipo license_back (app del chófer y panel)."
   },
-  "regDocTypeCriminalRecord": "Certificado de antecedentes",
+  "regDocTypeCriminalRecord": "Certificado penal",
   "@regDocTypeCriminalRecord": {
     "description": "Registro de chófer: nombre del documento de tipo criminal_record (app del chófer y panel)."
   },
@@ -3121,6 +3507,118 @@
   "errorProfileNotFound": "No encontramos tu perfil. Vuelve a iniciar sesión.",
   "@errorProfileNotFound": {
     "description": "No se encontró el perfil de la cuenta (usuario o chófer). Antes salía «User not found» en inglés."
+  },
+  "regErrorHasBookings": "Esta cuenta ya tiene reservas como pasajero. Para registrarte como chófer, crea una cuenta con otro correo.",
+  "@regErrorHasBookings": {
+    "description": "Error del registro de chóferes: el servidor respondió «has_bookings»."
+  },
+  "regErrorDriverAccount": "Una cuenta de chófer no puede usar pagos de pasajero.",
+  "@regErrorDriverAccount": {
+    "description": "Error del registro de chóferes: el servidor respondió «driver_account»."
+  },
+  "regErrorNotARider": "Esta cuenta no puede iniciar una solicitud de chófer.",
+  "@regErrorNotARider": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_a_rider»."
+  },
+  "regErrorAdminAccount": "Una cuenta de administración no puede registrarse como chófer.",
+  "@regErrorAdminAccount": {
+    "description": "Error del registro de chóferes: el servidor respondió «admin_account»."
+  },
+  "regErrorInactiveUser": "Tu cuenta está bloqueada.",
+  "@regErrorInactiveUser": {
+    "description": "Error del registro de chóferes: el servidor respondió «inactive_user»."
+  },
+  "regErrorNotADriver": "Esta cuenta aún no tiene una solicitud de chófer.",
+  "@regErrorNotADriver": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_a_driver»."
+  },
+  "regErrorLockedAfterApproval": "Tus datos ya fueron aprobados; solo Luxelane puede cambiarlos.",
+  "@regErrorLockedAfterApproval": {
+    "description": "Error del registro de chóferes: el servidor respondió «locked_after_approval»."
+  },
+  "regErrorApplicationClosed": "Esta solicitud está cerrada y ya no admite cambios.",
+  "@regErrorApplicationClosed": {
+    "description": "Error del registro de chóferes: el servidor respondió «application_closed»."
+  },
+  "regErrorPlateInUse": "Esa placa ya está registrada en otro vehículo activo.",
+  "@regErrorPlateInUse": {
+    "description": "Error del registro de chóferes: el servidor respondió «plate_in_use»."
+  },
+  "regErrorInvalidFile": "El archivo no es una imagen válida o supera el tamaño permitido. Toma la foto otra vez.",
+  "@regErrorInvalidFile": {
+    "description": "Error del registro de chóferes: el servidor respondió «invalid_file»."
+  },
+  "regErrorFileMissing": "No encontramos el archivo subido. Vuelve a intentarlo.",
+  "@regErrorFileMissing": {
+    "description": "Error del registro de chóferes: el servidor respondió «file_missing»."
+  },
+  "regErrorUnexpectedVersion": "El documento cambió mientras lo subías. Actualiza la pantalla y vuelve a intentarlo.",
+  "@regErrorUnexpectedVersion": {
+    "description": "Error del registro de chóferes: el servidor respondió «unexpected_version»."
+  },
+  "regErrorDocumentExpired": "La fecha de vencimiento ya pasó. Sube un documento vigente.",
+  "@regErrorDocumentExpired": {
+    "description": "Error del registro de chóferes: el servidor respondió «document_expired»."
+  },
+  "regErrorRequirementsNotConfigured": "Aún no podemos recibir solicitudes: faltan por definir los documentos que se piden. Puedes guardar tus datos y enviar más adelante.",
+  "@regErrorRequirementsNotConfigured": {
+    "description": "Error del registro de chóferes: el servidor respondió «requirements_not_configured»."
+  },
+  "regErrorStepsIncomplete": "Completa tus datos personales y los del vehículo antes de enviar.",
+  "@regErrorStepsIncomplete": {
+    "description": "Error del registro de chóferes: el servidor respondió «steps_incomplete»."
+  },
+  "regErrorDocumentsMissing": "Faltan documentos obligatorios o hay alguno vencido o rechazado.",
+  "@regErrorDocumentsMissing": {
+    "description": "Error del registro de chóferes: el servidor respondió «documents_missing»."
+  },
+  "regErrorInvalidRequest": "Revisa los datos marcados e inténtalo de nuevo.",
+  "@regErrorInvalidRequest": {
+    "description": "Error del registro de chóferes: el servidor respondió «invalid_request»."
+  },
+  "regErrorDriverDocsBlocked": "Tienes documentos obligatorios vencidos. Súbelos de nuevo para volver a conectarte.",
+  "@regErrorDriverDocsBlocked": {
+    "description": "Error del registro de chóferes: el servidor respondió «driver_docs_blocked»."
+  },
+  "regErrorProfileNotFound": "No encontramos tu perfil. Cierra sesión y vuelve a entrar.",
+  "@regErrorProfileNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «profile_not_found»."
+  },
+  "regErrorDocumentsNotApproved": "No se puede aprobar: hay documentos obligatorios sin aprobar o vencidos.",
+  "@regErrorDocumentsNotApproved": {
+    "description": "Error del registro de chóferes: el servidor respondió «documents_not_approved»."
+  },
+  "regErrorNotDecidable": "La solicitud no está en un estado que admita esta decisión.",
+  "@regErrorNotDecidable": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_decidable»."
+  },
+  "regErrorNotReviewable": "Este documento no se puede revisar en su estado actual.",
+  "@regErrorNotReviewable": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_reviewable»."
+  },
+  "regErrorStaleVersion": "El chófer subió una versión más nueva. Actualiza y revisa la última.",
+  "@regErrorStaleVersion": {
+    "description": "Error del registro de chóferes: el servidor respondió «stale_version»."
+  },
+  "regErrorDocumentNotFound": "Ese documento no existe o aún no se subió.",
+  "@regErrorDocumentNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «document_not_found»."
+  },
+  "regErrorDriverNotFound": "No encontramos a ese chófer.",
+  "@regErrorDriverNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «driver_not_found»."
+  },
+  "regErrorApplicationNotFound": "No encontramos esa solicitud.",
+  "@regErrorApplicationNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «application_not_found»."
+  },
+  "regErrorPurgeDisabled": "El borrado de documentos está desactivado.",
+  "@regErrorPurgeDisabled": {
+    "description": "Error del registro de chóferes: el servidor respondió «purge_disabled»."
+  },
+  "regErrorGeneric": "No pudimos completar este paso. Inténtalo de nuevo.",
+  "@regErrorGeneric": {
+    "description": "Error del registro de chóferes: el servidor respondió «(otro)»."
   },
   "homePickOriginTitle": "Seleccionar lugar de recogida",
   "@homePickOriginTitle": {

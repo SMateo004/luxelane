@@ -3142,119 +3142,17 @@ abstract class AppLocalizations {
   /// **'Conéctate para aceptar'**
   String get driverQueueConnectToAccept;
 
-  /// Color del vehículo que viene escrito por defecto en el registro (editable).
-  ///
-  /// In es, this message translates to:
-  /// **'Negro'**
-  String get driverOnboardingDefaultColor;
-
-  /// Error al registrar el vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'No se pudo registrar el vehículo. Revisa los datos e inténtalo de nuevo.'**
-  String get driverOnboardingVehicleError;
-
-  /// Error al guardar la licencia.
-  ///
-  /// In es, this message translates to:
-  /// **'No se pudo guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.'**
-  String get driverOnboardingLicenseError;
-
-  /// Error general del registro del chófer.
-  ///
-  /// In es, this message translates to:
-  /// **'No se pudo completar el registro. Inténtalo de nuevo.'**
-  String get driverOnboardingGenericError;
-
   /// Botón para cerrar sesión.
   ///
   /// In es, this message translates to:
   /// **'Cerrar sesión'**
   String get driverSignOut;
 
-  /// Título del paso 1 del registro.
-  ///
-  /// In es, this message translates to:
-  /// **'Tu vehículo'**
-  String get driverOnboardingVehicleTitle;
-
-  /// Texto del paso 1 del registro.
-  ///
-  /// In es, this message translates to:
-  /// **'Registra el vehículo que vas a conducir.'**
-  String get driverOnboardingVehicleSubtitle;
-
   /// Botón para pasar al siguiente paso.
   ///
   /// In es, this message translates to:
   /// **'Continuar'**
   String get driverContinue;
-
-  /// Título del paso 2 del registro.
-  ///
-  /// In es, this message translates to:
-  /// **'Licencia de conducir'**
-  String get driverOnboardingLicenseTitle;
-
-  /// Texto del paso 2 del registro.
-  ///
-  /// In es, this message translates to:
-  /// **'Tus documentos serán revisados antes de que puedas aceptar viajes.'**
-  String get driverOnboardingLicenseSubtitle;
-
-  /// Aviso del paso 2: un administrador revisa los documentos.
-  ///
-  /// In es, this message translates to:
-  /// **'Un administrador verificará tus documentos antes de que puedas conectarte.'**
-  String get driverOnboardingReviewNotice;
-
-  /// Botón para volver al paso anterior.
-  ///
-  /// In es, this message translates to:
-  /// **'Atrás'**
-  String get driverOnboardingBack;
-
-  /// Botón para enviar el registro.
-  ///
-  /// In es, this message translates to:
-  /// **'Enviar'**
-  String get driverOnboardingSubmit;
-
-  /// Etiqueta del selector de clase del vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'Categoría del vehículo'**
-  String get driverOnboardingClass;
-
-  /// Campo: marca del vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'Marca'**
-  String get driverOnboardingMake;
-
-  /// Campo: modelo del vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'Modelo'**
-  String get driverOnboardingModel;
-
-  /// Campo: placa (matrícula) del vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'Placa'**
-  String get driverOnboardingPlate;
-
-  /// Campo: año del vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'Año'**
-  String get driverOnboardingYear;
-
-  /// Campo: color del vehículo.
-  ///
-  /// In es, this message translates to:
-  /// **'Color'**
-  String get driverOnboardingColor;
 
   /// Error de campo vacío.
   ///
@@ -3267,36 +3165,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Inválido'**
   String get driverFieldInvalid;
-
-  /// Campo: número de licencia de conducir.
-  ///
-  /// In es, this message translates to:
-  /// **'Número de licencia'**
-  String get driverOnboardingLicenseNumber;
-
-  /// Campo: vencimiento de la licencia, con el formato mes/año.
-  ///
-  /// In es, this message translates to:
-  /// **'Fecha de vencimiento (MM/AAAA)'**
-  String get driverOnboardingLicenseExpiry;
-
-  /// Error: el vencimiento no tiene el formato mes/año.
-  ///
-  /// In es, this message translates to:
-  /// **'Usa MM/AAAA'**
-  String get driverOnboardingExpiryFormat;
-
-  /// Error: mes fuera de 1–12.
-  ///
-  /// In es, this message translates to:
-  /// **'Mes inválido'**
-  String get driverOnboardingInvalidMonth;
-
-  /// Error: la licencia ya venció.
-  ///
-  /// In es, this message translates to:
-  /// **'Licencia vencida'**
-  String get driverOnboardingLicenseExpired;
 
   /// Título de la pantalla de ganancias.
   ///
@@ -3682,6 +3550,642 @@ abstract class AppLocalizations {
   /// **'Perfil'**
   String get driverNavProfile;
 
+  /// Registro de chófer (app del chófer): título de la pantalla previa a abrir la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Conducir con Luxelane'**
+  String get regIntroTitle;
+
+  /// Registro de chófer (app del chófer): qué cambia al abrir la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Para registrarte como chófer, esta cuenta pasa a ser una cuenta de chófer.'**
+  String get regIntroBody;
+
+  /// Registro de chófer (app del chófer): la cuenta no vuelve a ser de pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'La cuenta deja de ser de pasajero y no se vuelve a usar para reservar viajes.'**
+  String get regIntroPointOneWay;
+
+  /// Registro de chófer (app del chófer): quien ya tiene reservas usa otro correo.
+  ///
+  /// In es, this message translates to:
+  /// **'Si ya hiciste reservas como pasajero con este correo, crea otra cuenta con un correo distinto para registrarte como chófer.'**
+  String get regIntroPointBookings;
+
+  /// Registro de chófer (app del chófer): qué viene después.
+  ///
+  /// In es, this message translates to:
+  /// **'Después completarás tus datos, los de tu vehículo y tus documentos. Luxelane los revisa antes de habilitarte.'**
+  String get regIntroPointReview;
+
+  /// Registro de chófer (app del chófer): botón para convertir la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Convertir en cuenta de chófer'**
+  String get regIntroStart;
+
+  /// Registro de chófer (app del chófer): título de la confirmación.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Convertir esta cuenta?'**
+  String get regIntroConfirmTitle;
+
+  /// Registro de chófer (app del chófer): texto de la confirmación.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta cuenta ya no se podrá usar como pasajero. No se puede deshacer.'**
+  String get regIntroConfirmBody;
+
+  /// Registro de chófer (app del chófer): confirmar la conversión.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, convertir'**
+  String get regIntroConfirmYes;
+
+  /// Registro de chófer (app del chófer): cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get regCancel;
+
+  /// Registro de chófer (app del chófer): cerrar sesión desde el registro.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get regSignOut;
+
+  /// Registro de chófer (app del chófer): título de la pantalla de la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu solicitud de chófer'**
+  String get regTitle;
+
+  /// Registro de chófer (app del chófer): encabezado del paso actual.
+  ///
+  /// In es, this message translates to:
+  /// **'Paso {current} de {total}: {title}'**
+  String regStepOf(int current, int total, String title);
+
+  /// Registro de chófer (app del chófer): etiqueta de accesibilidad de la barra de progreso.
+  ///
+  /// In es, this message translates to:
+  /// **'Progreso de la solicitud: paso {current} de {total}'**
+  String regProgressLabel(int current, int total);
+
+  /// Registro de chófer (app del chófer): título del paso de datos personales.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus datos'**
+  String get regStepPersonal;
+
+  /// Registro de chófer (app del chófer): título del paso del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vehículo'**
+  String get regStepVehicle;
+
+  /// Registro de chófer (app del chófer): título del paso de documentos.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos'**
+  String get regStepDocuments;
+
+  /// Registro de chófer (app del chófer): título del paso del segundo factor.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificación en dos pasos'**
+  String get regStepSecurity;
+
+  /// Registro de chófer (app del chófer): título del paso final.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen y envío'**
+  String get regStepSummary;
+
+  /// Registro de chófer (app del chófer): volver al paso anterior.
+  ///
+  /// In es, this message translates to:
+  /// **'Atrás'**
+  String get regBack;
+
+  /// Registro de chófer (app del chófer): ir al paso siguiente.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar'**
+  String get regContinue;
+
+  /// Registro de chófer (app del chófer): guardar el paso y seguir.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar y continuar'**
+  String get regSaveContinue;
+
+  /// Registro de chófer (app del chófer): reintentar la carga.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get regRetry;
+
+  /// Registro de chófer (app del chófer): etiqueta mientras se guarda.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardando…'**
+  String get regSaving;
+
+  /// Registro de chófer (app del chófer): campo nombre completo.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get regFullName;
+
+  /// Registro de chófer (app del chófer): campo número de documento de identidad.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de documento de identidad'**
+  String get regNationalId;
+
+  /// Registro de chófer (app del chófer): campo número de licencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de licencia de conducir'**
+  String get regLicenseNumber;
+
+  /// Registro de chófer (app del chófer): campo vencimiento de la licencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencimiento de la licencia'**
+  String get regLicenseExpiry;
+
+  /// Registro de chófer (app del chófer): botón para elegir una fecha.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir fecha'**
+  String get regPickDate;
+
+  /// Registro de chófer (app del chófer): validación: campo vacío.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa este campo'**
+  String get regFieldRequired;
+
+  /// Registro de chófer (app del chófer): validación del nombre.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe tu nombre completo (2 a 120 caracteres)'**
+  String get regFullNameInvalid;
+
+  /// Registro de chófer (app del chófer): validación de un número de documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Usa solo letras, números y guiones (4 a 20)'**
+  String get regIdInvalid;
+
+  /// Registro de chófer (app del chófer): validación: la fecha debe ser futura.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige una fecha posterior a hoy'**
+  String get regDateInFuture;
+
+  /// Registro de chófer (app del chófer): quién ve los números de documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus números de documento solo los ve el equipo de Luxelane que revisa la solicitud.'**
+  String get regPrivacyNote;
+
+  /// Registro de chófer (app del chófer): campo marca.
+  ///
+  /// In es, this message translates to:
+  /// **'Marca'**
+  String get regMake;
+
+  /// Registro de chófer (app del chófer): campo modelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Modelo'**
+  String get regModel;
+
+  /// Registro de chófer (app del chófer): campo año.
+  ///
+  /// In es, this message translates to:
+  /// **'Año'**
+  String get regYear;
+
+  /// Registro de chófer (app del chófer): validación del año.
+  ///
+  /// In es, this message translates to:
+  /// **'Año entre {min} y {max}'**
+  String regYearInvalid(int min, int max);
+
+  /// Registro de chófer (app del chófer): validación de marca o modelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Entre 1 y 40 caracteres'**
+  String get regTextInvalid;
+
+  /// Registro de chófer (app del chófer): campo color.
+  ///
+  /// In es, this message translates to:
+  /// **'Color'**
+  String get regColor;
+
+  /// Registro de chófer (app del chófer): campo color libre.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe el color'**
+  String get regColorOtherText;
+
+  /// Registro de chófer (app del chófer): validación del color libre.
+  ///
+  /// In es, this message translates to:
+  /// **'Entre 1 y 20 caracteres'**
+  String get regColorOtherInvalid;
+
+  /// Registro de chófer (app del chófer): campo placa.
+  ///
+  /// In es, this message translates to:
+  /// **'Placa'**
+  String get regPlate;
+
+  /// Registro de chófer (app del chófer): validación de la placa.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo letras y números (4 a 10)'**
+  String get regPlateInvalid;
+
+  /// Registro de chófer (app del chófer): campo tipo de vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de vehículo'**
+  String get regBodyType;
+
+  /// Registro de chófer (app del chófer): campo pasajeros.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajeros'**
+  String get regPassengers;
+
+  /// Registro de chófer (app del chófer): campo clase de servicio.
+  ///
+  /// In es, this message translates to:
+  /// **'Clase de servicio'**
+  String get regVehicleClass;
+
+  /// Registro de chófer (app del chófer): qué pasa al cambiar de vehículo tras aprobar.
+  ///
+  /// In es, this message translates to:
+  /// **'Si cambias de vehículo después de la aprobación, el nuevo queda en revisión hasta que Luxelane lo apruebe.'**
+  String get regVehicleChangeNote;
+
+  /// Registro de chófer (app del chófer): consejo general para las fotos.
+  ///
+  /// In es, this message translates to:
+  /// **'Sube cada documento con una foto nítida, con buena luz y sin reflejos.'**
+  String get regDocsIntro;
+
+  /// Registro de chófer (app del chófer): aviso cuando no hay requisitos configurados.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane aún no definió qué documentos se piden. Puedes completar tus datos; el envío se habilita cuando estén definidos.'**
+  String get regDocsNotConfigured;
+
+  /// Registro de chófer (app del chófer): etiqueta de documento obligatorio.
+  ///
+  /// In es, this message translates to:
+  /// **'Obligatorio'**
+  String get regDocRequired;
+
+  /// Registro de chófer (app del chófer): etiqueta de documento opcional.
+  ///
+  /// In es, this message translates to:
+  /// **'Opcional'**
+  String get regDocOptional;
+
+  /// Registro de chófer (app del chófer): fecha de vencimiento de un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Vence: {date}'**
+  String regDocExpires(String date);
+
+  /// Registro de chófer (app del chófer): motivo de rechazo de un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo: {reason}'**
+  String regDocRejectedReason(String reason);
+
+  /// Registro de chófer (app del chófer): subir un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Subir'**
+  String get regDocUpload;
+
+  /// Registro de chófer (app del chófer): volver a subir un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a subir'**
+  String get regDocReupload;
+
+  /// Registro de chófer (app del chófer): etiqueta mientras se sube.
+  ///
+  /// In es, this message translates to:
+  /// **'Subiendo…'**
+  String get regDocUploading;
+
+  /// Registro de chófer (app del chófer): en la web no se suben documentos ni fotos.
+  ///
+  /// In es, this message translates to:
+  /// **'Los documentos y las fotos se suben desde la app de Luxelane en tu teléfono. Aquí puedes completar tus datos y los del vehículo.'**
+  String get regWebUploadBlocked;
+
+  /// Registro de chófer (app del chófer): fallo al subir la foto.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo subir la foto. Revisa tu conexión y vuelve a intentarlo.'**
+  String get regUploadFailed;
+
+  /// Registro de chófer (app del chófer): la foto tiene poca resolución.
+  ///
+  /// In es, this message translates to:
+  /// **'La foto tiene poca resolución. Tómala más cerca y con buena luz.'**
+  String get regPhotoTooSmall;
+
+  /// Registro de chófer (app del chófer): no se pudo leer la foto.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos leer la foto. Vuelve a tomarla.'**
+  String get regPhotoUnreadable;
+
+  /// Registro de chófer (app del chófer): ayuda: documento de identidad o licencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Apoya el documento en una superficie lisa, con buena luz y sin reflejos. Que se vean las cuatro esquinas y que el texto se lea.'**
+  String get regHelpIdDocument;
+
+  /// Registro de chófer (app del chófer): ayuda: certificados y documentos en papel.
+  ///
+  /// In es, this message translates to:
+  /// **'Fotografía la hoja completa, de frente y sin sombras.'**
+  String get regHelpPaper;
+
+  /// Registro de chófer (app del chófer): ayuda: foto de perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cara de frente, sin gafas de sol ni gorra, con fondo claro.'**
+  String get regHelpProfile;
+
+  /// Registro de chófer (app del chófer): ayuda: foto en vivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Se toma en el momento con la cámara frontal. Mira a la cámara con buena luz.'**
+  String get regHelpLive;
+
+  /// Registro de chófer (app del chófer): ayuda: fotos exteriores del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'El vehículo completo desde este lado, con buena luz.'**
+  String get regHelpVehicle;
+
+  /// Registro de chófer (app del chófer): ayuda: fotos del interior.
+  ///
+  /// In es, this message translates to:
+  /// **'El interior completo desde este punto, con buena luz.'**
+  String get regHelpInterior;
+
+  /// Registro de chófer (app del chófer): ayuda: foto de la placa.
+  ///
+  /// In es, this message translates to:
+  /// **'La placa de frente, completa y legible.'**
+  String get regHelpPlate;
+
+  /// Registro de chófer (app del chófer): aviso del marco de encuadre (la cámara del sistema se abre a pantalla completa).
+  ///
+  /// In es, this message translates to:
+  /// **'La cámara se abre a pantalla completa: encuadra como en este marco.'**
+  String get regFrameHint;
+
+  /// Registro de chófer (app del chófer): etiqueta de accesibilidad del marco de encuadre.
+  ///
+  /// In es, this message translates to:
+  /// **'Guía de encuadre'**
+  String get regFrameLabel;
+
+  /// Registro de chófer (app del chófer): abrir la cámara.
+  ///
+  /// In es, this message translates to:
+  /// **'Tomar foto'**
+  String get regTakePhoto;
+
+  /// Registro de chófer (app del chófer): elegir de la galería.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir de la galería'**
+  String get regFromGallery;
+
+  /// Registro de chófer (app del chófer): la foto en vivo solo admite cámara.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta foto solo se toma con la cámara, no desde la galería.'**
+  String get regLiveCameraOnly;
+
+  /// Registro de chófer (app del chófer): título de la revisión de la foto.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa la foto'**
+  String get regReviewTitle;
+
+  /// Registro de chófer (app del chófer): qué comprobar antes de usar la foto.
+  ///
+  /// In es, this message translates to:
+  /// **'Comprueba que se lea bien y que no esté cortada.'**
+  String get regReviewHint;
+
+  /// Registro de chófer (app del chófer): etiqueta de accesibilidad de la vista previa.
+  ///
+  /// In es, this message translates to:
+  /// **'Vista previa de la foto'**
+  String get regPhotoPreviewLabel;
+
+  /// Registro de chófer (app del chófer): repetir la foto.
+  ///
+  /// In es, this message translates to:
+  /// **'Repetir'**
+  String get regRetake;
+
+  /// Registro de chófer (app del chófer): usar la foto.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar esta foto'**
+  String get regUsePhoto;
+
+  /// Registro de chófer (app del chófer): fecha de vencimiento del documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de vencimiento del documento'**
+  String get regExpiryNeeded;
+
+  /// Registro de chófer (app del chófer): falta la fecha de vencimiento.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la fecha de vencimiento'**
+  String get regExpiryRequired;
+
+  /// Registro de chófer (app del chófer): no se tomó ninguna foto.
+  ///
+  /// In es, this message translates to:
+  /// **'No se tomó ninguna foto.'**
+  String get regPhotoCancelled;
+
+  /// Registro de chófer (app del chófer): no se pudo abrir la cámara o la galería.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir la cámara. Revisa los permisos de la app.'**
+  String get regCameraUnavailable;
+
+  /// Registro de chófer (app del chófer): por qué se pide el segundo factor.
+  ///
+  /// In es, this message translates to:
+  /// **'Para enviar la solicitud y, después, conectarte, tu cuenta necesita la verificación en dos pasos con una app autenticadora.'**
+  String get regSecurityBody;
+
+  /// Registro de chófer (app del chófer): abrir el alta del segundo factor.
+  ///
+  /// In es, this message translates to:
+  /// **'Activar la verificación en dos pasos'**
+  String get regSecurityEnroll;
+
+  /// Registro de chófer (app del chófer): el segundo factor está listo.
+  ///
+  /// In es, this message translates to:
+  /// **'La verificación en dos pasos está activa en esta sesión.'**
+  String get regSecurityReady;
+
+  /// Registro de chófer (app del chófer): activado pero la sesión no lo usó.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya la tienes activada. Cierra sesión y vuelve a entrar con el código de tu app autenticadora para continuar.'**
+  String get regSecuritySignInAgain;
+
+  /// Registro de chófer (app del chófer): volver a comprobar el segundo factor.
+  ///
+  /// In es, this message translates to:
+  /// **'Comprobar de nuevo'**
+  String get regSecurityCheck;
+
+  /// Registro de chófer (app del chófer): falta el segundo factor para enviar.
+  ///
+  /// In es, this message translates to:
+  /// **'Antes de enviar, activa la verificación en dos pasos.'**
+  String get regSecurityNeededToSubmit;
+
+  /// Registro de chófer (app del chófer): introducción del resumen.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa tu solicitud antes de enviarla.'**
+  String get regSummaryIntro;
+
+  /// Registro de chófer (app del chófer): sección datos personales del resumen.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos personales'**
+  String get regSummaryPersonal;
+
+  /// Registro de chófer (app del chófer): sección vehículo del resumen.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get regSummaryVehicle;
+
+  /// Registro de chófer (app del chófer): progreso de documentos obligatorios.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos obligatorios listos: {done} de {total}'**
+  String regSummaryDocs(int done, int total);
+
+  /// Registro de chófer (app del chófer): documentos que faltan.
+  ///
+  /// In es, this message translates to:
+  /// **'Faltan: {list}'**
+  String regSummaryMissing(String list);
+
+  /// Registro de chófer (app del chófer): faltan pasos.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tus datos y los del vehículo para poder enviar.'**
+  String get regSummaryIncomplete;
+
+  /// Registro de chófer (app del chófer): editar una sección.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get regEdit;
+
+  /// Registro de chófer (app del chófer): enviar la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar solicitud'**
+  String get regSubmit;
+
+  /// Registro de chófer (app del chófer): aviso tras enviar.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud enviada.'**
+  String get regSubmitted;
+
+  /// Registro de chófer (app del chófer): solicitud enviada o en revisión.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud en revisión'**
+  String get regStatusReviewTitle;
+
+  /// Registro de chófer (app del chófer): qué pasa mientras se revisa (sin plazos).
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane está revisando tu solicitud. Recibirás un aviso en la app cuando haya una respuesta.'**
+  String get regStatusReviewBody;
+
+  /// Registro de chófer (app del chófer): Luxelane pidió cambios.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.'**
+  String get regStatusNeedsChanges;
+
+  /// Registro de chófer (app del chófer): solicitud rechazada.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud no aprobada'**
+  String get regStatusRejectedTitle;
+
+  /// Registro de chófer (app del chófer): la solicitud está cerrada.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta solicitud no fue aprobada y está cerrada.'**
+  String get regStatusRejectedBody;
+
+  /// Registro de chófer (app del chófer): actualizar el estado.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizar'**
+  String get regRefresh;
+
+  /// Registro de chófer (app del chófer): no se conecta sin segundo factor (mfaEnforced).
+  ///
+  /// In es, this message translates to:
+  /// **'Para conectarte, activa la verificación en dos pasos.'**
+  String get regOnlineNeedsMfa;
+
+  /// Registro de chófer (app del chófer): tiene segundo factor pero la sesión no lo usó.
+  ///
+  /// In es, this message translates to:
+  /// **'Para conectarte, cierra sesión y vuelve a entrar con el código de tu app autenticadora.'**
+  String get regOnlineNeedsMfaSignIn;
+
+  /// Registro de chófer (app del chófer): botón del aviso para activar el segundo factor.
+  ///
+  /// In es, this message translates to:
+  /// **'Activar'**
+  String get regOnlineMfaAction;
+
   /// Registro de chófer: nombre del documento de tipo profile_photo (app del chófer y panel).
   ///
   /// In es, this message translates to:
@@ -3721,7 +4225,7 @@ abstract class AppLocalizations {
   /// Registro de chófer: nombre del documento de tipo criminal_record (app del chófer y panel).
   ///
   /// In es, this message translates to:
-  /// **'Certificado de antecedentes'**
+  /// **'Certificado penal'**
   String get regDocTypeCriminalRecord;
 
   /// Registro de chófer: nombre del documento de tipo vehicle_ownership (app del chófer y panel).
@@ -4323,6 +4827,174 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No encontramos tu perfil. Vuelve a iniciar sesión.'**
   String get errorProfileNotFound;
+
+  /// Error del registro de chóferes: el servidor respondió «has_bookings».
+  ///
+  /// In es, this message translates to:
+  /// **'Esta cuenta ya tiene reservas como pasajero. Para registrarte como chófer, crea una cuenta con otro correo.'**
+  String get regErrorHasBookings;
+
+  /// Error del registro de chóferes: el servidor respondió «driver_account».
+  ///
+  /// In es, this message translates to:
+  /// **'Una cuenta de chófer no puede usar pagos de pasajero.'**
+  String get regErrorDriverAccount;
+
+  /// Error del registro de chóferes: el servidor respondió «not_a_rider».
+  ///
+  /// In es, this message translates to:
+  /// **'Esta cuenta no puede iniciar una solicitud de chófer.'**
+  String get regErrorNotARider;
+
+  /// Error del registro de chóferes: el servidor respondió «admin_account».
+  ///
+  /// In es, this message translates to:
+  /// **'Una cuenta de administración no puede registrarse como chófer.'**
+  String get regErrorAdminAccount;
+
+  /// Error del registro de chóferes: el servidor respondió «inactive_user».
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta está bloqueada.'**
+  String get regErrorInactiveUser;
+
+  /// Error del registro de chóferes: el servidor respondió «not_a_driver».
+  ///
+  /// In es, this message translates to:
+  /// **'Esta cuenta aún no tiene una solicitud de chófer.'**
+  String get regErrorNotADriver;
+
+  /// Error del registro de chóferes: el servidor respondió «locked_after_approval».
+  ///
+  /// In es, this message translates to:
+  /// **'Tus datos ya fueron aprobados; solo Luxelane puede cambiarlos.'**
+  String get regErrorLockedAfterApproval;
+
+  /// Error del registro de chóferes: el servidor respondió «application_closed».
+  ///
+  /// In es, this message translates to:
+  /// **'Esta solicitud está cerrada y ya no admite cambios.'**
+  String get regErrorApplicationClosed;
+
+  /// Error del registro de chóferes: el servidor respondió «plate_in_use».
+  ///
+  /// In es, this message translates to:
+  /// **'Esa placa ya está registrada en otro vehículo activo.'**
+  String get regErrorPlateInUse;
+
+  /// Error del registro de chóferes: el servidor respondió «invalid_file».
+  ///
+  /// In es, this message translates to:
+  /// **'El archivo no es una imagen válida o supera el tamaño permitido. Toma la foto otra vez.'**
+  String get regErrorInvalidFile;
+
+  /// Error del registro de chóferes: el servidor respondió «file_missing».
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos el archivo subido. Vuelve a intentarlo.'**
+  String get regErrorFileMissing;
+
+  /// Error del registro de chóferes: el servidor respondió «unexpected_version».
+  ///
+  /// In es, this message translates to:
+  /// **'El documento cambió mientras lo subías. Actualiza la pantalla y vuelve a intentarlo.'**
+  String get regErrorUnexpectedVersion;
+
+  /// Error del registro de chóferes: el servidor respondió «document_expired».
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de vencimiento ya pasó. Sube un documento vigente.'**
+  String get regErrorDocumentExpired;
+
+  /// Error del registro de chóferes: el servidor respondió «requirements_not_configured».
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no podemos recibir solicitudes: faltan por definir los documentos que se piden. Puedes guardar tus datos y enviar más adelante.'**
+  String get regErrorRequirementsNotConfigured;
+
+  /// Error del registro de chóferes: el servidor respondió «steps_incomplete».
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tus datos personales y los del vehículo antes de enviar.'**
+  String get regErrorStepsIncomplete;
+
+  /// Error del registro de chóferes: el servidor respondió «documents_missing».
+  ///
+  /// In es, this message translates to:
+  /// **'Faltan documentos obligatorios o hay alguno vencido o rechazado.'**
+  String get regErrorDocumentsMissing;
+
+  /// Error del registro de chóferes: el servidor respondió «invalid_request».
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los datos marcados e inténtalo de nuevo.'**
+  String get regErrorInvalidRequest;
+
+  /// Error del registro de chóferes: el servidor respondió «driver_docs_blocked».
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes documentos obligatorios vencidos. Súbelos de nuevo para volver a conectarte.'**
+  String get regErrorDriverDocsBlocked;
+
+  /// Error del registro de chóferes: el servidor respondió «profile_not_found».
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos tu perfil. Cierra sesión y vuelve a entrar.'**
+  String get regErrorProfileNotFound;
+
+  /// Error del registro de chóferes: el servidor respondió «documents_not_approved».
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede aprobar: hay documentos obligatorios sin aprobar o vencidos.'**
+  String get regErrorDocumentsNotApproved;
+
+  /// Error del registro de chóferes: el servidor respondió «not_decidable».
+  ///
+  /// In es, this message translates to:
+  /// **'La solicitud no está en un estado que admita esta decisión.'**
+  String get regErrorNotDecidable;
+
+  /// Error del registro de chóferes: el servidor respondió «not_reviewable».
+  ///
+  /// In es, this message translates to:
+  /// **'Este documento no se puede revisar en su estado actual.'**
+  String get regErrorNotReviewable;
+
+  /// Error del registro de chóferes: el servidor respondió «stale_version».
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer subió una versión más nueva. Actualiza y revisa la última.'**
+  String get regErrorStaleVersion;
+
+  /// Error del registro de chóferes: el servidor respondió «document_not_found».
+  ///
+  /// In es, this message translates to:
+  /// **'Ese documento no existe o aún no se subió.'**
+  String get regErrorDocumentNotFound;
+
+  /// Error del registro de chóferes: el servidor respondió «driver_not_found».
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos a ese chófer.'**
+  String get regErrorDriverNotFound;
+
+  /// Error del registro de chóferes: el servidor respondió «application_not_found».
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos esa solicitud.'**
+  String get regErrorApplicationNotFound;
+
+  /// Error del registro de chóferes: el servidor respondió «purge_disabled».
+  ///
+  /// In es, this message translates to:
+  /// **'El borrado de documentos está desactivado.'**
+  String get regErrorPurgeDisabled;
+
+  /// Error del registro de chóferes: el servidor respondió «(otro)».
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos completar este paso. Inténtalo de nuevo.'**
+  String get regErrorGeneric;
 
   /// Título del mapa para elegir el punto de recogida.
   ///

@@ -1,4 +1,5 @@
 import '../../features/business/data/business_lead_repository.dart';
+import '../../features/driver_registration/data/driver_registration_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -110,6 +111,9 @@ void _registerRepositories() {
   sl.registerLazySingleton<VehicleRepository>(
     () => VehicleRepositoryImpl(firestore: sl()),
   );
+  sl.registerLazySingleton<DriverRegistrationRepository>(
+    () => DriverRegistrationRepositoryImpl(functions: sl()),
+  );
 
   sl.registerLazySingleton<PaymentRepository>(
     () => PaymentRepositoryImpl(firestore: sl(), functions: sl()),
@@ -181,6 +185,7 @@ void _registerBlocs() {
       userRepository: sl(),
       vehicleRepository: sl(),
       mapsService: sl(),
+      registrationRepository: sl(),
     ),
   );
 }

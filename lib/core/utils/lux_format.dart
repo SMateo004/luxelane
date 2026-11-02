@@ -27,6 +27,12 @@ abstract class LuxFormat {
     return '${cents < 0 ? '-' : ''}Bs $whole$decimals'; // i18n-ignore: formato del importe
   }
 
+  /// Fecha sin hora en el idioma activo: «14 nov 2026», «Nov 14, 2026».
+  static String date(DateTime d, {String? locale}) {
+    L10n.ensureDateSymbols();
+    return DateFormat.yMMMd(locale ?? L10n.code).format(d);
+  }
+
   /// «18:30» en español y portugués; «6:30 PM» en inglés.
   static String time(DateTime d, {String? locale}) {
     final l = locale ?? L10n.code;

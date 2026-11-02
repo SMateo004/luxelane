@@ -13,7 +13,6 @@ import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
-import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/services/presentation/pages/airport_transfer_page.dart';
 import '../../features/services/presentation/pages/hourly_charter_page.dart';
@@ -26,6 +25,7 @@ import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
 import '../../features/business/presentation/pages/business_page.dart';
+import '../../features/driver_registration/presentation/pages/driver_registration_entry.dart';
 import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../l10n/l10n.dart';
 import '../../core/widgets/components.dart';
@@ -191,7 +191,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         ),
         GoRoute(
           path: '/driver/onboarding',
-          pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+          pageBuilder: (c, s) => _fade(const DriverRegistrationEntry(), s),
         ),
         GoRoute(
           path: '/empresas',

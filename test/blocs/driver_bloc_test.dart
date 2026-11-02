@@ -8,7 +8,11 @@ import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/repositories/repositories.dart';
 import 'package:luxelane/core/services/maps_service.dart';
 import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
+import 'package:luxelane/features/driver_registration/data/driver_registration_repository.dart';
+import 'package:luxelane/l10n/l10n.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../driver_registration/fakes.dart';
 
 class MockBookingRepository extends Mock implements BookingRepository {}
 
@@ -149,6 +153,110 @@ void main() {
         vehicleRepository: vehicleRepo,
         mapsService: mapsService,
       );
+
+  group('registro de chóferes (B1)', () {
+    blocTest<DriverBloc, DriverState>(
+      'una cuenta de pasajero va a la pantalla previa de la solicitud',
+      build: () {
+        when(() => userRepo.getUserById(any())).thenAnswer((_) async => Right(
+            User(
+                id: 'r',
+                email: 'r@example.com',
+                phone: '',
+                displayName: 'Ana',
+                role: UserRole.rider,
+                createdAt: _now,
+                isVerified: true,
+                isActive: true,
+                fcmTokens: const [])));
+        return bloc();
+      },
+      act: (b) => b.add(const DriverStarted(userId: 'r')),
+      expect: () => [isA<DriverApplicationStartRequired>()],
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'un chófer sin verificar (aunque tenga licencia) va al registro por pasos',
+      build: () {
+        when(() => userRepo.getDriverProfile(any())).thenAnswer((_) async =>
+            Right(DriverProfile(
+                userId: 'driver-1',
+                licenseNumber: 'DL-001',
+                licenseExpiry: DateTime(2027),
+                vehicleId: 'v',
+                documentsVerified: false,
+                rating: 0,
+                totalRides: 0,
+                isAvailable: false)));
+        return bloc();
+      },
+      act: (b) => b.add(const DriverStarted(userId: 'driver-1')),
+      expect: () => [isA<DriverOnboardingRequired>()],
+    );
+
+    DriverBloc withRegistration(FakeRegistrationRepository reg) {
+      when(() => userRepo.setDriverAvailability(
+            userId: any(named: 'userId'),
+            isAvailable: any(named: 'isAvailable'),
+          )).thenAnswer((_) async => const Right(null));
+      return DriverBloc(
+        bookingRepository: bookingRepo,
+        tripFlowRepository: tripFlow,
+        userRepository: userRepo,
+        vehicleRepository: vehicleRepo,
+        mapsService: mapsService,
+        registrationRepository: reg,
+      )..emit(DriverLoaded(
+          user: _driverUser,
+          profile: _driverProfile,
+          isAvailable: false,
+          bookings: const [],
+        ));
+    }
+
+    blocTest<DriverBloc, DriverState>(
+      'con mfaEnforced y sin segundo factor no se conecta y guía al alta',
+      build: () => withRegistration(
+          FakeRegistrationRepository(fakeApplication(mfaEnforced: true))),
+      act: (b) => b.add(const DriverAvailabilityToggled(
+          userId: 'driver-1', isAvailable: true)),
+      expect: () => [
+        isA<DriverLoaded>()
+            .having((s) => s.isAvailable, 'isAvailable', false)
+            .having((s) => s.mfaBlock, 'mfaBlock', SecondFactorState.none)
+            .having((s) => s.notice, 'notice', L10n.current.regOnlineNeedsMfa),
+      ],
+      verify: (_) => verifyNever(() => userRepo.setDriverAvailability(
+          userId: any(named: 'userId'),
+          isAvailable: any(named: 'isAvailable'))),
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'con mfaEnforced y el TOTP dado de alta pero no en la sesión: volver a entrar',
+      build: () => withRegistration(
+          FakeRegistrationRepository(fakeApplication(mfaEnforced: true))
+            ..factor = SecondFactorState.enrolledNotInSession),
+      act: (b) => b.add(const DriverAvailabilityToggled(
+          userId: 'driver-1', isAvailable: true)),
+      expect: () => [
+        isA<DriverLoaded>().having((s) => s.mfaBlock, 'mfaBlock',
+            SecondFactorState.enrolledNotInSession),
+      ],
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'con el segundo factor en la sesión (o sin mfaEnforced) se conecta',
+      build: () => withRegistration(
+          FakeRegistrationRepository(fakeApplication(mfaEnforced: true))
+            ..factor = SecondFactorState.inSession),
+      act: (b) => b.add(const DriverAvailabilityToggled(
+          userId: 'driver-1', isAvailable: true)),
+      expect: () => [
+        isA<DriverLoaded>().having((s) => s.isAvailable, 'isAvailable', true),
+        isA<DriverLoaded>().having((s) => s.isTracking, 'isTracking', true),
+      ],
+    );
+  });
 
   group('DriverBloc', () {
     blocTest<DriverBloc, DriverState>(

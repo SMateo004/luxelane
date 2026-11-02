@@ -1740,88 +1740,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get driverQueueConnectToAccept => 'Fique online para aceitar';
 
   @override
-  String get driverOnboardingDefaultColor => 'Preto';
-
-  @override
-  String get driverOnboardingVehicleError =>
-      'Não foi possível cadastrar o veículo. Verifique os dados e tente novamente.';
-
-  @override
-  String get driverOnboardingLicenseError =>
-      'Não foi possível salvar sua habilitação. Verifique sua conexão e tente novamente.';
-
-  @override
-  String get driverOnboardingGenericError =>
-      'Não foi possível concluir o cadastro. Tente novamente.';
-
-  @override
   String get driverSignOut => 'Sair';
 
   @override
-  String get driverOnboardingVehicleTitle => 'Seu veículo';
-
-  @override
-  String get driverOnboardingVehicleSubtitle =>
-      'Cadastre o veículo que você vai dirigir.';
-
-  @override
   String get driverContinue => 'Continuar';
-
-  @override
-  String get driverOnboardingLicenseTitle => 'Carteira de habilitação';
-
-  @override
-  String get driverOnboardingLicenseSubtitle =>
-      'Seus documentos serão analisados antes que você possa aceitar viagens.';
-
-  @override
-  String get driverOnboardingReviewNotice =>
-      'Um administrador verificará seus documentos antes que você possa ficar online.';
-
-  @override
-  String get driverOnboardingBack => 'Voltar';
-
-  @override
-  String get driverOnboardingSubmit => 'Enviar';
-
-  @override
-  String get driverOnboardingClass => 'Categoria do veículo';
-
-  @override
-  String get driverOnboardingMake => 'Marca';
-
-  @override
-  String get driverOnboardingModel => 'Modelo';
-
-  @override
-  String get driverOnboardingPlate => 'Placa';
-
-  @override
-  String get driverOnboardingYear => 'Ano';
-
-  @override
-  String get driverOnboardingColor => 'Cor';
 
   @override
   String get driverFieldRequired => 'Obrigatório';
 
   @override
   String get driverFieldInvalid => 'Inválido';
-
-  @override
-  String get driverOnboardingLicenseNumber => 'Número da habilitação';
-
-  @override
-  String get driverOnboardingLicenseExpiry => 'Data de validade (MM/AAAA)';
-
-  @override
-  String get driverOnboardingExpiryFormat => 'Use MM/AAAA';
-
-  @override
-  String get driverOnboardingInvalidMonth => 'Mês inválido';
-
-  @override
-  String get driverOnboardingLicenseExpired => 'Habilitação vencida';
 
   @override
   String get driverEarningsTitle => 'Ganhos';
@@ -2046,6 +1974,369 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get driverNavProfile => 'Perfil';
+
+  @override
+  String get regIntroTitle => 'Dirigir com a Luxelane';
+
+  @override
+  String get regIntroBody =>
+      'Para se cadastrar como motorista, esta conta passa a ser uma conta de motorista.';
+
+  @override
+  String get regIntroPointOneWay =>
+      'A conta deixa de ser de passageiro e não volta a ser usada para reservar viagens.';
+
+  @override
+  String get regIntroPointBookings =>
+      'Se você já fez reservas como passageiro com este e-mail, crie outra conta com um e-mail diferente para se cadastrar como motorista.';
+
+  @override
+  String get regIntroPointReview =>
+      'Depois você vai completar seus dados, os do seu veículo e seus documentos. A Luxelane os revisa antes de habilitar você.';
+
+  @override
+  String get regIntroStart => 'Converter em conta de motorista';
+
+  @override
+  String get regIntroConfirmTitle => 'Converter esta conta?';
+
+  @override
+  String get regIntroConfirmBody =>
+      'Esta conta não poderá mais ser usada como passageiro. Não é possível desfazer.';
+
+  @override
+  String get regIntroConfirmYes => 'Sim, converter';
+
+  @override
+  String get regCancel => 'Cancelar';
+
+  @override
+  String get regSignOut => 'Sair';
+
+  @override
+  String get regTitle => 'Sua solicitação de motorista';
+
+  @override
+  String regStepOf(int current, int total, String title) {
+    return 'Etapa $current de $total: $title';
+  }
+
+  @override
+  String regProgressLabel(int current, int total) {
+    return 'Progresso da solicitação: etapa $current de $total';
+  }
+
+  @override
+  String get regStepPersonal => 'Seus dados';
+
+  @override
+  String get regStepVehicle => 'Seu veículo';
+
+  @override
+  String get regStepDocuments => 'Documentos';
+
+  @override
+  String get regStepSecurity => 'Verificação em duas etapas';
+
+  @override
+  String get regStepSummary => 'Resumo e envio';
+
+  @override
+  String get regBack => 'Voltar';
+
+  @override
+  String get regContinue => 'Continuar';
+
+  @override
+  String get regSaveContinue => 'Salvar e continuar';
+
+  @override
+  String get regRetry => 'Tentar novamente';
+
+  @override
+  String get regSaving => 'Salvando…';
+
+  @override
+  String get regFullName => 'Nome completo';
+
+  @override
+  String get regNationalId => 'Número do documento de identidade';
+
+  @override
+  String get regLicenseNumber => 'Número da carteira de motorista';
+
+  @override
+  String get regLicenseExpiry => 'Vencimento da carteira';
+
+  @override
+  String get regPickDate => 'Escolher data';
+
+  @override
+  String get regFieldRequired => 'Preencha este campo';
+
+  @override
+  String get regFullNameInvalid =>
+      'Escreva seu nome completo (2 a 120 caracteres)';
+
+  @override
+  String get regIdInvalid => 'Use apenas letras, números e hífens (4 a 20)';
+
+  @override
+  String get regDateInFuture => 'Escolha uma data posterior a hoje';
+
+  @override
+  String get regPrivacyNote =>
+      'Seus números de documento só são vistos pela equipe da Luxelane que revisa a solicitação.';
+
+  @override
+  String get regMake => 'Marca';
+
+  @override
+  String get regModel => 'Modelo';
+
+  @override
+  String get regYear => 'Ano';
+
+  @override
+  String regYearInvalid(int min, int max) {
+    return 'Ano entre $min e $max';
+  }
+
+  @override
+  String get regTextInvalid => 'Entre 1 e 40 caracteres';
+
+  @override
+  String get regColor => 'Cor';
+
+  @override
+  String get regColorOtherText => 'Escreva a cor';
+
+  @override
+  String get regColorOtherInvalid => 'Entre 1 e 20 caracteres';
+
+  @override
+  String get regPlate => 'Placa';
+
+  @override
+  String get regPlateInvalid => 'Apenas letras e números (4 a 10)';
+
+  @override
+  String get regBodyType => 'Tipo de veículo';
+
+  @override
+  String get regPassengers => 'Passageiros';
+
+  @override
+  String get regVehicleClass => 'Classe de serviço';
+
+  @override
+  String get regVehicleChangeNote =>
+      'Se você trocar de veículo depois da aprovação, o novo fica em análise até a Luxelane aprová-lo.';
+
+  @override
+  String get regDocsIntro =>
+      'Envie cada documento com uma foto nítida, com boa luz e sem reflexos.';
+
+  @override
+  String get regDocsNotConfigured =>
+      'A Luxelane ainda não definiu quais documentos são exigidos. Você pode completar seus dados; o envio é liberado quando estiverem definidos.';
+
+  @override
+  String get regDocRequired => 'Obrigatório';
+
+  @override
+  String get regDocOptional => 'Opcional';
+
+  @override
+  String regDocExpires(String date) {
+    return 'Vence em: $date';
+  }
+
+  @override
+  String regDocRejectedReason(String reason) {
+    return 'Motivo: $reason';
+  }
+
+  @override
+  String get regDocUpload => 'Enviar';
+
+  @override
+  String get regDocReupload => 'Enviar novamente';
+
+  @override
+  String get regDocUploading => 'Enviando…';
+
+  @override
+  String get regWebUploadBlocked =>
+      'Os documentos e as fotos são enviados pelo app da Luxelane no seu celular. Aqui você pode completar seus dados e os do veículo.';
+
+  @override
+  String get regUploadFailed =>
+      'Não foi possível enviar a foto. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get regPhotoTooSmall =>
+      'A foto tem pouca resolução. Tire-a mais de perto e com boa luz.';
+
+  @override
+  String get regPhotoUnreadable =>
+      'Não conseguimos ler a foto. Tire-a novamente.';
+
+  @override
+  String get regHelpIdDocument =>
+      'Apoie o documento em uma superfície lisa, com boa luz e sem reflexos. As quatro pontas devem aparecer e o texto deve ser legível.';
+
+  @override
+  String get regHelpPaper =>
+      'Fotografe a folha inteira, de frente e sem sombras.';
+
+  @override
+  String get regHelpProfile =>
+      'Seu rosto de frente, sem óculos escuros nem boné, com fundo claro.';
+
+  @override
+  String get regHelpLive =>
+      'É tirada na hora com a câmera frontal. Olhe para a câmera com boa luz.';
+
+  @override
+  String get regHelpVehicle => 'O veículo inteiro deste lado, com boa luz.';
+
+  @override
+  String get regHelpInterior => 'O interior inteiro deste ponto, com boa luz.';
+
+  @override
+  String get regHelpPlate => 'A placa de frente, completa e legível.';
+
+  @override
+  String get regFrameHint =>
+      'A câmera abre em tela cheia: enquadre como neste guia.';
+
+  @override
+  String get regFrameLabel => 'Guia de enquadramento';
+
+  @override
+  String get regTakePhoto => 'Tirar foto';
+
+  @override
+  String get regFromGallery => 'Escolher da galeria';
+
+  @override
+  String get regLiveCameraOnly =>
+      'Esta foto só pode ser tirada com a câmera, não da galeria.';
+
+  @override
+  String get regReviewTitle => 'Confira a foto';
+
+  @override
+  String get regReviewHint => 'Confira se está legível e não cortada.';
+
+  @override
+  String get regPhotoPreviewLabel => 'Pré-visualização da foto';
+
+  @override
+  String get regRetake => 'Repetir';
+
+  @override
+  String get regUsePhoto => 'Usar esta foto';
+
+  @override
+  String get regExpiryNeeded => 'Data de vencimento do documento';
+
+  @override
+  String get regExpiryRequired => 'Informe a data de vencimento';
+
+  @override
+  String get regPhotoCancelled => 'Nenhuma foto foi tirada.';
+
+  @override
+  String get regCameraUnavailable =>
+      'Não foi possível abrir a câmera. Verifique as permissões do app.';
+
+  @override
+  String get regSecurityBody =>
+      'Para enviar a solicitação e, depois, ficar on-line, sua conta precisa da verificação em duas etapas com um app autenticador.';
+
+  @override
+  String get regSecurityEnroll => 'Ativar a verificação em duas etapas';
+
+  @override
+  String get regSecurityReady =>
+      'A verificação em duas etapas está ativa nesta sessão.';
+
+  @override
+  String get regSecuritySignInAgain =>
+      'Você já a ativou. Saia e entre novamente com o código do seu app autenticador para continuar.';
+
+  @override
+  String get regSecurityCheck => 'Verificar de novo';
+
+  @override
+  String get regSecurityNeededToSubmit =>
+      'Antes de enviar, ative a verificação em duas etapas.';
+
+  @override
+  String get regSummaryIntro => 'Revise sua solicitação antes de enviá-la.';
+
+  @override
+  String get regSummaryPersonal => 'Dados pessoais';
+
+  @override
+  String get regSummaryVehicle => 'Veículo';
+
+  @override
+  String regSummaryDocs(int done, int total) {
+    return 'Documentos obrigatórios prontos: $done de $total';
+  }
+
+  @override
+  String regSummaryMissing(String list) {
+    return 'Faltam: $list';
+  }
+
+  @override
+  String get regSummaryIncomplete =>
+      'Complete seus dados e os do veículo para poder enviar.';
+
+  @override
+  String get regEdit => 'Editar';
+
+  @override
+  String get regSubmit => 'Enviar solicitação';
+
+  @override
+  String get regSubmitted => 'Solicitação enviada.';
+
+  @override
+  String get regStatusReviewTitle => 'Solicitação em análise';
+
+  @override
+  String get regStatusReviewBody =>
+      'A Luxelane está revisando sua solicitação. Você receberá um aviso no app quando houver uma resposta.';
+
+  @override
+  String get regStatusNeedsChanges =>
+      'A Luxelane pediu ajustes na sua solicitação. Revise os documentos destacados e envie novamente.';
+
+  @override
+  String get regStatusRejectedTitle => 'Solicitação não aprovada';
+
+  @override
+  String get regStatusRejectedBody =>
+      'Esta solicitação não foi aprovada e está encerrada.';
+
+  @override
+  String get regRefresh => 'Atualizar';
+
+  @override
+  String get regOnlineNeedsMfa =>
+      'Para ficar on-line, ative a verificação em duas etapas.';
+
+  @override
+  String get regOnlineNeedsMfaSignIn =>
+      'Para ficar on-line, saia e entre novamente com o código do seu app autenticador.';
+
+  @override
+  String get regOnlineMfaAction => 'Ativar';
 
   @override
   String get regDocTypeProfilePhoto => 'Foto de perfil';
@@ -2407,6 +2698,115 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get errorProfileNotFound =>
       'Não encontramos seu perfil. Entre novamente.';
+
+  @override
+  String get regErrorHasBookings =>
+      'Esta conta já tem reservas como passageiro. Para se cadastrar como motorista, crie uma conta com outro e-mail.';
+
+  @override
+  String get regErrorDriverAccount =>
+      'Uma conta de motorista não pode usar pagamentos de passageiro.';
+
+  @override
+  String get regErrorNotARider =>
+      'Esta conta não pode iniciar uma solicitação de motorista.';
+
+  @override
+  String get regErrorAdminAccount =>
+      'Uma conta de administração não pode se cadastrar como motorista.';
+
+  @override
+  String get regErrorInactiveUser => 'Sua conta está bloqueada.';
+
+  @override
+  String get regErrorNotADriver =>
+      'Esta conta ainda não tem uma solicitação de motorista.';
+
+  @override
+  String get regErrorLockedAfterApproval =>
+      'Seus dados já foram aprovados; só a Luxelane pode alterá-los.';
+
+  @override
+  String get regErrorApplicationClosed =>
+      'Esta solicitação está encerrada e não aceita mais alterações.';
+
+  @override
+  String get regErrorPlateInUse =>
+      'Essa placa já está cadastrada em outro veículo ativo.';
+
+  @override
+  String get regErrorInvalidFile =>
+      'O arquivo não é uma imagem válida ou excede o tamanho permitido. Tire a foto novamente.';
+
+  @override
+  String get regErrorFileMissing =>
+      'Não encontramos o arquivo enviado. Tente novamente.';
+
+  @override
+  String get regErrorUnexpectedVersion =>
+      'O documento mudou enquanto você o enviava. Atualize a tela e tente novamente.';
+
+  @override
+  String get regErrorDocumentExpired =>
+      'A data de vencimento já passou. Envie um documento válido.';
+
+  @override
+  String get regErrorRequirementsNotConfigured =>
+      'Ainda não podemos receber solicitações: faltam definir os documentos exigidos. Você pode salvar seus dados e enviar depois.';
+
+  @override
+  String get regErrorStepsIncomplete =>
+      'Complete seus dados pessoais e os do veículo antes de enviar.';
+
+  @override
+  String get regErrorDocumentsMissing =>
+      'Faltam documentos obrigatórios ou há algum vencido ou recusado.';
+
+  @override
+  String get regErrorInvalidRequest =>
+      'Revise os dados destacados e tente novamente.';
+
+  @override
+  String get regErrorDriverDocsBlocked =>
+      'Você tem documentos obrigatórios vencidos. Envie-os novamente para voltar a ficar on-line.';
+
+  @override
+  String get regErrorProfileNotFound =>
+      'Não encontramos seu perfil. Saia e entre novamente.';
+
+  @override
+  String get regErrorDocumentsNotApproved =>
+      'Não é possível aprovar: há documentos obrigatórios não aprovados ou vencidos.';
+
+  @override
+  String get regErrorNotDecidable =>
+      'A solicitação não está em um estado que permita esta decisão.';
+
+  @override
+  String get regErrorNotReviewable =>
+      'Este documento não pode ser revisado no estado atual.';
+
+  @override
+  String get regErrorStaleVersion =>
+      'O motorista enviou uma versão mais nova. Atualize e revise a última.';
+
+  @override
+  String get regErrorDocumentNotFound =>
+      'Esse documento não existe ou ainda não foi enviado.';
+
+  @override
+  String get regErrorDriverNotFound => 'Não encontramos esse motorista.';
+
+  @override
+  String get regErrorApplicationNotFound => 'Não encontramos essa solicitação.';
+
+  @override
+  String get regErrorPurgeDisabled =>
+      'A exclusão de documentos está desativada.';
+
+  @override
+  String get regErrorGeneric =>
+      'Não foi possível concluir esta etapa. Tente novamente.';
 
   @override
   String get homePickOriginTitle => 'Selecionar ponto de embarque';

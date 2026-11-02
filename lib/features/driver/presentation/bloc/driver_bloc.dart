@@ -11,6 +11,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../driver_registration/data/driver_registration_repository.dart';
 
 // ---------------------------------------------------------------------------
 // Events
@@ -187,6 +188,7 @@ class DriverLoaded extends DriverState {
     this.noticeSeq = 0,
     this.updateRequired,
     this.updateSeq = 0,
+    this.mfaBlock,
   });
 
   final User user;
@@ -214,6 +216,10 @@ class DriverLoaded extends DriverState {
   /// un viaje; [updateSeq] sube con cada aviso.
   final AppUpdateRequiredFailure? updateRequired;
   final int updateSeq;
+
+  /// Con config/security.mfaEnforced, no se conecta sin el segundo factor
+  /// en la sesión: qué le falta (null si nada).
+  final SecondFactorState? mfaBlock;
 
   /// Solicitudes que este chófer puede atender: de su clase de vehículo y
   /// sin descartar.
@@ -330,6 +336,7 @@ class DriverLoaded extends DriverState {
         notice,
         noticeSeq,
         updateSeq,
+        mfaBlock,
       ];
 
   DriverLoaded copyWith({
@@ -342,6 +349,8 @@ class DriverLoaded extends DriverState {
     List<String>? declinedIds,
     String? notice,
     AppUpdateRequiredFailure? updateRequired,
+    SecondFactorState? mfaBlock,
+    bool clearMfaBlock = false,
   }) =>
       DriverLoaded(
         user: user ?? this.user,
@@ -356,11 +365,20 @@ class DriverLoaded extends DriverState {
         noticeSeq: notice != null ? noticeSeq + 1 : noticeSeq,
         updateRequired: updateRequired ?? this.updateRequired,
         updateSeq: updateRequired != null ? updateSeq + 1 : updateSeq,
+        mfaBlock: clearMfaBlock ? null : (mfaBlock ?? this.mfaBlock),
       );
 }
 
+/// Chófer sin verificar (o sin perfil): registro por pasos con las
+/// callables (B1).
 class DriverOnboardingRequired extends DriverState {
   const DriverOnboardingRequired();
+}
+
+/// Cuenta de pasajero en la app del chófer: antes de abrir la solicitud
+/// (startDriverApplication) se explica que la cuenta pasa a ser de chófer.
+class DriverApplicationStartRequired extends DriverState {
+  const DriverApplicationStartRequired();
 }
 
 class DriverError extends DriverState {
@@ -381,7 +399,9 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     required UserRepository userRepository,
     required VehicleRepository vehicleRepository,
     required MapsService mapsService,
+    DriverRegistrationRepository? registrationRepository,
   })  : _bookingRepo = bookingRepository,
+        _registration = registrationRepository,
         _tripFlow = tripFlowRepository,
         _userRepo = userRepository,
         _vehicleRepo = vehicleRepository,
@@ -416,6 +436,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   final UserRepository _userRepo;
   final VehicleRepository _vehicleRepo;
   final MapsService _mapsService;
+
+  /// Para saber si config/security.mfaEnforced aplica (la app no lee
+  /// config/security) y si la sesión tiene el segundo factor.
+  final DriverRegistrationRepository? _registration;
+  bool? _mfaEnforced;
   StreamSubscription<Position>? _positionSub;
 
   /// Última posición del chófer: el servidor la guarda al llegar,
@@ -434,6 +459,12 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       final userResult = await _userRepo.getUserById(event.userId);
       final user = userResult.fold((f) => null, (u) => u);
 
+      // Cuenta de pasajero: puede abrir su solicitud (A10). Admin u otra
+      // cosa: no es una cuenta de chófer.
+      if (user != null && user.role == UserRole.rider) {
+        emit(const DriverApplicationStartRequired());
+        return;
+      }
       if (user == null || user.role != UserRole.driver) {
         emit(DriverError(L10n.current.driverErrorNotEnabled));
         return;
@@ -443,8 +474,9 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       final profileResult = await _userRepo.getDriverProfile(event.userId);
       DriverProfile? profile = profileResult.fold((_) => null, (p) => p);
 
-      // If no real profile, driver must complete onboarding first
-      if (profile == null || profile.licenseNumber.isEmpty) {
+      // Sin perfil o sin verificar: registro por pasos (B1). Lo que aprueba
+      // Luxelane es documentsVerified; la licencia ya no se escribe aquí.
+      if (profile == null || !profile.documentsVerified) {
         emit(const DriverOnboardingRequired());
         return;
       }
@@ -569,6 +601,21 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       );
       return;
     }
+    if (event.isAvailable && state is DriverLoaded) {
+      final block = await _mfaBlockForOnline();
+      if (block != null && state is DriverLoaded) {
+        emit((state as DriverLoaded).copyWith(
+          mfaBlock: block,
+          notice: block == SecondFactorState.none
+              ? L10n.current.regOnlineNeedsMfa
+              : L10n.current.regOnlineNeedsMfaSignIn,
+        ));
+        return;
+      }
+      if (state is DriverLoaded && (state as DriverLoaded).mfaBlock != null) {
+        emit((state as DriverLoaded).copyWith(clearMfaBlock: true));
+      }
+    }
     final result = await _userRepo.setDriverAvailability(
       userId: event.userId,
       isAvailable: event.isAvailable,
@@ -593,6 +640,20 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       // Con un viaje en curso se sigue compartiendo hasta terminarlo.
       add(const DriverLocationTrackingStopped());
     }
+  }
+
+  /// Con mfaEnforced, qué le falta para conectarse (null si nada). Sin red
+  /// para saberlo, no bloquea: acceptBooking lo exige igual en el servidor.
+  Future<SecondFactorState?> _mfaBlockForOnline() async {
+    final reg = _registration;
+    if (reg == null) return null;
+    if (_mfaEnforced == null) {
+      final r = await reg.getApplication();
+      _mfaEnforced = r.fold((_) => null, (v) => v.mfaEnforced);
+    }
+    if (_mfaEnforced != true) return null;
+    final s = await reg.secondFactor();
+    return s == SecondFactorState.inSession ? null : s;
   }
 
   Future<void> _onStartTracking(

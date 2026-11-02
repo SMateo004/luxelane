@@ -340,5 +340,173 @@
     "es": "No encontramos tu perfil. Vuelve a iniciar sesión.",
     "en": "We could not find your profile. Please sign in again.",
     "pt": "Não encontramos seu perfil. Entre novamente."
+  },
+  "regErrorHasBookings": {
+    "description": "Error del registro de chóferes: el servidor respondió «has_bookings».",
+    "es": "Esta cuenta ya tiene reservas como pasajero. Para registrarte como chófer, crea una cuenta con otro correo.",
+    "en": "This account already has bookings as a passenger. To sign up as a chauffeur, create an account with a different email.",
+    "pt": "Esta conta já tem reservas como passageiro. Para se cadastrar como motorista, crie uma conta com outro e-mail."
+  },
+  "regErrorDriverAccount": {
+    "description": "Error del registro de chóferes: el servidor respondió «driver_account».",
+    "es": "Una cuenta de chófer no puede usar pagos de pasajero.",
+    "en": "A chauffeur account cannot use passenger payments.",
+    "pt": "Uma conta de motorista não pode usar pagamentos de passageiro."
+  },
+  "regErrorNotARider": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_a_rider».",
+    "es": "Esta cuenta no puede iniciar una solicitud de chófer.",
+    "en": "This account cannot start a chauffeur application.",
+    "pt": "Esta conta não pode iniciar uma solicitação de motorista."
+  },
+  "regErrorAdminAccount": {
+    "description": "Error del registro de chóferes: el servidor respondió «admin_account».",
+    "es": "Una cuenta de administración no puede registrarse como chófer.",
+    "en": "An administrator account cannot sign up as a chauffeur.",
+    "pt": "Uma conta de administração não pode se cadastrar como motorista."
+  },
+  "regErrorInactiveUser": {
+    "description": "Error del registro de chóferes: el servidor respondió «inactive_user».",
+    "es": "Tu cuenta está bloqueada.",
+    "en": "Your account is blocked.",
+    "pt": "Sua conta está bloqueada."
+  },
+  "regErrorNotADriver": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_a_driver».",
+    "es": "Esta cuenta aún no tiene una solicitud de chófer.",
+    "en": "This account does not have a chauffeur application yet.",
+    "pt": "Esta conta ainda não tem uma solicitação de motorista."
+  },
+  "regErrorLockedAfterApproval": {
+    "description": "Error del registro de chóferes: el servidor respondió «locked_after_approval».",
+    "es": "Tus datos ya fueron aprobados; solo Luxelane puede cambiarlos.",
+    "en": "Your details have already been approved; only Luxelane can change them.",
+    "pt": "Seus dados já foram aprovados; só a Luxelane pode alterá-los."
+  },
+  "regErrorApplicationClosed": {
+    "description": "Error del registro de chóferes: el servidor respondió «application_closed».",
+    "es": "Esta solicitud está cerrada y ya no admite cambios.",
+    "en": "This application is closed and can no longer be changed.",
+    "pt": "Esta solicitação está encerrada e não aceita mais alterações."
+  },
+  "regErrorPlateInUse": {
+    "description": "Error del registro de chóferes: el servidor respondió «plate_in_use».",
+    "es": "Esa placa ya está registrada en otro vehículo activo.",
+    "en": "That license plate is already registered to another active vehicle.",
+    "pt": "Essa placa já está cadastrada em outro veículo ativo."
+  },
+  "regErrorInvalidFile": {
+    "description": "Error del registro de chóferes: el servidor respondió «invalid_file».",
+    "es": "El archivo no es una imagen válida o supera el tamaño permitido. Toma la foto otra vez.",
+    "en": "The file is not a valid image or is too large. Take the photo again.",
+    "pt": "O arquivo não é uma imagem válida ou excede o tamanho permitido. Tire a foto novamente."
+  },
+  "regErrorFileMissing": {
+    "description": "Error del registro de chóferes: el servidor respondió «file_missing».",
+    "es": "No encontramos el archivo subido. Vuelve a intentarlo.",
+    "en": "We couldn't find the uploaded file. Try again.",
+    "pt": "Não encontramos o arquivo enviado. Tente novamente."
+  },
+  "regErrorUnexpectedVersion": {
+    "description": "Error del registro de chóferes: el servidor respondió «unexpected_version».",
+    "es": "El documento cambió mientras lo subías. Actualiza la pantalla y vuelve a intentarlo.",
+    "en": "The document changed while you were uploading it. Refresh the screen and try again.",
+    "pt": "O documento mudou enquanto você o enviava. Atualize a tela e tente novamente."
+  },
+  "regErrorDocumentExpired": {
+    "description": "Error del registro de chóferes: el servidor respondió «document_expired».",
+    "es": "La fecha de vencimiento ya pasó. Sube un documento vigente.",
+    "en": "The expiry date has already passed. Upload a valid document.",
+    "pt": "A data de vencimento já passou. Envie um documento válido."
+  },
+  "regErrorRequirementsNotConfigured": {
+    "description": "Error del registro de chóferes: el servidor respondió «requirements_not_configured».",
+    "es": "Aún no podemos recibir solicitudes: faltan por definir los documentos que se piden. Puedes guardar tus datos y enviar más adelante.",
+    "en": "We can't receive applications yet: the required documents haven't been defined. You can save your details and submit later.",
+    "pt": "Ainda não podemos receber solicitações: faltam definir os documentos exigidos. Você pode salvar seus dados e enviar depois."
+  },
+  "regErrorStepsIncomplete": {
+    "description": "Error del registro de chóferes: el servidor respondió «steps_incomplete».",
+    "es": "Completa tus datos personales y los del vehículo antes de enviar.",
+    "en": "Complete your personal and vehicle details before submitting.",
+    "pt": "Complete seus dados pessoais e os do veículo antes de enviar."
+  },
+  "regErrorDocumentsMissing": {
+    "description": "Error del registro de chóferes: el servidor respondió «documents_missing».",
+    "es": "Faltan documentos obligatorios o hay alguno vencido o rechazado.",
+    "en": "Some required documents are missing, expired or rejected.",
+    "pt": "Faltam documentos obrigatórios ou há algum vencido ou recusado."
+  },
+  "regErrorInvalidRequest": {
+    "description": "Error del registro de chóferes: el servidor respondió «invalid_request».",
+    "es": "Revisa los datos marcados e inténtalo de nuevo.",
+    "en": "Check the highlighted details and try again.",
+    "pt": "Revise os dados destacados e tente novamente."
+  },
+  "regErrorDriverDocsBlocked": {
+    "description": "Error del registro de chóferes: el servidor respondió «driver_docs_blocked».",
+    "es": "Tienes documentos obligatorios vencidos. Súbelos de nuevo para volver a conectarte.",
+    "en": "You have expired required documents. Upload them again to go back online.",
+    "pt": "Você tem documentos obrigatórios vencidos. Envie-os novamente para voltar a ficar on-line."
+  },
+  "regErrorProfileNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «profile_not_found».",
+    "es": "No encontramos tu perfil. Cierra sesión y vuelve a entrar.",
+    "en": "We couldn't find your profile. Sign out and sign in again.",
+    "pt": "Não encontramos seu perfil. Saia e entre novamente."
+  },
+  "regErrorDocumentsNotApproved": {
+    "description": "Error del registro de chóferes: el servidor respondió «documents_not_approved».",
+    "es": "No se puede aprobar: hay documentos obligatorios sin aprobar o vencidos.",
+    "en": "Cannot approve: some required documents are not approved or have expired.",
+    "pt": "Não é possível aprovar: há documentos obrigatórios não aprovados ou vencidos."
+  },
+  "regErrorNotDecidable": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_decidable».",
+    "es": "La solicitud no está en un estado que admita esta decisión.",
+    "en": "The application is not in a state that allows this decision.",
+    "pt": "A solicitação não está em um estado que permita esta decisão."
+  },
+  "regErrorNotReviewable": {
+    "description": "Error del registro de chóferes: el servidor respondió «not_reviewable».",
+    "es": "Este documento no se puede revisar en su estado actual.",
+    "en": "This document cannot be reviewed in its current state.",
+    "pt": "Este documento não pode ser revisado no estado atual."
+  },
+  "regErrorStaleVersion": {
+    "description": "Error del registro de chóferes: el servidor respondió «stale_version».",
+    "es": "El chófer subió una versión más nueva. Actualiza y revisa la última.",
+    "en": "The chauffeur uploaded a newer version. Refresh and review the latest one.",
+    "pt": "O motorista enviou uma versão mais nova. Atualize e revise a última."
+  },
+  "regErrorDocumentNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «document_not_found».",
+    "es": "Ese documento no existe o aún no se subió.",
+    "en": "That document does not exist or has not been uploaded yet.",
+    "pt": "Esse documento não existe ou ainda não foi enviado."
+  },
+  "regErrorDriverNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «driver_not_found».",
+    "es": "No encontramos a ese chófer.",
+    "en": "We couldn't find that chauffeur.",
+    "pt": "Não encontramos esse motorista."
+  },
+  "regErrorApplicationNotFound": {
+    "description": "Error del registro de chóferes: el servidor respondió «application_not_found».",
+    "es": "No encontramos esa solicitud.",
+    "en": "We couldn't find that application.",
+    "pt": "Não encontramos essa solicitação."
+  },
+  "regErrorPurgeDisabled": {
+    "description": "Error del registro de chóferes: el servidor respondió «purge_disabled».",
+    "es": "El borrado de documentos está desactivado.",
+    "en": "Document deletion is turned off.",
+    "pt": "A exclusão de documentos está desativada."
+  },
+  "regErrorGeneric": {
+    "description": "Error del registro de chóferes: el servidor respondió «(otro)».",
+    "es": "No pudimos completar este paso. Inténtalo de nuevo.",
+    "en": "We couldn't complete this step. Try again.",
+    "pt": "Não foi possível concluir esta etapa. Tente novamente."
   }
 }

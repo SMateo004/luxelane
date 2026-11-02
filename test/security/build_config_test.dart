@@ -206,7 +206,9 @@ void main() {
   });
 
   group('Registro de chóferes (B0)', () {
-    test('firebase_storage, image_picker y flutter_image_compress con versión fija', () {
+    test(
+        'firebase_storage, image_picker y flutter_image_compress con versión fija',
+        () {
       final pubspec = _read('pubspec.yaml');
       expect(pubspec, contains('\n  firebase_storage: 12.4.10\n'));
       expect(pubspec, contains('\n  image_picker: 1.2.1\n'));
