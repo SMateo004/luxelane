@@ -133,3 +133,23 @@ describe('firestore.indexes.json: registro de chóferes', () => {
     expect(src).toContain("collectionGroup('documents').where('expiresAt', '<='");
   });
 });
+
+// Registro de chóferes (B5): orden, claves de config/ops y pruebas en
+// dispositivo real.
+describe('DEPLOY.md: registro de chóferes', () => {
+  const i = deploy.indexOf('## Registro de chóferes');
+  const section = i < 0 ? '' : deploy.slice(i, deploy.indexOf('\n## ', i + 5));
+  it('la sección existe y las reglas van después de publicar las apps', () => {
+    expect(section).not.toBe('');
+    expect(section).toMatch(/no se despliegan hasta publicar las\s+apps/);
+    expect(section.indexOf('**Apps**')).toBeLessThan(section.indexOf('**Reglas al final'));
+  });
+  it.each(['driverRequirements', 'vehicleMinYear', 'docExpiryReminderDays', 'blockOnExpiredDocs',
+    'driverDocsPurgeEnabled', 'signBlob', 'DRIVER_DOCS_BUCKET'])('menciona %s', (k) => {
+    expect(section).toContain(k);
+  });
+  it.each(['Quitar el EXIF', 'Cámara frontal en la foto en vivo', 'URL firmada de 5 minutos'])(
+    'pruebas en dispositivo real: %s', (item) => {
+      expect(section).toContain(item);
+    });
+});
