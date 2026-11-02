@@ -9,6 +9,444 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get adminDrvAppSection => 'Driver applications';
+
+  @override
+  String get adminDrvAppSectionSubtitle =>
+      'Details, vehicle and documents of people who want to drive.';
+
+  @override
+  String get adminDrvAppTabInbox => 'Applications';
+
+  @override
+  String get adminDrvAppTabExpiries => 'Upcoming expiries';
+
+  @override
+  String get adminDrvAppReload => 'Reload';
+
+  @override
+  String get adminDrvAppRetry => 'Try again';
+
+  @override
+  String get adminDrvAppStatusFilter => 'Filter by status';
+
+  @override
+  String get adminDrvAppInboxEmpty => 'No applications with this status';
+
+  @override
+  String get adminDrvAppInboxEmptyHint =>
+      'Choose another status above to see more.';
+
+  @override
+  String get adminDrvAppInboxError => 'The applications could not be loaded.';
+
+  @override
+  String adminDrvAppInboxTruncated(String count) {
+    return 'Showing the $count most recent.';
+  }
+
+  @override
+  String adminDrvAppSubmittedAt(String date) {
+    return 'Submitted on $date';
+  }
+
+  @override
+  String adminDrvAppUpdatedAt(String date) {
+    return 'Updated on $date';
+  }
+
+  @override
+  String get adminDrvAppNoName => 'No name';
+
+  @override
+  String adminDrvAppOpen(String name) {
+    return 'Open the application from $name';
+  }
+
+  @override
+  String get adminDrvAppOpenShort => 'View application';
+
+  @override
+  String get adminDrvAppBack => 'Back to the inbox';
+
+  @override
+  String get adminDrvAppDetailError => 'The application could not be loaded.';
+
+  @override
+  String get adminDrvAppPersonalTitle => 'Personal details';
+
+  @override
+  String get adminDrvAppPersonalMissing =>
+      'Personal details not completed yet.';
+
+  @override
+  String get adminDrvAppFullName => 'Full name';
+
+  @override
+  String get adminDrvAppNationalId => 'ID document number';
+
+  @override
+  String get adminDrvAppLicenseNumber => 'License number';
+
+  @override
+  String get adminDrvAppLicenseExpiry => 'License expiry';
+
+  @override
+  String get adminDrvAppEmail => 'Email';
+
+  @override
+  String get adminDrvAppStatus => 'Status';
+
+  @override
+  String get adminDrvAppVehicleTitle => 'Vehicle';
+
+  @override
+  String get adminDrvAppVehicleMissing => 'Vehicle not registered yet.';
+
+  @override
+  String get adminDrvAppMake => 'Make';
+
+  @override
+  String get adminDrvAppModel => 'Model';
+
+  @override
+  String get adminDrvAppYear => 'Year';
+
+  @override
+  String get adminDrvAppColor => 'Colour';
+
+  @override
+  String get adminDrvAppPlate => 'Plate';
+
+  @override
+  String get adminDrvAppBodyType => 'Body type';
+
+  @override
+  String get adminDrvAppPassengers => 'Passengers';
+
+  @override
+  String get adminDrvAppClass => 'Class';
+
+  @override
+  String get adminDrvAppPendingVehicle => 'Vehicle change pending review.';
+
+  @override
+  String get adminDrvAppDocsTitle => 'Documents';
+
+  @override
+  String get adminDrvAppRequirementsMissing => 'Requirements not configured';
+
+  @override
+  String get adminDrvAppRequirementsMissingBody =>
+      'The driverRequirements list is missing from config/ops: the driver cannot submit the application and it cannot be approved. Uploaded documents are shown.';
+
+  @override
+  String get adminDrvAppRequired => 'Required';
+
+  @override
+  String get adminDrvAppOptional => 'Optional';
+
+  @override
+  String get adminDrvAppNotRequested => 'Not in the requirements';
+
+  @override
+  String adminDrvAppDocVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String adminDrvAppDocExpires(String date) {
+    return 'Expires on $date';
+  }
+
+  @override
+  String adminDrvAppDocExpired(String date) {
+    return 'Expired on $date';
+  }
+
+  @override
+  String get adminDrvAppDocExpiryMissing => 'No expiry date';
+
+  @override
+  String adminDrvAppDocRejectReason(String reason) {
+    return 'Rejection reason: $reason';
+  }
+
+  @override
+  String adminDrvAppDocNote(String note) {
+    return 'Note: $note';
+  }
+
+  @override
+  String get adminDrvAppDocNotUploaded => 'Not uploaded';
+
+  @override
+  String get adminDrvAppViewDoc => 'View document';
+
+  @override
+  String adminDrvAppViewDocLabel(String document) {
+    return 'View document: $document';
+  }
+
+  @override
+  String get adminDrvAppApproveDoc => 'Approve';
+
+  @override
+  String adminDrvAppApproveDocLabel(String document) {
+    return 'Approve document: $document';
+  }
+
+  @override
+  String get adminDrvAppRejectDoc => 'Reject';
+
+  @override
+  String adminDrvAppRejectDocLabel(String document) {
+    return 'Reject document: $document';
+  }
+
+  @override
+  String adminDrvAppApproveTitle(String document) {
+    return 'Approve $document?';
+  }
+
+  @override
+  String adminDrvAppApproveBody(String version) {
+    return 'Version $version will be approved. It is recorded in the audit log with your account.';
+  }
+
+  @override
+  String get adminDrvAppApproveConfirm => 'Approve document';
+
+  @override
+  String get adminDrvAppDocApproved => 'Document approved.';
+
+  @override
+  String get adminDrvAppDocRejected =>
+      'Document rejected. The driver will see the reason.';
+
+  @override
+  String adminDrvAppRejectTitle(String document) {
+    return 'Reject $document';
+  }
+
+  @override
+  String get adminDrvAppRejectReasonLabel => 'Rejection reason';
+
+  @override
+  String get adminDrvAppRejectReasonHint => 'Choose a reason';
+
+  @override
+  String get adminDrvAppRejectReasonRequired => 'Choose a reason to reject.';
+
+  @override
+  String get adminDrvAppRejectNoteLabel => 'Note for the driver (optional)';
+
+  @override
+  String get adminDrvAppRejectConfirm => 'Reject document';
+
+  @override
+  String get adminDrvAppCancel => 'Cancel';
+
+  @override
+  String get adminDrvAppClose => 'Close';
+
+  @override
+  String get adminDrvAppViewerLoading => 'Opening the document…';
+
+  @override
+  String get adminDrvAppViewerExpiry =>
+      'The link expires 5 minutes after opening. If it expires, close the viewer and open it again.';
+
+  @override
+  String get adminDrvAppViewerLogged =>
+      'Every opening is recorded in the access log.';
+
+  @override
+  String get adminDrvAppViewerPdf => 'This document is a PDF.';
+
+  @override
+  String get adminDrvAppViewerOpenPdf => 'Open PDF in a new tab';
+
+  @override
+  String get adminDrvAppViewerPdfError =>
+      'The PDF could not be opened. Close the viewer and try again.';
+
+  @override
+  String get adminDrvAppViewerImageError =>
+      'The image could not be shown. If the link expired, close the viewer and open it again.';
+
+  @override
+  String adminDrvAppViewerImageLabel(String document) {
+    return 'Image of the document: $document';
+  }
+
+  @override
+  String get adminDrvAppViewerError => 'The document could not be opened.';
+
+  @override
+  String get adminDrvAppDecide => 'Final decision';
+
+  @override
+  String get adminDrvAppDecisionTitle => 'Final decision on the application';
+
+  @override
+  String get adminDrvAppDecisionBody =>
+      'Approving requires every required document to be approved and valid. The driver is notified of the result.';
+
+  @override
+  String get adminDrvAppDecisionApprove => 'Approve';
+
+  @override
+  String get adminDrvAppDecisionNeedsChanges => 'Request changes';
+
+  @override
+  String get adminDrvAppDecisionReject => 'Reject';
+
+  @override
+  String get adminDrvAppDecisionReasonLabel =>
+      'Reason (recorded in the audit log)';
+
+  @override
+  String adminDrvAppDecisionReasonHint(String min, String max) {
+    return 'Between $min and $max characters';
+  }
+
+  @override
+  String adminDrvAppDecisionReasonShort(String min) {
+    return 'Write at least $min characters.';
+  }
+
+  @override
+  String get adminDrvAppDecisionConfirm => 'Confirm decision';
+
+  @override
+  String get adminDrvAppDecisionNotDecidable =>
+      'Only submitted, in-review or changes-requested applications can be decided.';
+
+  @override
+  String adminDrvAppDecisionDone(String status) {
+    return 'Decision saved: $status.';
+  }
+
+  @override
+  String adminDrvAppErrDocsNotApproved(String documents) {
+    return 'Cannot approve: these required documents are not approved or valid: $documents.';
+  }
+
+  @override
+  String get adminDrvAppErrDocsNotApprovedAny =>
+      'Cannot approve: some required documents are not approved or have expired.';
+
+  @override
+  String get adminDrvAppErrStaleVersion =>
+      'The driver uploaded a new version; reload the application.';
+
+  @override
+  String get adminDrvAppErrNotReviewable =>
+      'This document cannot be reviewed in its current state.';
+
+  @override
+  String get adminDrvAppErrNotDecidable =>
+      'This application can no longer be decided; reload.';
+
+  @override
+  String get adminDrvAppErrRequirements =>
+      'Requirements not configured: it cannot be approved.';
+
+  @override
+  String get adminDrvAppErrStepsIncomplete =>
+      'Application steps are missing (personal details or vehicle).';
+
+  @override
+  String get adminDrvAppErrNotFound =>
+      'The document or driver was not found; reload.';
+
+  @override
+  String get adminDrvAppErrInvalid =>
+      'Check the details: the reason needs between 10 and 500 characters.';
+
+  @override
+  String get adminDrvAppErrPermission =>
+      'Permission denied: an administrator role is required.';
+
+  @override
+  String get adminDrvAppErrGeneric =>
+      'It could not be completed. Try again in a few minutes.';
+
+  @override
+  String get adminDrvAppAccessLog => 'Access log';
+
+  @override
+  String get adminDrvAppAccessLogHint =>
+      'Who opened each document of this application and when, newest first.';
+
+  @override
+  String get adminDrvAppAccessLogEmpty =>
+      'Nobody has opened the documents of this application yet.';
+
+  @override
+  String get adminDrvAppAccessLogError => 'The access log could not be loaded.';
+
+  @override
+  String adminDrvAppAccessLogEntry(String document, String version) {
+    return '$document · version $version';
+  }
+
+  @override
+  String adminDrvAppAccessLogWho(String who, String date) {
+    return '$who · $date';
+  }
+
+  @override
+  String adminDrvAppUnknownAdmin(String id) {
+    return 'Administrator $id';
+  }
+
+  @override
+  String adminDrvAppExpiriesPeriod(String days) {
+    return 'Next $days days';
+  }
+
+  @override
+  String adminDrvAppExpiriesEmpty(String days) {
+    return 'No document expires in the next $days days.';
+  }
+
+  @override
+  String get adminDrvAppExpiriesError => 'The expiries could not be loaded.';
+
+  @override
+  String adminDrvAppExpiriesTruncated(String count) {
+    return 'There are more results; showing the first $count. Shorten the period to see the rest.';
+  }
+
+  @override
+  String get adminDrvAppBlocked => 'Blocked from going online';
+
+  @override
+  String get adminDrvAppAllowOnline => 'Allow online';
+
+  @override
+  String adminDrvAppAllowOnlineLabel(String name) {
+    return 'Allow $name to go online';
+  }
+
+  @override
+  String get adminDrvAppAllowOnlineTitle =>
+      'Allow going online with expired documents';
+
+  @override
+  String adminDrvAppAllowOnlineBody(String name) {
+    return '$name will be able to go online despite the current expired documents, until another one expires. It is recorded in the audit log with your reason.';
+  }
+
+  @override
+  String get adminDrvAppAllowOnlineConfirm => 'Allow';
+
+  @override
+  String get adminDrvAppAllowOnlineDone => 'Driver allowed to go online.';
+
+  @override
   String get adminPrefsEmpty => 'No preferences for this trip';
 
   @override

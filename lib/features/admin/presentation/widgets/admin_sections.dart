@@ -233,6 +233,9 @@ enum AdminSection {
   finance,
   pricing,
   drivers,
+
+  /// Solicitudes de chófer (B2). Su nombre sale de los .arb.
+  driverApplications,
   vehicles,
   users,
   business,

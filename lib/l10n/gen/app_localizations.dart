@@ -100,6 +100,720 @@ abstract class AppLocalizations {
     Locale('pt')
   ];
 
+  /// Panel, solicitudes de chófer: nombre de la sección en la barra lateral y las pestañas.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes de chófer'**
+  String get adminDrvAppSection;
+
+  /// Panel, solicitudes de chófer: subtítulo de la sección.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos, vehículo y documentos de quienes quieren conducir.'**
+  String get adminDrvAppSectionSubtitle;
+
+  /// Panel, solicitudes de chófer: pestaña de la bandeja de solicitudes.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes'**
+  String get adminDrvAppTabInbox;
+
+  /// Panel, solicitudes de chófer: pestaña de documentos que vencen pronto.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencimientos próximos'**
+  String get adminDrvAppTabExpiries;
+
+  /// Panel, solicitudes de chófer: botón de recargar.
+  ///
+  /// In es, this message translates to:
+  /// **'Recargar'**
+  String get adminDrvAppReload;
+
+  /// Panel, solicitudes de chófer: botón para reintentar tras un error.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get adminDrvAppRetry;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible del filtro por estado.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtrar por estado'**
+  String get adminDrvAppStatusFilter;
+
+  /// Panel, solicitudes de chófer: bandeja vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay solicitudes en este estado'**
+  String get adminDrvAppInboxEmpty;
+
+  /// Panel, solicitudes de chófer: pista bajo la bandeja vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige otro estado arriba para ver más.'**
+  String get adminDrvAppInboxEmptyHint;
+
+  /// Panel, solicitudes de chófer: no se pudo cargar la bandeja.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar las solicitudes.'**
+  String get adminDrvAppInboxError;
+
+  /// Panel, solicitudes de chófer: aviso de que la lista está recortada; {count} es el máximo mostrado.
+  ///
+  /// In es, this message translates to:
+  /// **'Se muestran las {count} más recientes.'**
+  String adminDrvAppInboxTruncated(String count);
+
+  /// Panel, solicitudes de chófer: fecha de envío de la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviada el {date}'**
+  String adminDrvAppSubmittedAt(String date);
+
+  /// Panel, solicitudes de chófer: fecha de la última actualización (sin envío).
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizada el {date}'**
+  String adminDrvAppUpdatedAt(String date);
+
+  /// Panel, solicitudes de chófer: chófer sin nombre en su cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin nombre'**
+  String get adminDrvAppNoName;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible para abrir una solicitud; {name} es el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir la solicitud de {name}'**
+  String adminDrvAppOpen(String name);
+
+  /// Panel, solicitudes de chófer: botón para abrir la solicitud desde vencimientos.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver solicitud'**
+  String get adminDrvAppOpenShort;
+
+  /// Panel, solicitudes de chófer: volver del detalle a la bandeja.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a la bandeja'**
+  String get adminDrvAppBack;
+
+  /// Panel, solicitudes de chófer: no se pudo cargar el detalle.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la solicitud.'**
+  String get adminDrvAppDetailError;
+
+  /// Panel, solicitudes de chófer: título de los datos personales.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos personales'**
+  String get adminDrvAppPersonalTitle;
+
+  /// Panel, solicitudes de chófer: el chófer no completó los datos personales.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no completó sus datos personales.'**
+  String get adminDrvAppPersonalMissing;
+
+  /// Panel, solicitudes de chófer: campo nombre completo.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get adminDrvAppFullName;
+
+  /// Panel, solicitudes de chófer: campo número del documento de identidad.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de documento'**
+  String get adminDrvAppNationalId;
+
+  /// Panel, solicitudes de chófer: campo número de licencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de licencia'**
+  String get adminDrvAppLicenseNumber;
+
+  /// Panel, solicitudes de chófer: campo vencimiento de la licencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencimiento de la licencia'**
+  String get adminDrvAppLicenseExpiry;
+
+  /// Panel, solicitudes de chófer: campo correo de la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo'**
+  String get adminDrvAppEmail;
+
+  /// Panel, solicitudes de chófer: campo estado de la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado'**
+  String get adminDrvAppStatus;
+
+  /// Panel, solicitudes de chófer: título del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get adminDrvAppVehicleTitle;
+
+  /// Panel, solicitudes de chófer: el chófer no completó el vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no registró el vehículo.'**
+  String get adminDrvAppVehicleMissing;
+
+  /// Panel, solicitudes de chófer: campo marca.
+  ///
+  /// In es, this message translates to:
+  /// **'Marca'**
+  String get adminDrvAppMake;
+
+  /// Panel, solicitudes de chófer: campo modelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Modelo'**
+  String get adminDrvAppModel;
+
+  /// Panel, solicitudes de chófer: campo año.
+  ///
+  /// In es, this message translates to:
+  /// **'Año'**
+  String get adminDrvAppYear;
+
+  /// Panel, solicitudes de chófer: campo color.
+  ///
+  /// In es, this message translates to:
+  /// **'Color'**
+  String get adminDrvAppColor;
+
+  /// Panel, solicitudes de chófer: campo placa.
+  ///
+  /// In es, this message translates to:
+  /// **'Placa'**
+  String get adminDrvAppPlate;
+
+  /// Panel, solicitudes de chófer: campo carrocería.
+  ///
+  /// In es, this message translates to:
+  /// **'Carrocería'**
+  String get adminDrvAppBodyType;
+
+  /// Panel, solicitudes de chófer: campo número de pasajeros.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajeros'**
+  String get adminDrvAppPassengers;
+
+  /// Panel, solicitudes de chófer: campo clase de servicio.
+  ///
+  /// In es, this message translates to:
+  /// **'Clase'**
+  String get adminDrvAppClass;
+
+  /// Panel, solicitudes de chófer: aviso de vehículo nuevo en revisión tras aprobar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambio de vehículo pendiente de revisión.'**
+  String get adminDrvAppPendingVehicle;
+
+  /// Panel, solicitudes de chófer: título de la lista de documentos.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos'**
+  String get adminDrvAppDocsTitle;
+
+  /// Panel, solicitudes de chófer: banner: config/ops.driverRequirements no existe.
+  ///
+  /// In es, this message translates to:
+  /// **'Requisitos sin configurar'**
+  String get adminDrvAppRequirementsMissing;
+
+  /// Panel, solicitudes de chófer: explicación del banner de requisitos sin configurar.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta la lista driverRequirements en config/ops: el chófer no puede enviar la solicitud y no se puede aprobar. Se muestran los documentos subidos.'**
+  String get adminDrvAppRequirementsMissingBody;
+
+  /// Panel, solicitudes de chófer: documento obligatorio.
+  ///
+  /// In es, this message translates to:
+  /// **'Obligatorio'**
+  String get adminDrvAppRequired;
+
+  /// Panel, solicitudes de chófer: documento opcional.
+  ///
+  /// In es, this message translates to:
+  /// **'Opcional'**
+  String get adminDrvAppOptional;
+
+  /// Panel, solicitudes de chófer: documento subido que no está en los requisitos.
+  ///
+  /// In es, this message translates to:
+  /// **'Fuera de los requisitos'**
+  String get adminDrvAppNotRequested;
+
+  /// Panel, solicitudes de chófer: versión del documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Versión {version}'**
+  String adminDrvAppDocVersion(String version);
+
+  /// Panel, solicitudes de chófer: fecha de vencimiento futura.
+  ///
+  /// In es, this message translates to:
+  /// **'Vence el {date}'**
+  String adminDrvAppDocExpires(String date);
+
+  /// Panel, solicitudes de chófer: fecha de vencimiento pasada.
+  ///
+  /// In es, this message translates to:
+  /// **'Venció el {date}'**
+  String adminDrvAppDocExpired(String date);
+
+  /// Panel, solicitudes de chófer: el documento vence pero no tiene fecha.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin fecha de vencimiento'**
+  String get adminDrvAppDocExpiryMissing;
+
+  /// Panel, solicitudes de chófer: motivo del rechazo de un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo del rechazo: {reason}'**
+  String adminDrvAppDocRejectReason(String reason);
+
+  /// Panel, solicitudes de chófer: nota del rechazo.
+  ///
+  /// In es, this message translates to:
+  /// **'Nota: {note}'**
+  String adminDrvAppDocNote(String note);
+
+  /// Panel, solicitudes de chófer: el documento no se subió.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin subir'**
+  String get adminDrvAppDocNotUploaded;
+
+  /// Panel, solicitudes de chófer: botón para abrir el visor.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver documento'**
+  String get adminDrvAppViewDoc;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible del botón ver; {document} es el tipo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver documento: {document}'**
+  String adminDrvAppViewDocLabel(String document);
+
+  /// Panel, solicitudes de chófer: botón aprobar documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar'**
+  String get adminDrvAppApproveDoc;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible del botón aprobar.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar documento: {document}'**
+  String adminDrvAppApproveDocLabel(String document);
+
+  /// Panel, solicitudes de chófer: botón rechazar documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get adminDrvAppRejectDoc;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible del botón rechazar.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar documento: {document}'**
+  String adminDrvAppRejectDocLabel(String document);
+
+  /// Panel, solicitudes de chófer: título del diálogo para aprobar un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Aprobar {document}?'**
+  String adminDrvAppApproveTitle(String document);
+
+  /// Panel, solicitudes de chófer: texto del diálogo para aprobar.
+  ///
+  /// In es, this message translates to:
+  /// **'Se aprueba la versión {version}. Queda en la auditoría con tu cuenta.'**
+  String adminDrvAppApproveBody(String version);
+
+  /// Panel, solicitudes de chófer: confirmar aprobación de documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar documento'**
+  String get adminDrvAppApproveConfirm;
+
+  /// Panel, solicitudes de chófer: aviso tras aprobar un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento aprobado.'**
+  String get adminDrvAppDocApproved;
+
+  /// Panel, solicitudes de chófer: aviso tras rechazar un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento rechazado. El chófer verá el motivo.'**
+  String get adminDrvAppDocRejected;
+
+  /// Panel, solicitudes de chófer: título del diálogo para rechazar un documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar {document}'**
+  String adminDrvAppRejectTitle(String document);
+
+  /// Panel, solicitudes de chófer: etiqueta de la lista de motivos.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo del rechazo'**
+  String get adminDrvAppRejectReasonLabel;
+
+  /// Panel, solicitudes de chófer: texto de la lista sin elegir.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige un motivo'**
+  String get adminDrvAppRejectReasonHint;
+
+  /// Panel, solicitudes de chófer: error: falta elegir el motivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige un motivo para rechazar.'**
+  String get adminDrvAppRejectReasonRequired;
+
+  /// Panel, solicitudes de chófer: nota opcional para el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Nota para el chófer (opcional)'**
+  String get adminDrvAppRejectNoteLabel;
+
+  /// Panel, solicitudes de chófer: confirmar rechazo de documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar documento'**
+  String get adminDrvAppRejectConfirm;
+
+  /// Panel, solicitudes de chófer: cancelar un diálogo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get adminDrvAppCancel;
+
+  /// Panel, solicitudes de chófer: cerrar el visor o un diálogo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar'**
+  String get adminDrvAppClose;
+
+  /// Panel, solicitudes de chófer: el visor pide el enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Abriendo el documento…'**
+  String get adminDrvAppViewerLoading;
+
+  /// Panel, solicitudes de chófer: aviso del visor: el enlace dura 5 minutos.
+  ///
+  /// In es, this message translates to:
+  /// **'El enlace caduca en 5 minutos. Si caduca, cierra el visor y vuelve a abrirlo.'**
+  String get adminDrvAppViewerExpiry;
+
+  /// Panel, solicitudes de chófer: aviso: cada apertura se registra.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada apertura queda en la bitácora de accesos.'**
+  String get adminDrvAppViewerLogged;
+
+  /// Panel, solicitudes de chófer: el documento es un PDF.
+  ///
+  /// In es, this message translates to:
+  /// **'Este documento es un PDF.'**
+  String get adminDrvAppViewerPdf;
+
+  /// Panel, solicitudes de chófer: botón para abrir el PDF en otra pestaña.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir PDF en otra pestaña'**
+  String get adminDrvAppViewerOpenPdf;
+
+  /// Panel, solicitudes de chófer: no se pudo abrir el PDF.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir el PDF. Cierra el visor y vuelve a intentarlo.'**
+  String get adminDrvAppViewerPdfError;
+
+  /// Panel, solicitudes de chófer: no se pudo mostrar la imagen.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo mostrar la imagen. Si el enlace caducó, cierra el visor y vuelve a abrirlo.'**
+  String get adminDrvAppViewerImageError;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible de la imagen del documento.
+  ///
+  /// In es, this message translates to:
+  /// **'Imagen del documento: {document}'**
+  String adminDrvAppViewerImageLabel(String document);
+
+  /// Panel, solicitudes de chófer: no se pudo pedir el enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir el documento.'**
+  String get adminDrvAppViewerError;
+
+  /// Panel, solicitudes de chófer: botón que abre la decisión final.
+  ///
+  /// In es, this message translates to:
+  /// **'Decisión final'**
+  String get adminDrvAppDecide;
+
+  /// Panel, solicitudes de chófer: título del diálogo de decisión final.
+  ///
+  /// In es, this message translates to:
+  /// **'Decisión final de la solicitud'**
+  String get adminDrvAppDecisionTitle;
+
+  /// Panel, solicitudes de chófer: texto del diálogo de decisión.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar exige todos los documentos obligatorios aprobados y vigentes. El chófer recibe un aviso con el resultado.'**
+  String get adminDrvAppDecisionBody;
+
+  /// Panel, solicitudes de chófer: opción aprobar la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar'**
+  String get adminDrvAppDecisionApprove;
+
+  /// Panel, solicitudes de chófer: opción pedir cambios.
+  ///
+  /// In es, this message translates to:
+  /// **'Pedir cambios'**
+  String get adminDrvAppDecisionNeedsChanges;
+
+  /// Panel, solicitudes de chófer: opción rechazar la solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get adminDrvAppDecisionReject;
+
+  /// Panel, solicitudes de chófer: etiqueta del motivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo (queda en la auditoría)'**
+  String get adminDrvAppDecisionReasonLabel;
+
+  /// Panel, solicitudes de chófer: pista del campo motivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Entre {min} y {max} caracteres'**
+  String adminDrvAppDecisionReasonHint(String min, String max);
+
+  /// Panel, solicitudes de chófer: error: motivo demasiado corto.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe al menos {min} caracteres.'**
+  String adminDrvAppDecisionReasonShort(String min);
+
+  /// Panel, solicitudes de chófer: confirmar la decisión.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar decisión'**
+  String get adminDrvAppDecisionConfirm;
+
+  /// Panel, solicitudes de chófer: la solicitud no admite decisión en su estado.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo se decide una solicitud enviada, en revisión o con cambios pedidos.'**
+  String get adminDrvAppDecisionNotDecidable;
+
+  /// Panel, solicitudes de chófer: aviso tras guardar la decisión.
+  ///
+  /// In es, this message translates to:
+  /// **'Decisión guardada: {status}.'**
+  String adminDrvAppDecisionDone(String status);
+
+  /// Panel, solicitudes de chófer: error al aprobar: faltan documentos; {documents} es la lista.
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede aprobar: estos documentos obligatorios no están aprobados o vigentes: {documents}.'**
+  String adminDrvAppErrDocsNotApproved(String documents);
+
+  /// Panel, solicitudes de chófer: error al aprobar sin lista de documentos.
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede aprobar: hay documentos obligatorios sin aprobar o vencidos.'**
+  String get adminDrvAppErrDocsNotApprovedAny;
+
+  /// Panel, solicitudes de chófer: error: el chófer subió otra versión.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer subió una versión nueva; recarga la solicitud.'**
+  String get adminDrvAppErrStaleVersion;
+
+  /// Panel, solicitudes de chófer: error: el documento no se puede revisar.
+  ///
+  /// In es, this message translates to:
+  /// **'Este documento no se puede revisar en su estado actual.'**
+  String get adminDrvAppErrNotReviewable;
+
+  /// Panel, solicitudes de chófer: error: la solicitud no admite decisión.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta solicitud ya no admite decisión; recarga.'**
+  String get adminDrvAppErrNotDecidable;
+
+  /// Panel, solicitudes de chófer: error: requisitos sin configurar.
+  ///
+  /// In es, this message translates to:
+  /// **'Requisitos sin configurar: no se puede aprobar.'**
+  String get adminDrvAppErrRequirements;
+
+  /// Panel, solicitudes de chófer: error: faltan pasos.
+  ///
+  /// In es, this message translates to:
+  /// **'Faltan pasos de la solicitud (datos personales o vehículo).'**
+  String get adminDrvAppErrStepsIncomplete;
+
+  /// Panel, solicitudes de chófer: error: documento o chófer no encontrado.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontró el documento o el chófer; recarga.'**
+  String get adminDrvAppErrNotFound;
+
+  /// Panel, solicitudes de chófer: error: datos inválidos.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los datos: el motivo necesita entre 10 y 500 caracteres.'**
+  String get adminDrvAppErrInvalid;
+
+  /// Panel, solicitudes de chófer: error: sin permiso de admin.
+  ///
+  /// In es, this message translates to:
+  /// **'Permiso denegado: se necesita rol de administrador.'**
+  String get adminDrvAppErrPermission;
+
+  /// Panel, solicitudes de chófer: error genérico.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar. Inténtalo de nuevo en unos minutos.'**
+  String get adminDrvAppErrGeneric;
+
+  /// Panel, solicitudes de chófer: botón que abre la bitácora de accesos.
+  ///
+  /// In es, this message translates to:
+  /// **'Bitácora de accesos'**
+  String get adminDrvAppAccessLog;
+
+  /// Panel, solicitudes de chófer: explicación de la bitácora.
+  ///
+  /// In es, this message translates to:
+  /// **'Quién abrió cada documento de esta solicitud y cuándo, de lo más reciente a lo más antiguo.'**
+  String get adminDrvAppAccessLogHint;
+
+  /// Panel, solicitudes de chófer: bitácora vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Nadie abrió todavía los documentos de esta solicitud.'**
+  String get adminDrvAppAccessLogEmpty;
+
+  /// Panel, solicitudes de chófer: no se pudo cargar la bitácora.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la bitácora de accesos.'**
+  String get adminDrvAppAccessLogError;
+
+  /// Panel, solicitudes de chófer: línea de la bitácora: documento y versión.
+  ///
+  /// In es, this message translates to:
+  /// **'{document} · versión {version}'**
+  String adminDrvAppAccessLogEntry(String document, String version);
+
+  /// Panel, solicitudes de chófer: línea de la bitácora: quién y cuándo.
+  ///
+  /// In es, this message translates to:
+  /// **'{who} · {date}'**
+  String adminDrvAppAccessLogWho(String who, String date);
+
+  /// Panel, solicitudes de chófer: administrador sin correo conocido; {id} es su código corto.
+  ///
+  /// In es, this message translates to:
+  /// **'Administrador {id}'**
+  String adminDrvAppUnknownAdmin(String id);
+
+  /// Panel, solicitudes de chófer: chip del periodo de vencimientos.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximos {days} días'**
+  String adminDrvAppExpiriesPeriod(String days);
+
+  /// Panel, solicitudes de chófer: sin vencimientos en el periodo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ningún documento vence en los próximos {days} días.'**
+  String adminDrvAppExpiriesEmpty(String days);
+
+  /// Panel, solicitudes de chófer: no se pudieron cargar los vencimientos.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar los vencimientos.'**
+  String get adminDrvAppExpiriesError;
+
+  /// Panel, solicitudes de chófer: la lista de vencimientos se recortó.
+  ///
+  /// In es, this message translates to:
+  /// **'Hay más resultados; se muestran los {count} primeros. Acorta el periodo para ver el resto.'**
+  String adminDrvAppExpiriesTruncated(String count);
+
+  /// Panel, solicitudes de chófer: el chófer está bloqueado para ponerse en línea.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueado para ponerse en línea'**
+  String get adminDrvAppBlocked;
+
+  /// Panel, solicitudes de chófer: botón para autorizar en línea.
+  ///
+  /// In es, this message translates to:
+  /// **'Autorizar en línea'**
+  String get adminDrvAppAllowOnline;
+
+  /// Panel, solicitudes de chófer: etiqueta accesible del botón autorizar; {name} es el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Autorizar en línea a {name}'**
+  String adminDrvAppAllowOnlineLabel(String name);
+
+  /// Panel, solicitudes de chófer: título del diálogo de autorizar en línea.
+  ///
+  /// In es, this message translates to:
+  /// **'Autorizar en línea con documentos vencidos'**
+  String get adminDrvAppAllowOnlineTitle;
+
+  /// Panel, solicitudes de chófer: texto del diálogo; {name} es el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'{name} podrá ponerse en línea pese a los documentos vencidos actuales, hasta que venza otro. Queda en la auditoría con tu motivo.'**
+  String adminDrvAppAllowOnlineBody(String name);
+
+  /// Panel, solicitudes de chófer: confirmar autorizar en línea.
+  ///
+  /// In es, this message translates to:
+  /// **'Autorizar'**
+  String get adminDrvAppAllowOnlineConfirm;
+
+  /// Panel, solicitudes de chófer: aviso tras autorizar.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer autorizado para ponerse en línea.'**
+  String get adminDrvAppAllowOnlineDone;
+
   /// Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje.
   ///
   /// In es, this message translates to:
