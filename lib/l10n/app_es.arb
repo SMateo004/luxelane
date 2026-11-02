@@ -2688,6 +2688,210 @@
   "@driverNavProfile": {
     "description": "Pestaña de la app del chófer: perfil."
   },
+  "regDocTypeProfilePhoto": "Foto de perfil",
+  "@regDocTypeProfilePhoto": {
+    "description": "Registro de chófer: nombre del documento de tipo profile_photo (app del chófer y panel)."
+  },
+  "regDocTypeLivePhoto": "Foto en vivo",
+  "@regDocTypeLivePhoto": {
+    "description": "Registro de chófer: nombre del documento de tipo live_photo (app del chófer y panel)."
+  },
+  "regDocTypeNationalIdFront": "Documento de identidad (anverso)",
+  "@regDocTypeNationalIdFront": {
+    "description": "Registro de chófer: nombre del documento de tipo national_id_front (app del chófer y panel)."
+  },
+  "regDocTypeNationalIdBack": "Documento de identidad (reverso)",
+  "@regDocTypeNationalIdBack": {
+    "description": "Registro de chófer: nombre del documento de tipo national_id_back (app del chófer y panel)."
+  },
+  "regDocTypeLicenseFront": "Licencia de conducir (anverso)",
+  "@regDocTypeLicenseFront": {
+    "description": "Registro de chófer: nombre del documento de tipo license_front (app del chófer y panel)."
+  },
+  "regDocTypeLicenseBack": "Licencia de conducir (reverso)",
+  "@regDocTypeLicenseBack": {
+    "description": "Registro de chófer: nombre del documento de tipo license_back (app del chófer y panel)."
+  },
+  "regDocTypeCriminalRecord": "Certificado de antecedentes",
+  "@regDocTypeCriminalRecord": {
+    "description": "Registro de chófer: nombre del documento de tipo criminal_record (app del chófer y panel)."
+  },
+  "regDocTypeVehicleOwnership": "Documento de propiedad del vehículo",
+  "@regDocTypeVehicleOwnership": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_ownership (app del chófer y panel)."
+  },
+  "regDocTypeVehicleSoat": "Seguro obligatorio de accidentes (SOAT)",
+  "@regDocTypeVehicleSoat": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_soat (app del chófer y panel)."
+  },
+  "regDocTypeVehicleInspection": "Inspección técnica del vehículo",
+  "@regDocTypeVehicleInspection": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_inspection (app del chófer y panel)."
+  },
+  "regDocTypeVehicleInsurance": "Seguro del vehículo",
+  "@regDocTypeVehicleInsurance": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_insurance (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePermit": "Permiso de operación del vehículo",
+  "@regDocTypeVehiclePermit": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_permit (app del chófer y panel)."
+  },
+  "regDocTypeOwnerAuthorization": "Autorización del propietario",
+  "@regDocTypeOwnerAuthorization": {
+    "description": "Registro de chófer: nombre del documento de tipo owner_authorization (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoFront": "Vehículo: frente",
+  "@regDocTypeVehiclePhotoFront": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_front (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoBack": "Vehículo: parte trasera",
+  "@regDocTypeVehiclePhotoBack": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_back (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoLeft": "Vehículo: lado izquierdo",
+  "@regDocTypeVehiclePhotoLeft": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_left (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoRight": "Vehículo: lado derecho",
+  "@regDocTypeVehiclePhotoRight": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_right (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoInteriorFront": "Vehículo: interior delantero",
+  "@regDocTypeVehiclePhotoInteriorFront": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_interior_front (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoInteriorBack": "Vehículo: interior trasero",
+  "@regDocTypeVehiclePhotoInteriorBack": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_interior_back (app del chófer y panel)."
+  },
+  "regDocTypeVehiclePhotoPlate": "Vehículo: placa",
+  "@regDocTypeVehiclePhotoPlate": {
+    "description": "Registro de chófer: nombre del documento de tipo vehicle_photo_plate (app del chófer y panel)."
+  },
+  "regAppStatusDraft": "Borrador",
+  "@regAppStatusDraft": {
+    "description": "Registro de chófer: estado de la solicitud draft."
+  },
+  "regAppStatusSubmitted": "Enviada",
+  "@regAppStatusSubmitted": {
+    "description": "Registro de chófer: estado de la solicitud submitted."
+  },
+  "regAppStatusInReview": "En revisión",
+  "@regAppStatusInReview": {
+    "description": "Registro de chófer: estado de la solicitud in_review."
+  },
+  "regAppStatusNeedsChanges": "Necesita cambios",
+  "@regAppStatusNeedsChanges": {
+    "description": "Registro de chófer: estado de la solicitud needs_changes."
+  },
+  "regAppStatusApproved": "Aprobada",
+  "@regAppStatusApproved": {
+    "description": "Registro de chófer: estado de la solicitud approved."
+  },
+  "regAppStatusRejected": "Rechazada",
+  "@regAppStatusRejected": {
+    "description": "Registro de chófer: estado de la solicitud rejected."
+  },
+  "regDocStatusPendingUpload": "Por subir",
+  "@regDocStatusPendingUpload": {
+    "description": "Registro de chófer: estado de un documento pending_upload."
+  },
+  "regDocStatusUploaded": "Subido, en revisión",
+  "@regDocStatusUploaded": {
+    "description": "Registro de chófer: estado de un documento uploaded."
+  },
+  "regDocStatusApproved": "Aprobado",
+  "@regDocStatusApproved": {
+    "description": "Registro de chófer: estado de un documento approved."
+  },
+  "regDocStatusRejected": "Rechazado",
+  "@regDocStatusRejected": {
+    "description": "Registro de chófer: estado de un documento rejected."
+  },
+  "regDocStatusExpired": "Vencido",
+  "@regDocStatusExpired": {
+    "description": "Registro de chófer: estado de un documento expired."
+  },
+  "regRejectIllegible": "No se lee bien",
+  "@regRejectIllegible": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (illegible)."
+  },
+  "regRejectExpired": "Está vencido",
+  "@regRejectExpired": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (expired)."
+  },
+  "regRejectWrongDocument": "No es el documento pedido",
+  "@regRejectWrongDocument": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (wrong_document)."
+  },
+  "regRejectIncomplete": "Está incompleto o cortado",
+  "@regRejectIncomplete": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (incomplete)."
+  },
+  "regRejectDataMismatch": "Los datos no coinciden con los de la solicitud",
+  "@regRejectDataMismatch": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (data_mismatch)."
+  },
+  "regRejectLowQuality": "Imagen de baja calidad",
+  "@regRejectLowQuality": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (low_quality)."
+  },
+  "regRejectOther": "Otro motivo",
+  "@regRejectOther": {
+    "description": "Registro de chófer: motivo de rechazo de un documento (other)."
+  },
+  "regColorBlack": "Negro",
+  "@regColorBlack": {
+    "description": "Registro de chófer: color del vehículo black (mismo texto que el catálogo del servidor)."
+  },
+  "regColorWhite": "Blanco",
+  "@regColorWhite": {
+    "description": "Registro de chófer: color del vehículo white (mismo texto que el catálogo del servidor)."
+  },
+  "regColorSilver": "Plateado",
+  "@regColorSilver": {
+    "description": "Registro de chófer: color del vehículo silver (mismo texto que el catálogo del servidor)."
+  },
+  "regColorGray": "Gris",
+  "@regColorGray": {
+    "description": "Registro de chófer: color del vehículo gray (mismo texto que el catálogo del servidor)."
+  },
+  "regColorBlue": "Azul",
+  "@regColorBlue": {
+    "description": "Registro de chófer: color del vehículo blue (mismo texto que el catálogo del servidor)."
+  },
+  "regColorRed": "Rojo",
+  "@regColorRed": {
+    "description": "Registro de chófer: color del vehículo red (mismo texto que el catálogo del servidor)."
+  },
+  "regColorGreen": "Verde",
+  "@regColorGreen": {
+    "description": "Registro de chófer: color del vehículo green (mismo texto que el catálogo del servidor)."
+  },
+  "regColorBeige": "Beige",
+  "@regColorBeige": {
+    "description": "Registro de chófer: color del vehículo beige (mismo texto que el catálogo del servidor)."
+  },
+  "regColorBrown": "Marrón",
+  "@regColorBrown": {
+    "description": "Registro de chófer: color del vehículo brown (mismo texto que el catálogo del servidor)."
+  },
+  "regColorOther": "Otro",
+  "@regColorOther": {
+    "description": "Registro de chófer: color del vehículo other (mismo texto que el catálogo del servidor)."
+  },
+  "regBodySedan": "Sedán",
+  "@regBodySedan": {
+    "description": "Registro de chófer: tipo de carrocería sedan."
+  },
+  "regBodySuv": "SUV",
+  "@regBodySuv": {
+    "description": "Registro de chófer: tipo de carrocería suv."
+  },
+  "regBodyVan": "Van",
+  "@regBodyVan": {
+    "description": "Registro de chófer: tipo de carrocería van."
+  },
   "errorTooManyAttempts": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
   "@errorTooManyAttempts": {
     "description": "Error: el servidor o Firebase limitó los intentos."

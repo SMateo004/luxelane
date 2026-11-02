@@ -2040,6 +2040,162 @@ class AppLocalizationsEs extends AppLocalizations {
   String get driverNavProfile => 'Perfil';
 
   @override
+  String get regDocTypeProfilePhoto => 'Foto de perfil';
+
+  @override
+  String get regDocTypeLivePhoto => 'Foto en vivo';
+
+  @override
+  String get regDocTypeNationalIdFront => 'Documento de identidad (anverso)';
+
+  @override
+  String get regDocTypeNationalIdBack => 'Documento de identidad (reverso)';
+
+  @override
+  String get regDocTypeLicenseFront => 'Licencia de conducir (anverso)';
+
+  @override
+  String get regDocTypeLicenseBack => 'Licencia de conducir (reverso)';
+
+  @override
+  String get regDocTypeCriminalRecord => 'Certificado de antecedentes';
+
+  @override
+  String get regDocTypeVehicleOwnership =>
+      'Documento de propiedad del vehículo';
+
+  @override
+  String get regDocTypeVehicleSoat => 'Seguro obligatorio de accidentes (SOAT)';
+
+  @override
+  String get regDocTypeVehicleInspection => 'Inspección técnica del vehículo';
+
+  @override
+  String get regDocTypeVehicleInsurance => 'Seguro del vehículo';
+
+  @override
+  String get regDocTypeVehiclePermit => 'Permiso de operación del vehículo';
+
+  @override
+  String get regDocTypeOwnerAuthorization => 'Autorización del propietario';
+
+  @override
+  String get regDocTypeVehiclePhotoFront => 'Vehículo: frente';
+
+  @override
+  String get regDocTypeVehiclePhotoBack => 'Vehículo: parte trasera';
+
+  @override
+  String get regDocTypeVehiclePhotoLeft => 'Vehículo: lado izquierdo';
+
+  @override
+  String get regDocTypeVehiclePhotoRight => 'Vehículo: lado derecho';
+
+  @override
+  String get regDocTypeVehiclePhotoInteriorFront =>
+      'Vehículo: interior delantero';
+
+  @override
+  String get regDocTypeVehiclePhotoInteriorBack => 'Vehículo: interior trasero';
+
+  @override
+  String get regDocTypeVehiclePhotoPlate => 'Vehículo: placa';
+
+  @override
+  String get regAppStatusDraft => 'Borrador';
+
+  @override
+  String get regAppStatusSubmitted => 'Enviada';
+
+  @override
+  String get regAppStatusInReview => 'En revisión';
+
+  @override
+  String get regAppStatusNeedsChanges => 'Necesita cambios';
+
+  @override
+  String get regAppStatusApproved => 'Aprobada';
+
+  @override
+  String get regAppStatusRejected => 'Rechazada';
+
+  @override
+  String get regDocStatusPendingUpload => 'Por subir';
+
+  @override
+  String get regDocStatusUploaded => 'Subido, en revisión';
+
+  @override
+  String get regDocStatusApproved => 'Aprobado';
+
+  @override
+  String get regDocStatusRejected => 'Rechazado';
+
+  @override
+  String get regDocStatusExpired => 'Vencido';
+
+  @override
+  String get regRejectIllegible => 'No se lee bien';
+
+  @override
+  String get regRejectExpired => 'Está vencido';
+
+  @override
+  String get regRejectWrongDocument => 'No es el documento pedido';
+
+  @override
+  String get regRejectIncomplete => 'Está incompleto o cortado';
+
+  @override
+  String get regRejectDataMismatch =>
+      'Los datos no coinciden con los de la solicitud';
+
+  @override
+  String get regRejectLowQuality => 'Imagen de baja calidad';
+
+  @override
+  String get regRejectOther => 'Otro motivo';
+
+  @override
+  String get regColorBlack => 'Negro';
+
+  @override
+  String get regColorWhite => 'Blanco';
+
+  @override
+  String get regColorSilver => 'Plateado';
+
+  @override
+  String get regColorGray => 'Gris';
+
+  @override
+  String get regColorBlue => 'Azul';
+
+  @override
+  String get regColorRed => 'Rojo';
+
+  @override
+  String get regColorGreen => 'Verde';
+
+  @override
+  String get regColorBeige => 'Beige';
+
+  @override
+  String get regColorBrown => 'Marrón';
+
+  @override
+  String get regColorOther => 'Otro';
+
+  @override
+  String get regBodySedan => 'Sedán';
+
+  @override
+  String get regBodySuv => 'SUV';
+
+  @override
+  String get regBodyVan => 'Van';
+
+  @override
   String get errorTooManyAttempts =>
       'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
 

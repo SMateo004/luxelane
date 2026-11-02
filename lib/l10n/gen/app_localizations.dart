@@ -3682,6 +3682,312 @@ abstract class AppLocalizations {
   /// **'Perfil'**
   String get driverNavProfile;
 
+  /// Registro de chófer: nombre del documento de tipo profile_photo (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Foto de perfil'**
+  String get regDocTypeProfilePhoto;
+
+  /// Registro de chófer: nombre del documento de tipo live_photo (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Foto en vivo'**
+  String get regDocTypeLivePhoto;
+
+  /// Registro de chófer: nombre del documento de tipo national_id_front (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de identidad (anverso)'**
+  String get regDocTypeNationalIdFront;
+
+  /// Registro de chófer: nombre del documento de tipo national_id_back (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de identidad (reverso)'**
+  String get regDocTypeNationalIdBack;
+
+  /// Registro de chófer: nombre del documento de tipo license_front (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia de conducir (anverso)'**
+  String get regDocTypeLicenseFront;
+
+  /// Registro de chófer: nombre del documento de tipo license_back (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia de conducir (reverso)'**
+  String get regDocTypeLicenseBack;
+
+  /// Registro de chófer: nombre del documento de tipo criminal_record (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Certificado de antecedentes'**
+  String get regDocTypeCriminalRecord;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_ownership (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Documento de propiedad del vehículo'**
+  String get regDocTypeVehicleOwnership;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_soat (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Seguro obligatorio de accidentes (SOAT)'**
+  String get regDocTypeVehicleSoat;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_inspection (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Inspección técnica del vehículo'**
+  String get regDocTypeVehicleInspection;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_insurance (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Seguro del vehículo'**
+  String get regDocTypeVehicleInsurance;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_permit (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Permiso de operación del vehículo'**
+  String get regDocTypeVehiclePermit;
+
+  /// Registro de chófer: nombre del documento de tipo owner_authorization (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Autorización del propietario'**
+  String get regDocTypeOwnerAuthorization;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_front (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: frente'**
+  String get regDocTypeVehiclePhotoFront;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_back (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: parte trasera'**
+  String get regDocTypeVehiclePhotoBack;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_left (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: lado izquierdo'**
+  String get regDocTypeVehiclePhotoLeft;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_right (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: lado derecho'**
+  String get regDocTypeVehiclePhotoRight;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_interior_front (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: interior delantero'**
+  String get regDocTypeVehiclePhotoInteriorFront;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_interior_back (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: interior trasero'**
+  String get regDocTypeVehiclePhotoInteriorBack;
+
+  /// Registro de chófer: nombre del documento de tipo vehicle_photo_plate (app del chófer y panel).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo: placa'**
+  String get regDocTypeVehiclePhotoPlate;
+
+  /// Registro de chófer: estado de la solicitud draft.
+  ///
+  /// In es, this message translates to:
+  /// **'Borrador'**
+  String get regAppStatusDraft;
+
+  /// Registro de chófer: estado de la solicitud submitted.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviada'**
+  String get regAppStatusSubmitted;
+
+  /// Registro de chófer: estado de la solicitud in_review.
+  ///
+  /// In es, this message translates to:
+  /// **'En revisión'**
+  String get regAppStatusInReview;
+
+  /// Registro de chófer: estado de la solicitud needs_changes.
+  ///
+  /// In es, this message translates to:
+  /// **'Necesita cambios'**
+  String get regAppStatusNeedsChanges;
+
+  /// Registro de chófer: estado de la solicitud approved.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobada'**
+  String get regAppStatusApproved;
+
+  /// Registro de chófer: estado de la solicitud rejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazada'**
+  String get regAppStatusRejected;
+
+  /// Registro de chófer: estado de un documento pending_upload.
+  ///
+  /// In es, this message translates to:
+  /// **'Por subir'**
+  String get regDocStatusPendingUpload;
+
+  /// Registro de chófer: estado de un documento uploaded.
+  ///
+  /// In es, this message translates to:
+  /// **'Subido, en revisión'**
+  String get regDocStatusUploaded;
+
+  /// Registro de chófer: estado de un documento approved.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobado'**
+  String get regDocStatusApproved;
+
+  /// Registro de chófer: estado de un documento rejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazado'**
+  String get regDocStatusRejected;
+
+  /// Registro de chófer: estado de un documento expired.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencido'**
+  String get regDocStatusExpired;
+
+  /// Registro de chófer: motivo de rechazo de un documento (illegible).
+  ///
+  /// In es, this message translates to:
+  /// **'No se lee bien'**
+  String get regRejectIllegible;
+
+  /// Registro de chófer: motivo de rechazo de un documento (expired).
+  ///
+  /// In es, this message translates to:
+  /// **'Está vencido'**
+  String get regRejectExpired;
+
+  /// Registro de chófer: motivo de rechazo de un documento (wrong_document).
+  ///
+  /// In es, this message translates to:
+  /// **'No es el documento pedido'**
+  String get regRejectWrongDocument;
+
+  /// Registro de chófer: motivo de rechazo de un documento (incomplete).
+  ///
+  /// In es, this message translates to:
+  /// **'Está incompleto o cortado'**
+  String get regRejectIncomplete;
+
+  /// Registro de chófer: motivo de rechazo de un documento (data_mismatch).
+  ///
+  /// In es, this message translates to:
+  /// **'Los datos no coinciden con los de la solicitud'**
+  String get regRejectDataMismatch;
+
+  /// Registro de chófer: motivo de rechazo de un documento (low_quality).
+  ///
+  /// In es, this message translates to:
+  /// **'Imagen de baja calidad'**
+  String get regRejectLowQuality;
+
+  /// Registro de chófer: motivo de rechazo de un documento (other).
+  ///
+  /// In es, this message translates to:
+  /// **'Otro motivo'**
+  String get regRejectOther;
+
+  /// Registro de chófer: color del vehículo black (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Negro'**
+  String get regColorBlack;
+
+  /// Registro de chófer: color del vehículo white (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Blanco'**
+  String get regColorWhite;
+
+  /// Registro de chófer: color del vehículo silver (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Plateado'**
+  String get regColorSilver;
+
+  /// Registro de chófer: color del vehículo gray (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Gris'**
+  String get regColorGray;
+
+  /// Registro de chófer: color del vehículo blue (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Azul'**
+  String get regColorBlue;
+
+  /// Registro de chófer: color del vehículo red (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Rojo'**
+  String get regColorRed;
+
+  /// Registro de chófer: color del vehículo green (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Verde'**
+  String get regColorGreen;
+
+  /// Registro de chófer: color del vehículo beige (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Beige'**
+  String get regColorBeige;
+
+  /// Registro de chófer: color del vehículo brown (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Marrón'**
+  String get regColorBrown;
+
+  /// Registro de chófer: color del vehículo other (mismo texto que el catálogo del servidor).
+  ///
+  /// In es, this message translates to:
+  /// **'Otro'**
+  String get regColorOther;
+
+  /// Registro de chófer: tipo de carrocería sedan.
+  ///
+  /// In es, this message translates to:
+  /// **'Sedán'**
+  String get regBodySedan;
+
+  /// Registro de chófer: tipo de carrocería suv.
+  ///
+  /// In es, this message translates to:
+  /// **'SUV'**
+  String get regBodySuv;
+
+  /// Registro de chófer: tipo de carrocería van.
+  ///
+  /// In es, this message translates to:
+  /// **'Van'**
+  String get regBodyVan;
+
   /// Error: el servidor o Firebase limitó los intentos.
   ///
   /// In es, this message translates to:
