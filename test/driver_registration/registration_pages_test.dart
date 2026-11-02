@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/app/lux_locale.dart';
 import 'package:luxelane/core/models/models.dart';
+import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
+import 'package:luxelane/features/driver_registration/presentation/pages/driver_registration_entry.dart';
 import 'package:luxelane/features/driver_registration/data/driver_registration_repository.dart';
 import 'package:luxelane/features/driver_registration/data/image_prep.dart';
 import 'package:luxelane/features/driver_registration/data/photo_picker.dart';
@@ -19,6 +22,9 @@ import 'fakes.dart';
 
 class _MockAuthBloc extends MockBloc<AuthEvent, AuthState>
     implements AuthBloc {}
+
+class _MockDriverBloc extends MockBloc<DriverEvent, DriverState>
+    implements DriverBloc {}
 
 Future<void> _pump(
   WidgetTester t,
@@ -253,5 +259,41 @@ void main() {
     await expectLater(t, meetsGuideline(androidTapTargetGuideline));
     await expectLater(t, meetsGuideline(labeledTapTargetGuideline));
     handle.dispose();
+  });
+
+  testWidgets(
+      'entrada: un pasajero ve la pantalla previa aunque el DriverBloc no haya arrancado (app del pasajero)',
+      (t) async {
+    final auth = _MockAuthBloc();
+    when(() => auth.state).thenReturn(AuthAuthenticated(User(
+        id: 'r',
+        email: 'r@example.com',
+        phone: '',
+        displayName: 'Ana',
+        role: UserRole.rider,
+        createdAt: DateTime(2026),
+        isVerified: true,
+        isActive: true,
+        fcmTokens: const [])));
+    final driver = _MockDriverBloc();
+    when(() => driver.state).thenReturn(const DriverInitial());
+    L10n.use(const Locale('es'));
+    await t.pumpWidget(MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>.value(value: auth),
+        BlocProvider<DriverBloc>.value(value: driver),
+      ],
+      child: MaterialApp(
+        supportedLocales: LuxLocale.supportedLocales,
+        localizationsDelegates: LuxLocale.delegates,
+        home: DriverRegistrationEntry(
+          repository: FakeRegistrationRepository(fakeApplication()),
+          imagePrep: FakeImagePrep(),
+          picker: FakePicker(),
+        ),
+      ),
+    ));
+    await t.pumpAndSettle();
+    expect(find.byType(DriverApplicationIntroPage), findsOneWidget);
   });
 }

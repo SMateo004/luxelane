@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../../core/enums/enums.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/pages/mfa_enroll_page.dart';
 import '../../../driver/presentation/bloc/driver_bloc.dart';
@@ -40,7 +41,12 @@ class DriverRegistrationEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final driver = context.watch<DriverBloc>().state;
-    if (driver is DriverApplicationStartRequired) {
+    final auth = context.watch<AuthBloc>().state;
+    // En la app del pasajero el DriverBloc no arranca para un pasajero: el
+    // rol de la sesión también cuenta.
+    final isRider =
+        auth is AuthAuthenticated && auth.user.role == UserRole.rider;
+    if (driver is DriverApplicationStartRequired || isRider) {
       return DriverApplicationIntroPage(
         repository: _repo,
         onStarted: () => _restart(context),
