@@ -1,5 +1,661 @@
 {
   "@@locale": "es",
+  "adminDrvAppSection": "Solicitudes de chófer",
+  "@adminDrvAppSection": {
+    "description": "Panel, solicitudes de chófer: nombre de la sección en la barra lateral y las pestañas."
+  },
+  "adminDrvAppSectionSubtitle": "Datos, vehículo y documentos de quienes quieren conducir.",
+  "@adminDrvAppSectionSubtitle": {
+    "description": "Panel, solicitudes de chófer: subtítulo de la sección."
+  },
+  "adminDrvAppTabInbox": "Solicitudes",
+  "@adminDrvAppTabInbox": {
+    "description": "Panel, solicitudes de chófer: pestaña de la bandeja de solicitudes."
+  },
+  "adminDrvAppTabExpiries": "Vencimientos próximos",
+  "@adminDrvAppTabExpiries": {
+    "description": "Panel, solicitudes de chófer: pestaña de documentos que vencen pronto."
+  },
+  "adminDrvAppReload": "Recargar",
+  "@adminDrvAppReload": {
+    "description": "Panel, solicitudes de chófer: botón de recargar."
+  },
+  "adminDrvAppRetry": "Reintentar",
+  "@adminDrvAppRetry": {
+    "description": "Panel, solicitudes de chófer: botón para reintentar tras un error."
+  },
+  "adminDrvAppStatusFilter": "Filtrar por estado",
+  "@adminDrvAppStatusFilter": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible del filtro por estado."
+  },
+  "adminDrvAppInboxEmpty": "No hay solicitudes en este estado",
+  "@adminDrvAppInboxEmpty": {
+    "description": "Panel, solicitudes de chófer: bandeja vacía."
+  },
+  "adminDrvAppInboxEmptyHint": "Elige otro estado arriba para ver más.",
+  "@adminDrvAppInboxEmptyHint": {
+    "description": "Panel, solicitudes de chófer: pista bajo la bandeja vacía."
+  },
+  "adminDrvAppInboxError": "No se pudieron cargar las solicitudes.",
+  "@adminDrvAppInboxError": {
+    "description": "Panel, solicitudes de chófer: no se pudo cargar la bandeja."
+  },
+  "adminDrvAppInboxTruncated": "Se muestran las {count} más recientes.",
+  "@adminDrvAppInboxTruncated": {
+    "description": "Panel, solicitudes de chófer: aviso de que la lista está recortada; {count} es el máximo mostrado.",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "200"
+      }
+    }
+  },
+  "adminDrvAppSubmittedAt": "Enviada el {date}",
+  "@adminDrvAppSubmittedAt": {
+    "description": "Panel, solicitudes de chófer: fecha de envío de la solicitud.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "24/10/2026 14:30"
+      }
+    }
+  },
+  "adminDrvAppUpdatedAt": "Actualizada el {date}",
+  "@adminDrvAppUpdatedAt": {
+    "description": "Panel, solicitudes de chófer: fecha de la última actualización (sin envío).",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "24/10/2026 14:30"
+      }
+    }
+  },
+  "adminDrvAppNoName": "Sin nombre",
+  "@adminDrvAppNoName": {
+    "description": "Panel, solicitudes de chófer: chófer sin nombre en su cuenta."
+  },
+  "adminDrvAppOpen": "Abrir la solicitud de {name}",
+  "@adminDrvAppOpen": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible para abrir una solicitud; {name} es el chófer.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana Pérez"
+      }
+    }
+  },
+  "adminDrvAppOpenShort": "Ver solicitud",
+  "@adminDrvAppOpenShort": {
+    "description": "Panel, solicitudes de chófer: botón para abrir la solicitud desde vencimientos."
+  },
+  "adminDrvAppBack": "Volver a la bandeja",
+  "@adminDrvAppBack": {
+    "description": "Panel, solicitudes de chófer: volver del detalle a la bandeja."
+  },
+  "adminDrvAppDetailError": "No se pudo cargar la solicitud.",
+  "@adminDrvAppDetailError": {
+    "description": "Panel, solicitudes de chófer: no se pudo cargar el detalle."
+  },
+  "adminDrvAppPersonalTitle": "Datos personales",
+  "@adminDrvAppPersonalTitle": {
+    "description": "Panel, solicitudes de chófer: título de los datos personales."
+  },
+  "adminDrvAppPersonalMissing": "Aún no completó sus datos personales.",
+  "@adminDrvAppPersonalMissing": {
+    "description": "Panel, solicitudes de chófer: el chófer no completó los datos personales."
+  },
+  "adminDrvAppFullName": "Nombre completo",
+  "@adminDrvAppFullName": {
+    "description": "Panel, solicitudes de chófer: campo nombre completo."
+  },
+  "adminDrvAppNationalId": "Número de documento",
+  "@adminDrvAppNationalId": {
+    "description": "Panel, solicitudes de chófer: campo número del documento de identidad."
+  },
+  "adminDrvAppLicenseNumber": "Número de licencia",
+  "@adminDrvAppLicenseNumber": {
+    "description": "Panel, solicitudes de chófer: campo número de licencia."
+  },
+  "adminDrvAppLicenseExpiry": "Vencimiento de la licencia",
+  "@adminDrvAppLicenseExpiry": {
+    "description": "Panel, solicitudes de chófer: campo vencimiento de la licencia."
+  },
+  "adminDrvAppEmail": "Correo",
+  "@adminDrvAppEmail": {
+    "description": "Panel, solicitudes de chófer: campo correo de la cuenta."
+  },
+  "adminDrvAppStatus": "Estado",
+  "@adminDrvAppStatus": {
+    "description": "Panel, solicitudes de chófer: campo estado de la solicitud."
+  },
+  "adminDrvAppVehicleTitle": "Vehículo",
+  "@adminDrvAppVehicleTitle": {
+    "description": "Panel, solicitudes de chófer: título del vehículo."
+  },
+  "adminDrvAppVehicleMissing": "Aún no registró el vehículo.",
+  "@adminDrvAppVehicleMissing": {
+    "description": "Panel, solicitudes de chófer: el chófer no completó el vehículo."
+  },
+  "adminDrvAppMake": "Marca",
+  "@adminDrvAppMake": {
+    "description": "Panel, solicitudes de chófer: campo marca."
+  },
+  "adminDrvAppModel": "Modelo",
+  "@adminDrvAppModel": {
+    "description": "Panel, solicitudes de chófer: campo modelo."
+  },
+  "adminDrvAppYear": "Año",
+  "@adminDrvAppYear": {
+    "description": "Panel, solicitudes de chófer: campo año."
+  },
+  "adminDrvAppColor": "Color",
+  "@adminDrvAppColor": {
+    "description": "Panel, solicitudes de chófer: campo color."
+  },
+  "adminDrvAppPlate": "Placa",
+  "@adminDrvAppPlate": {
+    "description": "Panel, solicitudes de chófer: campo placa."
+  },
+  "adminDrvAppBodyType": "Carrocería",
+  "@adminDrvAppBodyType": {
+    "description": "Panel, solicitudes de chófer: campo carrocería."
+  },
+  "adminDrvAppPassengers": "Pasajeros",
+  "@adminDrvAppPassengers": {
+    "description": "Panel, solicitudes de chófer: campo número de pasajeros."
+  },
+  "adminDrvAppClass": "Clase",
+  "@adminDrvAppClass": {
+    "description": "Panel, solicitudes de chófer: campo clase de servicio."
+  },
+  "adminDrvAppPendingVehicle": "Cambio de vehículo pendiente de revisión.",
+  "@adminDrvAppPendingVehicle": {
+    "description": "Panel, solicitudes de chófer: aviso de vehículo nuevo en revisión tras aprobar."
+  },
+  "adminDrvAppDocsTitle": "Documentos",
+  "@adminDrvAppDocsTitle": {
+    "description": "Panel, solicitudes de chófer: título de la lista de documentos."
+  },
+  "adminDrvAppRequirementsMissing": "Requisitos sin configurar",
+  "@adminDrvAppRequirementsMissing": {
+    "description": "Panel, solicitudes de chófer: banner: config/ops.driverRequirements no existe."
+  },
+  "adminDrvAppRequirementsMissingBody": "Falta la lista driverRequirements en config/ops: el chófer no puede enviar la solicitud y no se puede aprobar. Se muestran los documentos subidos.",
+  "@adminDrvAppRequirementsMissingBody": {
+    "description": "Panel, solicitudes de chófer: explicación del banner de requisitos sin configurar."
+  },
+  "adminDrvAppRequired": "Obligatorio",
+  "@adminDrvAppRequired": {
+    "description": "Panel, solicitudes de chófer: documento obligatorio."
+  },
+  "adminDrvAppOptional": "Opcional",
+  "@adminDrvAppOptional": {
+    "description": "Panel, solicitudes de chófer: documento opcional."
+  },
+  "adminDrvAppNotRequested": "Fuera de los requisitos",
+  "@adminDrvAppNotRequested": {
+    "description": "Panel, solicitudes de chófer: documento subido que no está en los requisitos."
+  },
+  "adminDrvAppDocVersion": "Versión {version}",
+  "@adminDrvAppDocVersion": {
+    "description": "Panel, solicitudes de chófer: versión del documento.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "2"
+      }
+    }
+  },
+  "adminDrvAppDocExpires": "Vence el {date}",
+  "@adminDrvAppDocExpires": {
+    "description": "Panel, solicitudes de chófer: fecha de vencimiento futura.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "24/10/2026 14:30"
+      }
+    }
+  },
+  "adminDrvAppDocExpired": "Venció el {date}",
+  "@adminDrvAppDocExpired": {
+    "description": "Panel, solicitudes de chófer: fecha de vencimiento pasada.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "24/10/2026 14:30"
+      }
+    }
+  },
+  "adminDrvAppDocExpiryMissing": "Sin fecha de vencimiento",
+  "@adminDrvAppDocExpiryMissing": {
+    "description": "Panel, solicitudes de chófer: el documento vence pero no tiene fecha."
+  },
+  "adminDrvAppDocRejectReason": "Motivo del rechazo: {reason}",
+  "@adminDrvAppDocRejectReason": {
+    "description": "Panel, solicitudes de chófer: motivo del rechazo de un documento.",
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "example": "Ilegible"
+      }
+    }
+  },
+  "adminDrvAppDocNote": "Nota: {note}",
+  "@adminDrvAppDocNote": {
+    "description": "Panel, solicitudes de chófer: nota del rechazo.",
+    "placeholders": {
+      "note": {
+        "type": "String",
+        "example": "Se ve borroso"
+      }
+    }
+  },
+  "adminDrvAppDocNotUploaded": "Sin subir",
+  "@adminDrvAppDocNotUploaded": {
+    "description": "Panel, solicitudes de chófer: el documento no se subió."
+  },
+  "adminDrvAppViewDoc": "Ver documento",
+  "@adminDrvAppViewDoc": {
+    "description": "Panel, solicitudes de chófer: botón para abrir el visor."
+  },
+  "adminDrvAppViewDocLabel": "Ver documento: {document}",
+  "@adminDrvAppViewDocLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible del botón ver; {document} es el tipo.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppApproveDoc": "Aprobar",
+  "@adminDrvAppApproveDoc": {
+    "description": "Panel, solicitudes de chófer: botón aprobar documento."
+  },
+  "adminDrvAppApproveDocLabel": "Aprobar documento: {document}",
+  "@adminDrvAppApproveDocLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible del botón aprobar.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppRejectDoc": "Rechazar",
+  "@adminDrvAppRejectDoc": {
+    "description": "Panel, solicitudes de chófer: botón rechazar documento."
+  },
+  "adminDrvAppRejectDocLabel": "Rechazar documento: {document}",
+  "@adminDrvAppRejectDocLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible del botón rechazar.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppApproveTitle": "¿Aprobar {document}?",
+  "@adminDrvAppApproveTitle": {
+    "description": "Panel, solicitudes de chófer: título del diálogo para aprobar un documento.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppApproveBody": "Se aprueba la versión {version}. Queda en la auditoría con tu cuenta.",
+  "@adminDrvAppApproveBody": {
+    "description": "Panel, solicitudes de chófer: texto del diálogo para aprobar.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "2"
+      }
+    }
+  },
+  "adminDrvAppApproveConfirm": "Aprobar documento",
+  "@adminDrvAppApproveConfirm": {
+    "description": "Panel, solicitudes de chófer: confirmar aprobación de documento."
+  },
+  "adminDrvAppDocApproved": "Documento aprobado.",
+  "@adminDrvAppDocApproved": {
+    "description": "Panel, solicitudes de chófer: aviso tras aprobar un documento."
+  },
+  "adminDrvAppDocRejected": "Documento rechazado. El chófer verá el motivo.",
+  "@adminDrvAppDocRejected": {
+    "description": "Panel, solicitudes de chófer: aviso tras rechazar un documento."
+  },
+  "adminDrvAppRejectTitle": "Rechazar {document}",
+  "@adminDrvAppRejectTitle": {
+    "description": "Panel, solicitudes de chófer: título del diálogo para rechazar un documento.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppRejectReasonLabel": "Motivo del rechazo",
+  "@adminDrvAppRejectReasonLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta de la lista de motivos."
+  },
+  "adminDrvAppRejectReasonHint": "Elige un motivo",
+  "@adminDrvAppRejectReasonHint": {
+    "description": "Panel, solicitudes de chófer: texto de la lista sin elegir."
+  },
+  "adminDrvAppRejectReasonRequired": "Elige un motivo para rechazar.",
+  "@adminDrvAppRejectReasonRequired": {
+    "description": "Panel, solicitudes de chófer: error: falta elegir el motivo."
+  },
+  "adminDrvAppRejectNoteLabel": "Nota para el chófer (opcional)",
+  "@adminDrvAppRejectNoteLabel": {
+    "description": "Panel, solicitudes de chófer: nota opcional para el chófer."
+  },
+  "adminDrvAppRejectConfirm": "Rechazar documento",
+  "@adminDrvAppRejectConfirm": {
+    "description": "Panel, solicitudes de chófer: confirmar rechazo de documento."
+  },
+  "adminDrvAppCancel": "Cancelar",
+  "@adminDrvAppCancel": {
+    "description": "Panel, solicitudes de chófer: cancelar un diálogo."
+  },
+  "adminDrvAppClose": "Cerrar",
+  "@adminDrvAppClose": {
+    "description": "Panel, solicitudes de chófer: cerrar el visor o un diálogo."
+  },
+  "adminDrvAppViewerLoading": "Abriendo el documento…",
+  "@adminDrvAppViewerLoading": {
+    "description": "Panel, solicitudes de chófer: el visor pide el enlace."
+  },
+  "adminDrvAppViewerExpiry": "El enlace caduca en 5 minutos. Si caduca, cierra el visor y vuelve a abrirlo.",
+  "@adminDrvAppViewerExpiry": {
+    "description": "Panel, solicitudes de chófer: aviso del visor: el enlace dura 5 minutos."
+  },
+  "adminDrvAppViewerLogged": "Cada apertura queda en la bitácora de accesos.",
+  "@adminDrvAppViewerLogged": {
+    "description": "Panel, solicitudes de chófer: aviso: cada apertura se registra."
+  },
+  "adminDrvAppViewerPdf": "Este documento es un PDF.",
+  "@adminDrvAppViewerPdf": {
+    "description": "Panel, solicitudes de chófer: el documento es un PDF."
+  },
+  "adminDrvAppViewerOpenPdf": "Abrir PDF en otra pestaña",
+  "@adminDrvAppViewerOpenPdf": {
+    "description": "Panel, solicitudes de chófer: botón para abrir el PDF en otra pestaña."
+  },
+  "adminDrvAppViewerPdfError": "No se pudo abrir el PDF. Cierra el visor y vuelve a intentarlo.",
+  "@adminDrvAppViewerPdfError": {
+    "description": "Panel, solicitudes de chófer: no se pudo abrir el PDF."
+  },
+  "adminDrvAppViewerImageError": "No se pudo mostrar la imagen. Si el enlace caducó, cierra el visor y vuelve a abrirlo.",
+  "@adminDrvAppViewerImageError": {
+    "description": "Panel, solicitudes de chófer: no se pudo mostrar la imagen."
+  },
+  "adminDrvAppViewerImageLabel": "Imagen del documento: {document}",
+  "@adminDrvAppViewerImageLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible de la imagen del documento.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppViewerError": "No se pudo abrir el documento.",
+  "@adminDrvAppViewerError": {
+    "description": "Panel, solicitudes de chófer: no se pudo pedir el enlace."
+  },
+  "adminDrvAppDecide": "Decisión final",
+  "@adminDrvAppDecide": {
+    "description": "Panel, solicitudes de chófer: botón que abre la decisión final."
+  },
+  "adminDrvAppDecisionTitle": "Decisión final de la solicitud",
+  "@adminDrvAppDecisionTitle": {
+    "description": "Panel, solicitudes de chófer: título del diálogo de decisión final."
+  },
+  "adminDrvAppDecisionBody": "Aprobar exige todos los documentos obligatorios aprobados y vigentes. El chófer recibe un aviso con el resultado.",
+  "@adminDrvAppDecisionBody": {
+    "description": "Panel, solicitudes de chófer: texto del diálogo de decisión."
+  },
+  "adminDrvAppDecisionApprove": "Aprobar",
+  "@adminDrvAppDecisionApprove": {
+    "description": "Panel, solicitudes de chófer: opción aprobar la solicitud."
+  },
+  "adminDrvAppDecisionNeedsChanges": "Pedir cambios",
+  "@adminDrvAppDecisionNeedsChanges": {
+    "description": "Panel, solicitudes de chófer: opción pedir cambios."
+  },
+  "adminDrvAppDecisionReject": "Rechazar",
+  "@adminDrvAppDecisionReject": {
+    "description": "Panel, solicitudes de chófer: opción rechazar la solicitud."
+  },
+  "adminDrvAppDecisionReasonLabel": "Motivo (queda en la auditoría)",
+  "@adminDrvAppDecisionReasonLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta del motivo."
+  },
+  "adminDrvAppDecisionReasonHint": "Entre {min} y {max} caracteres",
+  "@adminDrvAppDecisionReasonHint": {
+    "description": "Panel, solicitudes de chófer: pista del campo motivo.",
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "10"
+      },
+      "max": {
+        "type": "String",
+        "example": "500"
+      }
+    }
+  },
+  "adminDrvAppDecisionReasonShort": "Escribe al menos {min} caracteres.",
+  "@adminDrvAppDecisionReasonShort": {
+    "description": "Panel, solicitudes de chófer: error: motivo demasiado corto.",
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "adminDrvAppDecisionConfirm": "Confirmar decisión",
+  "@adminDrvAppDecisionConfirm": {
+    "description": "Panel, solicitudes de chófer: confirmar la decisión."
+  },
+  "adminDrvAppDecisionNotDecidable": "Solo se decide una solicitud enviada, en revisión o con cambios pedidos.",
+  "@adminDrvAppDecisionNotDecidable": {
+    "description": "Panel, solicitudes de chófer: la solicitud no admite decisión en su estado."
+  },
+  "adminDrvAppDecisionDone": "Decisión guardada: {status}.",
+  "@adminDrvAppDecisionDone": {
+    "description": "Panel, solicitudes de chófer: aviso tras guardar la decisión.",
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "example": "Enviada"
+      }
+    }
+  },
+  "adminDrvAppErrDocsNotApproved": "No se puede aprobar: estos documentos obligatorios no están aprobados o vigentes: {documents}.",
+  "@adminDrvAppErrDocsNotApproved": {
+    "description": "Panel, solicitudes de chófer: error al aprobar: faltan documentos; {documents} es la lista.",
+    "placeholders": {
+      "documents": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      }
+    }
+  },
+  "adminDrvAppErrDocsNotApprovedAny": "No se puede aprobar: hay documentos obligatorios sin aprobar o vencidos.",
+  "@adminDrvAppErrDocsNotApprovedAny": {
+    "description": "Panel, solicitudes de chófer: error al aprobar sin lista de documentos."
+  },
+  "adminDrvAppErrStaleVersion": "El chófer subió una versión nueva; recarga la solicitud.",
+  "@adminDrvAppErrStaleVersion": {
+    "description": "Panel, solicitudes de chófer: error: el chófer subió otra versión."
+  },
+  "adminDrvAppErrNotReviewable": "Este documento no se puede revisar en su estado actual.",
+  "@adminDrvAppErrNotReviewable": {
+    "description": "Panel, solicitudes de chófer: error: el documento no se puede revisar."
+  },
+  "adminDrvAppErrNotDecidable": "Esta solicitud ya no admite decisión; recarga.",
+  "@adminDrvAppErrNotDecidable": {
+    "description": "Panel, solicitudes de chófer: error: la solicitud no admite decisión."
+  },
+  "adminDrvAppErrRequirements": "Requisitos sin configurar: no se puede aprobar.",
+  "@adminDrvAppErrRequirements": {
+    "description": "Panel, solicitudes de chófer: error: requisitos sin configurar."
+  },
+  "adminDrvAppErrStepsIncomplete": "Faltan pasos de la solicitud (datos personales o vehículo).",
+  "@adminDrvAppErrStepsIncomplete": {
+    "description": "Panel, solicitudes de chófer: error: faltan pasos."
+  },
+  "adminDrvAppErrNotFound": "No se encontró el documento o el chófer; recarga.",
+  "@adminDrvAppErrNotFound": {
+    "description": "Panel, solicitudes de chófer: error: documento o chófer no encontrado."
+  },
+  "adminDrvAppErrInvalid": "Revisa los datos: el motivo necesita entre 10 y 500 caracteres.",
+  "@adminDrvAppErrInvalid": {
+    "description": "Panel, solicitudes de chófer: error: datos inválidos."
+  },
+  "adminDrvAppErrPermission": "Permiso denegado: se necesita rol de administrador.",
+  "@adminDrvAppErrPermission": {
+    "description": "Panel, solicitudes de chófer: error: sin permiso de admin."
+  },
+  "adminDrvAppErrGeneric": "No se pudo completar. Inténtalo de nuevo en unos minutos.",
+  "@adminDrvAppErrGeneric": {
+    "description": "Panel, solicitudes de chófer: error genérico."
+  },
+  "adminDrvAppAccessLog": "Bitácora de accesos",
+  "@adminDrvAppAccessLog": {
+    "description": "Panel, solicitudes de chófer: botón que abre la bitácora de accesos."
+  },
+  "adminDrvAppAccessLogHint": "Quién abrió cada documento de esta solicitud y cuándo, de lo más reciente a lo más antiguo.",
+  "@adminDrvAppAccessLogHint": {
+    "description": "Panel, solicitudes de chófer: explicación de la bitácora."
+  },
+  "adminDrvAppAccessLogEmpty": "Nadie abrió todavía los documentos de esta solicitud.",
+  "@adminDrvAppAccessLogEmpty": {
+    "description": "Panel, solicitudes de chófer: bitácora vacía."
+  },
+  "adminDrvAppAccessLogError": "No se pudo cargar la bitácora de accesos.",
+  "@adminDrvAppAccessLogError": {
+    "description": "Panel, solicitudes de chófer: no se pudo cargar la bitácora."
+  },
+  "adminDrvAppAccessLogEntry": "{document} · versión {version}",
+  "@adminDrvAppAccessLogEntry": {
+    "description": "Panel, solicitudes de chófer: línea de la bitácora: documento y versión.",
+    "placeholders": {
+      "document": {
+        "type": "String",
+        "example": "Licencia de conducir (anverso)"
+      },
+      "version": {
+        "type": "String",
+        "example": "2"
+      }
+    }
+  },
+  "adminDrvAppAccessLogWho": "{who} · {date}",
+  "@adminDrvAppAccessLogWho": {
+    "description": "Panel, solicitudes de chófer: línea de la bitácora: quién y cuándo.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "admin@example.com"
+      },
+      "date": {
+        "type": "String",
+        "example": "24/10/2026 14:30"
+      }
+    }
+  },
+  "adminDrvAppUnknownAdmin": "Administrador {id}",
+  "@adminDrvAppUnknownAdmin": {
+    "description": "Panel, solicitudes de chófer: administrador sin correo conocido; {id} es su código corto.",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "A1B2C3"
+      }
+    }
+  },
+  "adminDrvAppExpiriesPeriod": "Próximos {days} días",
+  "@adminDrvAppExpiriesPeriod": {
+    "description": "Panel, solicitudes de chófer: chip del periodo de vencimientos.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "30"
+      }
+    }
+  },
+  "adminDrvAppExpiriesEmpty": "Ningún documento vence en los próximos {days} días.",
+  "@adminDrvAppExpiriesEmpty": {
+    "description": "Panel, solicitudes de chófer: sin vencimientos en el periodo.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "30"
+      }
+    }
+  },
+  "adminDrvAppExpiriesError": "No se pudieron cargar los vencimientos.",
+  "@adminDrvAppExpiriesError": {
+    "description": "Panel, solicitudes de chófer: no se pudieron cargar los vencimientos."
+  },
+  "adminDrvAppExpiriesTruncated": "Hay más resultados; se muestran los {count} primeros. Acorta el periodo para ver el resto.",
+  "@adminDrvAppExpiriesTruncated": {
+    "description": "Panel, solicitudes de chófer: la lista de vencimientos se recortó.",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "200"
+      }
+    }
+  },
+  "adminDrvAppBlocked": "Bloqueado para ponerse en línea",
+  "@adminDrvAppBlocked": {
+    "description": "Panel, solicitudes de chófer: el chófer está bloqueado para ponerse en línea."
+  },
+  "adminDrvAppAllowOnline": "Autorizar en línea",
+  "@adminDrvAppAllowOnline": {
+    "description": "Panel, solicitudes de chófer: botón para autorizar en línea."
+  },
+  "adminDrvAppAllowOnlineLabel": "Autorizar en línea a {name}",
+  "@adminDrvAppAllowOnlineLabel": {
+    "description": "Panel, solicitudes de chófer: etiqueta accesible del botón autorizar; {name} es el chófer.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana Pérez"
+      }
+    }
+  },
+  "adminDrvAppAllowOnlineTitle": "Autorizar en línea con documentos vencidos",
+  "@adminDrvAppAllowOnlineTitle": {
+    "description": "Panel, solicitudes de chófer: título del diálogo de autorizar en línea."
+  },
+  "adminDrvAppAllowOnlineBody": "{name} podrá ponerse en línea pese a los documentos vencidos actuales, hasta que venza otro. Queda en la auditoría con tu motivo.",
+  "@adminDrvAppAllowOnlineBody": {
+    "description": "Panel, solicitudes de chófer: texto del diálogo; {name} es el chófer.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana Pérez"
+      }
+    }
+  },
+  "adminDrvAppAllowOnlineConfirm": "Autorizar",
+  "@adminDrvAppAllowOnlineConfirm": {
+    "description": "Panel, solicitudes de chófer: confirmar autorizar en línea."
+  },
+  "adminDrvAppAllowOnlineDone": "Chófer autorizado para ponerse en línea.",
+  "@adminDrvAppAllowOnlineDone": {
+    "description": "Panel, solicitudes de chófer: aviso tras autorizar."
+  },
   "adminPrefsEmpty": "Sin preferencias para este viaje",
   "@adminPrefsEmpty": {
     "description": "Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje."
