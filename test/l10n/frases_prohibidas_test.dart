@@ -15,6 +15,11 @@ const _porIdioma = <String, Map<String, String>>{
         r'(lo|las|los)\s+cumpliremos|nos\s+aseguramos|te\s+aseguramos|respetar[aá]\s+(siempre\s+)?tus',
     // promesas_test.dart no las ve: «\b» tras «á» no es límite en Dart.
     'te contactarán': r'te\s+(contactamos|contactaremos|llamar[aá]|llamaremos)',
+    // Registro de chóferes (B4): la foto en vivo no es una prueba de vida
+    // ni una comparación de rostro; nada de identidad «verificada».
+    'verificación de identidad':
+        r'verificaci[oó]n\s+de\s+(la\s+)?identidad|identidad\s+verificada|verificamos\s+(tu\s+)?identidad',
+    'biometría': r'biom[eé]tric|prueba\s+de\s+vida|reconocimiento\s+facial|comparaci[oó]n\s+(de\s+)?(rostro|cara)',
   },
   'en': {
     'garantías': r'guarantee',
@@ -42,6 +47,9 @@ const _porIdioma = <String, Map<String, String>>{
     'agua de cortesía': r'\bwater\b',
     'cargadores': r'charger',
     'chóferes multilingües': r'multilingual',
+    'verificación de identidad':
+        r'identity\s+verification|verif\w*\s+(your\s+)?identity|identity\s+(is\s+)?verified',
+    'biometría': r'biometric|liveness|proof\s+of\s+life|facial\s+recognition|face\s+(match|comparison)',
   },
   'pt': {
     'garantías': r'garanti',
@@ -69,6 +77,9 @@ const _porIdioma = <String, Map<String, String>>{
     'agua de cortesía': r'\b[aá]gua\b',
     'cargadores': r'carregador',
     'chóferes multilingües': r'multil[ií]ngue',
+    'verificación de identidad':
+        r'verifica[cç][aã]o\s+de\s+identidade|identidade\s+verificada|verificamos\s+(a\s+sua\s+|sua\s+)?identidade',
+    'biometría': r'biom[eé]tric|prova\s+de\s+vida|reconhecimento\s+facial|compara[cç][aã]o\s+(de\s+)?rosto',
   },
 };
 
