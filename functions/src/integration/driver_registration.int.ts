@@ -12,7 +12,7 @@ import { describe, it, expect, beforeAll, beforeEach, afterAll, jest } from '@je
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import {
-  acceptBooking as acceptBookingFn, adminDecideApplication as decideFn, saveDriverStep as saveStepFn,
+  acceptBooking as acceptBookingFn, adminDecideApplication as decideFn, publishDriverInfo, saveDriverStep as saveStepFn,
   submitApplication as submitFn,
 } from '../index';
 import {
@@ -239,6 +239,32 @@ describe('vehículo', () => {
     expect((await db.doc(`vehicles/${newId}`).get()).data()!.isActive).toBe(true);
     expect((await db.doc(`vehicles/${oldId}`).get()).data()!.isActive).toBe(false);
     expect((await db.doc('driverProfiles/carlos').get()).data()!.vehicleId).toBe(newId);
+  });
+
+  it('B3: el pasajero ve marca, modelo, color y placa del vehículo aprobado, no del que está en revisión', async () => {
+    await readyApplication();
+    await submitApplication(deps, 'carlos');
+    await approveAll();
+    await adminDecideApplication(deps, ADMIN, { driverId: 'carlos', decision: 'approve', reason: 'Aprobado (prueba)' });
+    const ref = db.doc('bookings/b-info');
+    // Asignar dispara publishDriverInfo (se ejecuta aquí con el antes y el después).
+    async function assign(driverId: string | null) {
+      const before = await ref.get();
+      await ref.update({ driverId });
+      const after = await ref.get();
+      await (publishDriverInfo as unknown as Runnable).run({ data: { before, after }, params: { bookingId: 'b-info' } });
+      return (await ref.get()).data()?.driverInfo;
+    }
+    await ref.set({ riderId: 'ana', status: 'confirmed', driverId: null });
+    expect((await assign('carlos')).vehicle).toEqual({
+      make: 'Marca', model: 'Modelo', plate: 'PRB123', color: 'Negro', colorCode: 'black' });
+    // Vehículo nuevo tras aprobar: en revisión; el pasajero sigue viendo el aprobado.
+    await saveDriverStep(deps, 'carlos', { ...VEHICLE, plate: 'NUE-456', color: 'other', colorOther: 'Vino' });
+    await assign(null);
+    expect((await assign('carlos')).vehicle.plate).toBe('PRB123');
+    await adminDecideApplication(deps, ADMIN, { driverId: 'carlos', decision: 'approve', reason: 'Vehículo nuevo revisado' });
+    await assign(null);
+    expect((await assign('carlos')).vehicle).toMatchObject({ plate: 'NUE456', color: 'Vino', colorCode: 'other' });
   });
 
   it('datos personales tras aprobar: los cambia el admin', async () => {
