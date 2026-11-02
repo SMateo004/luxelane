@@ -78,6 +78,9 @@ const URL_TTL_MS = 5 * 60 * 1000;
 // ---------------------------------------------------------------------------
 
 /** Lo que el registro necesita del almacenamiento (sustituible en tests). */
+/** Cache-Control de los documentos aceptados (el visor del panel no los guarda). */
+export const NO_STORE = 'private, no-store, max-age=0';
+
 export interface DocStore {
   /** null si no existe. */
   metadata(path: string): Promise<{ size: number; contentType: string | null } | null>;
@@ -85,6 +88,8 @@ export interface DocStore {
   /** URL de lectura firmada que caduca en [ttlMs]. */
   signedReadUrl(path: string, ttlMs: number): Promise<string>;
   markInvalid(path: string, reason: string): Promise<void>;
+  /** Archivo aceptado: que ni el navegador ni un proxy lo guarden en caché. */
+  seal(path: string): Promise<void>;
   deletePrefix(prefix: string): Promise<number>;
 }
 
@@ -113,6 +118,9 @@ export function gcsDocStore(bucket: { file: (p: string) => any; deleteFiles: (o:
     },
     async markInvalid(path, reason) {
       await bucket.file(path).setMetadata({ metadata: { luxelaneInvalid: reason } });
+    },
+    async seal(path) {
+      await bucket.file(path).setMetadata({ cacheControl: NO_STORE });
     },
     async deletePrefix(prefix) {
       const [files] = (await bucket.getFiles({ prefix })) as [unknown[]];
@@ -459,6 +467,7 @@ export async function registerDocumentUpload(deps: RegDeps, uid: string | undefi
     throw regError('invalid-argument', 'invalid_file', { fields: ['file'] });
   }
 
+  await deps.store.seal(path);
   const now = ts(nowMillis);
   return db.runTransaction(async (tx) => {
     const aRef = appRef(db, id);
@@ -844,4 +853,28 @@ export async function adminPurgeDriverDocuments(deps: RegDeps, actor: AdminActor
     });
   });
   return { driverId: input.driverId, deleted };
+}
+
+export const expiriesSchema = z.strictObject({
+  /** Vencidos y los que vencen en los próximos [days] días. */
+  days: z.number().int().min(1).max(365),
+});
+
+/**
+ * Vencimientos próximos para el panel (B2): las reglas no dejan al cliente
+ * consultar el grupo de colecciones documents. Solo tipo, estado y fecha;
+ * ni rutas ni datos personales. Como mucho 200, los más próximos primero.
+ */
+export async function adminListDocExpiries(deps: RegDeps, _actor: AdminActor, data: unknown) {
+  const input = parseInput(expiriesSchema, data);
+  const horizon = nowMs(deps) + input.days * DAY_MS;
+  const snap = await deps.db.collectionGroup('documents').where('expiresAt', '<=', ts(horizon)).get();
+  const items = snap.docs
+    .filter((d) => d.ref.parent.parent?.parent.id === 'driverApplications')
+    .map((d) => ({
+      driverId: d.ref.parent.parent!.id, type: d.id, status: d.data().status as string,
+      expiresAt: (d.data().expiresAt as admin.firestore.Timestamp).toMillis(),
+    }))
+    .sort((a, b) => a.expiresAt - b.expiresAt);
+  return { items: items.slice(0, 200), truncated: items.length > 200 };
 }

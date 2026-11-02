@@ -13,9 +13,10 @@ import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import {
   acceptBooking as acceptBookingFn, adminDecideApplication as decideFn, saveDriverStep as saveStepFn,
+  submitApplication as submitFn,
 } from '../index';
 import {
-  adminAllowDriverOnline, adminDecideApplication, adminGetDocumentUrl, adminPurgeDriverDocuments,
+  adminAllowDriverOnline, adminDecideApplication, adminGetDocumentUrl, adminListDocExpiries, adminPurgeDriverDocuments, NO_STORE,
   adminReviewDocument, DocStore, gcsDocStore, getDriverApplication, recomputeDocsBlock, RegDeps,
   registerDocumentUpload, runDocExpiry, saveDriverStep, storagePath, submitApplication,
 } from '../driver_application';
@@ -347,6 +348,44 @@ describe('acceso y permisos', () => {
       data: { driverId: 'carlos', decision: 'reject', reason: 'Prueba sin segundo factor' } }));
     expect(r.reason).toBe('mfa_required');
     await db.doc('config/security').delete();
+  });
+
+  it('con mfaEnforced, el chófer da de alta el TOTP antes de enviar (A10.3)', async () => {
+    await readyApplication();
+    await db.doc('config/security').set({ mfaEnforced: true });
+    const now = Math.floor(Date.now() / 1000);
+    const base = { app: {}, data: null };
+    const noFactor = await reason((submitFn as unknown as Runnable).run({ ...base,
+      auth: { uid: 'carlos', token: { role: 'driver', auth_time: now, firebase: { sign_in_provider: 'password' } } } }));
+    expect(noFactor.reason).toBe('mfa_required');
+    expect((await app())?.status).toBe('draft');
+    const ok = await (submitFn as unknown as Runnable).run({ ...base, auth: { uid: 'carlos',
+      token: { role: 'driver', auth_time: now, firebase: { sign_in_provider: 'password', sign_in_second_factor: 'totp' } } } });
+    expect(ok).toEqual({ status: 'submitted' });
+    await db.doc('config/security').delete();
+  });
+
+  it('el archivo aceptado queda sin caché (Cache-Control no-store) para el visor del panel', async () => {
+    await saveDriverStep(deps, 'carlos', PERSONAL);
+    await uploadAndRegister('carlos', 'profile_photo');
+    const [md] = await bucket.file(storagePath('carlos', 'profile_photo', 1)).getMetadata();
+    expect(md.cacheControl).toBe(NO_STORE);
+  });
+
+  it('vencimientos para el panel: vencidos y próximos, sin rutas ni datos personales', async () => {
+    await readyApplication();
+    await db.doc('driverApplications/otro').set({ driverId: 'otro', status: 'draft' });
+    await db.doc('driverApplications/otro/documents/license_front')
+      .set({ status: 'approved', version: 1, expiresAt: admin.firestore.Timestamp.fromMillis(clock - DAY) });
+    // Otra subcolección llamada documents fuera del registro: no cuenta.
+    await db.doc('otraCosa/x/documents/y').set({ expiresAt: admin.firestore.Timestamp.fromMillis(clock) });
+    const r = await adminListDocExpiries(deps, ADMIN, { days: 60 });
+    expect(r).toEqual({ truncated: false, items: [
+      { driverId: 'otro', type: 'license_front', status: 'approved', expiresAt: clock - DAY },
+      { driverId: 'carlos', type: 'license_front', status: 'uploaded', expiresAt: clock + 30 * DAY },
+    ] });
+    expect((await adminListDocExpiries(deps, ADMIN, { days: 10 })).items.map((i) => i.driverId)).toEqual(['otro']);
+    await db.recursiveDelete(db.collection('otraCosa'));
   });
 
   it('purga manual: desactivada sin config/ops.driverDocsPurgeEnabled', async () => {

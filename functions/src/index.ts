@@ -1039,9 +1039,15 @@ export const registerDocumentUpload = secureCallable('registerDocumentUpload', {
 export const submitApplication = secureCallable('submitApplication', {}, (req) => {
   parseInput(schema.submitApplication, req.data);
   return registration.submitApplication(regDeps(), req.auth?.uid);
-}, { role: 'driver' });
+  // Con config/security.mfaEnforced, el TOTP se da de alta antes del envío
+  // (A10.3): un chófer aprobado sin él no podría aceptar viajes.
+}, { role: 'driver', requireMfa: true });
 
 /** URL firmada de pocos minutos de un documento; queda en la bitácora. */
+/** Vencimientos próximos de documentos de chófer para el panel (B2). */
+export const adminListDocExpiries = secureCallable('adminListDocExpiries', {}, async (req) =>
+  registration.adminListDocExpiries(regDeps(), await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
 export const adminGetDocumentUrl = secureCallable('adminGetDocumentUrl', {}, async (req) =>
   registration.adminGetDocumentUrl(regDeps(), await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 

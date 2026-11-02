@@ -25,7 +25,7 @@ import { inboxSchema } from './payment_inbox';
 import { collectBalanceSchema } from './payment_balance';
 import { updatePreferencesSchema } from './preferences';
 import {
-  decideSchema, docUrlSchema, overrideSchema as allowOnlineSchema, purgeSchema, reviewSchema, stepSchema, uploadSchema,
+  decideSchema, docUrlSchema, expiriesSchema, overrideSchema as allowOnlineSchema, purgeSchema, reviewSchema, stepSchema, uploadSchema,
 } from './driver_application';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -252,6 +252,9 @@ const CASES: Record<string, Case> = {
     wrongType: { type: 'license_front', version: '1' },
     extreme: [{ type: 'selfie', version: 1 }, { type: 'license_front', version: 0 }, { type: 'license_front', version: 1_000_000 },
       { type: 'license_front', version: 21 }],
+  },
+  adminListDocExpiries: {
+    schema: expiriesSchema, valid: { days: 30 }, wrongType: { days: '30' }, extreme: [{ days: 0 }, { days: 366 }, { days: 30, x: 1 }],
   },
   adminGetDocumentUrl: {
     schema: docUrlSchema, valid: { driverId: ID, type: 'national_id_front' },

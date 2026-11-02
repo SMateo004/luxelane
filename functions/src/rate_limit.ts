@@ -79,6 +79,7 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   adminDecideApplication: per10min(60),
   adminAllowDriverOnline: per10min(30),
   adminPurgeDriverDocuments: perHour(10),
+  adminListDocExpiries: per10min(30),
   // Al abrir la app del chófer.
   registerDriverDevice: per10min(20),
   // Escrituras de admin (Parte A).

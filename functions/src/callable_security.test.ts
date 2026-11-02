@@ -40,7 +40,7 @@ describe('cobertura de App Check en las callables', () => {
     'adminRecordPayment', 'adminUpdateConfig', 'adminUpdatePricingRule', 'adminVerifyDriver',
     'adminUpdateDriverSensitive', 'adminSetVehicleActive', 'adminSetLeadHandled',
     'adminGetDocumentUrl', 'adminReviewDocument', 'adminDecideApplication', 'adminAllowDriverOnline',
-    'adminPurgeDriverDocuments'];
+    'adminPurgeDriverDocuments', 'adminListDocExpiries'];
   it.each(ADMIN_ONLY.map((n) => [n]))('%s exige rol admin', (name) => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'admin' }));
   });
@@ -140,6 +140,9 @@ describe('APP_CHECK_ENFORCE (parámetro de despliegue)', () => {
     '%s exige rol chófer', (name) => {
       expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'driver' }));
     });
+  it('submitApplication exige el segundo factor (con mfaEnforced)', () => {
+    expect((index as Exported).submitApplication[SECURED_MARK]).toEqual(expect.objectContaining({ requireMfa: true }));
+  });
   it('startDriverApplication no exige rol (la llama un pasajero) y tiene límite de tasa', () => {
     const meta = (index as Exported).startDriverApplication[SECURED_MARK];
     expect(meta).toEqual(expect.objectContaining({ name: 'startDriverApplication' }));
