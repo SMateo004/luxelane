@@ -61,6 +61,10 @@
 		</dict>
 	</array>
 	<!-- Location: pickup point and chauffeur tracking (geolocator). -->
+	<key>NSCameraUsageDescription</key>
+	<string>Si te registras como chófer, Luxelane usa la cámara para fotografiar tus documentos, tu vehículo y tu foto en vivo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Si te registras como chófer, puedes elegir de tus fotos la foto de perfil y las de tus documentos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Luxelane usa tu ubicación para proponerte el lugar de recogida y mostrar el trayecto de tu chófer.</string>
 	<!-- Chófer conectado con la app minimizada (indicador azul de iOS). -->

@@ -205,6 +205,23 @@ void main() {
     });
   });
 
+  group('Registro de chóferes (B0)', () {
+    test('firebase_storage, image_picker y flutter_image_compress con versión fija', () {
+      final pubspec = _read('pubspec.yaml');
+      expect(pubspec, contains('\n  firebase_storage: 12.4.10\n'));
+      expect(pubspec, contains('\n  image_picker: 1.2.1\n'));
+      expect(pubspec, contains('\n  flutter_image_compress: 2.4.0\n'));
+      // Sin cámara propia (decisión del responsable).
+      expect(pubspec, isNot(contains('\n  camera:')));
+    });
+
+    test('iOS declara para qué usa la cámara y las fotos', () {
+      final plist = _read('ios/Runner/Info.plist');
+      expect(plist, contains('<key>NSCameraUsageDescription</key>'));
+      expect(plist, contains('<key>NSPhotoLibraryUsageDescription</key>'));
+    });
+  });
+
   group('App Check (T1)', () {
     test('firebase_app_check con versión fija', () {
       expect(_read('pubspec.yaml'),

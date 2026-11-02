@@ -32,6 +32,9 @@ dependencies:
   firebase_crashlytics: ^4.0.4
   firebase_performance: ^0.10.0
   cloud_functions: ^5.0.4
+  # Registro de chóferes (B0): versiones fijas aprobadas por el responsable.
+  # firebase_storage 12.4.10 es la de firebase_core 3.15.2 (pubspec.lock).
+  firebase_storage: 12.4.10
 
   # Payments
   flutter_stripe: ^10.2.0
@@ -63,6 +66,10 @@ dependencies:
   firebase_app_check: 0.3.2+10
   qr_flutter: 4.1.0
   flutter_secure_storage: 9.2.4
+  # Fotos del registro de chóferes (B0): cámara o galería del sistema y
+  # recompresión a JPEG sin EXIF (sin ubicación) antes de subir.
+  image_picker: 1.2.1
+  flutter_image_compress: 2.4.0
 
 dev_dependencies:
   flutter_test:
