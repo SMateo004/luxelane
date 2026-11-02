@@ -31,8 +31,15 @@ if [ "${1:-}" != "--sin-build" ]; then
   # Pasajero y panel con lugares y rutas ficticios (F5): sin clave de mapas
   # se llega igual a la pantalla de reserva. Nunca es la build de producción.
   "$FLUTTER" build web --release -t tools/experiencia/main_capturas.dart "${DEFINES[@]}" -o "$ROOT/build/web-emu"
-  "$FLUTTER" build web --release -t lib/main_driver.dart "${DEFINES[@]}" -o "$ROOT/build/web-emu-driver"
+  # Chófer: CAPTURE_WEB_UPLOADS (solo con USE_EMULATORS) deja ver en la web
+  # los pasos de la cámara del registro; en producción la web no sube.
+  "$FLUTTER" build web --release -t lib/main_driver.dart "${DEFINES[@]}" \
+    --dart-define=CAPTURE_WEB_UPLOADS=true -o "$ROOT/build/web-emu-driver"
 fi
 
-exec "$FIREBASE" emulators:exec --only auth,firestore --project "$PROJECT" \
-  "node tools/experiencia/seed.cjs && (node tools/experiencia/callables.cjs & node tools/experiencia/serve.cjs)"
+# Storage (registro de chóferes): sus reglas leen Firestore, y esa llamada
+# no puede pasar por el proxy de la sesión.
+exec env -u HTTPS_PROXY -u https_proxy -u GLOBAL_AGENT_HTTPS_PROXY -u npm_config_https_proxy \
+  -u YARN_HTTPS_PROXY -u HTTP_PROXY -u http_proxy \
+  "$FIREBASE" emulators:exec --only auth,firestore,storage --project "$PROJECT" \
+  "node tools/experiencia/seed.cjs && node tools/experiencia/seed_registro.cjs && (node tools/experiencia/callables.cjs & node tools/experiencia/serve.cjs)"

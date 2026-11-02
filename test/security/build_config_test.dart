@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:luxelane/features/driver_registration/data/image_prep.dart';
 import 'package:luxelane/core/config/env.dart';
 import 'package:luxelane/core/widgets/lux_map.dart';
 import 'package:luxelane/firebase_options.dart';
@@ -215,6 +216,21 @@ void main() {
       expect(pubspec, contains('\n  flutter_image_compress: 2.4.0\n'));
       // Sin cámara propia (decisión del responsable).
       expect(pubspec, isNot(contains('\n  camera:')));
+    });
+
+    test(
+        'el modo de capturas (subir desde la web) no está en ninguna build real',
+        () {
+      // Sin USE_EMULATORS ni CAPTURE_WEB_UPLOADS: la web no sube documentos.
+      expect(kCaptureWebUploads, isFalse);
+      expect(_read('.github/workflows/ci.yml'),
+          isNot(contains('CAPTURE_WEB_UPLOADS')));
+      final src =
+          _read('lib/features/driver_registration/data/image_prep.dart');
+      expect(
+          src,
+          contains(
+              "kUseEmulators && bool.fromEnvironment('CAPTURE_WEB_UPLOADS')"));
     });
 
     test('iOS declara para qué usa la cámara y las fotos', () {

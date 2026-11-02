@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
+import '../../../core/config/emulator_setup.dart' show kUseEmulators;
+
 /// Lado corto mínimo de una foto de documento, en píxeles. Es un valor
 /// técnico (legibilidad), no un requisito de negocio: se puede ajustar.
 const kMinShortSidePx = 720;
@@ -16,7 +18,15 @@ const kJpegQuality = 85;
 /// Subir documentos solo desde la app del teléfono: en la web la
 /// compresión necesita un script externo que la CSP no permite y la cámara
 /// no se puede garantizar (decisión 3).
-bool get uploadsSupported => debugUploadsSupported ?? !kIsWeb;
+bool get uploadsSupported =>
+    debugUploadsSupported ?? (!kIsWeb || kCaptureWebUploads);
+
+/// Solo para las capturas contra los emuladores (tools/experiencia): la web
+/// sube SIN recomprimir para poder ver los pasos de la cámara. Exige
+/// USE_EMULATORS además de CAPTURE_WEB_UPLOADS: la build de producción nunca
+/// lo activa (build_config_test.dart).
+const kCaptureWebUploads =
+    kUseEmulators && bool.fromEnvironment('CAPTURE_WEB_UPLOADS');
 
 /// Solo pruebas: simula la web (false) o el teléfono (true).
 bool? debugUploadsSupported;
@@ -74,19 +84,22 @@ class DeviceImagePrep extends ImagePrep {
   }
 
   @override
-  Future<Uint8List> compressWithoutMetadata(Uint8List bytes) =>
-      FlutterImageCompress.compressWithList(
-        bytes,
-        minWidth: kTargetSidePx,
-        minHeight: kTargetSidePx,
-        quality: kJpegQuality,
-        // Explícitos aunque sean los valores por defecto: JPEG, orientación
-        // aplicada a los píxeles y SIN EXIF (ubicación incluida).
-        // ignore: avoid_redundant_argument_values
-        format: CompressFormat.jpeg,
-        // ignore: avoid_redundant_argument_values
-        keepExif: false,
-        // ignore: avoid_redundant_argument_values
-        autoCorrectionAngle: true,
-      );
+  Future<Uint8List> compressWithoutMetadata(Uint8List bytes) async =>
+      // Solo en el modo de capturas (web contra emuladores): sin compresión.
+      kIsWeb && kCaptureWebUploads
+          ? bytes
+          : await FlutterImageCompress.compressWithList(
+              bytes,
+              minWidth: kTargetSidePx,
+              minHeight: kTargetSidePx,
+              quality: kJpegQuality,
+              // Explícitos aunque sean los valores por defecto: JPEG, orientación
+              // aplicada a los píxeles y SIN EXIF (ubicación incluida).
+              // ignore: avoid_redundant_argument_values
+              format: CompressFormat.jpeg,
+              // ignore: avoid_redundant_argument_values
+              keepExif: false,
+              // ignore: avoid_redundant_argument_values
+              autoCorrectionAngle: true,
+            );
 }
