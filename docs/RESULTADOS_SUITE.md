@@ -4,6 +4,40 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/registro-chofer, Parte B (B0–B5, commit 42ed8c2, 2026-11-03)
+
+Sobre A10 (a0d596b). Flutter 3.29.3, Node 22, emuladores de Firestore, Storage
+y Auth con `demo-luxelane`; reglas e integración sin las variables de proxy de
+la sesión. Dependencias nuevas con versión fija: firebase_storage 12.4.10,
+image_picker 1.2.1, flutter_image_compress 2.4.0.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           312 archivos, 0 cambiados       0
+flutter test                                  pasa           939/939                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           652/652 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1851/1851 (27 de 27 suites)     0
+npm run test:integration (demo-luxelane)      pasa           440/440 (48 de 48 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+capturas del registro (B4)                    170 de 180     10 al 200 % no capturadas       —
+```
+
+`flutter test` en la suite completa (commit c751f83) dio `+938 -1: Some tests
+failed`: `mapas_ficticios_test.dart` («ningún archivo de lib/ importa ni nombra
+el MapsService ficticio») por un comentario de `image_prep.dart` que nombraba
+el entorno de capturas. Corregido en 42ed8c2; repetido: `01:50 +939: All tests
+passed!`. analyze y format, repetidos tras la corrección: 108 issues, 0
+cambiados. El resto de filas son de c751f83 (la corrección solo cambia un
+comentario).
+
+La Parte B no cambia `firestore.rules` ni `storage.rules` (sin celdas nuevas en
+la matriz): las reglas anteriores son las mismas y dan el mismo resultado que
+arriba.
+
 ## cierre/registro-chofer, A10 (alta del aspirante, commit 67ad375, 2026-10-31)
 
 Sobre la Parte A (796b748). Emuladores de Firestore, Storage y Auth con
