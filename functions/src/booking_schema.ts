@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 import { preferencesSchema } from './preferences';
+import { flightInputSchema } from './flight_schema';
 
 // Capacidad de cada clase, igual que VehicleClass.capacity y
 // luggageCapacity en lib/core/enums/enums.dart.
@@ -46,6 +47,12 @@ const trip = {
   hours: z.number().positive().max(24).optional(),
   /** Versión de la app (x.y.z); la comprueba app_version.ts. */
   appVersion: z.string().max(40).optional(),
+  /**
+   * Vuelo de llegada (prompt de vuelos, A1): solo para recogida en un
+   * aeropuerto. Con él, la hora de recogida la calcula el servidor
+   * (readyAt) y no se usa scheduledAt. Una app antigua no lo manda.
+   */
+  flight: flightInputSchema.optional(),
 };
 
 const needsDestination = (d: { serviceType: string; destination?: unknown }) =>
