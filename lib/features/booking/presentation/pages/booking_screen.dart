@@ -1508,13 +1508,13 @@ class _BookingScreenState extends State<BookingScreen> {
               child: Text(context.l10n.bookingFlightSectionTitle,
                   style: LuxTypography.titleMedium),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: LuxSpacing.sm),
             _FlightTypeSelector(
               value: _flightType,
               errorText: _flightAttempted ? _flightTypeError : null,
               onChanged: (t) => setState(() => _flightType = t),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: LuxSpacing.md),
           ],
           _LightTextField(
             label: _airportPickup
@@ -1538,7 +1538,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             if (_flightType != null &&
                 ServiceArea.airportFor(_formData!.origin) != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: LuxSpacing.md),
               FlightPickupInfo(
                 airportCode: ServiceArea.airportFor(_formData!.origin)!.iata,
                 flightType: _flightType!,
