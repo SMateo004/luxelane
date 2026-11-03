@@ -4926,6 +4926,18 @@
       }
     }
   },
+  "driverRequestAirportFlight": "Aeropuerto {airport} · {type}",
+  "@driverRequestAirportFlight": {
+    "description": "Vuelos: solicitud abierta con recogida en aeropuerto; solo aeropuerto y tipo de vuelo, nunca el número.",
+    "placeholders": {
+      "airport": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
   "flightStatusScheduled": "Programado",
   "@flightStatusScheduled": {
     "description": "Vuelos: estado del vuelo (scheduled)."

@@ -1069,6 +1069,7 @@
   "rideFlightDisrupted": "Seu voo aparece como cancelado ou desviado. A central vai revisar sua reserva.",
   "driverFlightCardTitle": "Voo",
   "driverFlightStatus": "Status: {status}",
+  "driverRequestAirportFlight": "Aeroporto {airport} · {type}",
   "flightStatusScheduled": "Programado",
   "flightStatusDelayed": "Atrasado",
   "flightStatusLanded": "Pousou",

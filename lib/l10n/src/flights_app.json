@@ -104,5 +104,19 @@
         "type": "String"
       }
     }
+  },
+  "driverRequestAirportFlight": {
+    "description": "Vuelos: solicitud abierta con recogida en aeropuerto; solo aeropuerto y tipo de vuelo, nunca el número.",
+    "es": "Aeropuerto {airport} · {type}",
+    "en": "Airport {airport} · {type}",
+    "pt": "Aeroporto {airport} · {type}",
+    "placeholders": {
+      "airport": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
   }
 }

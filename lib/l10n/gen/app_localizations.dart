@@ -6514,6 +6514,12 @@ abstract class AppLocalizations {
   /// **'Estado: {status}'**
   String driverFlightStatus(String status);
 
+  /// Vuelos: solicitud abierta con recogida en aeropuerto; solo aeropuerto y tipo de vuelo, nunca el número.
+  ///
+  /// In es, this message translates to:
+  /// **'Aeropuerto {airport} · {type}'**
+  String driverRequestAirportFlight(String airport, String type);
+
   /// Vuelos: estado del vuelo (scheduled).
   ///
   /// In es, this message translates to:

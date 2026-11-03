@@ -3702,6 +3702,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String driverRequestAirportFlight(String airport, String type) {
+    return 'Aeropuerto $airport · $type';
+  }
+
+  @override
   String get flightStatusScheduled => 'Programado';
 
   @override

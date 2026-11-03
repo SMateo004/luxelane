@@ -1069,6 +1069,7 @@
   "rideFlightDisrupted": "Your flight shows as cancelled or diverted. Our team will review your booking.",
   "driverFlightCardTitle": "Flight",
   "driverFlightStatus": "Status: {status}",
+  "driverRequestAirportFlight": "Airport {airport} · {type}",
   "flightStatusScheduled": "Scheduled",
   "flightStatusDelayed": "Delayed",
   "flightStatusLanded": "Landed",

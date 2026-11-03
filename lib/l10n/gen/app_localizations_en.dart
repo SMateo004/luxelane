@@ -3691,6 +3691,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String driverRequestAirportFlight(String airport, String type) {
+    return 'Airport $airport · $type';
+  }
+
+  @override
   String get flightStatusScheduled => 'Scheduled';
 
   @override
