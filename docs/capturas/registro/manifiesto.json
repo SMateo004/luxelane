@@ -1,0 +1,2489 @@
+{
+  "generado": "2026-11-03T01:21:38.485Z",
+  "idiomas": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "capturas": [
+    {
+      "idioma": "es",
+      "estado": "r01-previa",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r01-previa_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r01-previa",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r01-previa_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r01-previa",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r01-previa_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r01-previa",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r01-previa_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r01-previa",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r01-previa_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r01-previa",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r01-previa_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r01-previa",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r01-previa_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r01-previa",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r01-previa_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r01-previa",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r01-previa_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r01-previa",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r01-previa_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r01-previa",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r01-previa_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r01-previa",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r01-previa_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r03-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r03-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r03-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r03-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r03-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r03-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r03-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r03-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r03-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r03-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r03-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r03-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r03-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r03-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r03-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r03-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r03-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r03-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r03-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r03-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r03-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r03-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r03-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r03-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r05-documentos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r05-documentos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r05-documentos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r05-documentos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r05-documentos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r05-documentos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r05-documentos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r05-documentos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r05-documentos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r05-documentos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r05-documentos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r05-documentos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r05-documentos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r05-documentos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r05-documentos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r05-documentos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r05-documentos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r05-documentos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r05-documentos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r05-documentos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r05-documentos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r05-documentos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r05-documentos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r05-documentos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r06-foto-en-vivo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r06-foto-en-vivo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r06-foto-en-vivo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r06-foto-en-vivo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r06-foto-en-vivo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r06-foto-en-vivo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r06-foto-en-vivo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r06-foto-en-vivo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r06-foto-en-vivo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r06-foto-en-vivo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r06-foto-en-vivo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r06-foto-en-vivo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r06-foto-en-vivo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r11-en-revision",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r11-en-revision_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r11-en-revision",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r11-en-revision_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r11-en-revision",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r11-en-revision_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r11-en-revision",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r11-en-revision_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r11-en-revision",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r11-en-revision_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r11-en-revision",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r11-en-revision_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r11-en-revision",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r11-en-revision_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r11-en-revision",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r11-en-revision_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r11-en-revision",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r11-en-revision_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r11-en-revision",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r11-en-revision_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r11-en-revision",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r11-en-revision_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r11-en-revision",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r11-en-revision_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r12-no-aprobada",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r12-no-aprobada_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r12-no-aprobada",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r12-no-aprobada_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r12-no-aprobada",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r12-no-aprobada_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r12-no-aprobada",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r12-no-aprobada_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r12-no-aprobada",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r12-no-aprobada_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r12-no-aprobada",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r12-no-aprobada_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r12-no-aprobada",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r12-no-aprobada_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r12-no-aprobada",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r12-no-aprobada_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r12-no-aprobada",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r12-no-aprobada_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r12-no-aprobada",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r12-no-aprobada_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r12-no-aprobada",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r12-no-aprobada_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r12-no-aprobada",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r12-no-aprobada_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r13-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r13-sin-requisitos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r13-sin-requisitos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r13-sin-requisitos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r13-sin-requisitos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r13-sin-requisitos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r13-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r13-sin-requisitos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r13-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r13-sin-requisitos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r13-sin-requisitos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r13-sin-requisitos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r13-sin-requisitos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r13-sin-requisitos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r13-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r13-sin-requisitos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r13-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r13-sin-requisitos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r13-sin-requisitos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r13-sin-requisitos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r13-sin-requisitos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r13-sin-requisitos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r13-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r13-sin-requisitos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p01-bandeja",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p01-bandeja_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p01-bandeja",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p01-bandeja_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p01-bandeja",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p01-bandeja_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p02-detalle",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p02-detalle_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p02-detalle",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p02-detalle_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p02-detalle",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p02-detalle_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p03-visor",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p03-visor_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p03-visor",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p03-visor_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p03-visor",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p03-visor_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p04-rechazo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p04-rechazo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p04-rechazo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p04-rechazo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p04-rechazo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p04-rechazo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p05-decision",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p05-decision_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p05-decision",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p05-decision_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p05-decision",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p05-decision_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p06-bitacora",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p06-bitacora_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p06-bitacora",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p06-bitacora_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p06-bitacora",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p06-bitacora_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p07-vencimientos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p07-vencimientos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p07-vencimientos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p07-vencimientos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p07-vencimientos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p07-vencimientos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p08-sin-requisitos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/p08-sin-requisitos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p08-sin-requisitos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/p08-sin-requisitos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "p08-sin-requisitos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/p08-sin-requisitos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r02-previa-confirmar",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r02-previa-confirmar_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r02-previa-confirmar",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r02-previa-confirmar_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r02-previa-confirmar",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r02-previa-confirmar_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r02-previa-confirmar",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r02-previa-confirmar_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r02-previa-confirmar",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r02-previa-confirmar_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r02-previa-confirmar",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r02-previa-confirmar_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r02-previa-confirmar",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r02-previa-confirmar_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r02-previa-confirmar",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r02-previa-confirmar_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r02-previa-confirmar",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r02-previa-confirmar_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r02-previa-confirmar",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r02-previa-confirmar_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r02-previa-confirmar",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r02-previa-confirmar_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r02-previa-confirmar",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r02-previa-confirmar_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r04-vehiculo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r04-vehiculo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r04-vehiculo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r04-vehiculo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r04-vehiculo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r04-vehiculo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r04-vehiculo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r04-vehiculo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r04-vehiculo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r04-vehiculo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r04-vehiculo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r04-vehiculo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r04-vehiculo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r04-vehiculo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r04-vehiculo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r04-vehiculo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r04-vehiculo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r04-vehiculo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r04-vehiculo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r04-vehiculo_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "pt",
+      "estado": "r04-vehiculo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r04-vehiculo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r04-vehiculo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r04-vehiculo_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "es",
+      "estado": "r07-revision-foto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r07-revision-foto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r07-revision-foto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r07-revision-foto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r07-revision-foto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r07-revision-foto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r07-revision-foto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r07-revision-foto_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "en",
+      "estado": "r07-revision-foto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r07-revision-foto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r07-revision-foto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r07-revision-foto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r07-revision-foto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r07-revision-foto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r07-revision-foto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r07-revision-foto_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r07-revision-foto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r07-revision-foto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r07-revision-foto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r07-revision-foto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r07-revision-foto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r07-revision-foto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r07-revision-foto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r07-revision-foto_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "es",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r08-falta-vencimiento_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r08-falta-vencimiento_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r08-falta-vencimiento_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r08-falta-vencimiento_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "en",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r08-falta-vencimiento_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r08-falta-vencimiento_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r08-falta-vencimiento_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r08-falta-vencimiento_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r08-falta-vencimiento_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r08-falta-vencimiento_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r08-falta-vencimiento_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r08-falta-vencimiento",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r08-falta-vencimiento_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "es",
+      "estado": "r09-resumen",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r09-resumen_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r09-resumen",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r09-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r09-resumen",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r09-resumen_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r09-resumen",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r09-resumen_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r09-resumen",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r09-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r09-resumen",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r09-resumen_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r09-resumen",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r09-resumen_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r09-resumen",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r09-resumen_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r09-resumen",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r09-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r09-resumen",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r09-resumen_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "es",
+      "estado": "r10-segundo-factor",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r10-segundo-factor_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r10-segundo-factor",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/r10-segundo-factor_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r10-segundo-factor",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/r10-segundo-factor_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r10-segundo-factor",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r10-segundo-factor_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "en",
+      "estado": "r10-segundo-factor",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/r10-segundo-factor_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r10-segundo-factor",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/r10-segundo-factor_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r10-segundo-factor",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/r10-segundo-factor_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "r10-segundo-factor",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/r10-segundo-factor_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r10-segundo-factor",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/r10-segundo-factor_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r10-segundo-factor",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/r10-segundo-factor_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r10-segundo-factor",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/r10-segundo-factor_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "r10-segundo-factor",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/r10-segundo-factor_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "es",
+      "estado": "r09-resumen",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/r09-resumen_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "r09-resumen",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/r09-resumen_390_x2.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    }
+  ],
+  "semantica": [
+    {
+      "idioma": "es",
+      "estado": "r01-previa",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Para registrarte como chófer, esta cuenta pasa a ser una cuenta de chófer.",
+        "La cuenta deja de ser de pasajero y no se vuelve a usar para reservar viajes.",
+        "Si ya hiciste reservas como pasajero con este correo, crea otra cuenta con un correo distinto para registrarte como chófer.",
+        "Después completarás tus datos, los de tu vehículo y tus documentos. Luxelane los revisa antes de habilitarte.",
+        "Convertir en cuenta de chófer Convertir en cuenta de chófer",
+        "Cerrar sesión Cerrar sesión"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r01-previa",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "To sign up as a chauffeur, this account becomes a chauffeur account.",
+        "The account stops being a passenger account and cannot be used to book rides again.",
+        "If you have already booked rides as a passenger with this email, create another account with a different email to sign up as a chauffeur.",
+        "Then you will complete your details, your vehicle details and your documents. Luxelane reviews them before enabling you.",
+        "Convert to a chauffeur account Convert to a chauffeur account",
+        "Sign out Sign out"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r01-previa",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Para se cadastrar como motorista, esta conta passa a ser uma conta de motorista.",
+        "A conta deixa de ser de passageiro e não volta a ser usada para reservar viagens.",
+        "Se você já fez reservas como passageiro com este e-mail, crie outra conta com um e-mail diferente para se cadastrar como motorista.",
+        "Depois você vai completar seus dados, os do seu veículo e seus documentos. A Luxelane os revisa antes de habilitar você.",
+        "Converter em conta de motorista Converter em conta de motorista",
+        "Sair Sair"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r03-datos",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Progreso de la solicitud: paso 1 de 4",
+        "Vencimiento de la licencia: Elegir fecha",
+        "Tus números de documento solo los ve el equipo de Luxelane que revisa la solicitud.",
+        "Guardar y continuar Guardar y continuar"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r03-datos",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sign out",
+        "Application progress: step 1 of 4",
+        "License expiry date: Choose date",
+        "Your document numbers are only seen by the Luxelane team that reviews the application.",
+        "Save and continue Save and continue"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r03-datos",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sair",
+        "Progresso da solicitação: etapa 1 de 4",
+        "Vencimento da carteira: Escolher data",
+        "Seus números de documento só são vistos pela equipe da Luxelane que revisa a solicitação.",
+        "Salvar e continuar Salvar e continuar"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r05-documentos",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Volver a subir 141x36"
+      ],
+      "textos": [
+        "Cerrar sesión",
+        "Progreso de la solicitud: paso 3 de 4",
+        "Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.",
+        "Sube cada documento con una foto nítida, con buena luz y sin reflejos.",
+        "Foto de perfil Obligatorio Subido, en revisión",
+        "Volver a subir",
+        "Foto en vivo Obligatorio Por subir",
+        "Subir",
+        "Documento de identidad (anverso) Obligatorio Aprobado",
+        "Licencia de conducir (anverso) Obligatorio Rechazado Vence: 22 nov 2026 Motivo: No se lee bien La foto salió con reflejo (nota de prueba)."
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r05-documentos",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Upload again 138x16"
+      ],
+      "textos": [
+        "Sign out",
+        "Application progress: step 3 of 4",
+        "Luxelane asked for changes to your application. Check the highlighted documents and submit it again.",
+        "Upload each document with a sharp photo, in good light and without glare.",
+        "Profile photo Required Uploaded, in review",
+        "Upload again",
+        "Live photo Required To upload",
+        "Upload",
+        "ID document (front) Required Approved",
+        "Driver's license (front) Required Rejected Expires: Nov 22, 2026 Reason: Not legible La foto salió con reflejo (nota de prueba)."
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r05-documentos",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Enviar novamente 168x16"
+      ],
+      "textos": [
+        "Sair",
+        "Progresso da solicitação: etapa 3 de 4",
+        "A Luxelane pediu ajustes na sua solicitação. Revise os documentos destacados e envie novamente.",
+        "Envie cada documento com uma foto nítida, com boa luz e sem reflexos.",
+        "Foto de perfil Obrigatório Enviado, em análise",
+        "Enviar novamente",
+        "Foto ao vivo Obrigatório A enviar",
+        "Enviar",
+        "Documento de identidade (frente) Obrigatório Aprovado",
+        "Carteira de motorista (frente) Obrigatório Recusado Vence em: 22 de nov. de 2026 Motivo: Não está legível La foto salió con reflejo (nota de prueba)."
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r06-foto-en-vivo",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Atrás",
+        "Se toma en el momento con la cámara frontal. Mira a la cámara con buena luz.",
+        "Guía de encuadre",
+        "La cámara se abre a pantalla completa: encuadra como en este marco.",
+        "Tomar foto Tomar foto",
+        "Esta foto solo se toma con la cámara, no desde la galería."
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r06-foto-en-vivo",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Back",
+        "It is taken on the spot with the front camera. Look at the camera in good light.",
+        "Framing guide",
+        "The camera opens full screen: frame it like this guide.",
+        "Take photo Take photo",
+        "This photo can only be taken with the camera, not from the gallery."
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r06-foto-en-vivo",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "É tirada na hora com a câmera frontal. Olhe para a câmera com boa luz.",
+        "Guia de enquadramento",
+        "A câmera abre em tela cheia: enquadre como neste guia.",
+        "Tirar foto Tirar foto",
+        "Esta foto só pode ser tirada com a câmera, não da galeria."
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r11-en-revision",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Luxelane está revisando tu solicitud. Recibirás un aviso en la app cuando haya una respuesta.",
+        "Actualizar Actualizar"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r11-en-revision",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sign out",
+        "Luxelane is reviewing your application. You will get a notice in the app when there is an answer.",
+        "Refresh Refresh"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r11-en-revision",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sair",
+        "A Luxelane está revisando sua solicitação. Você receberá um aviso no app quando houver uma resposta.",
+        "Atualizar Atualizar"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r12-no-aprobada",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Esta solicitud no fue aprobada y está cerrada."
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r12-no-aprobada",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sign out",
+        "This application was not approved and is closed."
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r12-no-aprobada",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sair",
+        "Esta solicitação não foi aprovada e está encerrada."
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r13-sin-requisitos",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Progreso de la solicitud: paso 1 de 4",
+        "Vencimiento de la licencia: Elegir fecha",
+        "Tus números de documento solo los ve el equipo de Luxelane que revisa la solicitud.",
+        "Guardar y continuar Guardar y continuar"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r13-sin-requisitos",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sign out",
+        "Application progress: step 1 of 4",
+        "License expiry date: Choose date",
+        "Your document numbers are only seen by the Luxelane team that reviews the application.",
+        "Save and continue Save and continue"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r13-sin-requisitos",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sair",
+        "Progresso da solicitação: etapa 1 de 4",
+        "Vencimento da carteira: Escolher data",
+        "Seus números de documento só são vistos pela equipe da Luxelane que revisa a solicitação.",
+        "Salvar e continuar Salvar e continuar"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p01-bandeja",
+      "interactivos": 26,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Aprobada Aprobada 25x48"
+      ],
+      "textos": [
+        "Cerrar sesión",
+        "Panel Panel",
+        "Operaciones · 5 Operaciones · 5",
+        "Pagos Pagos",
+        "Finanzas · 2 Finanzas · 2",
+        "Tarifas Tarifas",
+        "Chóferes · 5 Chóferes · 5",
+        "Solicitudes de chófer Solicitudes de chófer",
+        "Vehículos Vehículos",
+        "Usuarios Usuarios",
+        "Empresas Empresas",
+        "Auditoría Auditoría",
+        "Alertas · 3 Alertas · 3",
+        "Configuración Configuración",
+        "Silenciar",
+        "Ver",
+        "Solicitudes Solicitudes",
+        "Vencimientos próximos Vencimientos próximos",
+        "Enviada Enviada",
+        "En revisión En revisión",
+        "Necesita cambios Necesita cambios",
+        "Aprobada Aprobada",
+        "Rechazada Rechazada",
+        "Borrador Borrador",
+        "Recargar",
+        "Abrir la solicitud de Rita Prueba"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p02-detalle",
+      "interactivos": 19,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Panel Panel",
+        "Operaciones · 5 Operaciones · 5",
+        "Pagos Pagos",
+        "Finanzas · 2 Finanzas · 2",
+        "Tarifas Tarifas",
+        "Chóferes · 5 Chóferes · 5",
+        "Solicitudes de chófer Solicitudes de chófer",
+        "Vehículos Vehículos",
+        "Usuarios Usuarios",
+        "Empresas Empresas",
+        "Auditoría Auditoría",
+        "Alertas · 3 Alertas · 3",
+        "Configuración Configuración",
+        "Silenciar",
+        "Ver",
+        "Volver a la bandeja",
+        "Decisión final",
+        "Bitácora de accesos",
+        "Nombre completo Rita Prueba (ficticio)",
+        "Número de documento 0000000-FIC",
+        "Número de licencia LIC-FICTICIA",
+        "Vencimiento de la licencia 07/12/2027",
+        "Marca Marca"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p03-visor",
+      "interactivos": 19,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Panel Panel",
+        "Operaciones · 5 Operaciones · 5",
+        "Pagos Pagos",
+        "Finanzas · 2 Finanzas · 2",
+        "Tarifas Tarifas",
+        "Chóferes · 5 Chóferes · 5",
+        "Solicitudes de chófer Solicitudes de chófer",
+        "Vehículos Vehículos",
+        "Usuarios Usuarios",
+        "Empresas Empresas",
+        "Auditoría Auditoría",
+        "Alertas · 3 Alertas · 3",
+        "Configuración Configuración",
+        "Silenciar",
+        "Ver",
+        "Número de documento 0000000-FIC",
+        "Número de licencia LIC-FICTICIA",
+        "Vencimiento de la licencia 07/12/2027",
+        "Marca Marca",
+        "Modelo Modelo",
+        "Año 2022",
+        "Color Negro",
+        "Placa FIC1123",
+        "Carrocería Sedán",
+        "Pasajeros 3",
+        "Clase Business Class",
+        "DOCUMENTOS",
+        "Ver documento: Foto de perfil",
+        "Aprobar documento: Foto de perfil",
+        "Rechazar documento: Foto de perfil",
+        "Foto en vivo Subido, en revisión Obligatorio · Versión 1"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p04-rechazo",
+      "interactivos": 19,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Panel Panel",
+        "Operaciones · 5 Operaciones · 5",
+        "Pagos Pagos",
+        "Finanzas · 2 Finanzas · 2",
+        "Tarifas Tarifas",
+        "Chóferes · 5 Chóferes · 5",
+        "Solicitudes de chófer Solicitudes de chófer",
+        "Vehículos Vehículos",
+        "Usuarios Usuarios",
+        "Empresas Empresas",
+        "Auditoría Auditoría",
+        "Alertas · 3 Alertas · 3",
+        "Configuración Configuración",
+        "Silenciar",
+        "Ver",
+        "Número de documento 0000000-FIC",
+        "Número de licencia LIC-FICTICIA",
+        "Vencimiento de la licencia 07/12/2027",
+        "Marca Marca",
+        "Modelo Modelo",
+        "Año 2022",
+        "Color Negro",
+        "Placa FIC1123",
+        "Carrocería Sedán",
+        "Pasajeros 3",
+        "Clase Business Class",
+        "DOCUMENTOS",
+        "Ver documento: Foto de perfil",
+        "Aprobar documento: Foto de perfil",
+        "Rechazar documento: Foto de perfil",
+        "Foto en vivo Subido, en revisión Obligatorio · Versión 1"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p05-decision",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Decisión final de la solicitud",
+        "Aprobar exige todos los documentos obligatorios aprobados y vigentes. El chófer recibe un aviso con el resultado.",
+        "Aprobar",
+        "Pedir cambios",
+        "Rechazar",
+        "Quedan 500 caracteres",
+        "Cancelar",
+        "Confirmar decisión"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p06-bitacora",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Bitácora de accesos",
+        "Cerrar",
+        "Quién abrió cada documento de esta solicitud y cuándo, de lo más reciente a lo más antiguo.",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 18:41",
+        "Foto en vivo · versión 1 admin@prueba.test · 02/11/2026 18:31",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:31",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:30",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:29",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:28",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:27",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:25",
+        "Licencia de conducir (anverso) · versión 1 admin@prueba.test · 02/11/2026 17:22"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p07-vencimientos",
+      "interactivos": 26,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Panel Panel",
+        "Operaciones · 5 Operaciones · 5",
+        "Pagos Pagos",
+        "Finanzas · 2 Finanzas · 2",
+        "Tarifas Tarifas",
+        "Chóferes · 5 Chóferes · 5",
+        "Solicitudes de chófer Solicitudes de chófer",
+        "Vehículos Vehículos",
+        "Usuarios Usuarios",
+        "Empresas Empresas",
+        "Auditoría Auditoría",
+        "Alertas · 3 Alertas · 3",
+        "Configuración Configuración",
+        "Silenciar",
+        "Ver",
+        "Solicitudes Solicitudes",
+        "Vencimientos próximos Vencimientos próximos",
+        "Próximos 7 días Próximos 7 días",
+        "Próximos 30 días Próximos 30 días",
+        "Próximos 90 días Próximos 90 días",
+        "Recargar",
+        "Abrir la solicitud de Vito Prueba",
+        "Autorizar en línea a Vito Prueba",
+        "Luis Prueba chofer@prueba.test Licencia de conducir (anverso) Aprobado Vence el 08/11/2026 Abrir la solicitud de Luis Prueba",
+        "Dora Prueba regdocs@prueba.test Licencia de conducir (anverso) Rechazado Vence el 22/11/2026 Abrir la solicitud de Dora Prueba"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "p08-sin-requisitos",
+      "interactivos": 19,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Panel Panel",
+        "Operaciones · 5 Operaciones · 5",
+        "Pagos Pagos",
+        "Finanzas · 2 Finanzas · 2",
+        "Tarifas Tarifas",
+        "Chóferes · 5 Chóferes · 5",
+        "Solicitudes de chófer Solicitudes de chófer",
+        "Vehículos Vehículos",
+        "Usuarios Usuarios",
+        "Empresas Empresas",
+        "Auditoría Auditoría",
+        "Alertas · 3 Alertas · 3",
+        "Configuración Configuración",
+        "Silenciar",
+        "Ver",
+        "Volver a la bandeja",
+        "Decisión final",
+        "Bitácora de accesos",
+        "Requisitos sin configurar Falta la lista driverRequirements en config/ops: el chófer no puede enviar la solicitud y no se puede aprobar. Se muestran los documentos subidos.",
+        "Nombre completo Rita Prueba (ficticio)",
+        "Número de documento 0000000-FIC",
+        "Número de licencia LIC-FICTICIA"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r02-previa-confirmar",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "¿Convertir esta cuenta?",
+        "Esta cuenta ya no se podrá usar como pasajero. No se puede deshacer.",
+        "Cancelar",
+        "Sí, convertir"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r02-previa-confirmar",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Convert this account?",
+        "This account can no longer be used as a passenger. This cannot be undone.",
+        "Cancel",
+        "Yes, convert"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r02-previa-confirmar",
+      "interactivos": 2,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Converter esta conta?",
+        "Esta conta não poderá mais ser usada como passageiro. Não é possível desfazer.",
+        "Cancelar",
+        "Sim, converter"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r04-vehiculo",
+      "interactivos": 7,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sign out",
+        "Application progress: step 2 of 4",
+        "Luxelane asked for changes to your application. Check the highlighted documents and submit it again.",
+        "Color Black",
+        "Vehicle type",
+        "Sedan",
+        "SUV",
+        "Van",
+        "Passengers 3",
+        "Service class Business Class",
+        "If you change vehicles after approval, the new one stays in review until Luxelane approves it."
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r04-vehiculo",
+      "interactivos": 8,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Guardar y continuar Guardar y continuar 342x15"
+      ],
+      "textos": [
+        "Cerrar sesión",
+        "Progreso de la solicitud: paso 2 de 4",
+        "Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.",
+        "Color Negro",
+        "Tipo de vehículo",
+        "Sedán",
+        "SUV",
+        "Van",
+        "Pasajeros 3",
+        "Clase de servicio Business Class",
+        "Si cambias de vehículo después de la aprobación, el nuevo queda en revisión hasta que Luxelane lo apruebe.",
+        "Guardar y continuar Guardar y continuar"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r04-vehiculo",
+      "interactivos": 7,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sair",
+        "Progresso da solicitação: etapa 2 de 4",
+        "A Luxelane pediu ajustes na sua solicitação. Revise os documentos destacados e envie novamente.",
+        "Cor Preto",
+        "Tipo de veículo",
+        "Sedã",
+        "SUV",
+        "Van",
+        "Passageiros 3",
+        "Classe de serviço Business Class",
+        "Se você trocar de veículo depois da aprovação, o novo fica em análise até a Luxelane aprová-lo."
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r07-revision-foto",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Atrás",
+        "Comprueba que se lea bien y que no esté cortada.",
+        "Fecha de vencimiento del documento: Elegir fecha",
+        "Usar esta foto Usar esta foto",
+        "Repetir Repetir"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r07-revision-foto",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Back",
+        "Make sure it is readable and not cropped.",
+        "Document expiry date: Choose date",
+        "Use this photo Use this photo",
+        "Retake Retake"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r07-revision-foto",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "Confira se está legível e não cortada.",
+        "Data de vencimento do documento: Escolher data",
+        "Usar esta foto Usar esta foto",
+        "Repetir Repetir"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r08-falta-vencimiento",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Atrás",
+        "Comprueba que se lea bien y que no esté cortada.",
+        "Fecha de vencimiento del documento: Elegir fecha",
+        "Usar esta foto Usar esta foto",
+        "Repetir Repetir"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r08-falta-vencimiento",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Back",
+        "Make sure it is readable and not cropped.",
+        "Document expiry date: Choose date",
+        "Use this photo Use this photo",
+        "Retake Retake"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r08-falta-vencimiento",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "Confira se está legível e não cortada.",
+        "Data de vencimento do documento: Escolher data",
+        "Usar esta foto Usar esta foto",
+        "Repetir Repetir"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r09-resumen",
+      "interactivos": 6,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Back Back 342x44"
+      ],
+      "textos": [
+        "Sign out",
+        "Application progress: step 4 of 4",
+        "Luxelane asked for changes to your application. Check the highlighted documents and submit it again.",
+        "Review your application before submitting it.",
+        "Edit",
+        "Submit application Submit application",
+        "Back Back"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r09-resumen",
+      "interactivos": 6,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Voltar Voltar 342x44"
+      ],
+      "textos": [
+        "Sair",
+        "Progresso da solicitação: etapa 4 de 4",
+        "A Luxelane pediu ajustes na sua solicitação. Revise os documentos destacados e envie novamente.",
+        "Revise sua solicitação antes de enviá-la.",
+        "Editar",
+        "Enviar solicitação Enviar solicitação",
+        "Voltar Voltar"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r10-segundo-factor",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Progreso de la solicitud: paso 4 de 5",
+        "Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.",
+        "Para enviar la solicitud y, después, conectarte, tu cuenta necesita la verificación en dos pasos con una app autenticadora.",
+        "Activar la verificación en dos pasos Activar la verificación en dos pasos",
+        "Comprobar de nuevo Comprobar de nuevo",
+        "Continuar Continuar",
+        "Atrás Atrás"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "r10-segundo-factor",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sign out",
+        "Application progress: step 4 of 5",
+        "Luxelane asked for changes to your application. Check the highlighted documents and submit it again.",
+        "To submit the application and later go online, your account needs two-step verification with an authenticator app.",
+        "Turn on two-step verification Turn on two-step verification",
+        "Check again Check again",
+        "Continue Continue",
+        "Back Back"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "r10-segundo-factor",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Sair",
+        "Progresso da solicitação: etapa 4 de 5",
+        "A Luxelane pediu ajustes na sua solicitação. Revise os documentos destacados e envie novamente.",
+        "Para enviar a solicitação e, depois, ficar on-line, sua conta precisa da verificação em duas etapas com um app autenticador.",
+        "Ativar a verificação em duas etapas Ativar a verificação em duas etapas",
+        "Verificar de novo Verificar de novo",
+        "Continuar Continuar",
+        "Voltar Voltar"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "r09-resumen",
+      "interactivos": 6,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Cerrar sesión",
+        "Progreso de la solicitud: paso 4 de 4",
+        "Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.",
+        "Revisa tu solicitud antes de enviarla.",
+        "Editar",
+        "Enviar solicitud Enviar solicitud",
+        "Atrás Atrás"
+      ]
+    }
+  ]
+}

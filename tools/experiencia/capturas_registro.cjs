@@ -60,7 +60,16 @@ function config(doc, data) {
 /** Desplaza (rueda sobre el contenido) hasta ver el elemento y lo toca. */
 async function reach(page, el) {
   const { width, height } = page.viewportSize();
-  for (let i = 0; i < 30 && !(await el.isVisible().catch(() => false)); i++) {
+  // «Visible» para Playwright incluye lo que está fuera de la ventana (el
+  // lienzo de Flutter no se desplaza con scrollIntoView): se mira la caja.
+  const inView = async () => {
+    // Flutter web solo crea la semántica de lo que está cerca de la vista:
+    // sin nodo todavía, se sigue desplazando (sin esperar).
+    if (!(await el.count())) return false;
+    const box = await el.boundingBox({ timeout: 500 }).catch(() => null);
+    return !!box && box.y >= 0 && box.y + box.height <= height;
+  };
+  for (let i = 0; i < 80 && !(await inView()); i++) {
     await page.mouse.move(width * 0.7, height / 2);
     await page.mouse.wheel(0, 350); await page.waitForTimeout(250);
   }
@@ -81,7 +90,7 @@ async function button(page, name) {
 
 /** Toma la foto con el selector de archivos del navegador (image_picker web). */
 async function takePhoto(page, label) {
-  const [chooser] = await Promise.all([page.waitForEvent('filechooser', { timeout: 15000 }), L.tap(page, label)]);
+  const [chooser] = await Promise.all([page.waitForEvent('filechooser', { timeout: 15000 }), button(page, label)]);
   await chooser.setFiles(FIXTURE);
   await sleep(2500);
 }
@@ -89,16 +98,16 @@ async function takePhoto(page, label) {
 // [app, estado, usuario, ir(page, lang), {antes, despues}]
 const S = [
   ['d', 'r01-previa', 'aspirante', async () => {}],
-  ['d', 'r02-previa-confirmar', 'aspirante', async (p, l) => { await L.tap(p, T[l].start); await sleep(1200); }],
+  ['d', 'r02-previa-confirmar', 'aspirante', async (p, l) => { await button(p, T[l].start); await sleep(1200); }],
   ['d', 'r03-datos', 'regdatos', async () => {}],
-  ['d', 'r04-vehiculo', 'regdocs', async (p, l) => { await L.tap(p, T[l].back, { exact: true }); await sleep(1500); }],
+  ['d', 'r04-vehiculo', 'regdocs', async (p, l) => { await button(p, T[l].back); await sleep(1500); }],
   ['d', 'r05-documentos', 'regdocs', async () => {}],
   ['d', 'r06-foto-en-vivo', 'regdocs', async (p, l) => { await buttonByIndex(p, T[l].upload, 0); await sleep(1500); }],
   ['d', 'r07-revision-foto', 'regdocs', async (p, l) => {
     await buttonByIndex(p, T[l].reupload, 2); await sleep(1500); await takePhoto(p, T[l].take); }],
   ['d', 'r08-falta-vencimiento', 'regdocs', async (p, l) => {
     await buttonByIndex(p, T[l].reupload, 2); await sleep(1500); await takePhoto(p, T[l].take);
-    await L.tap(p, T[l].use); await sleep(1500); }],
+    await button(p, T[l].use); await sleep(1500); }],
   ['d', 'r09-resumen', 'regdocs', async (p, l) => { await button(p, T[l].cont); await sleep(1500); }],
   ['d', 'r10-segundo-factor', 'regdocs', async (p, l) => { await button(p, T[l].cont); await sleep(1500); },
     { before: () => config('config/security', { mfaEnforced: true }), after: () => config('config/security', { mfaEnforced: false }) }],
