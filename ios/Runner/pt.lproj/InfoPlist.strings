@@ -1,0 +1,3 @@
+/* Textos de los permisos de iOS (registro de chóferes). Mismo sentido en es, en y pt. */
+"NSCameraUsageDescription" = "Se você se cadastrar como motorista, a Luxelane usa a câmera para fotografar seus documentos, seu veículo e sua foto ao vivo.";
+"NSPhotoLibraryUsageDescription" = "Se você se cadastrar como motorista, pode escolher das suas fotos a foto de perfil e as dos seus documentos.";

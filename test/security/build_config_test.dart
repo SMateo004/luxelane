@@ -233,6 +233,32 @@ void main() {
               "kUseEmulators && bool.fromEnvironment('CAPTURE_WEB_UPLOADS')"));
     });
 
+    test(
+        'iOS: los textos de cámara y fotos están en es, en y pt y entran en la app',
+        () {
+      for (final l in ['es', 'en', 'pt']) {
+        final f = File('ios/Runner/$l.lproj/InfoPlist.strings');
+        expect(f.existsSync(), isTrue, reason: l);
+        final txt = f.readAsStringSync();
+        for (final k in [
+          'NSCameraUsageDescription',
+          'NSPhotoLibraryUsageDescription'
+        ]) {
+          expect(RegExp('"$k" = "[^"]{20,}";').hasMatch(txt), isTrue,
+              reason: '$l: $k');
+        }
+      }
+      // Sin estar en el proyecto de Xcode no se copian a la app.
+      final pbx = _read('ios/Runner.xcodeproj/project.pbxproj');
+      expect(pbx, contains('InfoPlist.strings in Resources'));
+      for (final l in ['es', 'en', 'pt']) {
+        expect(pbx, contains('path = $l.lproj/InfoPlist.strings;'));
+      }
+      expect(pbx, matches(RegExp(r'knownRegions = \([^)]*\bes,[^)]*\bpt,')));
+      final plist = _read('ios/Runner/Info.plist');
+      expect(plist, contains('<key>CFBundleLocalizations</key>'));
+    });
+
     test('iOS declara para qué usa la cámara y las fotos', () {
       final plist = _read('ios/Runner/Info.plist');
       expect(plist, contains('<key>NSCameraUsageDescription</key>'));
