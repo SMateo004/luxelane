@@ -21,7 +21,7 @@ const kJpegQuality = 85;
 bool get uploadsSupported =>
     debugUploadsSupported ?? (!kIsWeb || kCaptureWebUploads);
 
-/// Solo para las capturas contra los emuladores (tools/experiencia): la web
+/// Solo para las capturas contra los emuladores (entorno de revisión): la web
 /// sube SIN recomprimir para poder ver los pasos de la cámara. Exige
 /// USE_EMULATORS además de CAPTURE_WEB_UPLOADS: la build de producción nunca
 /// lo activa (build_config_test.dart).
