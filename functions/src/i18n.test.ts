@@ -49,7 +49,9 @@ describe('catálogo', () => {
       'incident_unacknowledged', 'new_trip_available', 'payment_confirmed', 'payment_confirmed_cancelled',
       'payment_expired', 'payment_receipt', 'payment_rejected', 'refund_recorded', 'ride_completed',
       'ride_started', 'rider_no_show', 'trip_cancelled_by_rider',
-    ]);
+      'driver_application_approved', 'driver_application_needs_changes', 'driver_application_rejected',
+      'driver_document_expired', 'driver_document_expiring',
+    ].sort());
   });
 });
 
@@ -157,7 +159,7 @@ describe('ningún aviso usa texto fijo', () => {
 describe('preferencias: nada en push ni en la pantalla de bloqueo (B2)', () => {
   it('los avisos solo llevan importe, clase y referencia, nunca preferencias', () => {
     const used = new Set(Object.values(MESSAGES).flatMap((m) => placeholdersOf(m.es)));
-    expect([...used].sort()).toEqual(['amount', 'ref', 'vehicleClass']);
+    expect([...used].sort()).toEqual(['amount', 'days', 'ref', 'vehicleClass']);
   });
 
   it('ningún envío de push lee la copia de preferencias ni sus campos', () => {

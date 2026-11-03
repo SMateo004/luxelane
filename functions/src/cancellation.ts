@@ -97,7 +97,7 @@ export async function cancelBooking(deps: CancelDeps, uid: string | undefined, d
     });
     writeCancelSettle(tx, db, settle, r);
     // Libera al chófer: disponible si sigue conectado (como releaseDriver).
-    if (driver?.exists) tx.update(driverRef!, { isAvailable: driver.data()?.online !== false });
+    if (driver?.exists) tx.update(driverRef!, { isAvailable: driver.data()?.online !== false && driver.data()?.docsBlocked !== true });
     if (driverId) {
       await notifyDriver(tx, db, driverId, ref.id, at, 'booking_cancelled_by_rider');
     }
@@ -165,7 +165,7 @@ export async function releaseBooking(deps: CancelDeps, uid: string | undefined, 
     }));
     if (driver.exists) {
       tx.update(driverRef, {
-        isAvailable: driver.data()?.online !== false,
+        isAvailable: driver.data()?.online !== false && driver.data()?.docsBlocked !== true,
         releasedBookingsCount: admin.firestore.FieldValue.increment(1),
         lastReleasedAt: at,
       });

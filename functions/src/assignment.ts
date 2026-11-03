@@ -9,6 +9,8 @@ export interface DriverCandidate {
   driverId: string;
   isAvailable?: boolean;
   documentsVerified?: boolean;
+  /** Documentos obligatorios vencidos con el bloqueo activo. */
+  docsBlocked?: boolean;
   /** users/{uid}.isActive: un chófer bloqueado nunca se asigna (H10). */
   isActive?: boolean;
   location?: LatLng | null;
@@ -38,7 +40,7 @@ const validPoint = (p?: LatLng | null): p is LatLng =>
 export function rankCandidates(candidates: DriverCandidate[], pickup?: LatLng | null): string[] {
   const seen = new Set<string>();
   const eligible = candidates.filter((c) => {
-    if (!c.isAvailable || !c.documentsVerified || c.isActive === false || seen.has(c.driverId)) return false;
+    if (!c.isAvailable || !c.documentsVerified || c.docsBlocked || c.isActive === false || seen.has(c.driverId)) return false;
     seen.add(c.driverId);
     return true;
   });

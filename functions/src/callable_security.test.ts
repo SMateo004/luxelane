@@ -38,7 +38,9 @@ describe('cobertura de App Check en las callables', () => {
   const ADMIN_ONLY = ['adminOverrideVerify', 'acknowledgeIncident', 'closeIncident', 'resolveAlert',
     'refundPayment', 'backfillSettlements', 'setUserRole', 'setUserBlocked', 'adminUpdateBooking',
     'adminRecordPayment', 'adminUpdateConfig', 'adminUpdatePricingRule', 'adminVerifyDriver',
-    'adminUpdateDriverSensitive', 'adminSetVehicleActive', 'adminSetLeadHandled'];
+    'adminUpdateDriverSensitive', 'adminSetVehicleActive', 'adminSetLeadHandled',
+    'adminGetDocumentUrl', 'adminReviewDocument', 'adminDecideApplication', 'adminAllowDriverOnline',
+    'adminPurgeDriverDocuments', 'adminListDocExpiries'];
   it.each(ADMIN_ONLY.map((n) => [n]))('%s exige rol admin', (name) => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'admin' }));
   });
@@ -130,5 +132,25 @@ describe('APP_CHECK_ENFORCE (parámetro de despliegue)', () => {
     process.env.APP_CHECK_ENFORCE = 'true';
     await expect(run({ data: {} })).rejects.toMatchObject({ details: { reason: 'app_check_required' } });
     await expect(run({ data: {}, app: { appId: 'x' } })).resolves.toBe('ok');
+  });
+
+  // Registro de chóferes: solo con rol de chófer; decidir y revisar, con
+  // segundo factor e inicio de sesión reciente.
+  it.each(['saveDriverStep', 'getDriverApplication', 'registerDocumentUpload', 'submitApplication'].map((n) => [n]))(
+    '%s exige rol chófer', (name) => {
+      expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'driver' }));
+    });
+  it('submitApplication exige el segundo factor (con mfaEnforced)', () => {
+    expect((index as Exported).submitApplication[SECURED_MARK]).toEqual(expect.objectContaining({ requireMfa: true }));
+  });
+  it('startDriverApplication no exige rol (la llama un pasajero) y tiene límite de tasa', () => {
+    const meta = (index as Exported).startDriverApplication[SECURED_MARK];
+    expect(meta).toEqual(expect.objectContaining({ name: 'startDriverApplication' }));
+    expect(meta.role).toBeUndefined();
+    expect(RATE_LIMITS.startDriverApplication).toBeDefined();
+  });
+  it.each(['adminReviewDocument', 'adminDecideApplication', 'adminAllowDriverOnline', 'adminPurgeDriverDocuments']
+    .map((n) => [n]))('%s exige inicio de sesión reciente', (name) => {
+    expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ recentAuthSeconds: 300 }));
   });
 });

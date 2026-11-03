@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -43,6 +44,21 @@ const _prohibidas = <String, String>{
   'en minutos': r'(\b|\\n)en\s+minutos\b',
 };
 
+/// Única excepción, por clave: el nombre del documento del registro de
+/// chóferes (no es una promesa al pasajero). Su texto sale del .arb de esa
+/// clave; cualquier otro «antecedentes» sigue vetado.
+const _excepcionAntecedentes = 'regDocTypeCriminalRecord';
+
+/// Los textos de esa clave en los tres idiomas.
+Set<String> _textosExcepcion() => {
+      for (final l in ['es', 'en', 'pt'])
+        (jsonDecode(File('lib/l10n/app_$l.arb').readAsStringSync())
+            as Map<String, dynamic>)[_excepcionAntecedentes] as String,
+    };
+
+/// Archivos de traducción donde puede estar ese texto (y solo ahí).
+bool _esTraduccion(String path) => path.startsWith('lib/l10n/');
+
 void main() {
   // lib/ (app y web Flutter) y web/ (index.html y manifest).
   final files = [
@@ -57,13 +73,69 @@ void main() {
   for (final entry in _prohibidas.entries) {
     test('nadie promete «${entry.key}»', () {
       final re = RegExp(entry.value, caseSensitive: false);
+      final excepcion = entry.key == 'verificación de antecedentes'
+          ? _textosExcepcion()
+          : const <String>{};
+      String sinExcepcion(String path, String line) {
+        if (!_esTraduccion(path)) return line;
+        var out = line;
+        for (final t in excepcion) {
+          out = out.replaceAll(t, '');
+        }
+        return out;
+      }
+
       final hits = <String>[
         for (final f in files)
           for (final (i, line) in f.readAsLinesSync().indexed)
-            if (!line.trimLeft().startsWith('//') && re.hasMatch(line))
+            if (!line.trimLeft().startsWith('//') &&
+                re.hasMatch(sinExcepcion(f.path, line)))
               '${f.path}:${i + 1}: ${line.trim()}',
       ];
       expect(hits, isEmpty);
     });
   }
+
+  group('«antecedentes»: solo el nombre del documento, por su clave', () {
+    final re = RegExp(_prohibidas['verificación de antecedentes']!,
+        caseSensitive: false);
+
+    test('la excepción es solo esa clave y ese texto', () {
+      expect(_textosExcepcion(), {
+        'Certificado de antecedentes',
+        'Criminal record certificate',
+        'Certidão de antecedentes criminais',
+      });
+    });
+
+    test('sigue vetado en cualquier otro texto', () {
+      expect(re.hasMatch('Chóferes con verificación de antecedentes'), isTrue);
+      expect(re.hasMatch('Revisamos los antecedentes de cada chófer'), isTrue);
+      // En el .arb, otra clave con «antecedentes» no tiene excepción.
+      final es = jsonDecode(File('lib/l10n/app_es.arb').readAsStringSync())
+          as Map<String, dynamic>;
+      final otras = [
+        for (final e in es.entries)
+          if (!e.key.startsWith('@') &&
+              e.key != _excepcionAntecedentes &&
+              e.value is String &&
+              re.hasMatch(e.value as String))
+            e.key,
+      ];
+      expect(otras, isEmpty);
+    });
+
+    test('el texto exceptuado solo está en los archivos de traducción', () {
+      final textos = _textosExcepcion();
+      final fuera = <String>[
+        for (final f in Directory('lib').listSync(recursive: true))
+          if (f is File &&
+              f.path.endsWith('.dart') &&
+              !_esTraduccion(f.path) &&
+              textos.any(f.readAsStringSync().contains))
+            f.path,
+      ];
+      expect(fuera, isEmpty);
+    });
+  });
 }

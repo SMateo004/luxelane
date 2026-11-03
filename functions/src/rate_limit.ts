@@ -66,6 +66,20 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   // Preferencias del perfil: se guardan al tocar «Guardar».
   updatePreferences: per10min(20),
   getPreferenceOptions: per10min(30),
+  // Registro de chóferes: pasos y subidas con reintentos; envío, pocas.
+  // Abrir la solicitud cambia el rol: pocas veces.
+  startDriverApplication: perHour(5),
+  saveDriverStep: per10min(30),
+  getDriverApplication: per10min(60),
+  registerDocumentUpload: per10min(60),
+  submitApplication: perHour(10),
+  // Revisión del admin: cada URL abre un documento.
+  adminGetDocumentUrl: per10min(120),
+  adminReviewDocument: per10min(120),
+  adminDecideApplication: per10min(60),
+  adminAllowDriverOnline: per10min(30),
+  adminPurgeDriverDocuments: perHour(10),
+  adminListDocExpiries: per10min(30),
   // Al abrir la app del chófer.
   registerDriverDevice: per10min(20),
   // Escrituras de admin (Parte A).

@@ -144,6 +144,39 @@ export const MESSAGES = {
     pt: 'Reserva #{ref}: ninguém reconheceu o incidente.',
   },
 
+  // --- Chófer: registro (sin datos personales ni nombre del documento: se ve
+  // en la pantalla bloqueada) ---------------------------------------------
+  'driver_application_approved.title': { es: 'Solicitud aprobada', en: 'Application approved', pt: 'Solicitação aprovada' },
+  'driver_application_approved.body': {
+    es: 'Tu solicitud de chófer fue aprobada. Abre la app para ver los detalles.',
+    en: 'Your chauffeur application has been approved. Open the app to see the details.',
+    pt: 'Sua solicitação de motorista foi aprovada. Abra o app para ver os detalhes.',
+  },
+  'driver_application_needs_changes.title': { es: 'Tu solicitud necesita cambios', en: 'Your application needs changes', pt: 'Sua solicitação precisa de ajustes' },
+  'driver_application_needs_changes.body': {
+    es: 'Revisa tu solicitud en la app: hay algo que corregir.',
+    en: 'Check your application in the app: something needs to be corrected.',
+    pt: 'Confira sua solicitação no app: há algo a corrigir.',
+  },
+  'driver_application_rejected.title': { es: 'Solicitud no aprobada', en: 'Application not approved', pt: 'Solicitação não aprovada' },
+  'driver_application_rejected.body': {
+    es: 'Tu solicitud de chófer no fue aprobada. Abre la app para ver los detalles.',
+    en: 'Your chauffeur application was not approved. Open the app to see the details.',
+    pt: 'Sua solicitação de motorista não foi aprovada. Abra o app para ver os detalhes.',
+  },
+  'driver_document_expiring.title': { es: 'Un documento está por vencer', en: 'A document is about to expire', pt: 'Um documento vai vencer' },
+  'driver_document_expiring.body': {
+    es: 'Uno de tus documentos vence en {days} días. Revísalo en la app.',
+    en: 'One of your documents expires in {days} days. Check it in the app.',
+    pt: 'Um dos seus documentos vence em {days} dias. Confira no app.',
+  },
+  'driver_document_expired.title': { es: 'Un documento venció', en: 'A document has expired', pt: 'Um documento venceu' },
+  'driver_document_expired.body': {
+    es: 'Uno de tus documentos venció. Sube uno vigente desde la app.',
+    en: 'One of your documents has expired. Upload a valid one from the app.',
+    pt: 'Um dos seus documentos venceu. Envie um válido pelo app.',
+  },
+
   // --- Datos que se guardan y se muestran ------------------------------------
   'hourly_destination.name': { es: 'Servicio por horas', en: 'Hourly service', pt: 'Serviço por hora' },
   // Nombres de las clases: Business, First y SUV son nombres de producto.
@@ -153,6 +186,16 @@ export const MESSAGES = {
   'vehicle_class.firstClass': { es: 'First Class', en: 'First Class', pt: 'First Class' },
   'vehicle_class.electric': { es: 'Eléctrico', en: 'Electric', pt: 'Elétrico' },
   'vehicle_class.unknown': { es: 'Luxelane', en: 'Luxelane', pt: 'Luxelane' },
+  // Colores del vehículo (lista cerrada del registro); «otro» usa el texto del chófer.
+  'vehicle_color.black': { es: 'Negro', en: 'Black', pt: 'Preto' },
+  'vehicle_color.white': { es: 'Blanco', en: 'White', pt: 'Branco' },
+  'vehicle_color.silver': { es: 'Plateado', en: 'Silver', pt: 'Prata' },
+  'vehicle_color.gray': { es: 'Gris', en: 'Gray', pt: 'Cinza' },
+  'vehicle_color.blue': { es: 'Azul', en: 'Blue', pt: 'Azul' },
+  'vehicle_color.red': { es: 'Rojo', en: 'Red', pt: 'Vermelho' },
+  'vehicle_color.green': { es: 'Verde', en: 'Green', pt: 'Verde' },
+  'vehicle_color.beige': { es: 'Beige', en: 'Beige', pt: 'Bege' },
+  'vehicle_color.brown': { es: 'Marrón', en: 'Brown', pt: 'Marrom' },
 } as const satisfies Record<string, Texts>;
 
 export type MessageKey = keyof typeof MESSAGES;
@@ -180,6 +223,11 @@ export const NOTICES = {
   incident_raised: ['incident_raised.title', 'incident_raised.body'],
   incident_cancel_requested: ['incident_cancel_requested.title', 'incident_cancel_requested.body'],
   incident_unacknowledged: ['incident_unacknowledged.title', 'incident_unacknowledged.body'],
+  driver_application_approved: ['driver_application_approved.title', 'driver_application_approved.body'],
+  driver_application_needs_changes: ['driver_application_needs_changes.title', 'driver_application_needs_changes.body'],
+  driver_application_rejected: ['driver_application_rejected.title', 'driver_application_rejected.body'],
+  driver_document_expiring: ['driver_document_expiring.title', 'driver_document_expiring.body'],
+  driver_document_expired: ['driver_document_expired.title', 'driver_document_expired.body'],
 } as const satisfies Record<string, readonly [MessageKey, MessageKey]>;
 
 export type NoticeType = keyof typeof NOTICES;
@@ -243,4 +291,15 @@ export function formatMoney(amount: number, locale: AppLocale): string {
 export function vehicleClassName(vehicleClass: string | undefined, locale: AppLocale): string {
   const key = `vehicle_class.${vehicleClass}` as MessageKey;
   return t(key in MESSAGES ? key : 'vehicle_class.unknown', locale);
+}
+
+/**
+ * Color del vehículo en el idioma de quien lo ve: los códigos del registro
+ * se traducen; «otro» o un color antiguo en texto libre se muestran tal cual.
+ */
+export function vehicleColorName(color: unknown, colorOther: unknown, locale: AppLocale): string {
+  if (color === 'other') return typeof colorOther === 'string' ? colorOther : '';
+  const key = `vehicle_color.${color}` as MessageKey;
+  if (typeof color === 'string' && key in MESSAGES) return t(key, locale);
+  return typeof color === 'string' ? color : '';
 }

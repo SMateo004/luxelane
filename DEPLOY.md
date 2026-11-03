@@ -292,6 +292,83 @@ preferencias, en el orden de «Preferencias del pasajero» (arriba):
   docs/GLOSARIO_IDIOMAS.md.
 - Traducciones legales del abogado (términos y privacidad).
 
+## Registro de chóferes (cierre/registro-chofer, Partes A y B)
+
+Servidor y reglas (Parte A y A10), app del chófer y panel (Parte B). **Las
+reglas de esta rama (Firestore y Storage) no se despliegan hasta publicar las
+apps**: con ellas, el alta antigua de la app del chófer (escribía
+`driverProfiles` y `vehicles` desde el cliente) deja de funcionar.
+
+### Pasos manuales previos (responsable; nada de esto lo fija el código)
+- `config/ops.driverRequirements`: lista de `{type, required, expires}` con los
+  tipos de documento (lista cerrada en `functions/src/driver_application.ts`).
+  Cuáles son obligatorios y cuáles vencen: responsable con su abogado.
+  **Si falta**, el chófer completa sus datos pero no puede enviar
+  (`requirements_not_configured`) y el panel muestra «Requisitos sin
+  configurar».
+- `config/ops.vehicleMinYear` (opcional, por clase de servicio): **si falta**,
+  solo se exige el rango 1990 hasta el año siguiente.
+- `config/ops.docExpiryReminderDays` (p. ej. `[30, 7]`): **si falta**, no hay
+  recordatorios; la tarea diaria solo marca vencidos y avisa a central.
+- `config/ops.blockOnExpiredDocs`: **si falta**, es `false`: alerta sin
+  bloquear. Con `true`, un obligatorio vencido impide conectarse (nunca corta
+  un viaje en curso; el admin puede autorizar con motivo).
+- `config/ops.driverDocsPurgeEnabled`: **si falta**, la purga manual está
+  desactivada (`purge_disabled`). La retención la decide el abogado.
+- Bucket de Storage: el de por defecto del proyecto, o el parámetro
+  `DRIVER_DOCS_BUCKET` de functions. Región recomendada `southamerica-east1`
+  (NO VERIFICADO: no hay región en Bolivia; transferencia al exterior, ver la
+  auditoría, sección M). El plan Blaze es necesario para Storage con
+  functions (NO VERIFICADO en la cuenta).
+- Firma de URLs: la cuenta de servicio de las functions necesita
+  `iam.serviceAccounts.signBlob` (rol «Creador de tokens de cuenta de
+  servicio» sobre sí misma). Sin él, `adminGetDocumentUrl` falla y el panel
+  no abre documentos. NO VERIFICADO.
+- App Check para Storage en la consola, después de la fase 1 de App Check.
+
+### Orden
+1. **Functions e índices** (`deploy --only functions,firestore:indexes`): las
+   callables del registro, la tarea diaria `driverDocExpiry`, el bloqueo por
+   documentos vencidos y el índice de grupo de colecciones de
+   `documents.expiresAt`. Una app antigua sigue funcionando.
+2. **Apps** (chófer y pasajero) y el **panel**, publicados.
+3. **`minDriverAppVersion`** a la versión de este paso.
+4. **Reglas al final, a mano**: `firestore.rules` y `storage.rules`
+   (`deploy --only firestore:rules,storage`).
+
+### Qué ve una app anterior
+- **Chófer, antes de las reglas**: el alta antigua sigue escribiendo
+  `driverProfiles` y `vehicles` sin pasar por la revisión de documentos; el
+  admin no ve solicitud. Por eso las reglas no esperan mucho tras el paso 3.
+- **Chófer, después de las reglas**: el alta antigua falla (sin permiso).
+  Un pasajero que abre la app antigua del chófer ve «aún no habilitada como
+  chófer» y no puede abrir su solicitud: necesita la app nueva.
+- **Chófer ya verificado**: nada cambia; se conecta como siempre (con
+  `mfaEnforced`, la app nueva le pide el TOTP antes de conectarse).
+- **Pasajero**: ve del chófer marca, modelo, color y placa del vehículo
+  aprobado (no del que está en revisión), como antes.
+- **Panel anterior**: sin la sección «Solicitudes de chófer»; verifica como
+  antes con `adminVerifyDriver`.
+
+### Pruebas en dispositivo real (registro de chóferes)
+Ninguna se puede hacer con los emuladores ni con las pruebas automáticas.
+En **staging**, con un Android y un iPhone, y anotar el resultado:
+
+1. **Quitar el EXIF de las fotos**: subir una foto con ubicación activada en
+   la cámara; descargar el objeto desde la consola y comprobar que no lleva
+   EXIF ni coordenadas (por ejemplo con `exiftool`).
+2. **Cámara frontal en la foto en vivo**: el paso «Foto en vivo» abre la
+   cámara frontal y no ofrece la galería.
+3. **URL firmada de 5 minutos**: en el panel, «Ver documento» abre el archivo;
+   la misma URL deja de funcionar pasados 5 minutos; el acceso queda en la
+   bitácora sin la URL; el navegador no lo guarda en caché
+   (`Cache-Control: private, no-store`).
+4. **Permisos de cámara y fotos en iOS**: el aviso del sistema muestra el
+   texto de `NSCameraUsageDescription` y `NSPhotoLibraryUsageDescription`
+   en el idioma del teléfono (es, en o pt, de `InfoPlist.strings`).
+5. **Web**: el registro deja completar datos y vehículo, y no ofrece subir
+   documentos ni la foto en vivo.
+
 ## Orden de despliegue de createBooking (D2)
 
 Las reservas pasan a crearse solo en el servidor (`createBooking`), que

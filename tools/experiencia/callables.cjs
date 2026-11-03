@@ -21,7 +21,8 @@ for (const v of ['FIRESTORE_EMULATOR_HOST', 'FIREBASE_AUTH_EMULATOR_HOST']) {
   if (!process.env[v]) throw new Error(`Falta ${v}: solo contra los emuladores.`);
 }
 process.env.GCLOUD_PROJECT = PROJECT;
-process.env.FIREBASE_CONFIG = JSON.stringify({ projectId: PROJECT });
+process.env.FIREBASE_CONFIG = JSON.stringify({ projectId: PROJECT, storageBucket: `${PROJECT}.appspot.com` });
+process.env.FIREBASE_STORAGE_EMULATOR_HOST = process.env.FIREBASE_STORAGE_EMULATOR_HOST || '127.0.0.1:9199';
 // Secretos ficticios (functions/.secret.local, que escribe levantar.sh).
 const secrets = path.join(__dirname, '../../functions/.secret.local');
 for (const line of fs.readFileSync(secrets, 'utf8').split('\n')) {
@@ -32,6 +33,13 @@ for (const line of fs.readFileSync(secrets, 'utf8').split('\n')) {
 const FUNCTIONS = path.join(__dirname, '../../functions');
 const admin = require(path.join(FUNCTIONS, 'node_modules/firebase-admin'));
 const fns = require(path.join(FUNCTIONS, 'lib/index.js'));
+// El emulador de Storage no firma URLs (no hay cuenta de servicio): para ver
+// el visor del panel, la «URL firmada» es el archivo en data: (solo aquí).
+const { File } = require(path.join(FUNCTIONS, 'node_modules/@google-cloud/storage'));
+File.prototype.getSignedUrl = async function signedUrlForLocalReview() {
+  const [[buf], [md]] = await Promise.all([this.download(), this.getMetadata()]);
+  return [`data:${md.contentType || 'application/octet-stream'};base64,${buf.toString('base64')}`];
+};
 const STRIPE = new Set(['createPaymentIntent', 'capturePayment', 'refundPayment', 'listPaymentMethods',
   'setDefaultPaymentMethod', 'attachPaymentMethod', 'detachPaymentMethod', 'ensureStripeCustomer',
   'createStripeCustomer', 'captureOnCompletion']);

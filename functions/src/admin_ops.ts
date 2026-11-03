@@ -110,10 +110,11 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
       if (!ASSIGNABLE.includes(status)) throw opError('failed-precondition', 'not_assignable', { status });
       const previous = (b.driverId as string | undefined) ?? null;
       if (previous === input.driverId) throw opError('failed-precondition', 'no_change');
-      const [user, profile, payment] = await Promise.all([
+      const [user, profile, payment, previousProfile] = await Promise.all([
         tx.get(db.collection('users').doc(input.driverId)),
         tx.get(db.collection('driverProfiles').doc(input.driverId)),
         readPaymentState(db, ref.id, tx),
+        previous ? tx.get(db.collection('driverProfiles').doc(previous)) : Promise.resolve(null),
       ]);
       // A3: una reserva que aún espera chófer no se asigna sin pago confirmado.
       if (status === 'pending' && !isPaid(payment)) throw opError('failed-precondition', 'payment_required');
@@ -121,6 +122,9 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
       if (user.data()?.isActive === false) throw opError('failed-precondition', 'driver_inactive');
       if (profile.data()?.documentsVerified !== true) throw opError('failed-precondition', 'driver_not_verified');
       if (profile.data()?.isAvailable !== true) throw opError('failed-precondition', 'driver_busy');
+      // Documentos obligatorios vencidos con el bloqueo activo (registro de
+      // chóferes): primero adminAllowDriverOnline.
+      if (profile.data()?.docsBlocked === true) throw opError('failed-precondition', 'driver_docs_blocked');
 
       const to: Status = status === 'pending' ? 'confirmed' : status;
       const after = { driverId: input.driverId, status: to };
@@ -128,7 +132,10 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
       const scheduledMs = (b.scheduledAt as admin.firestore.Timestamp | undefined)?.toMillis() ?? nowMs(deps);
       const busyNow = !['pending', 'confirmed'].includes(status) || scheduledMs < nowMs(deps) + BUSY_LEAD_MS;
       if (busyNow) tx.update(db.collection('driverProfiles').doc(input.driverId), { isAvailable: false });
-      if (previous) tx.update(db.collection('driverProfiles').doc(previous), { isAvailable: true });
+      if (previous) {
+        tx.update(db.collection('driverProfiles').doc(previous),
+          { isAvailable: previousProfile?.data()?.docsBlocked !== true });
+      }
       event(to, previous ? 'admin_reassign' : 'admin_assign', { driverId: input.driverId, previousDriverId: previous });
       writeAudit(tx, db, {
         actor, operation: previous ? 'reassign_driver' : 'assign_driver', collection: 'bookings', docId: ref.id,

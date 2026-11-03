@@ -98,7 +98,8 @@ describe('chófer verificado con isActive == false', () => {
       await env.withSecurityRulesDisabled((ctx) => deleteDoc(doc(ctx.firestore(), 'driverProfiles', 'bloq')));
       await assertFails(setDoc(profile(), { userId: 'bloq', licenseNumber: 'X', isAvailable: false }));
       await reactivate();
-      await assertSucceeds(setDoc(profile(), { userId: 'bloq', licenseNumber: 'X', isAvailable: false }));
+      // A10: tampoco activo; el perfil lo crea el servidor.
+      await assertFails(setDoc(profile(), { userId: 'bloq', licenseNumber: 'X', isAvailable: false }));
     });
   });
 });

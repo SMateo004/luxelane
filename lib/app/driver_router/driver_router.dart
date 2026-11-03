@@ -8,8 +8,8 @@ import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
-import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
+import '../../features/driver_registration/presentation/pages/driver_registration_entry.dart';
 import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../driver_shell/driver_shell.dart';
@@ -53,16 +53,15 @@ GoRouter buildDriverRouter(
         }
 
         // If driver hasn't completed onboarding, redirect there
-        if (isAuth &&
-            driverBloc.state is DriverOnboardingRequired &&
-            going != DriverRoutes.onboarding) {
+        // (pasajero que aún no abrió su solicitud o chófer sin verificar).
+        final registering = driverBloc.state is DriverOnboardingRequired ||
+            driverBloc.state is DriverApplicationStartRequired;
+        if (isAuth && registering && going != DriverRoutes.onboarding) {
           return DriverRoutes.onboarding;
         }
 
         // Once onboarding is done, don't let them revisit it
-        if (isAuth &&
-            driverBloc.state is! DriverOnboardingRequired &&
-            going == DriverRoutes.onboarding) {
+        if (isAuth && !registering && going == DriverRoutes.onboarding) {
           return DriverRoutes.home;
         }
 
@@ -76,7 +75,7 @@ GoRouter buildDriverRouter(
         ),
         GoRoute(
           path: DriverRoutes.onboarding,
-          pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+          pageBuilder: (c, s) => _fade(const DriverRegistrationEntry(), s),
         ),
         GoRoute(
           path: '/legal/terminos',

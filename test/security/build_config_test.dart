@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:luxelane/features/driver_registration/data/image_prep.dart';
 import 'package:luxelane/core/config/env.dart';
 import 'package:luxelane/core/widgets/lux_map.dart';
 import 'package:luxelane/firebase_options.dart';
@@ -202,6 +203,66 @@ void main() {
 
     test('no se despliega sin PICKUP_CODE_SECRET en Secret Manager', () {
       expect(ci, contains('functions:secrets:get PICKUP_CODE_SECRET'));
+    });
+  });
+
+  group('Registro de chóferes (B0)', () {
+    test(
+        'firebase_storage, image_picker y flutter_image_compress con versión fija',
+        () {
+      final pubspec = _read('pubspec.yaml');
+      expect(pubspec, contains('\n  firebase_storage: 12.4.10\n'));
+      expect(pubspec, contains('\n  image_picker: 1.2.1\n'));
+      expect(pubspec, contains('\n  flutter_image_compress: 2.4.0\n'));
+      // Sin cámara propia (decisión del responsable).
+      expect(pubspec, isNot(contains('\n  camera:')));
+    });
+
+    test(
+        'el modo de capturas (subir desde la web) no está en ninguna build real',
+        () {
+      // Sin USE_EMULATORS ni CAPTURE_WEB_UPLOADS: la web no sube documentos.
+      expect(kCaptureWebUploads, isFalse);
+      expect(_read('.github/workflows/ci.yml'),
+          isNot(contains('CAPTURE_WEB_UPLOADS')));
+      final src =
+          _read('lib/features/driver_registration/data/image_prep.dart');
+      expect(
+          src,
+          contains(
+              "kUseEmulators && bool.fromEnvironment('CAPTURE_WEB_UPLOADS')"));
+    });
+
+    test(
+        'iOS: los textos de cámara y fotos están en es, en y pt y entran en la app',
+        () {
+      for (final l in ['es', 'en', 'pt']) {
+        final f = File('ios/Runner/$l.lproj/InfoPlist.strings');
+        expect(f.existsSync(), isTrue, reason: l);
+        final txt = f.readAsStringSync();
+        for (final k in [
+          'NSCameraUsageDescription',
+          'NSPhotoLibraryUsageDescription'
+        ]) {
+          expect(RegExp('"$k" = "[^"]{20,}";').hasMatch(txt), isTrue,
+              reason: '$l: $k');
+        }
+      }
+      // Sin estar en el proyecto de Xcode no se copian a la app.
+      final pbx = _read('ios/Runner.xcodeproj/project.pbxproj');
+      expect(pbx, contains('InfoPlist.strings in Resources'));
+      for (final l in ['es', 'en', 'pt']) {
+        expect(pbx, contains('path = $l.lproj/InfoPlist.strings;'));
+      }
+      expect(pbx, matches(RegExp(r'knownRegions = \([^)]*\bes,[^)]*\bpt,')));
+      final plist = _read('ios/Runner/Info.plist');
+      expect(plist, contains('<key>CFBundleLocalizations</key>'));
+    });
+
+    test('iOS declara para qué usa la cámara y las fotos', () {
+      final plist = _read('ios/Runner/Info.plist');
+      expect(plist, contains('<key>NSCameraUsageDescription</key>'));
+      expect(plist, contains('<key>NSPhotoLibraryUsageDescription</key>'));
     });
   });
 

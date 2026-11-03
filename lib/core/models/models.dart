@@ -5,6 +5,7 @@ import '../enums/enums.dart';
 import 'place_model.dart';
 import 'trip_preferences.dart';
 
+export 'driver_application.dart';
 export 'place_model.dart';
 export 'trip_preferences.dart';
 

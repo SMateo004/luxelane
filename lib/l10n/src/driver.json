@@ -503,119 +503,17 @@
     "en": "Go online to accept",
     "pt": "Fique online para aceitar"
   },
-  "driverOnboardingDefaultColor": {
-    "description": "Color del vehículo que viene escrito por defecto en el registro (editable).",
-    "es": "Negro",
-    "en": "Black",
-    "pt": "Preto"
-  },
-  "driverOnboardingVehicleError": {
-    "description": "Error al registrar el vehículo.",
-    "es": "No se pudo registrar el vehículo. Revisa los datos e inténtalo de nuevo.",
-    "en": "The vehicle could not be registered. Check the details and try again.",
-    "pt": "Não foi possível cadastrar o veículo. Verifique os dados e tente novamente."
-  },
-  "driverOnboardingLicenseError": {
-    "description": "Error al guardar la licencia.",
-    "es": "No se pudo guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.",
-    "en": "Your license could not be saved. Check your connection and try again.",
-    "pt": "Não foi possível salvar sua habilitação. Verifique sua conexão e tente novamente."
-  },
-  "driverOnboardingGenericError": {
-    "description": "Error general del registro del chófer.",
-    "es": "No se pudo completar el registro. Inténtalo de nuevo.",
-    "en": "Registration could not be completed. Try again.",
-    "pt": "Não foi possível concluir o cadastro. Tente novamente."
-  },
   "driverSignOut": {
     "description": "Botón para cerrar sesión.",
     "es": "Cerrar sesión",
     "en": "Sign out",
     "pt": "Sair"
   },
-  "driverOnboardingVehicleTitle": {
-    "description": "Título del paso 1 del registro.",
-    "es": "Tu vehículo",
-    "en": "Your vehicle",
-    "pt": "Seu veículo"
-  },
-  "driverOnboardingVehicleSubtitle": {
-    "description": "Texto del paso 1 del registro.",
-    "es": "Registra el vehículo que vas a conducir.",
-    "en": "Register the vehicle you will drive.",
-    "pt": "Cadastre o veículo que você vai dirigir."
-  },
   "driverContinue": {
     "description": "Botón para pasar al siguiente paso.",
     "es": "Continuar",
     "en": "Continue",
     "pt": "Continuar"
-  },
-  "driverOnboardingLicenseTitle": {
-    "description": "Título del paso 2 del registro.",
-    "es": "Licencia de conducir",
-    "en": "Driver's license",
-    "pt": "Carteira de habilitação"
-  },
-  "driverOnboardingLicenseSubtitle": {
-    "description": "Texto del paso 2 del registro.",
-    "es": "Tus documentos serán revisados antes de que puedas aceptar viajes.",
-    "en": "Your documents will be reviewed before you can accept trips.",
-    "pt": "Seus documentos serão analisados antes que você possa aceitar viagens."
-  },
-  "driverOnboardingReviewNotice": {
-    "description": "Aviso del paso 2: un administrador revisa los documentos.",
-    "es": "Un administrador verificará tus documentos antes de que puedas conectarte.",
-    "en": "An administrator will verify your documents before you can go online.",
-    "pt": "Um administrador verificará seus documentos antes que você possa ficar online."
-  },
-  "driverOnboardingBack": {
-    "description": "Botón para volver al paso anterior.",
-    "es": "Atrás",
-    "en": "Back",
-    "pt": "Voltar"
-  },
-  "driverOnboardingSubmit": {
-    "description": "Botón para enviar el registro.",
-    "es": "Enviar",
-    "en": "Submit",
-    "pt": "Enviar"
-  },
-  "driverOnboardingClass": {
-    "description": "Etiqueta del selector de clase del vehículo.",
-    "es": "Categoría del vehículo",
-    "en": "Vehicle class",
-    "pt": "Categoria do veículo"
-  },
-  "driverOnboardingMake": {
-    "description": "Campo: marca del vehículo.",
-    "es": "Marca",
-    "en": "Make",
-    "pt": "Marca"
-  },
-  "driverOnboardingModel": {
-    "description": "Campo: modelo del vehículo.",
-    "es": "Modelo",
-    "en": "Model",
-    "pt": "Modelo"
-  },
-  "driverOnboardingPlate": {
-    "description": "Campo: placa (matrícula) del vehículo.",
-    "es": "Placa",
-    "en": "License plate",
-    "pt": "Placa"
-  },
-  "driverOnboardingYear": {
-    "description": "Campo: año del vehículo.",
-    "es": "Año",
-    "en": "Year",
-    "pt": "Ano"
-  },
-  "driverOnboardingColor": {
-    "description": "Campo: color del vehículo.",
-    "es": "Color",
-    "en": "Color",
-    "pt": "Cor"
   },
   "driverFieldRequired": {
     "description": "Error de campo vacío.",
@@ -628,36 +526,6 @@
     "es": "Inválido",
     "en": "Invalid",
     "pt": "Inválido"
-  },
-  "driverOnboardingLicenseNumber": {
-    "description": "Campo: número de licencia de conducir.",
-    "es": "Número de licencia",
-    "en": "License number",
-    "pt": "Número da habilitação"
-  },
-  "driverOnboardingLicenseExpiry": {
-    "description": "Campo: vencimiento de la licencia, con el formato mes/año.",
-    "es": "Fecha de vencimiento (MM/AAAA)",
-    "en": "Expiry date (MM/YYYY)",
-    "pt": "Data de validade (MM/AAAA)"
-  },
-  "driverOnboardingExpiryFormat": {
-    "description": "Error: el vencimiento no tiene el formato mes/año.",
-    "es": "Usa MM/AAAA",
-    "en": "Use MM/YYYY",
-    "pt": "Use MM/AAAA"
-  },
-  "driverOnboardingInvalidMonth": {
-    "description": "Error: mes fuera de 1–12.",
-    "es": "Mes inválido",
-    "en": "Invalid month",
-    "pt": "Mês inválido"
-  },
-  "driverOnboardingLicenseExpired": {
-    "description": "Error: la licencia ya venció.",
-    "es": "Licencia vencida",
-    "en": "License expired",
-    "pt": "Habilitação vencida"
   },
   "driverEarningsTitle": {
     "description": "Título de la pantalla de ganancias.",

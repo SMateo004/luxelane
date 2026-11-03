@@ -171,6 +171,91 @@ español.
   que parecen inventados y «champán», «Wi-Fi y carga inalámbrica» sin
   respaldo; «Stripe» y «PCI DSS» en la pantalla de tarjeta.
 
+## M. Registro de chóferes y sus documentos (cierre/registro-chofer, Parte A)
+
+Lo que se guarda, dónde y quién lo lee. Todo lo escribe el servidor; nada
+lo escribe un cliente salvo el archivo, que el chófer crea una vez en
+Storage.
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Estado de la solicitud, paso, fechas | driverApplications/{uid} | El chófer dueño y el admin | saveDriverStep, registerDocumentUpload, submitApplication, revisión del admin |
+| Nombre, número de cédula, número y vencimiento de licencia, datos del vehículo | driverApplications/{uid}/private/data (y licencia en driverProfiles; vehículo en vehicles) | Solo el admin (el chófer los recupera con getDriverApplication) | saveDriverStep |
+| Estado de cada documento: versión, vencimiento, motivo de rechazo y nota | driverApplications/{uid}/documents/{tipo} | El chófer dueño y el admin | El servidor |
+| Ruta del archivo, tamaño, tipo real, quién revisó | driverApplications/{uid}/documentFiles/{tipo} | Solo el admin | El servidor |
+| Archivos (fotos y documentos) | Cloud Storage, driverDocs/{uid}/{tipo}/{versión} | Nadie con las reglas; el admin con una URL firmada de 5 minutos (adminGetDocumentUrl) | El chófer crea (nunca sobrescribe ni borra) |
+| Bitácora de accesos: quién vio qué documento y cuándo (sin la URL) | driverDocAccessLogs | Solo el admin | adminGetDocumentUrl |
+| Bloqueo por documentos vencidos y autorización del admin | driverProfiles.docsBlocked, docsBlockOverride | El chófer y el admin | runDocExpiry, adminAllowDriverOnline |
+| Revisión, decisión, autorizaciones y purga | admin_logs | Solo el admin | El servidor, en la misma transacción |
+
+- Validación del archivo en el servidor: existe, tamaño máximo técnico de
+  10 MB, tipo real por los primeros bytes (JPEG, PNG, WebP; PDF solo en
+  antecedentes, propiedad, SOAT, inspección, seguro, permiso y autorización
+  del dueño). Un archivo que no cumple queda marcado en Storage y no se
+  registra.
+- **No hay antivirus ni análisis de contenido** (NO VERIFICADO que un
+  archivo con cabecera válida sea inocuo). Las URL firmadas sirven el
+  archivo con `Content-Disposition: inline`.
+- La foto en vivo se toma con la cámara dentro de la app: reduce el engaño
+  pero **no es una prueba de vida ni una comparación de rostro**; la
+  interfaz y esta auditoría no lo prometen.
+- Logs: cédula, licencia, nombre, placa, rutas, nombres de archivo y URL se
+  tachan por nombre y por patrón (driver_registration.int.ts lo comprueba).
+  Los avisos al chófer no nombran el documento (pantalla bloqueada).
+- Retención: **no se programa ningún borrado**. Hay una purga manual solo
+  para admin, con motivo y auditoría, desactivada: solo funciona con
+  config/ops.driverDocsPurgeEnabled = true.
+
+Región del bucket: el bucket predeterminado de Firebase usa la ubicación de
+recursos del proyecto, que no se puede cambiar una vez fijada. Para Bolivia
+la más cercana es `southamerica-east1` (São Paulo, Brasil). NO VERIFICADO:
+qué ubicación tiene ya el proyecto, si existe el bucket, el plan de
+facturación (Storage pide Blaze para buckets nuevos), App Check en Storage
+y que la cuenta de servicio de las functions tenga permiso para firmar URL
+(`iam.serviceAccounts.signBlob`, rol «Creador de tokens de cuenta de
+servicio» sobre sí misma).
+
+Preguntas para el abogado:
+1. ¿Cuánto tiempo hay que conservar las fotos de cédula, licencia,
+   antecedentes y del vehículo, de chóferes aprobados y de los rechazados?
+   ¿Hay obligación legal de conservarlos (transporte, seguros)?
+2. ¿Qué hacer con estos archivos al cerrar la cuenta de un chófer?
+   (deleteAccount hoy no los borra.)
+3. Si el bucket está fuera de Bolivia (São Paulo u otra región), ¿qué exige
+   la transferencia de datos personales al exterior y qué hay que decir en
+   la política de privacidad?
+4. ¿Qué documentos son obligatorios y cuáles vencen
+   (config/ops.driverRequirements)?
+
+### M.A10 Alta del aspirante (startDriverApplication)
+
+- Hasta A10, un aspirante nuevo no podía registrarse solo: las cuentas nuevas son `rider` (firestore.rules, `isValidSelfSignup`) y solo `setUserRole` (admin) daba el rol de chófer [seguro].
+- `startDriverApplication`: App Check y límite de tasa (secureCallable, 5 por hora), correo verificado en el token, cuenta `rider` activa, sin ninguna reserva (de cualquier estado), no admin. Cambia `users/{uid}.role` a `driver`, fija el claim y escribe la auditoría (`start_driver_application`, actor con rol `rider`) en la misma transacción que crea `driverApplications/{uid}` en draft y `driverProfiles/{uid}` con `documentsVerified: false`. De un solo sentido. Idempotente. Prueba: driver_start.int.ts.
+- Diferencia con setUserRole: no revoca las sesiones; la app debe pedir un token nuevo (`getIdToken(true)`) para que las reglas vean el claim. Se fija el claim después de Firestore; si falla, el reintento lo corrige.
+- `users/{uid}.isVerified` es el correo verificado (H6), no la verificación del chófer: no se toca. La del chófer es `driverProfiles/{uid}.documentsVerified`.
+- Cerrado para el aspirante sin verificar (reglas y servidor, con test): crear su perfil desde el cliente (ahora nadie), cambiar licencia, vehículo, ubicación o ponerse en línea (solo puede quedar fuera de línea), crear o cambiar vehículos desde el cliente, y usar un perfil de pagos (`ensureStripeCustomer`, `listPaymentMethods` y las demás que comprueban el cliente propio: `driver_account`, para cualquier chófer).
+- Consecuencia: la pantalla de alta actual de la app del chófer (escribe `driverProfiles` y `vehicles`) deja de funcionar con estas reglas hasta que la Parte B la cambie por las callables. Las reglas de esta rama no se despliegan antes que la Parte B.
+- Versiones por documento: como mucho 20 (storage.rules y `uploadSchema`).
+- Índice de grupo de colecciones `documents.expiresAt` en firestore.indexes.json (lo usa `runDocExpiry`; el emulador no lo exige).
+
+### M.B Apps y panel (Parte B)
+
+- **App del chófer** (`lib/features/driver_registration/`): pantalla previa a `startDriverApplication` (la cuenta pasa a ser de chófer, sin vuelta atrás; con reservas, otro correo) y token nuevo (`getIdToken(true)`) tras abrirla; registro por pasos (datos, vehículo, documentos, segundo factor con `mfaEnforced`, resumen y envío) con barra de progreso, reanudable; estado por documento con el motivo de rechazo y «Volver a subir»; «En revisión» sin plazos. Sustituye al alta antigua que escribía `driverProfiles` y `vehicles` desde el cliente.
+- **Fotos**: cámara o galería del sistema (`image_picker` 1.2.1); la foto en vivo solo con la cámara frontal y sin galería. **No hay cámara propia** (no se añadió `camera`): la guía de encuadre se muestra antes de abrir la cámara y en la revisión, no dentro de la cámara. Revisión antes de enviar (repetir o usar), resolución mínima local (lado corto ≥ 720 px, valor técnico) y recompresión a JPEG **sin EXIF** (`flutter_image_compress` 2.4.0, `keepExif: false`). Que el EXIF desaparezca de verdad en Android e iOS: NO VERIFICADO (prueba en dispositivo real en DEPLOY.md).
+- **PDF**: el servidor los admite en los tipos de papel, pero la app no los ofrece (no hay selector de archivos sin otra dependencia). Hoy todo documento se sube como foto.
+- **Web**: no se suben documentos ni la foto en vivo; la compresión web de `flutter_image_compress` necesita un script externo que la CSP no permite. Solo para las capturas contra los emuladores existe `CAPTURE_WEB_UPLOADS` (exige `USE_EMULATORS`; test en build_config_test.dart).
+- **Subida**: `driverDocs/{uid}/{tipo}/{versión}` con la versión siguiente; un reintento usa la misma versión y, si el objeto ya existe (no se puede sobrescribir), solo se registra: no se duplica.
+- **Segundo factor**: con `mfaEnforced`, el paso aparece antes del resumen, `submitApplication` lo exige en el servidor y la app no deja conectarse sin él (guía al alta o a volver a entrar). La app lo sabe por `getDriverApplication.mfaEnforced` (no lee `config/security`). Ponerse en línea sin TOTP no está cerrado en las reglas (solo en la app); aceptar viajes sí lo exige el servidor (`acceptBooking`).
+- **Panel** («Solicitudes de chófer», `lib/features/admin/`): bandeja por estado, detalle con datos y vehículo, requisitos sin configurar, visor con URL firmada de 5 minutos (`Image.network`, sin caché de disco; el objeto lleva `Cache-Control: private, no-store`, que fija el servidor al registrarlo), aprobar o rechazar por documento con motivos cerrados, decisión final con motivo, bitácora de accesos y vencimientos próximos (`adminListDocExpiries`) con «Autorizar en línea». Bandeja y bitácora leen hasta 200 sin índice compuesto (se avisa si se corta).
+- **Pasajero** (B3): ve marca, modelo, color y placa del vehículo **aprobado** (`publishDriverInfo` con `driverProfiles.vehicleId` y `isActive`); prueba en driver_registration.int.ts.
+- **Textos**: todo en los .arb (es/en/pt), errores del registro en el catálogo del cliente (`registrationErrorMessage`), frases prohibidas ampliadas (verificación de identidad, biometría, prueba de vida). El certificado se llama «Certificado de antecedentes» (en: «Criminal record certificate», pt: «Certidão de antecedentes criminais»): es la única excepción, por su clave (`regDocTypeCriminalRecord`), en las pruebas de promesas, que siguen vetando «antecedentes» en cualquier otro texto.
+- **iOS**: `NSCameraUsageDescription` y `NSPhotoLibraryUsageDescription` en es, en y pt (`ios/Runner/<idioma>.lproj/InfoPlist.strings`, en el proyecto de Xcode, y `CFBundleLocalizations`). Los de ubicación siguen solo en español.
+- **Pendientes** (no hechos en esta rama):
+  1. Ponerse en línea sin TOTP con `mfaEnforced` solo se bloquea en la app, no en las reglas (`driverProfiles` deja `isAvailable`/`online` en true sin mirar el segundo factor). Aceptar viajes sí lo exige el servidor (`acceptBooking`).
+  2. Diez capturas con el texto al 200 % (es y pt; vehículo, revisión de la foto, falta de vencimiento, resumen y segundo factor): el guion no desplaza el lienzo de Flutter web con la letra a ese tamaño. Los tests de widget comprueban que no hay desbordes. Las capturas se hicieron con el nombre anterior del certificado («Certificado penal»).
+  3. Las pruebas en dispositivo real de DEPLOY.md («Registro de chóferes»): EXIF quitado, cámara frontal en la foto en vivo, URL firmada de 5 minutos sin caché, permisos de cámara y fotos en iOS y web sin subidas.
+- **Matriz**: la Parte B no cambia `firestore.rules` ni `storage.rules`.
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
@@ -205,3 +290,4 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | Deuda: campos `*Usd` de `pricingRules` | ABIERTO (deuda, G5: no se renombra) | [seguro] Los importes están en bolivianos (`functions/src/pricing.ts:7`, `fare.ts:64`) aunque los campos se llamen `basePriceUsd`, `pricePerKmUsd`, `pricePerHourUsd` y `minimumPriceUsd`. No hay conversión de moneda en ningún sitio. ~270 usos: servidor (`fare.ts`, `pricing.ts`, esquema estricto de `adminUpdatePricingRule` en `admin_ops.ts`), app (`PricingRule` en `models.dart`, `PricingCatalog`, que lee `/pricingRules` directamente de Firestore, pestaña Tarifas), tests de reglas (`pricingRules.rules.ts`, `matrix.ts`), `tools/pricing` y `seed.cjs`. Riesgo por el que no se hizo: las apps instaladas leen los nombres viejos de Firestore hasta que `minAppVersion` las saque, así que habría un periodo con los dos nombres en cada documento; una edición del panel que escribiera solo uno haría que el precio mostrado y el cobrado se separaran. | Plan si se decide: (1) lectura doble `nuevo ?? viejo` en servidor y app, con tests de paridad; (2) `adminUpdatePricingRule` escribe los dos nombres; (3) script de migración con DRY-RUN por defecto que lista los cambios y solo escribe con `--apply`, contra `demo-luxelane` primero; (4) tras subir `minAppVersion`, dejar de escribir y luego de leer los viejos; (5) reglas al final. Nombres nuevos: decisión del responsable. |
 | Preferencias del pasajero | PARCIAL (servidor, reglas, apps y panel, en código) | Rama cierre/preferencias, Parte A: updatePreferences y esquema cerrado (preferences.ts, preferences.test.ts), copia por reserva en driverView/preferences (preferences.int.ts), reglas con ventana (preferences.rules.ts, matriz), idiomas en openRequests (open_requests.test.ts), logs (errors.test.ts, logs_privacy.int.ts). Sección K. | Retención y necesidades sensibles: abogado. Listas de musicStyle y needs: revisión del responsable. config/ops.playlistHosts: lo fija el responsable. Apps y panel: Parte B. |
 | Idiomas | PARCIAL (apps y servidor, en código) | Rama cierre/idiomas: es/en/pt en las apps del pasajero y del chófer, idioma de la cuenta en users/{uid}.locale (updatePreferences), avisos del servidor por idioma (i18n.ts), panel y legales en español. Sección L. | Revisión nativa y traducciones legales; decisiones de texto de la sección L. Capturas por idioma en docs/capturas/idiomas. |
+| Registro de chóferes | PARCIAL (servidor, reglas, apps y panel, en código) | Rama cierre/registro-chofer, Parte A: alta del aspirante con startDriverApplication (A10, driver_start.int.ts); solicitud por pasos y documentos en Storage (driver_application.ts), storage.rules, revisión con URL firmada y bitácora, vencimientos y bloqueo en línea, reglas y matriz (driverRegistration.rules.ts, storage.rules.ts, driver_registration.int.ts). Sección M. | Requisitos y vencimientos (config/ops), retención y región del bucket: responsable y abogado. Parte B (apps y panel) hecha. Pendiente: bloqueo de conectarse sin TOTP solo en la app (no en las reglas); 10 capturas al 200 % sin hacer; pruebas en dispositivo real de DEPLOY.md (EXIF, cámara frontal, URL de 5 minutos); PDF desde la app y cámara propia, no hechos. |

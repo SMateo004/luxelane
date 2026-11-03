@@ -50,8 +50,10 @@ describe('alta y activación de /vehicles', () => {
     await assertFails(setDoc(doc(db('nover'), 'vehicles', 'nuevo-nover'), vehicle('nover', true)));
   });
 
-  test('un chófer crea su vehículo inactivo', async () => {
-    await assertSucceeds(setDoc(doc(db('nover'), 'vehicles', 'nuevo-nover'), vehicle('nover', false)));
+  // A10: el aspirante lo registra con saveDriverStep; el verificado, aún desde aquí, inactivo.
+  test('el aspirante sin verificar no crea su vehículo desde el cliente; el verificado sí, inactivo', async () => {
+    await assertFails(setDoc(doc(db('nover'), 'vehicles', 'nuevo-nover'), vehicle('nover', false)));
+    await assertSucceeds(setDoc(doc(db('libre'), 'vehicles', 'nuevo-libre'), vehicle('libre', false)));
   });
 
   // Parte A: el admin lo activa con adminSetVehicleActive.

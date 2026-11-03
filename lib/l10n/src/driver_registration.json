@@ -1,0 +1,688 @@
+{
+  "regIntroTitle": {
+    "description": "Registro de chófer (app del chófer): título de la pantalla previa a abrir la solicitud.",
+    "es": "Conducir con Luxelane",
+    "en": "Drive with Luxelane",
+    "pt": "Dirigir com a Luxelane"
+  },
+  "regIntroBody": {
+    "description": "Registro de chófer (app del chófer): qué cambia al abrir la solicitud.",
+    "es": "Para registrarte como chófer, esta cuenta pasa a ser una cuenta de chófer.",
+    "en": "To sign up as a chauffeur, this account becomes a chauffeur account.",
+    "pt": "Para se cadastrar como motorista, esta conta passa a ser uma conta de motorista."
+  },
+  "regIntroPointOneWay": {
+    "description": "Registro de chófer (app del chófer): la cuenta no vuelve a ser de pasajero.",
+    "es": "La cuenta deja de ser de pasajero y no se vuelve a usar para reservar viajes.",
+    "en": "The account stops being a passenger account and cannot be used to book rides again.",
+    "pt": "A conta deixa de ser de passageiro e não volta a ser usada para reservar viagens."
+  },
+  "regIntroPointBookings": {
+    "description": "Registro de chófer (app del chófer): quien ya tiene reservas usa otro correo.",
+    "es": "Si ya hiciste reservas como pasajero con este correo, crea otra cuenta con un correo distinto para registrarte como chófer.",
+    "en": "If you have already booked rides as a passenger with this email, create another account with a different email to sign up as a chauffeur.",
+    "pt": "Se você já fez reservas como passageiro com este e-mail, crie outra conta com um e-mail diferente para se cadastrar como motorista."
+  },
+  "regIntroPointReview": {
+    "description": "Registro de chófer (app del chófer): qué viene después.",
+    "es": "Después completarás tus datos, los de tu vehículo y tus documentos. Luxelane los revisa antes de habilitarte.",
+    "en": "Then you will complete your details, your vehicle details and your documents. Luxelane reviews them before enabling you.",
+    "pt": "Depois você vai completar seus dados, os do seu veículo e seus documentos. A Luxelane os revisa antes de habilitar você."
+  },
+  "regIntroStart": {
+    "description": "Registro de chófer (app del chófer): botón para convertir la cuenta.",
+    "es": "Convertir en cuenta de chófer",
+    "en": "Convert to a chauffeur account",
+    "pt": "Converter em conta de motorista"
+  },
+  "regIntroConfirmTitle": {
+    "description": "Registro de chófer (app del chófer): título de la confirmación.",
+    "es": "¿Convertir esta cuenta?",
+    "en": "Convert this account?",
+    "pt": "Converter esta conta?"
+  },
+  "regIntroConfirmBody": {
+    "description": "Registro de chófer (app del chófer): texto de la confirmación.",
+    "es": "Esta cuenta ya no se podrá usar como pasajero. No se puede deshacer.",
+    "en": "This account can no longer be used as a passenger. This cannot be undone.",
+    "pt": "Esta conta não poderá mais ser usada como passageiro. Não é possível desfazer."
+  },
+  "regIntroConfirmYes": {
+    "description": "Registro de chófer (app del chófer): confirmar la conversión.",
+    "es": "Sí, convertir",
+    "en": "Yes, convert",
+    "pt": "Sim, converter"
+  },
+  "regCancel": {
+    "description": "Registro de chófer (app del chófer): cancelar.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "regSignOut": {
+    "description": "Registro de chófer (app del chófer): cerrar sesión desde el registro.",
+    "es": "Cerrar sesión",
+    "en": "Sign out",
+    "pt": "Sair"
+  },
+  "regTitle": {
+    "description": "Registro de chófer (app del chófer): título de la pantalla de la solicitud.",
+    "es": "Tu solicitud de chófer",
+    "en": "Your chauffeur application",
+    "pt": "Sua solicitação de motorista"
+  },
+  "regStepOf": {
+    "description": "Registro de chófer (app del chófer): encabezado del paso actual.",
+    "es": "Paso {current} de {total}: {title}",
+    "en": "Step {current} of {total}: {title}",
+    "pt": "Etapa {current} de {total}: {title}",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "regProgressLabel": {
+    "description": "Registro de chófer (app del chófer): etiqueta de accesibilidad de la barra de progreso.",
+    "es": "Progreso de la solicitud: paso {current} de {total}",
+    "en": "Application progress: step {current} of {total}",
+    "pt": "Progresso da solicitação: etapa {current} de {total}",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "regStepPersonal": {
+    "description": "Registro de chófer (app del chófer): título del paso de datos personales.",
+    "es": "Tus datos",
+    "en": "Your details",
+    "pt": "Seus dados"
+  },
+  "regStepVehicle": {
+    "description": "Registro de chófer (app del chófer): título del paso del vehículo.",
+    "es": "Tu vehículo",
+    "en": "Your vehicle",
+    "pt": "Seu veículo"
+  },
+  "regStepDocuments": {
+    "description": "Registro de chófer (app del chófer): título del paso de documentos.",
+    "es": "Documentos",
+    "en": "Documents",
+    "pt": "Documentos"
+  },
+  "regStepSecurity": {
+    "description": "Registro de chófer (app del chófer): título del paso del segundo factor.",
+    "es": "Verificación en dos pasos",
+    "en": "Two-step verification",
+    "pt": "Verificação em duas etapas"
+  },
+  "regStepSummary": {
+    "description": "Registro de chófer (app del chófer): título del paso final.",
+    "es": "Resumen y envío",
+    "en": "Summary and submission",
+    "pt": "Resumo e envio"
+  },
+  "regBack": {
+    "description": "Registro de chófer (app del chófer): volver al paso anterior.",
+    "es": "Atrás",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "regContinue": {
+    "description": "Registro de chófer (app del chófer): ir al paso siguiente.",
+    "es": "Continuar",
+    "en": "Continue",
+    "pt": "Continuar"
+  },
+  "regSaveContinue": {
+    "description": "Registro de chófer (app del chófer): guardar el paso y seguir.",
+    "es": "Guardar y continuar",
+    "en": "Save and continue",
+    "pt": "Salvar e continuar"
+  },
+  "regRetry": {
+    "description": "Registro de chófer (app del chófer): reintentar la carga.",
+    "es": "Reintentar",
+    "en": "Try again",
+    "pt": "Tentar novamente"
+  },
+  "regSaving": {
+    "description": "Registro de chófer (app del chófer): etiqueta mientras se guarda.",
+    "es": "Guardando…",
+    "en": "Saving…",
+    "pt": "Salvando…"
+  },
+  "regFullName": {
+    "description": "Registro de chófer (app del chófer): campo nombre completo.",
+    "es": "Nombre completo",
+    "en": "Full name",
+    "pt": "Nome completo"
+  },
+  "regNationalId": {
+    "description": "Registro de chófer (app del chófer): campo número de documento de identidad.",
+    "es": "Número de documento de identidad",
+    "en": "ID document number",
+    "pt": "Número do documento de identidade"
+  },
+  "regLicenseNumber": {
+    "description": "Registro de chófer (app del chófer): campo número de licencia.",
+    "es": "Número de licencia de conducir",
+    "en": "Driver's license number",
+    "pt": "Número da carteira de motorista"
+  },
+  "regLicenseExpiry": {
+    "description": "Registro de chófer (app del chófer): campo vencimiento de la licencia.",
+    "es": "Vencimiento de la licencia",
+    "en": "License expiry date",
+    "pt": "Vencimento da carteira"
+  },
+  "regPickDate": {
+    "description": "Registro de chófer (app del chófer): botón para elegir una fecha.",
+    "es": "Elegir fecha",
+    "en": "Choose date",
+    "pt": "Escolher data"
+  },
+  "regFieldRequired": {
+    "description": "Registro de chófer (app del chófer): validación: campo vacío.",
+    "es": "Completa este campo",
+    "en": "Fill in this field",
+    "pt": "Preencha este campo"
+  },
+  "regFullNameInvalid": {
+    "description": "Registro de chófer (app del chófer): validación del nombre.",
+    "es": "Escribe tu nombre completo (2 a 120 caracteres)",
+    "en": "Enter your full name (2 to 120 characters)",
+    "pt": "Escreva seu nome completo (2 a 120 caracteres)"
+  },
+  "regIdInvalid": {
+    "description": "Registro de chófer (app del chófer): validación de un número de documento.",
+    "es": "Usa solo letras, números y guiones (4 a 20)",
+    "en": "Use only letters, numbers and hyphens (4 to 20)",
+    "pt": "Use apenas letras, números e hífens (4 a 20)"
+  },
+  "regDateInFuture": {
+    "description": "Registro de chófer (app del chófer): validación: la fecha debe ser futura.",
+    "es": "Elige una fecha posterior a hoy",
+    "en": "Choose a date after today",
+    "pt": "Escolha uma data posterior a hoje"
+  },
+  "regPrivacyNote": {
+    "description": "Registro de chófer (app del chófer): quién ve los números de documento.",
+    "es": "Tus números de documento solo los ve el equipo de Luxelane que revisa la solicitud.",
+    "en": "Your document numbers are only seen by the Luxelane team that reviews the application.",
+    "pt": "Seus números de documento só são vistos pela equipe da Luxelane que revisa a solicitação."
+  },
+  "regMake": {
+    "description": "Registro de chófer (app del chófer): campo marca.",
+    "es": "Marca",
+    "en": "Make",
+    "pt": "Marca"
+  },
+  "regModel": {
+    "description": "Registro de chófer (app del chófer): campo modelo.",
+    "es": "Modelo",
+    "en": "Model",
+    "pt": "Modelo"
+  },
+  "regYear": {
+    "description": "Registro de chófer (app del chófer): campo año.",
+    "es": "Año",
+    "en": "Year",
+    "pt": "Ano"
+  },
+  "regYearInvalid": {
+    "description": "Registro de chófer (app del chófer): validación del año.",
+    "es": "Año entre {min} y {max}",
+    "en": "Year between {min} and {max}",
+    "pt": "Ano entre {min} e {max}",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "regTextInvalid": {
+    "description": "Registro de chófer (app del chófer): validación de marca o modelo.",
+    "es": "Entre 1 y 40 caracteres",
+    "en": "Between 1 and 40 characters",
+    "pt": "Entre 1 e 40 caracteres"
+  },
+  "regColor": {
+    "description": "Registro de chófer (app del chófer): campo color.",
+    "es": "Color",
+    "en": "Color",
+    "pt": "Cor"
+  },
+  "regColorOtherText": {
+    "description": "Registro de chófer (app del chófer): campo color libre.",
+    "es": "Escribe el color",
+    "en": "Enter the color",
+    "pt": "Escreva a cor"
+  },
+  "regColorOtherInvalid": {
+    "description": "Registro de chófer (app del chófer): validación del color libre.",
+    "es": "Entre 1 y 20 caracteres",
+    "en": "Between 1 and 20 characters",
+    "pt": "Entre 1 e 20 caracteres"
+  },
+  "regPlate": {
+    "description": "Registro de chófer (app del chófer): campo placa.",
+    "es": "Placa",
+    "en": "License plate",
+    "pt": "Placa"
+  },
+  "regPlateInvalid": {
+    "description": "Registro de chófer (app del chófer): validación de la placa.",
+    "es": "Solo letras y números (4 a 10)",
+    "en": "Letters and numbers only (4 to 10)",
+    "pt": "Apenas letras e números (4 a 10)"
+  },
+  "regBodyType": {
+    "description": "Registro de chófer (app del chófer): campo tipo de vehículo.",
+    "es": "Tipo de vehículo",
+    "en": "Vehicle type",
+    "pt": "Tipo de veículo"
+  },
+  "regPassengers": {
+    "description": "Registro de chófer (app del chófer): campo pasajeros.",
+    "es": "Pasajeros",
+    "en": "Passengers",
+    "pt": "Passageiros"
+  },
+  "regVehicleClass": {
+    "description": "Registro de chófer (app del chófer): campo clase de servicio.",
+    "es": "Clase de servicio",
+    "en": "Service class",
+    "pt": "Classe de serviço"
+  },
+  "regVehicleChangeNote": {
+    "description": "Registro de chófer (app del chófer): qué pasa al cambiar de vehículo tras aprobar.",
+    "es": "Si cambias de vehículo después de la aprobación, el nuevo queda en revisión hasta que Luxelane lo apruebe.",
+    "en": "If you change vehicles after approval, the new one stays in review until Luxelane approves it.",
+    "pt": "Se você trocar de veículo depois da aprovação, o novo fica em análise até a Luxelane aprová-lo."
+  },
+  "regDocsIntro": {
+    "description": "Registro de chófer (app del chófer): consejo general para las fotos.",
+    "es": "Sube cada documento con una foto nítida, con buena luz y sin reflejos.",
+    "en": "Upload each document with a sharp photo, in good light and without glare.",
+    "pt": "Envie cada documento com uma foto nítida, com boa luz e sem reflexos."
+  },
+  "regDocsNotConfigured": {
+    "description": "Registro de chófer (app del chófer): aviso cuando no hay requisitos configurados.",
+    "es": "Luxelane aún no definió qué documentos se piden. Puedes completar tus datos; el envío se habilita cuando estén definidos.",
+    "en": "Luxelane has not yet defined which documents are required. You can complete your details; submission is enabled once they are defined.",
+    "pt": "A Luxelane ainda não definiu quais documentos são exigidos. Você pode completar seus dados; o envio é liberado quando estiverem definidos."
+  },
+  "regDocRequired": {
+    "description": "Registro de chófer (app del chófer): etiqueta de documento obligatorio.",
+    "es": "Obligatorio",
+    "en": "Required",
+    "pt": "Obrigatório"
+  },
+  "regDocOptional": {
+    "description": "Registro de chófer (app del chófer): etiqueta de documento opcional.",
+    "es": "Opcional",
+    "en": "Optional",
+    "pt": "Opcional"
+  },
+  "regDocExpires": {
+    "description": "Registro de chófer (app del chófer): fecha de vencimiento de un documento.",
+    "es": "Vence: {date}",
+    "en": "Expires: {date}",
+    "pt": "Vence em: {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "regDocRejectedReason": {
+    "description": "Registro de chófer (app del chófer): motivo de rechazo de un documento.",
+    "es": "Motivo: {reason}",
+    "en": "Reason: {reason}",
+    "pt": "Motivo: {reason}",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "regDocUpload": {
+    "description": "Registro de chófer (app del chófer): subir un documento.",
+    "es": "Subir",
+    "en": "Upload",
+    "pt": "Enviar"
+  },
+  "regDocReupload": {
+    "description": "Registro de chófer (app del chófer): volver a subir un documento.",
+    "es": "Volver a subir",
+    "en": "Upload again",
+    "pt": "Enviar novamente"
+  },
+  "regDocUploading": {
+    "description": "Registro de chófer (app del chófer): etiqueta mientras se sube.",
+    "es": "Subiendo…",
+    "en": "Uploading…",
+    "pt": "Enviando…"
+  },
+  "regWebUploadBlocked": {
+    "description": "Registro de chófer (app del chófer): en la web no se suben documentos ni fotos.",
+    "es": "Los documentos y las fotos se suben desde la app de Luxelane en tu teléfono. Aquí puedes completar tus datos y los del vehículo.",
+    "en": "Documents and photos are uploaded from the Luxelane app on your phone. Here you can complete your details and your vehicle details.",
+    "pt": "Os documentos e as fotos são enviados pelo app da Luxelane no seu celular. Aqui você pode completar seus dados e os do veículo."
+  },
+  "regUploadFailed": {
+    "description": "Registro de chófer (app del chófer): fallo al subir la foto.",
+    "es": "No se pudo subir la foto. Revisa tu conexión y vuelve a intentarlo.",
+    "en": "The photo couldn't be uploaded. Check your connection and try again.",
+    "pt": "Não foi possível enviar a foto. Verifique sua conexão e tente novamente."
+  },
+  "regPhotoTooSmall": {
+    "description": "Registro de chófer (app del chófer): la foto tiene poca resolución.",
+    "es": "La foto tiene poca resolución. Tómala más cerca y con buena luz.",
+    "en": "The photo resolution is too low. Take it closer and in good light.",
+    "pt": "A foto tem pouca resolução. Tire-a mais de perto e com boa luz."
+  },
+  "regPhotoUnreadable": {
+    "description": "Registro de chófer (app del chófer): no se pudo leer la foto.",
+    "es": "No pudimos leer la foto. Vuelve a tomarla.",
+    "en": "We couldn't read the photo. Take it again.",
+    "pt": "Não conseguimos ler a foto. Tire-a novamente."
+  },
+  "regHelpIdDocument": {
+    "description": "Registro de chófer (app del chófer): ayuda: documento de identidad o licencia.",
+    "es": "Apoya el documento en una superficie lisa, con buena luz y sin reflejos. Que se vean las cuatro esquinas y que el texto se lea.",
+    "en": "Place the document on a flat surface, in good light and without glare. All four corners should be visible and the text readable.",
+    "pt": "Apoie o documento em uma superfície lisa, com boa luz e sem reflexos. As quatro pontas devem aparecer e o texto deve ser legível."
+  },
+  "regHelpPaper": {
+    "description": "Registro de chófer (app del chófer): ayuda: certificados y documentos en papel.",
+    "es": "Fotografía la hoja completa, de frente y sin sombras.",
+    "en": "Photograph the whole page, straight on and without shadows.",
+    "pt": "Fotografe a folha inteira, de frente e sem sombras."
+  },
+  "regHelpProfile": {
+    "description": "Registro de chófer (app del chófer): ayuda: foto de perfil.",
+    "es": "Tu cara de frente, sin gafas de sol ni gorra, con fondo claro.",
+    "en": "Your face straight on, without sunglasses or a cap, against a light background.",
+    "pt": "Seu rosto de frente, sem óculos escuros nem boné, com fundo claro."
+  },
+  "regHelpLive": {
+    "description": "Registro de chófer (app del chófer): ayuda: foto en vivo.",
+    "es": "Se toma en el momento con la cámara frontal. Mira a la cámara con buena luz.",
+    "en": "It is taken on the spot with the front camera. Look at the camera in good light.",
+    "pt": "É tirada na hora com a câmera frontal. Olhe para a câmera com boa luz."
+  },
+  "regHelpVehicle": {
+    "description": "Registro de chófer (app del chófer): ayuda: fotos exteriores del vehículo.",
+    "es": "El vehículo completo desde este lado, con buena luz.",
+    "en": "The whole vehicle from this side, in good light.",
+    "pt": "O veículo inteiro deste lado, com boa luz."
+  },
+  "regHelpInterior": {
+    "description": "Registro de chófer (app del chófer): ayuda: fotos del interior.",
+    "es": "El interior completo desde este punto, con buena luz.",
+    "en": "The whole interior from this point, in good light.",
+    "pt": "O interior inteiro deste ponto, com boa luz."
+  },
+  "regHelpPlate": {
+    "description": "Registro de chófer (app del chófer): ayuda: foto de la placa.",
+    "es": "La placa de frente, completa y legible.",
+    "en": "The license plate straight on, complete and readable.",
+    "pt": "A placa de frente, completa e legível."
+  },
+  "regFrameHint": {
+    "description": "Registro de chófer (app del chófer): aviso del marco de encuadre (la cámara del sistema se abre a pantalla completa).",
+    "es": "La cámara se abre a pantalla completa: encuadra como en este marco.",
+    "en": "The camera opens full screen: frame it like this guide.",
+    "pt": "A câmera abre em tela cheia: enquadre como neste guia."
+  },
+  "regFrameLabel": {
+    "description": "Registro de chófer (app del chófer): etiqueta de accesibilidad del marco de encuadre.",
+    "es": "Guía de encuadre",
+    "en": "Framing guide",
+    "pt": "Guia de enquadramento"
+  },
+  "regTakePhoto": {
+    "description": "Registro de chófer (app del chófer): abrir la cámara.",
+    "es": "Tomar foto",
+    "en": "Take photo",
+    "pt": "Tirar foto"
+  },
+  "regFromGallery": {
+    "description": "Registro de chófer (app del chófer): elegir de la galería.",
+    "es": "Elegir de la galería",
+    "en": "Choose from gallery",
+    "pt": "Escolher da galeria"
+  },
+  "regLiveCameraOnly": {
+    "description": "Registro de chófer (app del chófer): la foto en vivo solo admite cámara.",
+    "es": "Esta foto solo se toma con la cámara, no desde la galería.",
+    "en": "This photo can only be taken with the camera, not from the gallery.",
+    "pt": "Esta foto só pode ser tirada com a câmera, não da galeria."
+  },
+  "regReviewTitle": {
+    "description": "Registro de chófer (app del chófer): título de la revisión de la foto.",
+    "es": "Revisa la foto",
+    "en": "Check the photo",
+    "pt": "Confira a foto"
+  },
+  "regReviewHint": {
+    "description": "Registro de chófer (app del chófer): qué comprobar antes de usar la foto.",
+    "es": "Comprueba que se lea bien y que no esté cortada.",
+    "en": "Make sure it is readable and not cropped.",
+    "pt": "Confira se está legível e não cortada."
+  },
+  "regPhotoPreviewLabel": {
+    "description": "Registro de chófer (app del chófer): etiqueta de accesibilidad de la vista previa.",
+    "es": "Vista previa de la foto",
+    "en": "Photo preview",
+    "pt": "Pré-visualização da foto"
+  },
+  "regRetake": {
+    "description": "Registro de chófer (app del chófer): repetir la foto.",
+    "es": "Repetir",
+    "en": "Retake",
+    "pt": "Repetir"
+  },
+  "regUsePhoto": {
+    "description": "Registro de chófer (app del chófer): usar la foto.",
+    "es": "Usar esta foto",
+    "en": "Use this photo",
+    "pt": "Usar esta foto"
+  },
+  "regExpiryNeeded": {
+    "description": "Registro de chófer (app del chófer): fecha de vencimiento del documento.",
+    "es": "Fecha de vencimiento del documento",
+    "en": "Document expiry date",
+    "pt": "Data de vencimento do documento"
+  },
+  "regExpiryRequired": {
+    "description": "Registro de chófer (app del chófer): falta la fecha de vencimiento.",
+    "es": "Indica la fecha de vencimiento",
+    "en": "Enter the expiry date",
+    "pt": "Informe a data de vencimento"
+  },
+  "regPhotoCancelled": {
+    "description": "Registro de chófer (app del chófer): no se tomó ninguna foto.",
+    "es": "No se tomó ninguna foto.",
+    "en": "No photo was taken.",
+    "pt": "Nenhuma foto foi tirada."
+  },
+  "regCameraUnavailable": {
+    "description": "Registro de chófer (app del chófer): no se pudo abrir la cámara o la galería.",
+    "es": "No se pudo abrir la cámara. Revisa los permisos de la app.",
+    "en": "The camera couldn't be opened. Check the app permissions.",
+    "pt": "Não foi possível abrir a câmera. Verifique as permissões do app."
+  },
+  "regSecurityBody": {
+    "description": "Registro de chófer (app del chófer): por qué se pide el segundo factor.",
+    "es": "Para enviar la solicitud y, después, conectarte, tu cuenta necesita la verificación en dos pasos con una app autenticadora.",
+    "en": "To submit the application and later go online, your account needs two-step verification with an authenticator app.",
+    "pt": "Para enviar a solicitação e, depois, ficar on-line, sua conta precisa da verificação em duas etapas com um app autenticador."
+  },
+  "regSecurityEnroll": {
+    "description": "Registro de chófer (app del chófer): abrir el alta del segundo factor.",
+    "es": "Activar la verificación en dos pasos",
+    "en": "Turn on two-step verification",
+    "pt": "Ativar a verificação em duas etapas"
+  },
+  "regSecurityReady": {
+    "description": "Registro de chófer (app del chófer): el segundo factor está listo.",
+    "es": "La verificación en dos pasos está activa en esta sesión.",
+    "en": "Two-step verification is active in this session.",
+    "pt": "A verificação em duas etapas está ativa nesta sessão."
+  },
+  "regSecuritySignInAgain": {
+    "description": "Registro de chófer (app del chófer): activado pero la sesión no lo usó.",
+    "es": "Ya la tienes activada. Cierra sesión y vuelve a entrar con el código de tu app autenticadora para continuar.",
+    "en": "You already have it turned on. Sign out and sign in again with the code from your authenticator app to continue.",
+    "pt": "Você já a ativou. Saia e entre novamente com o código do seu app autenticador para continuar."
+  },
+  "regSecurityCheck": {
+    "description": "Registro de chófer (app del chófer): volver a comprobar el segundo factor.",
+    "es": "Comprobar de nuevo",
+    "en": "Check again",
+    "pt": "Verificar de novo"
+  },
+  "regSecurityNeededToSubmit": {
+    "description": "Registro de chófer (app del chófer): falta el segundo factor para enviar.",
+    "es": "Antes de enviar, activa la verificación en dos pasos.",
+    "en": "Before submitting, turn on two-step verification.",
+    "pt": "Antes de enviar, ative a verificação em duas etapas."
+  },
+  "regSummaryIntro": {
+    "description": "Registro de chófer (app del chófer): introducción del resumen.",
+    "es": "Revisa tu solicitud antes de enviarla.",
+    "en": "Review your application before submitting it.",
+    "pt": "Revise sua solicitação antes de enviá-la."
+  },
+  "regSummaryPersonal": {
+    "description": "Registro de chófer (app del chófer): sección datos personales del resumen.",
+    "es": "Datos personales",
+    "en": "Personal details",
+    "pt": "Dados pessoais"
+  },
+  "regSummaryVehicle": {
+    "description": "Registro de chófer (app del chófer): sección vehículo del resumen.",
+    "es": "Vehículo",
+    "en": "Vehicle",
+    "pt": "Veículo"
+  },
+  "regSummaryDocs": {
+    "description": "Registro de chófer (app del chófer): progreso de documentos obligatorios.",
+    "es": "Documentos obligatorios listos: {done} de {total}",
+    "en": "Required documents ready: {done} of {total}",
+    "pt": "Documentos obrigatórios prontos: {done} de {total}",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "regSummaryMissing": {
+    "description": "Registro de chófer (app del chófer): documentos que faltan.",
+    "es": "Faltan: {list}",
+    "en": "Missing: {list}",
+    "pt": "Faltam: {list}",
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "regSummaryIncomplete": {
+    "description": "Registro de chófer (app del chófer): faltan pasos.",
+    "es": "Completa tus datos y los del vehículo para poder enviar.",
+    "en": "Complete your details and your vehicle details to submit.",
+    "pt": "Complete seus dados e os do veículo para poder enviar."
+  },
+  "regEdit": {
+    "description": "Registro de chófer (app del chófer): editar una sección.",
+    "es": "Editar",
+    "en": "Edit",
+    "pt": "Editar"
+  },
+  "regSubmit": {
+    "description": "Registro de chófer (app del chófer): enviar la solicitud.",
+    "es": "Enviar solicitud",
+    "en": "Submit application",
+    "pt": "Enviar solicitação"
+  },
+  "regSubmitted": {
+    "description": "Registro de chófer (app del chófer): aviso tras enviar.",
+    "es": "Solicitud enviada.",
+    "en": "Application submitted.",
+    "pt": "Solicitação enviada."
+  },
+  "regStatusReviewTitle": {
+    "description": "Registro de chófer (app del chófer): solicitud enviada o en revisión.",
+    "es": "Solicitud en revisión",
+    "en": "Application in review",
+    "pt": "Solicitação em análise"
+  },
+  "regStatusReviewBody": {
+    "description": "Registro de chófer (app del chófer): qué pasa mientras se revisa (sin plazos).",
+    "es": "Luxelane está revisando tu solicitud. Recibirás un aviso en la app cuando haya una respuesta.",
+    "en": "Luxelane is reviewing your application. You will get a notice in the app when there is an answer.",
+    "pt": "A Luxelane está revisando sua solicitação. Você receberá um aviso no app quando houver uma resposta."
+  },
+  "regStatusNeedsChanges": {
+    "description": "Registro de chófer (app del chófer): Luxelane pidió cambios.",
+    "es": "Luxelane pidió cambios en tu solicitud. Revisa los documentos marcados y vuelve a enviarla.",
+    "en": "Luxelane asked for changes to your application. Check the highlighted documents and submit it again.",
+    "pt": "A Luxelane pediu ajustes na sua solicitação. Revise os documentos destacados e envie novamente."
+  },
+  "regStatusRejectedTitle": {
+    "description": "Registro de chófer (app del chófer): solicitud rechazada.",
+    "es": "Solicitud no aprobada",
+    "en": "Application not approved",
+    "pt": "Solicitação não aprovada"
+  },
+  "regStatusRejectedBody": {
+    "description": "Registro de chófer (app del chófer): la solicitud está cerrada.",
+    "es": "Esta solicitud no fue aprobada y está cerrada.",
+    "en": "This application was not approved and is closed.",
+    "pt": "Esta solicitação não foi aprovada e está encerrada."
+  },
+  "regRefresh": {
+    "description": "Registro de chófer (app del chófer): actualizar el estado.",
+    "es": "Actualizar",
+    "en": "Refresh",
+    "pt": "Atualizar"
+  },
+  "regOnlineNeedsMfa": {
+    "description": "Registro de chófer (app del chófer): no se conecta sin segundo factor (mfaEnforced).",
+    "es": "Para conectarte, activa la verificación en dos pasos.",
+    "en": "To go online, turn on two-step verification.",
+    "pt": "Para ficar on-line, ative a verificação em duas etapas."
+  },
+  "regOnlineNeedsMfaSignIn": {
+    "description": "Registro de chófer (app del chófer): tiene segundo factor pero la sesión no lo usó.",
+    "es": "Para conectarte, cierra sesión y vuelve a entrar con el código de tu app autenticadora.",
+    "en": "To go online, sign out and sign in again with the code from your authenticator app.",
+    "pt": "Para ficar on-line, saia e entre novamente com o código do seu app autenticador."
+  },
+  "regOnlineMfaAction": {
+    "description": "Registro de chófer (app del chófer): botón del aviso para activar el segundo factor.",
+    "es": "Activar",
+    "en": "Turn on",
+    "pt": "Ativar"
+  }
+}

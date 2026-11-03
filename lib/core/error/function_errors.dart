@@ -114,3 +114,54 @@ String businessLeadErrorMessage(String code, Object? details) => switch (code) {
       _ => commonFunctionError(code, details) ??
           L10n.current.errorBusinessLeadFailed,
     };
+
+/// Registro de chóferes (startDriverApplication, saveDriverStep,
+/// registerDocumentUpload, submitApplication y las del panel): cada motivo
+/// del servidor con su texto; si no, los comunes y uno genérico del paso.
+String registrationErrorMessage(String code, Object? details) {
+  final t = L10n.current;
+  return switch (functionErrorReason(details)) {
+    'has_bookings' => t.regErrorHasBookings,
+    'driver_account' => t.regErrorDriverAccount,
+    'not_a_rider' => t.regErrorNotARider,
+    'admin_account' => t.regErrorAdminAccount,
+    'inactive_user' => t.regErrorInactiveUser,
+    'email_not_verified' => t.errorEmailNotVerified,
+    'profile_not_found' => t.regErrorProfileNotFound,
+    'not_a_driver' => t.regErrorNotADriver,
+    'locked_after_approval' => t.regErrorLockedAfterApproval,
+    'application_closed' => t.regErrorApplicationClosed,
+    'plate_in_use' => t.regErrorPlateInUse,
+    'invalid_file' => t.regErrorInvalidFile,
+    'file_missing' => t.regErrorFileMissing,
+    'unexpected_version' => t.regErrorUnexpectedVersion,
+    'document_expired' => t.regErrorDocumentExpired,
+    'requirements_not_configured' => t.regErrorRequirementsNotConfigured,
+    'steps_incomplete' => t.regErrorStepsIncomplete,
+    'documents_missing' => t.regErrorDocumentsMissing,
+    'invalid_request' => t.regErrorInvalidRequest,
+    'driver_docs_blocked' => t.regErrorDriverDocsBlocked,
+    'documents_not_approved' => t.regErrorDocumentsNotApproved,
+    'not_decidable' => t.regErrorNotDecidable,
+    'not_reviewable' => t.regErrorNotReviewable,
+    'stale_version' => t.regErrorStaleVersion,
+    'document_not_found' => t.regErrorDocumentNotFound,
+    'driver_not_found' => t.regErrorDriverNotFound,
+    'application_not_found' => t.regErrorApplicationNotFound,
+    'purge_disabled' => t.regErrorPurgeDisabled,
+    _ => commonFunctionError(code, details) ?? t.regErrorGeneric,
+  };
+}
+
+/// Motivos del registro de chóferes que tienen texto propio (el test
+/// comprueba que cubren todos los que lanza el servidor).
+const kRegistrationReasons = [
+  'has_bookings', 'driver_account', 'not_a_rider', 'admin_account', //
+  'inactive_user', 'email_not_verified', 'profile_not_found', 'not_a_driver',
+  'locked_after_approval', 'application_closed', 'plate_in_use',
+  'invalid_file', 'file_missing', 'unexpected_version', 'document_expired',
+  'requirements_not_configured', 'steps_incomplete', 'documents_missing',
+  'invalid_request', 'driver_docs_blocked', 'documents_not_approved',
+  'not_decidable', 'not_reviewable', 'stale_version', 'document_not_found',
+  'driver_not_found', 'application_not_found', 'purge_disabled',
+];

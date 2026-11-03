@@ -5,12 +5,14 @@ import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/mfa_reminder_banner.dart';
 import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_alerts_tab.dart';
+import '../widgets/admin_driver_applications_tab.dart';
 import '../widgets/admin_finance_tab.dart';
 import '../widgets/admin_incidents_strip.dart';
 import '../widgets/admin_payments_tab.dart';
@@ -49,6 +51,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.finance: Icons.account_balance_outlined,
     AdminSection.pricing: Icons.sell_outlined,
     AdminSection.drivers: Icons.badge_outlined,
+    AdminSection.driverApplications: Icons.assignment_ind_outlined,
     AdminSection.vehicles: Icons.directions_car_outlined,
     AdminSection.users: Icons.people_outline,
     AdminSection.business: Icons.business_outlined,
@@ -66,6 +69,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.operations,
         AdminSection.payments,
         AdminSection.drivers,
+        AdminSection.driverApplications,
         AdminSection.vehicles,
       ],
     ),
@@ -100,6 +104,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.alerts: 'Avisos del servidor que piden revisión.',
     AdminSection.settings: 'Ajustes generales de la plataforma.',
   };
+
+  /// Las secciones nuevas toman el nombre de los .arb.
+  String _label(AdminSection s) => s == AdminSection.driverApplications
+      ? context.l10n.adminDrvAppSection
+      : _labels[s]!;
+
+  String? _subtitle(AdminSection s) => s == AdminSection.driverApplications
+      ? context.l10n.adminDrvAppSectionSubtitle
+      : _subtitles[s];
 
   void _go(AdminSection s) {
     if (s != _section) LuxHaptics.tap();
@@ -172,7 +185,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         appBar: AppBar(
           // El admin siempre vuelve al panel (router), así que no hay "atrás".
           automaticallyImplyLeading: false,
-          title: Text(_labels[_section]!),
+          title: Text(_label(_section)),
           actions: [
             IconButton(
               tooltip: 'Cerrar sesión',
@@ -199,8 +212,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                         padding: const EdgeInsets.only(right: LuxSpacing.sm),
                         child: SectionChip(
                           label: (_badge(s, state) ?? 0) > 0
-                              ? '${_labels[s]} · ${_badge(s, state)}'
-                              : _labels[s]!,
+                              ? '${_label(s)} · ${_badge(s, state)}'
+                              : _label(s),
                           selected: _section == s,
                           onTap: () => _go(s),
                         ),
@@ -237,7 +250,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             for (final s in sections)
                               AdminNavItem(
                                 icon: _icons[s]!,
-                                label: _labels[s]!,
+                                label: _label(s),
                                 badge: _badge(s, state),
                                 selected: _section == s,
                                 onTap: () => _go(s),
@@ -314,8 +327,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AdminPageHeader(
-                  title: _labels[_section]!,
-                  subtitle: _subtitles[_section],
+                  title: _label(_section),
+                  subtitle: _subtitle(_section),
                 ),
                 Expanded(
                   child: AnimatedSwitcher(
@@ -388,6 +401,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.finance => const FinanceTab(),
         AdminSection.pricing => const PricingTab(),
         AdminSection.drivers => const DriversTab(),
+        AdminSection.driverApplications => const DriverApplicationsTab(),
         AdminSection.vehicles => const VehiclesTab(),
         AdminSection.business => const BusinessLeadsTab(),
         AdminSection.users => const UsersTab(),

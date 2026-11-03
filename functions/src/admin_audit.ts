@@ -54,6 +54,8 @@ export interface AuditInput {
   details: string;
   /** Datos que ayudan a leer el cambio (p. ej. el importe original). */
   context?: Record<string, unknown>;
+  /** Rol de quien actúa; por defecto admin (startDriverApplication: el propio usuario). */
+  actorRole?: string;
 }
 
 export function writeAudit(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, a: AuditInput): void {
@@ -65,7 +67,7 @@ export function writeAudit(tx: admin.firestore.Transaction, db: admin.firestore.
     targetType: a.targetType,
     details: a.reason ? `${a.details} · Motivo: ${a.reason}` : a.details,
     operation: a.operation,
-    actor: { uid: a.actor.adminId, role: 'admin' },
+    actor: { uid: a.actor.adminId, role: a.actorRole ?? 'admin' },
     collection: a.collection,
     docPath: `${a.collection}/${a.docId}`,
     changes: a.changes,

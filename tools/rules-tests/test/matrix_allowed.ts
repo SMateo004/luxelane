@@ -43,11 +43,8 @@ export const ALLOWED: Record<string, Cells> = {
   'driverProfiles/{uid}': {
     asig: {
       leer: { why: 'el chófer lee su perfil' },
-      crear: { why: 'alta del chófer: crea su propio perfil sin verificación ni valoración' },
-      actualizar: { why: 'cambia disponibilidad y ubicación; licencia y vehículo, solo antes de verificar (H4)' },
+      actualizar: { why: 'cambia disponibilidad y ubicación; licencia y vehículo van por el registro del servidor (A10)' },
     },
-    libre: { crear: { why: 'alta del chófer: crea su propio perfil' } },
-    nover: { crear: { why: 'alta del chófer: crea su propio perfil' } },
     bloq: {
       leer: { why: 'el chófer lee su perfil' },
       actualizar: { why: 'con la cuenta bloqueada solo puede dejar de estar disponible (isAvailable y online en false), H10' },
@@ -56,6 +53,28 @@ export const ALLOWED: Record<string, Cells> = {
       leer: { why: 'el panel muestra los chóferes' },
       listar: { why: 'el panel lista los chóferes' },
     },
+  },
+  'driverApplications/{uid}': {
+    nover: { leer: { why: 'el chófer ve el estado y el paso de su solicitud' } },
+    bloq: { leer: { why: 'un chófer bloqueado sigue viendo el estado de su solicitud' } },
+    admin: { leer: { why: 'revisión de solicitudes' }, listar: { why: 'bandeja de solicitudes' } },
+  },
+  'driverApplications/{uid}/documents': {
+    nover: {
+      leer: { why: 'el chófer ve el estado de cada documento y el motivo de rechazo' },
+      listar: { why: 'igual que leer' },
+    },
+    bloq: { leer: { why: 'como cualquier dueño' }, listar: { why: 'igual que leer' } },
+    admin: { leer: { why: 'revisión de documentos' }, listar: { why: 'igual que leer' } },
+  },
+  'driverApplications/{uid}/private': {
+    admin: { leer: { why: 'datos personales y del vehículo para revisar' }, listar: { why: 'igual que leer' } },
+  },
+  'driverApplications/{uid}/documentFiles': {
+    admin: { leer: { why: 'ruta y tipo del archivo para revisarlo' }, listar: { why: 'igual que leer' } },
+  },
+  'driverDocAccessLogs/{id}': {
+    admin: { leer: { why: 'bitácora de quién vio qué documento' }, listar: { why: 'igual que leer' } },
   },
   'bookings/{id}': {
     ana: {
@@ -171,7 +190,6 @@ export const ALLOWED: Record<string, Cells> = {
       actualizar: { why: 'cambia color y foto' },
     },
     libre: { crear: { why: 'registra su vehículo, inactivo' } },
-    nover: { crear: { why: 'alta: registra su vehículo, inactivo' } },
     bloq: {
       leer: { why: 've su vehículo' },
       listar: { why: 'su vehículo por consulta' },
