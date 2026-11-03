@@ -256,6 +256,26 @@ Preguntas para el abogado:
   3. Las pruebas en dispositivo real de DEPLOY.md («Registro de chóferes»): EXIF quitado, cámara frontal en la foto en vivo, URL firmada de 5 minutos sin caché, permisos de cámara y fotos en iOS y web sin subidas.
 - **Matriz**: la Parte B no cambia `firestore.rules` ni `storage.rules`.
 
+## N. Vuelos de llegada (cierre/vuelos, Parte A)
+
+Qué se guarda y quién lo lee:
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Vuelo (aeropuerto, tipo, aerolínea, número, fecha, hora programada, equipaje facturado, estimada, real, estado, fuente, calidad del dato, bloqueo manual) y `readyAt` | `bookings/{id}.flight`, `bookings/{id}.readyAt` | Pasajero dueño, admin y el chófer asignado (como toda la reserva, también en su historial) | Solo el servidor: `createBooking`, `adminSetFlightInfo`, `adminClearFlightLock` |
+| Copia para el chófer (sin fuente ni bloqueo) | `bookings/{id}/driverView/flight` | Chófer asignado y activo entre `confirmed` e `in_progress` (misma regla que `driverView/preferences`), pasajero dueño y admin | Solo el servidor |
+| Aeropuertos y puntos de recogida nacional e internacional | `airports/{código}` | Cualquiera con sesión | `adminUpsertAirport` (MFA, sesión reciente, motivo, auditoría) |
+| Código, nombre y ciudad del aeropuerto | `airportsPublic/{código}` | Cualquiera (selector sin sesión) | `adminUpsertAirport` |
+| Caché de la fuente por aeropuerto y fecha | `flightBoard/{AEROPUERTO_AAAA-MM-DD}` | Nadie desde el cliente | Solo el servidor (planificador, Parte B) |
+
+- **Privacidad (A10)**: el número de vuelo, la aerolínea y el vuelo entero se tachan en los registros (`logger.ts`, prueba en errors.test.ts). En la Parte A no hay notificaciones de vuelo; las de la Parte B no llevarán el número en la pantalla bloqueada.
+- **Retención**: cuánto tiempo se guardan el vuelo de la reserva, su copia para el chófer y la caché `flightBoard`: **pendiente del abogado** (no se fija ningún plazo ni se programa borrado). `deleteAccount` no borra `flightBoard` (no tiene datos de la persona, solo vuelos por aeropuerto y fecha).
+- **Hallazgo**: el chófer asignado lee la reserva entera, también después de completarla (regla de siempre): ve el número de vuelo en su historial, como antes de este cambio (`flightNumber` suelto). La copia `driverView/flight` sí tiene ventana. Cerrarlo pide sacar el vuelo de la reserva o cambiar la regla de `bookings`: decisión del responsable.
+- **No se presentó con vuelo**: solo con el vuelo aterrizado (hora real de la fuente o de un admin) y pasada la espera desde `readyAt`. Retrasado, sin datos, desviado o cancelado: rechazado; solo un admin lo fuerza (`adminForceNoShow`, motivo y auditoría).
+- **Precio**: con vuelo se cotiza y reserva con `readyAt` como hora de recogida (incluido el recargo nocturno de `config/pricing`), y no cambia después.
+- **Límites conocidos (para la Parte B)**: la limpieza diaria de reservas sin chófer, la reasignación, la retención de la tarjeta y el aviso al liberar siguen usando `scheduledAt`, que con vuelo es el `readyAt` del momento de reservar; si `readyAt` cambia (planificador o admin), esos usos no se mueven. La lista fija de aeropuertos de `service_area.ts` sigue decidiendo si la recogida es un aeropuerto; además, el aeropuerto debe existir en `airports`.
+- **Fuente**: solo la manual (lo que fija un admin) y la de pruebas. La de la ATT no está implementada; la app y las callables de reserva nunca consultan una fuente externa, solo la caché.
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
