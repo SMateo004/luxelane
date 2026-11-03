@@ -4,6 +4,29 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/integracion tras fusionar cierre/registro-chofer (commit 005f5a9, 2026-11-03)
+
+Fusión `git merge --no-ff cierre/registro-chofer` (hasta ad7110b: Partes A,
+A10 y B, con los tres cambios de la aprobación) en un worktree limpio, sin
+conflictos. Emuladores de Firestore, Storage y Auth con `demo-luxelane`.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           312 archivos, 0 cambiados       0
+flutter test                                  pasa           944/944                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           652/652 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1851/1851 (27 de 27 suites)     0
+npm run test:integration (demo-luxelane)      pasa           440/440 (48 de 48 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+Las reglas de esta rama (Firestore y Storage) no se despliegan hasta publicar
+las apps (DEPLOY.md, «Registro de chóferes»).
+
 ## cierre/registro-chofer, Parte B (B0–B5, commit 42ed8c2, 2026-11-03)
 
 Sobre A10 (a0d596b). Flutter 3.29.3, Node 22, emuladores de Firestore, Storage
