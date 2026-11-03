@@ -18,6 +18,7 @@ import { driverViewDoc, driverViewRef, loadPlaylistHosts, sanitizePreferences, p
 import { AppLocale, DEFAULT_LOCALE, localeOf, t } from './i18n';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
 import { driverFlightRef, driverFlightView, resolveFlight, ResolvedFlight } from './flight';
+import { flightIsActive } from './flight_updates';
 
 export interface BookingDeps {
   db: admin.firestore.Firestore;
@@ -263,7 +264,13 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     // Las apps anteriores leen flightNumber y flightType sueltos.
     flightNumber: resolved?.flight.flightNumber ?? input.flightNumber ?? null,
     flightType: resolved?.flight.flightType ?? (pickupAirport ? input.flightType ?? null : null),
-    ...(resolved ? { flight: resolved.flight, readyAt: admin.firestore.Timestamp.fromMillis(resolved.readyAt) } : {}),
+    ...(resolved ? {
+      // notifiedReadyAt: desde dónde se miden los avisos de cambio de hora.
+      flight: { ...resolved.flight, notifiedReadyAt: admin.firestore.Timestamp.fromMillis(resolved.readyAt) },
+      readyAt: admin.firestore.Timestamp.fromMillis(resolved.readyAt),
+      // El planificador (pollFlights) solo lee las reservas con esto en true.
+      flightActive: flightIsActive('pending', resolved.flight.status, resolved.flight.actualArrival !== null),
+    } : {}),
     pickupAirport,
     hours: input.serviceType === 'byTheHour' ? input.hours ?? null : null,
     passengerCount: input.passengerCount,

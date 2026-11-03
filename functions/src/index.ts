@@ -8,6 +8,8 @@ import { defineBoolean, defineSecret, defineString } from 'firebase-functions/pa
 import * as bookingService from './booking_service';
 import * as preferences from './preferences';
 import { AppLocale, formatMoney, localeOf, notice, NoticeType, vehicleClassName, vehicleColorName } from './i18n';
+import * as flightUpdates from './flight_updates';
+import { ManualFlightProvider } from './flight_provider';
 import * as flight from './flight';
 import * as registration from './driver_application';
 import { reconcileOpenRequests } from './reconcile';
@@ -1052,8 +1054,23 @@ export const submitApplication = secureCallable('submitApplication', {}, (req) =
 
 /** Fija hora estimada, real y estado de un vuelo, con bloqueo manual (A5). */
 export const adminSetFlightInfo = secureCallable('adminSetFlightInfo', {}, async (req) =>
-  flight.adminSetFlightInfo({ db }, await adminActor(req), req.data),
+  flight.adminSetFlightInfo({ db, push: flightPush }, await adminActor(req), req.data),
 { role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Push de los avisos de vuelo (sin número de vuelo; ver flight_updates.ts). */
+const flightPush: flightUpdates.PushFn = (tokens, title, body, data) => sendPush(tokens, title, body, data);
+
+/**
+ * B1: revisa los vuelos de las reservas activas según
+ * config/ops.flightCheckpointsMinutes y flightPollMinutes (sin ellos no hace
+ * nada). Hasta conectar una fuente real, solo existe la manual: el
+ * planificador no encuentra datos nuevos, pero marca los datos viejos
+ * (flightStaleMinutes) y deja de vigilar las reservas terminadas.
+ */
+export const pollFlights = onSchedule('every 5 minutes', async () => {
+  const r = await flightUpdates.runFlightPoll({ db, provider: new ManualFlightProvider(), push: flightPush });
+  logger.info('pollFlights', 'done', { ...r });
+});
 
 /** Quita el bloqueo manual del vuelo (A5). */
 export const adminClearFlightLock = secureCallable('adminClearFlightLock', {}, async (req) =>

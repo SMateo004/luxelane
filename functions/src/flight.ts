@@ -19,6 +19,7 @@ import { AdminActor, changedFields, reasonSchema, writeAudit } from './admin_aud
 import { readPolicy } from './cancellation_policy';
 import { cleanText } from './driver_application';
 import { readBoard } from './flight_provider';
+import { applyFlightTx, driverFlightRef, driverFlightView, PushFn, readForFlight, sendPushes } from './flight_updates';
 import { FlightInput } from './flight_schema';
 import {
   computeReadyAt, DEFAULT_TIME_ZONE, FlightStatus, FLIGHT_STATUSES, FlightType, localToUtcMs, readExitMinutes,
@@ -70,7 +71,6 @@ export interface ResolvedFlight {
 
 const ts = (ms: number) => admin.firestore.Timestamp.fromMillis(ms);
 const tsOrNull = (ms: number | null) => (ms === null ? null : ts(ms));
-const ms = (t: unknown) => (t instanceof admin.firestore.Timestamp ? t.toMillis() : null);
 
 /**
  * Valida el vuelo contra la reserva, el aeropuerto y config/ops y calcula
@@ -115,18 +115,8 @@ export async function resolveFlight(db: admin.firestore.Firestore, f: FlightInpu
   return { flight, readyAt, pickupPointMissing: !validPoint(points[f.flightType]) };
 }
 
-/** Copia para el chófer asignado (driverView/flight): sin quién lo fijó ni el bloqueo. */
-export function driverFlightView(flight: BookingFlight, readyAt: number, updatedAt: admin.firestore.Timestamp) {
-  return {
-    airportCode: flight.airportCode, flightType: flight.flightType, airline: flight.airline,
-    flightNumber: flight.flightNumber, flightDate: flight.flightDate, scheduledArrival: flight.scheduledArrival,
-    estimatedArrival: flight.estimatedArrival, actualArrival: flight.actualArrival, status: flight.status,
-    dataQuality: flight.dataQuality, readyAt: ts(readyAt), updatedAt,
-  };
-}
-
-export const driverFlightRef = (db: admin.firestore.Firestore, bookingId: string) =>
-  db.collection('bookings').doc(bookingId).collection('driverView').doc('flight');
+// La copia para el chófer y su ruta viven en flight_updates.ts.
+export { driverFlightRef, driverFlightView };
 
 // ---------------------------------------------------------------------------
 // A5. Datos fijados por un admin
@@ -143,7 +133,7 @@ export const setFlightSchema = z.strictObject({
 }).refine((i) => i.status !== 'landed' || typeof i.actualArrival === 'number',
   { message: 'actualArrival', path: ['actualArrival'] });
 
-export interface FlightDeps { db: admin.firestore.Firestore; now?: () => number }
+export interface FlightDeps { db: admin.firestore.Firestore; now?: () => number; push?: PushFn }
 const nowOf = (d: FlightDeps) => d.now?.() ?? Date.now();
 
 /**
@@ -155,15 +145,16 @@ export async function adminSetFlightInfo(deps: FlightDeps, actor: AdminActor, da
   const input = parseInput(setFlightSchema, data);
   const db = deps.db;
   const nowMs = nowOf(deps);
-  const exit = readExitMinutes(await opsConfig(db, nowMs));
-  if (!exit) throw flightError('failed-precondition', 'flight_config_missing');
+  const ops = await opsConfig(db, nowMs);
+  if (!readExitMinutes(ops)) throw flightError('failed-precondition', 'flight_config_missing');
   const ref = db.collection('bookings').doc(input.bookingId);
-  return db.runTransaction(async (tx) => {
+  const out = await db.runTransaction(async (tx) => {
     const snap = await tx.get(ref);
     const b = snap.data();
     if (!b) throw flightError('not-found', 'booking_not_found');
     const f = b.flight as BookingFlight | undefined;
     if (!f) throw flightError('failed-precondition', 'booking_without_flight');
+    const reads = await readForFlight(tx, db, b, ref.id);
     const now = ts(nowMs);
     const next: BookingFlight = {
       ...f,
@@ -171,22 +162,20 @@ export async function adminSetFlightInfo(deps: FlightDeps, actor: AdminActor, da
       actualArrival: input.actualArrival === undefined ? f.actualArrival : tsOrNull(input.actualArrival),
       status: input.status, source: 'manual', lastObservedAt: now, lastChangeAt: now, dataQuality: 'ok', manualLock: true,
     };
-    const readyAt = computeReadyAt({
-      scheduledArrival: ms(next.scheduledArrival), estimatedArrival: ms(next.estimatedArrival),
-      actualArrival: ms(next.actualArrival), flightType: next.flightType, hasCheckedBag: next.hasCheckedBag,
-    }, exit)!;
-    tx.update(ref, { flight: next, readyAt: ts(readyAt), updatedAt: now });
-    tx.set(driverFlightRef(db, ref.id), driverFlightView(next, readyAt, now));
+    // readyAt, scheduledAt, solicitud abierta, copia del chófer y avisos.
+    const r = applyFlightTx(tx, db, ref, b, next, reads, ops, nowMs);
     writeAudit(tx, db, {
       actor, operation: 'set_flight_info', collection: 'bookings', docId: ref.id, targetType: 'booking',
       changes: changedFields({ status: f.status, estimatedArrival: f.estimatedArrival, actualArrival: f.actualArrival,
         readyAt: b.readyAt ?? null, manualLock: f.manualLock },
       { status: next.status, estimatedArrival: next.estimatedArrival, actualArrival: next.actualArrival,
-        readyAt: ts(readyAt), manualLock: true }),
+        readyAt: r.readyAt === null ? null : ts(r.readyAt), manualLock: true }),
       reason: input.reason, details: `Vuelo fijado a mano (${next.status})`,
     });
-    return { status: next.status, readyAt, manualLock: true };
+    return { result: { status: next.status, readyAt: r.readyAt, manualLock: true }, pushes: r.pushes };
   });
+  await sendPushes(deps.push, out.pushes);
+  return out.result;
 }
 
 export const clearLockSchema = z.strictObject({ bookingId: docId, reason: reasonSchema });

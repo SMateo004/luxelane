@@ -164,6 +164,32 @@ export const MESSAGES = {
     en: 'Your chauffeur application was not approved. Open the app to see the details.',
     pt: 'Sua solicitação de motorista não foi aprovada. Abra o app para ver os detalhes.',
   },
+  // Vuelos (Parte B, decisión 4). Sin número de vuelo ni datos del viaje:
+  // se ven en la pantalla bloqueada. Sin promesas.
+  'flight_time_changed_rider.title': { es: 'Cambió la hora de recogida', en: 'Pickup time changed', pt: 'O horário de embarque mudou' },
+  'flight_time_changed_rider.body': {
+    es: 'Por el horario de tu vuelo, tu chófer te esperará en el punto de recogida a las {time}.',
+    en: 'Because of your flight schedule, your chauffeur will wait for you at the pickup point at {time}.',
+    pt: 'Pelo horário do seu voo, seu motorista vai esperar você no ponto de embarque às {time}.',
+  },
+  'flight_time_changed_driver.title': { es: 'Cambió la hora de un viaje', en: 'A trip time changed', pt: 'O horário de uma viagem mudou' },
+  'flight_time_changed_driver.body': {
+    es: 'Por el horario del vuelo, debes estar en el punto de recogida a las {time}. Mira el detalle en la app.',
+    en: 'Because of the flight schedule, you should be at the pickup point at {time}. See the details in the app.',
+    pt: 'Pelo horário do voo, você deve estar no ponto de embarque às {time}. Veja os detalhes no app.',
+  },
+  'flight_disrupted_rider.title': { es: 'Cambio en tu vuelo', en: 'Change to your flight', pt: 'Mudança no seu voo' },
+  'flight_disrupted_rider.body': {
+    es: 'Tu vuelo figura como cancelado o desviado. Central revisará tu reserva; nada cambia por ahora.',
+    en: 'Your flight shows as cancelled or diverted. Our team will review your booking; nothing changes for now.',
+    pt: 'Seu voo aparece como cancelado ou desviado. A central vai revisar sua reserva; nada muda por enquanto.',
+  },
+  'flight_disrupted_driver.title': { es: 'Cambio en un vuelo', en: 'Change to a flight', pt: 'Mudança em um voo' },
+  'flight_disrupted_driver.body': {
+    es: 'El vuelo de un viaje asignado figura como cancelado o desviado. Central revisará la reserva.',
+    en: 'The flight for an assigned trip shows as cancelled or diverted. Our team will review the booking.',
+    pt: 'O voo de uma viagem atribuída aparece como cancelado ou desviado. A central vai revisar a reserva.',
+  },
   'driver_document_expiring.title': { es: 'Un documento está por vencer', en: 'A document is about to expire', pt: 'Um documento vai vencer' },
   'driver_document_expiring.body': {
     es: 'Uno de tus documentos vence en {days} días. Revísalo en la app.',
@@ -228,6 +254,10 @@ export const NOTICES = {
   driver_application_rejected: ['driver_application_rejected.title', 'driver_application_rejected.body'],
   driver_document_expiring: ['driver_document_expiring.title', 'driver_document_expiring.body'],
   driver_document_expired: ['driver_document_expired.title', 'driver_document_expired.body'],
+  flight_time_changed_rider: ['flight_time_changed_rider.title', 'flight_time_changed_rider.body'],
+  flight_time_changed_driver: ['flight_time_changed_driver.title', 'flight_time_changed_driver.body'],
+  flight_disrupted_rider: ['flight_disrupted_rider.title', 'flight_disrupted_rider.body'],
+  flight_disrupted_driver: ['flight_disrupted_driver.title', 'flight_disrupted_driver.body'],
 } as const satisfies Record<string, readonly [MessageKey, MessageKey]>;
 
 export type NoticeType = keyof typeof NOTICES;
@@ -278,6 +308,13 @@ export function notice(type: NoticeType, locale: AppLocale, params: Record<strin
  * español y portugués «Bs 1.234,50»; en inglés «Bs 1,234.50», para que la
  * cifra no se lea distinta. Sin céntimos, sin decimales.
  */
+/** Hora local de La Paz: «18:30» en español y portugués, «6:30 PM» en inglés. */
+export function formatLocalTime(ms: number, locale: AppLocale): string {
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : locale === 'pt' ? 'pt-BR' : 'es-BO', {
+    timeZone: 'America/La_Paz', hour: 'numeric', minute: '2-digit', hour12: locale === 'en',
+  }).format(new Date(ms));
+}
+
 export function formatMoney(amount: number, locale: AppLocale): string {
   const cents = Math.round(amount * 100);
   const abs = Math.abs(cents);
