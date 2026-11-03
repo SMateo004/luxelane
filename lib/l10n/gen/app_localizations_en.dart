@@ -3233,6 +3233,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get regErrorGeneric => 'We couldn\'t complete this step. Try again.';
 
   @override
+  String get flightStatusScheduled => 'Scheduled';
+
+  @override
+  String get flightStatusDelayed => 'Delayed';
+
+  @override
+  String get flightStatusLanded => 'Landed';
+
+  @override
+  String get flightStatusCancelled => 'Cancelled';
+
+  @override
+  String get flightStatusDiverted => 'Diverted';
+
+  @override
+  String get flightStatusUnknown => 'No data';
+
+  @override
+  String get flightPickupPointPending =>
+      'Pickup point to be confirmed by our team';
+
+  @override
+  String flightNoLiveData(String time) {
+    return 'No live flight data: scheduled time $time';
+  }
+
+  @override
+  String flightBeAtPointAt(String time) {
+    return 'Be at the pickup point at $time';
+  }
+
+  @override
+  String flightDriverWillBeAt(String time) {
+    return 'Your chauffeur will be at the pickup point at $time';
+  }
+
+  @override
+  String flightEstimatedArrival(String time) {
+    return 'Estimated arrival: $time';
+  }
+
+  @override
+  String flightScheduledArrival(String time) {
+    return 'Scheduled arrival: $time';
+  }
+
+  @override
+  String flightActualArrival(String time) {
+    return 'Landed: $time';
+  }
+
+  @override
   String get homePickOriginTitle => 'Select pickup point';
 
   @override

@@ -4276,6 +4276,88 @@
   "@regErrorGeneric": {
     "description": "Error del registro de chóferes: el servidor respondió «(otro)»."
   },
+  "flightStatusScheduled": "Programado",
+  "@flightStatusScheduled": {
+    "description": "Vuelos: estado del vuelo (scheduled)."
+  },
+  "flightStatusDelayed": "Retrasado",
+  "@flightStatusDelayed": {
+    "description": "Vuelos: estado del vuelo (delayed)."
+  },
+  "flightStatusLanded": "Aterrizó",
+  "@flightStatusLanded": {
+    "description": "Vuelos: estado del vuelo (landed)."
+  },
+  "flightStatusCancelled": "Cancelado",
+  "@flightStatusCancelled": {
+    "description": "Vuelos: estado del vuelo (cancelled)."
+  },
+  "flightStatusDiverted": "Desviado",
+  "@flightStatusDiverted": {
+    "description": "Vuelos: estado del vuelo (diverted)."
+  },
+  "flightStatusUnknown": "Sin datos",
+  "@flightStatusUnknown": {
+    "description": "Vuelos: estado del vuelo (unknown)."
+  },
+  "flightPickupPointPending": "Punto por confirmar con central",
+  "@flightPickupPointPending": {
+    "description": "Vuelos: sin punto de recogida definido para el aeropuerto."
+  },
+  "flightNoLiveData": "Sin datos de vuelo en vivo: hora programada {time}",
+  "@flightNoLiveData": {
+    "description": "Vuelos: sin datos en vivo; solo la hora programada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightBeAtPointAt": "Debes estar en el punto a las {time}",
+  "@flightBeAtPointAt": {
+    "description": "Vuelos: el chófer debe estar en el punto de recogida a esa hora.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightDriverWillBeAt": "Tu chófer estará en el punto de recogida a las {time}",
+  "@flightDriverWillBeAt": {
+    "description": "Vuelos: el pasajero ve a qué hora estará el chófer en el punto.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightEstimatedArrival": "Llegada estimada: {time}",
+  "@flightEstimatedArrival": {
+    "description": "Vuelos: hora estimada de llegada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightScheduledArrival": "Llegada programada: {time}",
+  "@flightScheduledArrival": {
+    "description": "Vuelos: hora programada de llegada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightActualArrival": "Aterrizó: {time}",
+  "@flightActualArrival": {
+    "description": "Vuelos: hora real de llegada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "homePickOriginTitle": "Seleccionar lugar de recogida",
   "@homePickOriginTitle": {
     "description": "Título del mapa para elegir el punto de recogida."

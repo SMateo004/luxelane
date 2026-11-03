@@ -3247,6 +3247,57 @@ class AppLocalizationsEs extends AppLocalizations {
       'No pudimos completar este paso. Inténtalo de nuevo.';
 
   @override
+  String get flightStatusScheduled => 'Programado';
+
+  @override
+  String get flightStatusDelayed => 'Retrasado';
+
+  @override
+  String get flightStatusLanded => 'Aterrizó';
+
+  @override
+  String get flightStatusCancelled => 'Cancelado';
+
+  @override
+  String get flightStatusDiverted => 'Desviado';
+
+  @override
+  String get flightStatusUnknown => 'Sin datos';
+
+  @override
+  String get flightPickupPointPending => 'Punto por confirmar con central';
+
+  @override
+  String flightNoLiveData(String time) {
+    return 'Sin datos de vuelo en vivo: hora programada $time';
+  }
+
+  @override
+  String flightBeAtPointAt(String time) {
+    return 'Debes estar en el punto a las $time';
+  }
+
+  @override
+  String flightDriverWillBeAt(String time) {
+    return 'Tu chófer estará en el punto de recogida a las $time';
+  }
+
+  @override
+  String flightEstimatedArrival(String time) {
+    return 'Llegada estimada: $time';
+  }
+
+  @override
+  String flightScheduledArrival(String time) {
+    return 'Llegada programada: $time';
+  }
+
+  @override
+  String flightActualArrival(String time) {
+    return 'Aterrizó: $time';
+  }
+
+  @override
   String get homePickOriginTitle => 'Seleccionar lugar de recogida';
 
   @override

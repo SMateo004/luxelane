@@ -5710,6 +5710,84 @@ abstract class AppLocalizations {
   /// **'No pudimos completar este paso. Inténtalo de nuevo.'**
   String get regErrorGeneric;
 
+  /// Vuelos: estado del vuelo (scheduled).
+  ///
+  /// In es, this message translates to:
+  /// **'Programado'**
+  String get flightStatusScheduled;
+
+  /// Vuelos: estado del vuelo (delayed).
+  ///
+  /// In es, this message translates to:
+  /// **'Retrasado'**
+  String get flightStatusDelayed;
+
+  /// Vuelos: estado del vuelo (landed).
+  ///
+  /// In es, this message translates to:
+  /// **'Aterrizó'**
+  String get flightStatusLanded;
+
+  /// Vuelos: estado del vuelo (cancelled).
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get flightStatusCancelled;
+
+  /// Vuelos: estado del vuelo (diverted).
+  ///
+  /// In es, this message translates to:
+  /// **'Desviado'**
+  String get flightStatusDiverted;
+
+  /// Vuelos: estado del vuelo (unknown).
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos'**
+  String get flightStatusUnknown;
+
+  /// Vuelos: sin punto de recogida definido para el aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto por confirmar con central'**
+  String get flightPickupPointPending;
+
+  /// Vuelos: sin datos en vivo; solo la hora programada.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos de vuelo en vivo: hora programada {time}'**
+  String flightNoLiveData(String time);
+
+  /// Vuelos: el chófer debe estar en el punto de recogida a esa hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes estar en el punto a las {time}'**
+  String flightBeAtPointAt(String time);
+
+  /// Vuelos: el pasajero ve a qué hora estará el chófer en el punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer estará en el punto de recogida a las {time}'**
+  String flightDriverWillBeAt(String time);
+
+  /// Vuelos: hora estimada de llegada.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada estimada: {time}'**
+  String flightEstimatedArrival(String time);
+
+  /// Vuelos: hora programada de llegada.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada programada: {time}'**
+  String flightScheduledArrival(String time);
+
+  /// Vuelos: hora real de llegada.
+  ///
+  /// In es, this message translates to:
+  /// **'Aterrizó: {time}'**
+  String flightActualArrival(String time);
+
   /// Título del mapa para elegir el punto de recogida.
   ///
   /// In es, this message translates to:
