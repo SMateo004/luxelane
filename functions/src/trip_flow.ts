@@ -11,6 +11,7 @@
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
+import { noShowEligibleAt } from './flight_time';
 import { docId } from './schemas';
 import { updateRequired } from './app_version';
 import { codesMatch, MAX_PICKUP_ATTEMPTS, newPickupSalt, pickupCode, pickupExpired, PICKUP_CODE_TTL_MS } from './pickup_code';
@@ -229,7 +230,12 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
       const ops = await opsConfig(db);
       // Con política, la app del chófer sabe desde cuándo puede marcar «no
       // aparece» (B4); sin ella el botón no aparece.
-      const availableAt = noShowAvailableAt(readPolicy(ops).policy, at.toMillis());
+      // Con vuelo, la espera empieza en readyAt, no al llegar (decisión 2).
+      const policy = readPolicy(ops).policy;
+      const readyAt = (b.readyAt as admin.firestore.Timestamp | undefined)?.toMillis() ?? null;
+      const availableAt = b.flight
+        ? noShowEligibleAt(readyAt, policy?.noShowWaitMinutes)
+        : noShowAvailableAt(policy, at.toMillis());
       if (availableAt !== null) update.noShowAvailableAt = admin.firestore.Timestamp.fromMillis(availableAt);
       const check = arrivalCheck(b, input.location, ops.arrivalRadiusMeters);
       adminDetail = check.extra;
@@ -274,6 +280,33 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
 }
 
 /**
+ * Regla del «no se presentó» en una reserva con vuelo (prompt de vuelos,
+ * A7). null si se permite; si no, el error con su motivo:
+ *   cancelado o desviado → flight_disrupted;
+ *   sin datos (declarado por el pasajero, desconocido) → flight_no_data;
+ *   no aterrizado o sin hora real → flight_not_landed;
+ *   aterrizado pero sin cumplir readyAt + espera → no_show_too_early.
+ * Sin vuelo, null (la regla de siempre).
+ */
+export function flightNoShowRule(b: admin.firestore.DocumentData, waitMinutes: number, nowMs: number): HttpsError | null {
+  const f = b.flight as { status?: string; actualArrival?: unknown; dataQuality?: string } | undefined;
+  if (!f) return null;
+  if (f.status === 'cancelled' || f.status === 'diverted') {
+    return tripError('failed-precondition', 'flight_disrupted', { flightStatus: f.status });
+  }
+  const landed = f.status === 'landed' && f.actualArrival instanceof admin.firestore.Timestamp;
+  if (!landed) {
+    const noData = f.status === 'unknown' || f.dataQuality === 'none';
+    return tripError('failed-precondition', noData ? 'flight_no_data' : 'flight_not_landed', { flightStatus: f.status ?? null });
+  }
+  const readyAt = (b.readyAt as admin.firestore.Timestamp | undefined)?.toMillis() ?? null;
+  const availableAt = noShowEligibleAt(readyAt, waitMinutes);
+  if (availableAt === null) return tripError('failed-precondition', 'flight_no_data', { flightStatus: f.status });
+  if (nowMs < availableAt) return tripError('failed-precondition', 'no_show_too_early', { availableAt });
+  return null;
+}
+
+/**
  * B4: el pasajero no aparece. Solo desde driver_arrived, con política de
  * cancelación (si no, no_show_disabled), pasado el tiempo de espera y con la
  * ubicación del chófer. Libera al chófer, deja evento y alerta a central;
@@ -288,8 +321,13 @@ async function markNoShow(tx: admin.firestore.Transaction, db: admin.firestore.F
   if (!policy || policy.noShowWaitMinutes === undefined) throw tripError('failed-precondition', 'no_show_disabled');
   if (!input.location) throw tripError('invalid-argument', 'location_required');
   const arrivedMs = (b.arrivedAt as admin.firestore.Timestamp | undefined)?.toMillis() ?? nowMs;
-  const availableAt = noShowAvailableAt(policy, arrivedMs)!;
-  if (nowMs < availableAt) throw tripError('failed-precondition', 'no_show_too_early', { availableAt });
+  // Con vuelo (decisión 2): solo con el vuelo aterrizado (hora real
+  // registrada) y pasada la espera desde readyAt. Con un dato que falta o
+  // está viejo no se retiene nada: solo un admin puede forzarlo.
+  const flightRule = flightNoShowRule(b, policy.noShowWaitMinutes, nowMs);
+  if (flightRule) throw flightRule;
+  const availableAt = b.flight ? null : noShowAvailableAt(policy, arrivedMs)!;
+  if (availableAt !== null && nowMs < availableAt) throw tripError('failed-precondition', 'no_show_too_early', { availableAt });
   const driverRef = db.collection('driverProfiles').doc(driverId);
   const driver = await tx.get(driverRef);
   tx.update(ref, { status: 'no_show', noShowAt: at, updatedAt: at });

@@ -8,6 +8,7 @@ import { defineBoolean, defineSecret, defineString } from 'firebase-functions/pa
 import * as bookingService from './booking_service';
 import * as preferences from './preferences';
 import { AppLocale, formatMoney, localeOf, notice, NoticeType, vehicleClassName, vehicleColorName } from './i18n';
+import * as flight from './flight';
 import * as registration from './driver_application';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
@@ -1044,6 +1045,31 @@ export const submitApplication = secureCallable('submitApplication', {}, (req) =
 }, { role: 'driver', requireMfa: true });
 
 /** URL firmada de pocos minutos de un documento; queda en la bitácora. */
+// ---------------------------------------------------------------------------
+// Vuelos (prompt de vuelos, Parte A): datos fijados por un admin, «no se
+// presentó» forzado y aeropuertos con sus puntos de recogida.
+// ---------------------------------------------------------------------------
+
+/** Fija hora estimada, real y estado de un vuelo, con bloqueo manual (A5). */
+export const adminSetFlightInfo = secureCallable('adminSetFlightInfo', {}, async (req) =>
+  flight.adminSetFlightInfo({ db }, await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Quita el bloqueo manual del vuelo (A5). */
+export const adminClearFlightLock = secureCallable('adminClearFlightLock', {}, async (req) =>
+  flight.adminClearFlightLock({ db }, await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** «No se presentó» cuando la regla del vuelo no deja al chófer (A7). */
+export const adminForceNoShow = secureCallable('adminForceNoShow', {}, async (req) =>
+  flight.adminForceNoShow({ db }, await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/** Aeropuerto y puntos de recogida nacional e internacional (A9). */
+export const adminUpsertAirport = secureCallable('adminUpsertAirport', {}, async (req) =>
+  flight.adminUpsertAirport({ db }, await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
 /** Vencimientos próximos de documentos de chófer para el panel (B2). */
 export const adminListDocExpiries = secureCallable('adminListDocExpiries', {}, async (req) =>
   registration.adminListDocExpiries(regDeps(), await adminActor(req), req.data), { role: 'admin', requireMfa: true });

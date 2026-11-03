@@ -40,7 +40,8 @@ describe('cobertura de App Check en las callables', () => {
     'adminRecordPayment', 'adminUpdateConfig', 'adminUpdatePricingRule', 'adminVerifyDriver',
     'adminUpdateDriverSensitive', 'adminSetVehicleActive', 'adminSetLeadHandled',
     'adminGetDocumentUrl', 'adminReviewDocument', 'adminDecideApplication', 'adminAllowDriverOnline',
-    'adminPurgeDriverDocuments', 'adminListDocExpiries'];
+    'adminPurgeDriverDocuments', 'adminListDocExpiries', 'adminSetFlightInfo', 'adminClearFlightLock',
+    'adminForceNoShow', 'adminUpsertAirport'];
   it.each(ADMIN_ONLY.map((n) => [n]))('%s exige rol admin', (name) => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'admin' }));
   });
@@ -139,6 +140,11 @@ describe('APP_CHECK_ENFORCE (parámetro de despliegue)', () => {
   it.each(['saveDriverStep', 'getDriverApplication', 'registerDocumentUpload', 'submitApplication'].map((n) => [n]))(
     '%s exige rol chófer', (name) => {
       expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'driver' }));
+    });
+  it.each(['adminSetFlightInfo', 'adminClearFlightLock', 'adminForceNoShow', 'adminUpsertAirport'].map((n) => [n]))(
+    '%s (vuelos) exige segundo factor e inicio de sesión reciente', (name) => {
+      expect((index as Exported)[name][SECURED_MARK]).toEqual(
+        expect.objectContaining({ role: 'admin', requireMfa: true, recentAuthSeconds: 300 }));
     });
   it('submitApplication exige el segundo factor (con mfaEnforced)', () => {
     expect((index as Exported).submitApplication[SECURED_MARK]).toEqual(expect.objectContaining({ requireMfa: true }));
