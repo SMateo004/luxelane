@@ -451,6 +451,413 @@ class AppLocalizationsEs extends AppLocalizations {
       'Chófer autorizado para ponerse en línea.';
 
   @override
+  String get adminFlightsSection => 'Vuelos';
+
+  @override
+  String get adminFlightsSectionSubtitle =>
+      'Vuelos de llegada por revisar y aeropuertos con sus puntos de recogida.';
+
+  @override
+  String get adminFlightsTabInbox => 'Bandeja';
+
+  @override
+  String get adminFlightsTabAirports => 'Aeropuertos';
+
+  @override
+  String get adminFlightsInboxToVerify => 'Por verificar';
+
+  @override
+  String get adminFlightsInboxNoData => 'Sin datos';
+
+  @override
+  String get adminFlightsInboxDisrupted => 'Cancelados o desviados';
+
+  @override
+  String adminFlightsInboxTruncated(String count) {
+    return 'Se leyeron las primeras $count reservas con vuelo: puede haber más.';
+  }
+
+  @override
+  String get adminFlightsInboxEmptyToVerify => 'No hay vuelos por verificar';
+
+  @override
+  String get adminFlightsInboxEmptyNoData => 'No hay vuelos sin datos';
+
+  @override
+  String get adminFlightsInboxEmptyDisrupted =>
+      'No hay vuelos cancelados ni desviados';
+
+  @override
+  String get adminFlightsInboxEmptyHint =>
+      'Aquí aparecen las reservas con vuelo que piden revisión.';
+
+  @override
+  String get adminFlightsInboxError => 'No se pudo cargar la bandeja de vuelos';
+
+  @override
+  String get adminFlightsRetry => 'Reintentar';
+
+  @override
+  String adminFlightsRowReadyAt(String time) {
+    return 'Chófer en el punto: $time';
+  }
+
+  @override
+  String get adminFlightsRowNoReadyAt => 'Sin hora de recogida';
+
+  @override
+  String adminFlightsRowSemantics(String code, String flight, String status) {
+    return 'Reserva $code, vuelo $flight, $status. Abrir el detalle';
+  }
+
+  @override
+  String adminFlightsBookingTitle(String code) {
+    return 'Reserva #$code';
+  }
+
+  @override
+  String get adminFlightsClose => 'Cerrar';
+
+  @override
+  String get adminFlightCardTitle => 'Vuelo';
+
+  @override
+  String get adminFlightAirport => 'Aeropuerto';
+
+  @override
+  String get adminFlightAirline => 'Aerolínea';
+
+  @override
+  String get adminFlightNumber => 'Número de vuelo';
+
+  @override
+  String get adminFlightType => 'Tipo';
+
+  @override
+  String get adminFlightDate => 'Fecha del vuelo';
+
+  @override
+  String get adminFlightScheduled => 'Llegada programada';
+
+  @override
+  String get adminFlightEstimated => 'Llegada estimada';
+
+  @override
+  String get adminFlightActual => 'Llegada real';
+
+  @override
+  String get adminFlightStatus => 'Estado del vuelo';
+
+  @override
+  String get adminFlightQuality => 'Calidad del dato';
+
+  @override
+  String get adminFlightQualityOk => 'Al día';
+
+  @override
+  String get adminFlightQualityStale => 'Desactualizado';
+
+  @override
+  String get adminFlightQualityNone => 'Sin datos en vivo';
+
+  @override
+  String get adminFlightSource => 'Fuente';
+
+  @override
+  String get adminFlightSourcePassenger => 'Pasajero';
+
+  @override
+  String get adminFlightSourceManual => 'Central';
+
+  @override
+  String get adminFlightSourceAuto => 'Automático';
+
+  @override
+  String get adminFlightCheckedBag => 'Equipaje facturado';
+
+  @override
+  String get adminFlightYes => 'Sí';
+
+  @override
+  String get adminFlightNo => 'No';
+
+  @override
+  String get adminFlightLastChange => 'Último cambio';
+
+  @override
+  String get adminFlightLastObserved => 'Último dato leído';
+
+  @override
+  String get adminFlightTimesNote => 'Horas de Bolivia (La Paz, UTC−4).';
+
+  @override
+  String adminFlightReadyAt(String time) {
+    return 'El chófer debe estar a las $time';
+  }
+
+  @override
+  String get adminFlightNoReadyAt => 'Sin hora de recogida calculada';
+
+  @override
+  String get adminFlightLocked =>
+      'Bloqueo manual: las fuentes automáticas no cambian estos datos.';
+
+  @override
+  String get adminFlightUnlocked => 'Sin bloqueo manual';
+
+  @override
+  String get adminFlightLockTag => 'Bloqueo manual';
+
+  @override
+  String adminFlightSetBy(String who, String date) {
+    return 'Fijado por $who el $date';
+  }
+
+  @override
+  String adminFlightLockClearedBy(String who, String date) {
+    return 'Bloqueo quitado por $who el $date';
+  }
+
+  @override
+  String adminFlightChangeReason(String reason) {
+    return 'Motivo: $reason';
+  }
+
+  @override
+  String get adminFlightAdminUnknown => 'un administrador';
+
+  @override
+  String get adminFlightLoadError => 'No se pudieron leer los datos del vuelo';
+
+  @override
+  String get adminFlightSetButton => 'Fijar datos del vuelo';
+
+  @override
+  String get adminFlightClearLockButton => 'Quitar bloqueo manual';
+
+  @override
+  String get adminFlightForceNoShowButton => 'Marcar no se presentó';
+
+  @override
+  String get adminFlightSetTitle => 'Fijar datos del vuelo';
+
+  @override
+  String get adminFlightSetMessage =>
+      'Los datos quedan fijados a mano, con bloqueo manual: ninguna fuente automática los cambia hasta quitar el bloqueo. La hora del chófer se vuelve a calcular.';
+
+  @override
+  String get adminFlightSetStatusLabel => 'Estado del vuelo';
+
+  @override
+  String get adminFlightSetPick => 'Elegir fecha y hora';
+
+  @override
+  String get adminFlightSetClearTime => 'Quitar hora';
+
+  @override
+  String get adminFlightSetNoTime => 'Sin hora';
+
+  @override
+  String adminFlightSetTimeSemantics(String label, String value) {
+    return '$label: $value. Cambiar';
+  }
+
+  @override
+  String get adminFlightSetActualRequired =>
+      'Con «Aterrizó» la llegada real es obligatoria';
+
+  @override
+  String get adminFlightReasonLabel => 'Motivo (de 10 a 500 caracteres)';
+
+  @override
+  String get adminFlightReasonShort =>
+      'El motivo necesita al menos 10 caracteres';
+
+  @override
+  String get adminFlightCancel => 'Cancelar';
+
+  @override
+  String get adminFlightSetConfirm => 'Fijar datos';
+
+  @override
+  String get adminFlightSetDone => 'Datos del vuelo fijados';
+
+  @override
+  String get adminFlightClearLockTitle => 'Quitar bloqueo manual';
+
+  @override
+  String get adminFlightClearLockMessage =>
+      'Las fuentes automáticas podrán volver a actualizar este vuelo.';
+
+  @override
+  String get adminFlightClearLockConfirm => 'Quitar bloqueo';
+
+  @override
+  String get adminFlightClearLockDone => 'Bloqueo manual quitado';
+
+  @override
+  String get adminFlightForceNoShowTitle => 'Marcar no se presentó';
+
+  @override
+  String adminFlightForceNoShowMessage(String code) {
+    return 'La reserva #$code pasará a «No se presentó». No se cobra nada: el pago se decide después en la reserva.';
+  }
+
+  @override
+  String get adminFlightForceNoShowConfirm => 'Marcar no se presentó';
+
+  @override
+  String get adminFlightForceNoShowDone =>
+      'Reserva marcada como no se presentó';
+
+  @override
+  String get adminFlightErrConfigMissing =>
+      'Faltan los minutos de salida del aeropuerto en la configuración de operaciones.';
+
+  @override
+  String get adminFlightErrNoFlight => 'Esta reserva no tiene vuelo.';
+
+  @override
+  String get adminFlightErrNotFound => 'La reserva ya no existe.';
+
+  @override
+  String get adminFlightErrInvalidTransition =>
+      'La reserva ya no está en «Chófer en el punto».';
+
+  @override
+  String get adminFlightErrNoShowDisabled =>
+      '«No se presentó» no está habilitado: falta la política de cancelación.';
+
+  @override
+  String get adminFlightErrInvalid => 'Revisa los datos: alguno no es válido.';
+
+  @override
+  String get adminFlightErrPermission => 'No tienes permiso para esta acción.';
+
+  @override
+  String get adminFlightErrGeneric =>
+      'No se pudo completar la acción. Inténtalo de nuevo.';
+
+  @override
+  String get adminAirportsAdd => 'Nuevo aeropuerto';
+
+  @override
+  String get adminAirportsEmpty => 'Aún no hay aeropuertos';
+
+  @override
+  String get adminAirportsEmptyHint =>
+      'Crea uno para definir sus puntos de recogida.';
+
+  @override
+  String get adminAirportsError => 'No se pudieron cargar los aeropuertos';
+
+  @override
+  String adminAirportPointSet(String type) {
+    return '$type: con punto';
+  }
+
+  @override
+  String adminAirportPointMissing(String type) {
+    return '$type: sin punto';
+  }
+
+  @override
+  String adminAirportEditSemantics(String code) {
+    return 'Editar el aeropuerto $code';
+  }
+
+  @override
+  String adminAirportEditTitle(String code) {
+    return 'Editar aeropuerto $code';
+  }
+
+  @override
+  String get adminAirportNewTitle => 'Nuevo aeropuerto';
+
+  @override
+  String get adminAirportCode => 'Código (3 letras)';
+
+  @override
+  String get adminAirportCodeInvalid =>
+      'Tres letras mayúsculas, por ejemplo VVI';
+
+  @override
+  String get adminAirportCodeLocked => 'El código no se cambia una vez creado';
+
+  @override
+  String get adminAirportName => 'Nombre';
+
+  @override
+  String get adminAirportNameInvalid => 'Entre 2 y 120 caracteres';
+
+  @override
+  String get adminAirportCity => 'Ciudad';
+
+  @override
+  String get adminAirportCityInvalid => 'Entre 2 y 80 caracteres';
+
+  @override
+  String get adminAirportTimeZone => 'Zona horaria: La Paz (UTC−4)';
+
+  @override
+  String adminAirportPointTitle(String type) {
+    return 'Punto de recogida · $type';
+  }
+
+  @override
+  String get adminAirportPointName => 'Nombre del punto';
+
+  @override
+  String get adminAirportPointNameInvalid => 'Entre 1 y 80 caracteres';
+
+  @override
+  String get adminAirportPointInstructions => 'Indicaciones';
+
+  @override
+  String get adminAirportPointInstructionsInvalid => 'Hasta 500 caracteres';
+
+  @override
+  String get adminAirportLat => 'Latitud';
+
+  @override
+  String get adminAirportLng => 'Longitud';
+
+  @override
+  String get adminAirportLatInvalid => 'Latitud entre -90 y 90';
+
+  @override
+  String get adminAirportLngInvalid => 'Longitud entre -180 y 180';
+
+  @override
+  String get adminAirportZeroInvalid => 'Las coordenadas (0, 0) no son válidas';
+
+  @override
+  String get adminAirportPointRemove => 'Quitar punto';
+
+  @override
+  String get adminAirportPointAdd => 'Añadir punto';
+
+  @override
+  String get adminAirportPointNone =>
+      'Sin punto: el chófer verá «Punto por confirmar con central».';
+
+  @override
+  String get adminAirportPointWillRemove => 'El punto se quitará al guardar.';
+
+  @override
+  String get adminAirportSave => 'Guardar';
+
+  @override
+  String get adminAirportSaved => 'Aeropuerto guardado';
+
+  @override
+  String get adminAirportFixErrors => 'Revisa los campos marcados';
+
+  @override
+  String get adminAirportErrInvalid =>
+      'Algún dato no es válido: revisa código, nombre, ciudad y coordenadas.';
+
+  @override
   String get adminPrefsEmpty => 'Sin preferencias para este viaje';
 
   @override

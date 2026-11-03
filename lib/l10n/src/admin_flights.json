@@ -1,0 +1,832 @@
+{
+  "adminFlightsSection": {
+    "description": "Panel, vuelos: nombre de la sección del menú.",
+    "es": "Vuelos",
+    "en": "Flights",
+    "pt": "Voos"
+  },
+  "adminFlightsSectionSubtitle": {
+    "description": "Panel, vuelos: subtítulo de la sección.",
+    "es": "Vuelos de llegada por revisar y aeropuertos con sus puntos de recogida.",
+    "en": "Arriving flights to review and airports with their pickup points.",
+    "pt": "Voos de chegada a revisar e aeroportos com seus pontos de embarque."
+  },
+  "adminFlightsTabInbox": {
+    "description": "Panel, vuelos: pestaña de la bandeja.",
+    "es": "Bandeja",
+    "en": "Inbox",
+    "pt": "Caixa de entrada"
+  },
+  "adminFlightsTabAirports": {
+    "description": "Panel, vuelos: pestaña de aeropuertos.",
+    "es": "Aeropuertos",
+    "en": "Airports",
+    "pt": "Aeroportos"
+  },
+  "adminFlightsInboxToVerify": {
+    "description": "Panel, vuelos: filtro: vuelos que solo declaró el pasajero.",
+    "es": "Por verificar",
+    "en": "To verify",
+    "pt": "A verificar"
+  },
+  "adminFlightsInboxNoData": {
+    "description": "Panel, vuelos: filtro: vuelos sin datos en vivo o con datos viejos.",
+    "es": "Sin datos",
+    "en": "No data",
+    "pt": "Sem dados"
+  },
+  "adminFlightsInboxDisrupted": {
+    "description": "Panel, vuelos: filtro: vuelos cancelados o desviados.",
+    "es": "Cancelados o desviados",
+    "en": "Cancelled or diverted",
+    "pt": "Cancelados ou desviados"
+  },
+  "adminFlightsInboxTruncated": {
+    "description": "Panel, vuelos: la lista está recortada; {count} es el máximo leído.",
+    "es": "Se leyeron las primeras {count} reservas con vuelo: puede haber más.",
+    "en": "Read the first {count} bookings with a flight: there may be more.",
+    "pt": "Foram lidas as primeiras {count} reservas com voo: pode haver mais.",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "200"
+      }
+    }
+  },
+  "adminFlightsInboxEmptyToVerify": {
+    "description": "Panel, vuelos: bandeja vacía (por verificar).",
+    "es": "No hay vuelos por verificar",
+    "en": "No flights to verify",
+    "pt": "Não há voos a verificar"
+  },
+  "adminFlightsInboxEmptyNoData": {
+    "description": "Panel, vuelos: bandeja vacía (sin datos).",
+    "es": "No hay vuelos sin datos",
+    "en": "No flights without data",
+    "pt": "Não há voos sem dados"
+  },
+  "adminFlightsInboxEmptyDisrupted": {
+    "description": "Panel, vuelos: bandeja vacía (cancelados o desviados).",
+    "es": "No hay vuelos cancelados ni desviados",
+    "en": "No cancelled or diverted flights",
+    "pt": "Não há voos cancelados nem desviados"
+  },
+  "adminFlightsInboxEmptyHint": {
+    "description": "Panel, vuelos: explicación bajo la bandeja vacía.",
+    "es": "Aquí aparecen las reservas con vuelo que piden revisión.",
+    "en": "Bookings with a flight that need review appear here.",
+    "pt": "Aqui aparecem as reservas com voo que pedem revisão."
+  },
+  "adminFlightsInboxError": {
+    "description": "Panel, vuelos: no se pudo leer la bandeja.",
+    "es": "No se pudo cargar la bandeja de vuelos",
+    "en": "Could not load the flights inbox",
+    "pt": "Não foi possível carregar a caixa de voos"
+  },
+  "adminFlightsRetry": {
+    "description": "Panel, vuelos: botón para volver a intentar.",
+    "es": "Reintentar",
+    "en": "Retry",
+    "pt": "Tentar de novo"
+  },
+  "adminFlightsRowReadyAt": {
+    "description": "Panel, vuelos: fila: hora a la que el chófer debe estar en el punto.",
+    "es": "Chófer en el punto: {time}",
+    "en": "Chauffeur at the point: {time}",
+    "pt": "Motorista no ponto: {time}",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:35"
+      }
+    }
+  },
+  "adminFlightsRowNoReadyAt": {
+    "description": "Panel, vuelos: fila: sin hora de recogida calculada.",
+    "es": "Sin hora de recogida",
+    "en": "No pickup time",
+    "pt": "Sem horário de embarque"
+  },
+  "adminFlightsRowSemantics": {
+    "description": "Panel, vuelos: lector de pantalla de una fila de la bandeja.",
+    "es": "Reserva {code}, vuelo {flight}, {status}. Abrir el detalle",
+    "en": "Booking {code}, flight {flight}, {status}. Open details",
+    "pt": "Reserva {code}, voo {flight}, {status}. Abrir o detalhe",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "AB12CD"
+      },
+      "flight": {
+        "type": "String",
+        "example": "VVI OB 760"
+      },
+      "status": {
+        "type": "String",
+        "example": "Retrasado"
+      }
+    }
+  },
+  "adminFlightsBookingTitle": {
+    "description": "Panel, vuelos: título del detalle cuando la reserva no está en la lista del panel.",
+    "es": "Reserva #{code}",
+    "en": "Booking #{code}",
+    "pt": "Reserva #{code}",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "AB12CD"
+      }
+    }
+  },
+  "adminFlightsClose": {
+    "description": "Panel, vuelos: botón para cerrar el detalle.",
+    "es": "Cerrar",
+    "en": "Close",
+    "pt": "Fechar"
+  },
+  "adminFlightCardTitle": {
+    "description": "Panel, vuelos: título de la tarjeta del vuelo en el detalle de la reserva.",
+    "es": "Vuelo",
+    "en": "Flight",
+    "pt": "Voo"
+  },
+  "adminFlightAirport": {
+    "description": "Panel, vuelos: fila: aeropuerto.",
+    "es": "Aeropuerto",
+    "en": "Airport",
+    "pt": "Aeroporto"
+  },
+  "adminFlightAirline": {
+    "description": "Panel, vuelos: fila: aerolínea.",
+    "es": "Aerolínea",
+    "en": "Airline",
+    "pt": "Companhia aérea"
+  },
+  "adminFlightNumber": {
+    "description": "Panel, vuelos: fila: número de vuelo.",
+    "es": "Número de vuelo",
+    "en": "Flight number",
+    "pt": "Número do voo"
+  },
+  "adminFlightType": {
+    "description": "Panel, vuelos: fila: tipo de vuelo (nacional o internacional).",
+    "es": "Tipo",
+    "en": "Type",
+    "pt": "Tipo"
+  },
+  "adminFlightDate": {
+    "description": "Panel, vuelos: fila: fecha del vuelo.",
+    "es": "Fecha del vuelo",
+    "en": "Flight date",
+    "pt": "Data do voo"
+  },
+  "adminFlightScheduled": {
+    "description": "Panel, vuelos: fila: llegada programada.",
+    "es": "Llegada programada",
+    "en": "Scheduled arrival",
+    "pt": "Chegada programada"
+  },
+  "adminFlightEstimated": {
+    "description": "Panel, vuelos: fila: llegada estimada.",
+    "es": "Llegada estimada",
+    "en": "Estimated arrival",
+    "pt": "Chegada estimada"
+  },
+  "adminFlightActual": {
+    "description": "Panel, vuelos: fila: llegada real.",
+    "es": "Llegada real",
+    "en": "Actual arrival",
+    "pt": "Chegada real"
+  },
+  "adminFlightStatus": {
+    "description": "Panel, vuelos: fila: estado del vuelo.",
+    "es": "Estado del vuelo",
+    "en": "Flight status",
+    "pt": "Status do voo"
+  },
+  "adminFlightQuality": {
+    "description": "Panel, vuelos: fila: calidad del dato.",
+    "es": "Calidad del dato",
+    "en": "Data quality",
+    "pt": "Qualidade do dado"
+  },
+  "adminFlightQualityOk": {
+    "description": "Panel, vuelos: calidad del dato: reciente.",
+    "es": "Al día",
+    "en": "Up to date",
+    "pt": "Atualizado"
+  },
+  "adminFlightQualityStale": {
+    "description": "Panel, vuelos: calidad del dato: viejo.",
+    "es": "Desactualizado",
+    "en": "Outdated",
+    "pt": "Desatualizado"
+  },
+  "adminFlightQualityNone": {
+    "description": "Panel, vuelos: calidad del dato: solo lo declarado por el pasajero.",
+    "es": "Sin datos en vivo",
+    "en": "No live data",
+    "pt": "Sem dados ao vivo"
+  },
+  "adminFlightSource": {
+    "description": "Panel, vuelos: fila: quién dio el último dato.",
+    "es": "Fuente",
+    "en": "Source",
+    "pt": "Fonte"
+  },
+  "adminFlightSourcePassenger": {
+    "description": "Panel, vuelos: fuente: el pasajero.",
+    "es": "Pasajero",
+    "en": "Passenger",
+    "pt": "Passageiro"
+  },
+  "adminFlightSourceManual": {
+    "description": "Panel, vuelos: fuente: un admin de central.",
+    "es": "Central",
+    "en": "Operations team",
+    "pt": "Central"
+  },
+  "adminFlightSourceAuto": {
+    "description": "Panel, vuelos: fuente: consulta automática.",
+    "es": "Automático",
+    "en": "Automatic",
+    "pt": "Automático"
+  },
+  "adminFlightCheckedBag": {
+    "description": "Panel, vuelos: fila: lleva equipaje facturado.",
+    "es": "Equipaje facturado",
+    "en": "Checked bag",
+    "pt": "Bagagem despachada"
+  },
+  "adminFlightYes": {
+    "description": "Panel, vuelos: sí.",
+    "es": "Sí",
+    "en": "Yes",
+    "pt": "Sim"
+  },
+  "adminFlightNo": {
+    "description": "Panel, vuelos: no.",
+    "es": "No",
+    "en": "No",
+    "pt": "Não"
+  },
+  "adminFlightLastChange": {
+    "description": "Panel, vuelos: fila: último cambio del vuelo.",
+    "es": "Último cambio",
+    "en": "Last change",
+    "pt": "Última alteração"
+  },
+  "adminFlightLastObserved": {
+    "description": "Panel, vuelos: fila: última vez que se leyó el dato.",
+    "es": "Último dato leído",
+    "en": "Last data read",
+    "pt": "Último dado lido"
+  },
+  "adminFlightTimesNote": {
+    "description": "Panel, vuelos: aclaración de la zona horaria de las horas.",
+    "es": "Horas de Bolivia (La Paz, UTC−4).",
+    "en": "Times in Bolivia (La Paz, UTC−4).",
+    "pt": "Horários da Bolívia (La Paz, UTC−4)."
+  },
+  "adminFlightReadyAt": {
+    "description": "Panel, vuelos: hora a la que el chófer debe estar en el punto de recogida.",
+    "es": "El chófer debe estar a las {time}",
+    "en": "The chauffeur must be there at {time}",
+    "pt": "O motorista deve estar lá às {time}",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:35"
+      }
+    }
+  },
+  "adminFlightNoReadyAt": {
+    "description": "Panel, vuelos: sin hora de recogida calculada.",
+    "es": "Sin hora de recogida calculada",
+    "en": "No pickup time calculated",
+    "pt": "Sem horário de embarque calculado"
+  },
+  "adminFlightLocked": {
+    "description": "Panel, vuelos: indicador de bloqueo manual activo.",
+    "es": "Bloqueo manual: las fuentes automáticas no cambian estos datos.",
+    "en": "Manual lock: automatic sources do not change this data.",
+    "pt": "Bloqueio manual: as fontes automáticas não alteram estes dados."
+  },
+  "adminFlightUnlocked": {
+    "description": "Panel, vuelos: sin bloqueo manual.",
+    "es": "Sin bloqueo manual",
+    "en": "No manual lock",
+    "pt": "Sem bloqueio manual"
+  },
+  "adminFlightLockTag": {
+    "description": "Panel, vuelos: etiqueta corta de bloqueo manual.",
+    "es": "Bloqueo manual",
+    "en": "Manual lock",
+    "pt": "Bloqueio manual"
+  },
+  "adminFlightSetBy": {
+    "description": "Panel, vuelos: quién y cuándo fijó los datos a mano.",
+    "es": "Fijado por {who} el {date}",
+    "en": "Set by {who} on {date}",
+    "pt": "Definido por {who} em {date}",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "admin@example.com"
+      },
+      "date": {
+        "type": "String",
+        "example": "20/11/2026 14:35"
+      }
+    }
+  },
+  "adminFlightLockClearedBy": {
+    "description": "Panel, vuelos: quién y cuándo quitó el bloqueo manual.",
+    "es": "Bloqueo quitado por {who} el {date}",
+    "en": "Lock removed by {who} on {date}",
+    "pt": "Bloqueio removido por {who} em {date}",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "admin@example.com"
+      },
+      "date": {
+        "type": "String",
+        "example": "20/11/2026 14:35"
+      }
+    }
+  },
+  "adminFlightChangeReason": {
+    "description": "Panel, vuelos: motivo del último cambio manual.",
+    "es": "Motivo: {reason}",
+    "en": "Reason: {reason}",
+    "pt": "Motivo: {reason}",
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "example": "Llamada a la aerolínea"
+      }
+    }
+  },
+  "adminFlightAdminUnknown": {
+    "description": "Panel, vuelos: autor sin correo conocido.",
+    "es": "un administrador",
+    "en": "an administrator",
+    "pt": "um administrador"
+  },
+  "adminFlightLoadError": {
+    "description": "Panel, vuelos: no se pudo leer el vuelo.",
+    "es": "No se pudieron leer los datos del vuelo",
+    "en": "Could not read the flight data",
+    "pt": "Não foi possível ler os dados do voo"
+  },
+  "adminFlightSetButton": {
+    "description": "Panel, vuelos: botón para fijar los datos del vuelo a mano.",
+    "es": "Fijar datos del vuelo",
+    "en": "Set flight data",
+    "pt": "Definir dados do voo"
+  },
+  "adminFlightClearLockButton": {
+    "description": "Panel, vuelos: botón para quitar el bloqueo manual.",
+    "es": "Quitar bloqueo manual",
+    "en": "Remove manual lock",
+    "pt": "Remover bloqueio manual"
+  },
+  "adminFlightForceNoShowButton": {
+    "description": "Panel, vuelos: botón para marcar que el pasajero no se presentó.",
+    "es": "Marcar no se presentó",
+    "en": "Mark as no-show",
+    "pt": "Marcar não compareceu"
+  },
+  "adminFlightSetTitle": {
+    "description": "Panel, vuelos: título del diálogo para fijar el vuelo.",
+    "es": "Fijar datos del vuelo",
+    "en": "Set flight data",
+    "pt": "Definir dados do voo"
+  },
+  "adminFlightSetMessage": {
+    "description": "Panel, vuelos: explicación del diálogo para fijar el vuelo.",
+    "es": "Los datos quedan fijados a mano, con bloqueo manual: ninguna fuente automática los cambia hasta quitar el bloqueo. La hora del chófer se vuelve a calcular.",
+    "en": "The data is set manually, with a manual lock: no automatic source changes it until the lock is removed. The chauffeur's time is recalculated.",
+    "pt": "Os dados ficam definidos manualmente, com bloqueio manual: nenhuma fonte automática os altera até remover o bloqueio. O horário do motorista é recalculado."
+  },
+  "adminFlightSetStatusLabel": {
+    "description": "Panel, vuelos: campo: estado del vuelo.",
+    "es": "Estado del vuelo",
+    "en": "Flight status",
+    "pt": "Status do voo"
+  },
+  "adminFlightSetPick": {
+    "description": "Panel, vuelos: botón para elegir fecha y hora.",
+    "es": "Elegir fecha y hora",
+    "en": "Choose date and time",
+    "pt": "Escolher data e hora"
+  },
+  "adminFlightSetClearTime": {
+    "description": "Panel, vuelos: botón para dejar la hora vacía.",
+    "es": "Quitar hora",
+    "en": "Clear time",
+    "pt": "Remover horário"
+  },
+  "adminFlightSetNoTime": {
+    "description": "Panel, vuelos: sin hora elegida.",
+    "es": "Sin hora",
+    "en": "No time",
+    "pt": "Sem horário"
+  },
+  "adminFlightSetTimeSemantics": {
+    "description": "Panel, vuelos: lector de pantalla del selector de hora.",
+    "es": "{label}: {value}. Cambiar",
+    "en": "{label}: {value}. Change",
+    "pt": "{label}: {value}. Alterar",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Llegada real"
+      },
+      "value": {
+        "type": "String",
+        "example": "20/11/2026 · 14:35"
+      }
+    }
+  },
+  "adminFlightSetActualRequired": {
+    "description": "Panel, vuelos: error: con «Aterrizó» la llegada real es obligatoria.",
+    "es": "Con «Aterrizó» la llegada real es obligatoria",
+    "en": "With «Landed» the actual arrival is required",
+    "pt": "Com «Pousou» a chegada real é obrigatória"
+  },
+  "adminFlightReasonLabel": {
+    "description": "Panel, vuelos: campo de motivo.",
+    "es": "Motivo (de 10 a 500 caracteres)",
+    "en": "Reason (10 to 500 characters)",
+    "pt": "Motivo (de 10 a 500 caracteres)"
+  },
+  "adminFlightReasonShort": {
+    "description": "Panel, vuelos: error: motivo corto.",
+    "es": "El motivo necesita al menos 10 caracteres",
+    "en": "The reason needs at least 10 characters",
+    "pt": "O motivo precisa de pelo menos 10 caracteres"
+  },
+  "adminFlightCancel": {
+    "description": "Panel, vuelos: botón cancelar.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "adminFlightSetConfirm": {
+    "description": "Panel, vuelos: botón para confirmar los datos del vuelo.",
+    "es": "Fijar datos",
+    "en": "Set data",
+    "pt": "Definir dados"
+  },
+  "adminFlightSetDone": {
+    "description": "Panel, vuelos: aviso: datos fijados.",
+    "es": "Datos del vuelo fijados",
+    "en": "Flight data set",
+    "pt": "Dados do voo definidos"
+  },
+  "adminFlightClearLockTitle": {
+    "description": "Panel, vuelos: título: quitar bloqueo manual.",
+    "es": "Quitar bloqueo manual",
+    "en": "Remove manual lock",
+    "pt": "Remover bloqueio manual"
+  },
+  "adminFlightClearLockMessage": {
+    "description": "Panel, vuelos: explicación de quitar el bloqueo.",
+    "es": "Las fuentes automáticas podrán volver a actualizar este vuelo.",
+    "en": "Automatic sources will be able to update this flight again.",
+    "pt": "As fontes automáticas poderão voltar a atualizar este voo."
+  },
+  "adminFlightClearLockConfirm": {
+    "description": "Panel, vuelos: botón para quitar el bloqueo.",
+    "es": "Quitar bloqueo",
+    "en": "Remove lock",
+    "pt": "Remover bloqueio"
+  },
+  "adminFlightClearLockDone": {
+    "description": "Panel, vuelos: aviso: bloqueo quitado.",
+    "es": "Bloqueo manual quitado",
+    "en": "Manual lock removed",
+    "pt": "Bloqueio manual removido"
+  },
+  "adminFlightForceNoShowTitle": {
+    "description": "Panel, vuelos: título: marcar que el pasajero no se presentó.",
+    "es": "Marcar no se presentó",
+    "en": "Mark as no-show",
+    "pt": "Marcar não compareceu"
+  },
+  "adminFlightForceNoShowMessage": {
+    "description": "Panel, vuelos: explicación de marcar que no se presentó; {code} es la reserva.",
+    "es": "La reserva #{code} pasará a «No se presentó». No se cobra nada: el pago se decide después en la reserva.",
+    "en": "Booking #{code} will change to «No-show». Nothing is charged: payment is decided later in the booking.",
+    "pt": "A reserva #{code} passará para «Não compareceu». Nada é cobrado: o pagamento é decidido depois na reserva.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "AB12CD"
+      }
+    }
+  },
+  "adminFlightForceNoShowConfirm": {
+    "description": "Panel, vuelos: botón para confirmar que no se presentó.",
+    "es": "Marcar no se presentó",
+    "en": "Mark as no-show",
+    "pt": "Marcar não compareceu"
+  },
+  "adminFlightForceNoShowDone": {
+    "description": "Panel, vuelos: aviso: marcada como no se presentó.",
+    "es": "Reserva marcada como no se presentó",
+    "en": "Booking marked as no-show",
+    "pt": "Reserva marcada como não compareceu"
+  },
+  "adminFlightErrConfigMissing": {
+    "description": "Panel, vuelos: error flight_config_missing.",
+    "es": "Faltan los minutos de salida del aeropuerto en la configuración de operaciones.",
+    "en": "The airport exit minutes are missing from the operations settings.",
+    "pt": "Faltam os minutos de saída do aeroporto na configuração de operações."
+  },
+  "adminFlightErrNoFlight": {
+    "description": "Panel, vuelos: error booking_without_flight.",
+    "es": "Esta reserva no tiene vuelo.",
+    "en": "This booking has no flight.",
+    "pt": "Esta reserva não tem voo."
+  },
+  "adminFlightErrNotFound": {
+    "description": "Panel, vuelos: error booking_not_found.",
+    "es": "La reserva ya no existe.",
+    "en": "The booking no longer exists.",
+    "pt": "A reserva não existe mais."
+  },
+  "adminFlightErrInvalidTransition": {
+    "description": "Panel, vuelos: error invalid_transition.",
+    "es": "La reserva ya no está en «Chófer en el punto».",
+    "en": "The booking is no longer in «Chauffeur at the point».",
+    "pt": "A reserva já não está em «Motorista no ponto»."
+  },
+  "adminFlightErrNoShowDisabled": {
+    "description": "Panel, vuelos: error no_show_disabled.",
+    "es": "«No se presentó» no está habilitado: falta la política de cancelación.",
+    "en": "«No-show» is not enabled: the cancellation policy is missing.",
+    "pt": "«Não compareceu» não está habilitado: falta a política de cancelamento."
+  },
+  "adminFlightErrInvalid": {
+    "description": "Panel, vuelos: error de datos no válidos.",
+    "es": "Revisa los datos: alguno no es válido.",
+    "en": "Check the data: something is not valid.",
+    "pt": "Revise os dados: algum não é válido."
+  },
+  "adminFlightErrPermission": {
+    "description": "Panel, vuelos: error de permiso.",
+    "es": "No tienes permiso para esta acción.",
+    "en": "You do not have permission for this action.",
+    "pt": "Você não tem permissão para esta ação."
+  },
+  "adminFlightErrGeneric": {
+    "description": "Panel, vuelos: error genérico.",
+    "es": "No se pudo completar la acción. Inténtalo de nuevo.",
+    "en": "The action could not be completed. Try again.",
+    "pt": "Não foi possível concluir a ação. Tente de novo."
+  },
+  "adminAirportsAdd": {
+    "description": "Panel, vuelos: botón para crear un aeropuerto.",
+    "es": "Nuevo aeropuerto",
+    "en": "New airport",
+    "pt": "Novo aeroporto"
+  },
+  "adminAirportsEmpty": {
+    "description": "Panel, vuelos: lista de aeropuertos vacía.",
+    "es": "Aún no hay aeropuertos",
+    "en": "No airports yet",
+    "pt": "Ainda não há aeroportos"
+  },
+  "adminAirportsEmptyHint": {
+    "description": "Panel, vuelos: explicación bajo la lista vacía.",
+    "es": "Crea uno para definir sus puntos de recogida.",
+    "en": "Create one to define its pickup points.",
+    "pt": "Crie um para definir seus pontos de embarque."
+  },
+  "adminAirportsError": {
+    "description": "Panel, vuelos: no se pudo leer la lista de aeropuertos.",
+    "es": "No se pudieron cargar los aeropuertos",
+    "en": "Could not load the airports",
+    "pt": "Não foi possível carregar os aeroportos"
+  },
+  "adminAirportPointSet": {
+    "description": "Panel, vuelos: etiqueta: el aeropuerto tiene punto para ese tipo de vuelo.",
+    "es": "{type}: con punto",
+    "en": "{type}: point set",
+    "pt": "{type}: com ponto",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Nacional"
+      }
+    }
+  },
+  "adminAirportPointMissing": {
+    "description": "Panel, vuelos: etiqueta: el aeropuerto no tiene punto para ese tipo de vuelo.",
+    "es": "{type}: sin punto",
+    "en": "{type}: no point",
+    "pt": "{type}: sem ponto",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Nacional"
+      }
+    }
+  },
+  "adminAirportEditSemantics": {
+    "description": "Panel, vuelos: lector de pantalla: editar un aeropuerto.",
+    "es": "Editar el aeropuerto {code}",
+    "en": "Edit airport {code}",
+    "pt": "Editar o aeroporto {code}",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "VVI"
+      }
+    }
+  },
+  "adminAirportEditTitle": {
+    "description": "Panel, vuelos: título del editor de un aeropuerto existente.",
+    "es": "Editar aeropuerto {code}",
+    "en": "Edit airport {code}",
+    "pt": "Editar aeroporto {code}",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "VVI"
+      }
+    }
+  },
+  "adminAirportNewTitle": {
+    "description": "Panel, vuelos: título del editor de un aeropuerto nuevo.",
+    "es": "Nuevo aeropuerto",
+    "en": "New airport",
+    "pt": "Novo aeroporto"
+  },
+  "adminAirportCode": {
+    "description": "Panel, vuelos: campo: código del aeropuerto.",
+    "es": "Código (3 letras)",
+    "en": "Code (3 letters)",
+    "pt": "Código (3 letras)"
+  },
+  "adminAirportCodeInvalid": {
+    "description": "Panel, vuelos: error del código.",
+    "es": "Tres letras mayúsculas, por ejemplo VVI",
+    "en": "Three capital letters, for example VVI",
+    "pt": "Três letras maiúsculas, por exemplo VVI"
+  },
+  "adminAirportCodeLocked": {
+    "description": "Panel, vuelos: ayuda: el código no se cambia.",
+    "es": "El código no se cambia una vez creado",
+    "en": "The code cannot be changed once created",
+    "pt": "O código não muda depois de criado"
+  },
+  "adminAirportName": {
+    "description": "Panel, vuelos: campo: nombre del aeropuerto.",
+    "es": "Nombre",
+    "en": "Name",
+    "pt": "Nome"
+  },
+  "adminAirportNameInvalid": {
+    "description": "Panel, vuelos: error del nombre.",
+    "es": "Entre 2 y 120 caracteres",
+    "en": "Between 2 and 120 characters",
+    "pt": "Entre 2 e 120 caracteres"
+  },
+  "adminAirportCity": {
+    "description": "Panel, vuelos: campo: ciudad.",
+    "es": "Ciudad",
+    "en": "City",
+    "pt": "Cidade"
+  },
+  "adminAirportCityInvalid": {
+    "description": "Panel, vuelos: error de la ciudad.",
+    "es": "Entre 2 y 80 caracteres",
+    "en": "Between 2 and 80 characters",
+    "pt": "Entre 2 e 80 caracteres"
+  },
+  "adminAirportTimeZone": {
+    "description": "Panel, vuelos: zona horaria fija del aeropuerto.",
+    "es": "Zona horaria: La Paz (UTC−4)",
+    "en": "Time zone: La Paz (UTC−4)",
+    "pt": "Fuso horário: La Paz (UTC−4)"
+  },
+  "adminAirportPointTitle": {
+    "description": "Panel, vuelos: título del punto de recogida de un tipo de vuelo.",
+    "es": "Punto de recogida · {type}",
+    "en": "Pickup point · {type}",
+    "pt": "Ponto de embarque · {type}",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Nacional"
+      }
+    }
+  },
+  "adminAirportPointName": {
+    "description": "Panel, vuelos: campo: nombre del punto.",
+    "es": "Nombre del punto",
+    "en": "Point name",
+    "pt": "Nome do ponto"
+  },
+  "adminAirportPointNameInvalid": {
+    "description": "Panel, vuelos: error del nombre del punto.",
+    "es": "Entre 1 y 80 caracteres",
+    "en": "Between 1 and 80 characters",
+    "pt": "Entre 1 e 80 caracteres"
+  },
+  "adminAirportPointInstructions": {
+    "description": "Panel, vuelos: campo: indicaciones del punto.",
+    "es": "Indicaciones",
+    "en": "Directions",
+    "pt": "Indicações"
+  },
+  "adminAirportPointInstructionsInvalid": {
+    "description": "Panel, vuelos: error de las indicaciones.",
+    "es": "Hasta 500 caracteres",
+    "en": "Up to 500 characters",
+    "pt": "Até 500 caracteres"
+  },
+  "adminAirportLat": {
+    "description": "Panel, vuelos: campo: latitud.",
+    "es": "Latitud",
+    "en": "Latitude",
+    "pt": "Latitude"
+  },
+  "adminAirportLng": {
+    "description": "Panel, vuelos: campo: longitud.",
+    "es": "Longitud",
+    "en": "Longitude",
+    "pt": "Longitude"
+  },
+  "adminAirportLatInvalid": {
+    "description": "Panel, vuelos: error de la latitud.",
+    "es": "Latitud entre -90 y 90",
+    "en": "Latitude between -90 and 90",
+    "pt": "Latitude entre -90 e 90"
+  },
+  "adminAirportLngInvalid": {
+    "description": "Panel, vuelos: error de la longitud.",
+    "es": "Longitud entre -180 y 180",
+    "en": "Longitude between -180 and 180",
+    "pt": "Longitude entre -180 e 180"
+  },
+  "adminAirportZeroInvalid": {
+    "description": "Panel, vuelos: error: coordenadas (0, 0).",
+    "es": "Las coordenadas (0, 0) no son válidas",
+    "en": "Coordinates (0, 0) are not valid",
+    "pt": "As coordenadas (0, 0) não são válidas"
+  },
+  "adminAirportPointRemove": {
+    "description": "Panel, vuelos: botón para quitar el punto.",
+    "es": "Quitar punto",
+    "en": "Remove point",
+    "pt": "Remover ponto"
+  },
+  "adminAirportPointAdd": {
+    "description": "Panel, vuelos: botón para añadir el punto.",
+    "es": "Añadir punto",
+    "en": "Add point",
+    "pt": "Adicionar ponto"
+  },
+  "adminAirportPointNone": {
+    "description": "Panel, vuelos: sin punto definido para ese tipo de vuelo.",
+    "es": "Sin punto: el chófer verá «Punto por confirmar con central».",
+    "en": "No point: the chauffeur will see «Pickup point to be confirmed by our team».",
+    "pt": "Sem ponto: o motorista verá «Ponto a confirmar com a central»."
+  },
+  "adminAirportPointWillRemove": {
+    "description": "Panel, vuelos: el punto se quitará al guardar.",
+    "es": "El punto se quitará al guardar.",
+    "en": "The point will be removed when saving.",
+    "pt": "O ponto será removido ao salvar."
+  },
+  "adminAirportSave": {
+    "description": "Panel, vuelos: botón guardar.",
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "adminAirportSaved": {
+    "description": "Panel, vuelos: aviso: aeropuerto guardado.",
+    "es": "Aeropuerto guardado",
+    "en": "Airport saved",
+    "pt": "Aeroporto salvo"
+  },
+  "adminAirportFixErrors": {
+    "description": "Panel, vuelos: aviso: hay campos con error.",
+    "es": "Revisa los campos marcados",
+    "en": "Check the highlighted fields",
+    "pt": "Revise os campos marcados"
+  },
+  "adminAirportErrInvalid": {
+    "description": "Panel, vuelos: error de datos no válidos al guardar el aeropuerto.",
+    "es": "Algún dato no es válido: revisa código, nombre, ciudad y coordenadas.",
+    "en": "Some data is not valid: check code, name, city and coordinates.",
+    "pt": "Algum dado não é válido: revise código, nome, cidade e coordenadas."
+  }
+}
