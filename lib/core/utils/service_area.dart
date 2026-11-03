@@ -41,29 +41,13 @@ class ServiceAirport {
     this.iata,
     this.name,
     this.lat,
-    this.lng, {
-    String? domesticExit,
-    String? internationalExit,
-  })  : _domesticExit = domesticExit,
-        _internationalExit = internationalExit;
+    this.lng,
+  );
 
   final String iata;
   final String name;
   final double lat;
   final double lng;
-
-  /// Where the passenger walks out, shown to the driver. Override per airport
-  /// with the actual door once confirmed on site.
-  final String? _domesticExit;
-  final String? _internationalExit;
-
-  String get domesticExit =>
-      _domesticExit ?? L10n.current.commonAirportDomesticExit;
-  String get internationalExit =>
-      _internationalExit ?? L10n.current.commonAirportInternationalExit;
-
-  String exitFor(FlightType type) =>
-      type == FlightType.domestic ? domesticExit : internationalExit;
 
   /// City the airport serves (El Alto → La Paz, Viru Viru → Santa Cruz).
   String? get cityName =>
@@ -322,14 +306,26 @@ abstract final class ServiceArea {
 /// "Z8-315", "LA8810", "BOV760".
 abstract final class FlightNumber {
   static final _pattern = RegExp(
-    r'^([A-Z]{2}|[A-Z][0-9]|[0-9][A-Z]|[A-Z]{3})([0-9]{1,4})[A-Z]?$',
+    r'^([A-Z]{2}|[A-Z][0-9]|[0-9][A-Z]|[A-Z]{3})([0-9]{1,4})([A-Z]?)$',
   );
 
-  /// Upper-cased with spaces and dashes removed.
-  static String normalize(String input) =>
-      input.toUpperCase().replaceAll(RegExp(r'[\s\-]'), '');
+  /// Mayúsculas, sin espacios, guiones, puntos ni barras, y sin ceros a la
+  /// izquierda en la parte numérica: la misma regla que el servidor
+  /// (functions/src/flight_time.ts, normalizeFlightNumber).
+  static String normalize(String input) {
+    final s = input.toUpperCase().replaceAll(RegExp(r'[\s.\-_/]'), '');
+    final m = _pattern.firstMatch(s);
+    if (m == null) return s;
+    final digits = m.group(2)!.replaceFirst(RegExp(r'^0+'), '');
+    return m.group(1)! + digits + (m.group(3) ?? '');
+  }
 
-  static bool isValid(String input) => _pattern.hasMatch(normalize(input));
+  static bool isValid(String input) {
+    final s = input.toUpperCase().replaceAll(RegExp(r'[\s.\-_/]'), '');
+    final m = _pattern.firstMatch(s);
+    // Número de 1 a 4 cifras que no sean todas cero.
+    return m != null && RegExp(r'[1-9]').hasMatch(m.group(2)!);
+  }
 
   /// Error to show for [input], or null when it is a valid flight number.
   static String? error(String input) {

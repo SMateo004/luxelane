@@ -1583,13 +1583,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonFlightInternational => 'Internacional';
 
   @override
-  String get commonAirportDomesticExit => 'Salida de llegadas nacionales';
-
-  @override
-  String get commonAirportInternationalExit =>
-      'Salida de llegadas internacionales';
-
-  @override
   String get commonOriginNoCoords =>
       'No pudimos ubicar la recogida en el mapa. Elige otra dirección.';
 
@@ -2329,18 +2322,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get driverFlightAirportPickup => 'Recogida en aeropuerto';
-
-  @override
-  String get driverFlightExitLabel => 'Tu pasajero sale por';
-
-  @override
-  String get driverFlightAskType =>
-      'Consulta con el pasajero si su vuelo es nacional o internacional';
-
-  @override
-  String driverFlightNumber(String flight) {
-    return 'Vuelo $flight';
-  }
 
   @override
   String get driverFlightCheckStatus => 'Ver estado en mivuelo.att.gob.bo';
@@ -3245,6 +3226,73 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get regErrorGeneric =>
       'No pudimos completar este paso. Inténtalo de nuevo.';
+
+  @override
+  String get bookingErrorFlightConfigMissing =>
+      'Aún no se pueden reservar recogidas con vuelo. Inténtalo más tarde.';
+
+  @override
+  String get bookingErrorAirportUnknown =>
+      'Este aeropuerto aún no está disponible para recogidas.';
+
+  @override
+  String get bookingErrorFlightNotAirportPickup =>
+      'El vuelo solo se indica cuando la recogida es en el aeropuerto de llegada.';
+
+  @override
+  String get bookingFlightSectionTitle => 'Tu vuelo';
+
+  @override
+  String get bookingFlightAirline => 'Aerolínea (opcional)';
+
+  @override
+  String get bookingFlightDate => 'Fecha del vuelo';
+
+  @override
+  String get bookingFlightTime => 'Hora de llegada según tu billete';
+
+  @override
+  String get bookingFlightPickDate => 'Elegir fecha';
+
+  @override
+  String get bookingFlightPickTime => 'Elegir hora';
+
+  @override
+  String get bookingFlightDateMissing => 'Indica la fecha del vuelo';
+
+  @override
+  String get bookingFlightTimeMissing =>
+      'Indica la hora de llegada de tu billete';
+
+  @override
+  String get bookingFlightCheckedBagQuestion => '¿Llevas equipaje facturado?';
+
+  @override
+  String get bookingFlightCheckedBagYes => 'Sí, con equipaje facturado';
+
+  @override
+  String get bookingFlightCheckedBagNo => 'No, solo de mano';
+
+  @override
+  String get bookingFlightCheckedBagHelp =>
+      'Si declaras sin equipaje y lo llevas, tu chófer puede irse antes de que salgas.';
+
+  @override
+  String rideFlightDelayed(String time) {
+    return 'Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las $time.';
+  }
+
+  @override
+  String get rideFlightDisrupted =>
+      'Tu vuelo figura como cancelado o desviado. Central revisará tu reserva.';
+
+  @override
+  String get driverFlightCardTitle => 'Vuelo';
+
+  @override
+  String driverFlightStatus(String status) {
+    return 'Estado: $status';
+  }
 
   @override
   String get flightStatusScheduled => 'Programado';

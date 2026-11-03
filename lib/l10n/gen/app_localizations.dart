@@ -2842,18 +2842,6 @@ abstract class AppLocalizations {
   /// **'Internacional'**
   String get commonFlightInternational;
 
-  /// Para el chófer: por dónde sale el pasajero de un vuelo nacional.
-  ///
-  /// In es, this message translates to:
-  /// **'Salida de llegadas nacionales'**
-  String get commonAirportDomesticExit;
-
-  /// Para el chófer: por dónde sale el pasajero de un vuelo internacional.
-  ///
-  /// In es, this message translates to:
-  /// **'Salida de llegadas internacionales'**
-  String get commonAirportInternationalExit;
-
   /// Error: la dirección de recogida no tiene coordenadas.
   ///
   /// In es, this message translates to:
@@ -4125,24 +4113,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Recogida en aeropuerto'**
   String get driverFlightAirportPickup;
-
-  /// Antes de la salida del aeropuerto por la que sale el pasajero.
-  ///
-  /// In es, this message translates to:
-  /// **'Tu pasajero sale por'**
-  String get driverFlightExitLabel;
-
-  /// Sin tipo de vuelo: pedir al chófer que lo consulte.
-  ///
-  /// In es, this message translates to:
-  /// **'Consulta con el pasajero si su vuelo es nacional o internacional'**
-  String get driverFlightAskType;
-
-  /// Enlace con el número de vuelo.
-  ///
-  /// In es, this message translates to:
-  /// **'Vuelo {flight}'**
-  String driverFlightNumber(String flight);
 
   /// Enlace al sitio de estado de vuelos (dominio, no se traduce).
   ///
@@ -5709,6 +5679,120 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No pudimos completar este paso. Inténtalo de nuevo.'**
   String get regErrorGeneric;
+
+  /// Error de la reserva con vuelo: el servidor respondió «flight_config_missing».
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no se pueden reservar recogidas con vuelo. Inténtalo más tarde.'**
+  String get bookingErrorFlightConfigMissing;
+
+  /// Error de la reserva con vuelo: el servidor respondió «airport_unknown».
+  ///
+  /// In es, this message translates to:
+  /// **'Este aeropuerto aún no está disponible para recogidas.'**
+  String get bookingErrorAirportUnknown;
+
+  /// Error de la reserva con vuelo: el servidor respondió «flight_not_airport_pickup».
+  ///
+  /// In es, this message translates to:
+  /// **'El vuelo solo se indica cuando la recogida es en el aeropuerto de llegada.'**
+  String get bookingErrorFlightNotAirportPickup;
+
+  /// Vuelos (pasajero): título del paso del vuelo en la reserva de aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vuelo'**
+  String get bookingFlightSectionTitle;
+
+  /// Vuelos (pasajero): campo aerolínea (opcional).
+  ///
+  /// In es, this message translates to:
+  /// **'Aerolínea (opcional)'**
+  String get bookingFlightAirline;
+
+  /// Vuelos (pasajero): campo fecha del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha del vuelo'**
+  String get bookingFlightDate;
+
+  /// Vuelos (pasajero): campo hora de llegada del billete.
+  ///
+  /// In es, this message translates to:
+  /// **'Hora de llegada según tu billete'**
+  String get bookingFlightTime;
+
+  /// Vuelos (pasajero): elegir la fecha.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir fecha'**
+  String get bookingFlightPickDate;
+
+  /// Vuelos (pasajero): elegir la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir hora'**
+  String get bookingFlightPickTime;
+
+  /// Vuelos (pasajero): falta la fecha.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la fecha del vuelo'**
+  String get bookingFlightDateMissing;
+
+  /// Vuelos (pasajero): falta la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la hora de llegada de tu billete'**
+  String get bookingFlightTimeMissing;
+
+  /// Vuelos (pasajero): pregunta del equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Llevas equipaje facturado?'**
+  String get bookingFlightCheckedBagQuestion;
+
+  /// Vuelos (pasajero): respuesta: con equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, con equipaje facturado'**
+  String get bookingFlightCheckedBagYes;
+
+  /// Vuelos (pasajero): respuesta: sin equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'No, solo de mano'**
+  String get bookingFlightCheckedBagNo;
+
+  /// Vuelos (pasajero): ayuda sobria sobre el equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'Si declaras sin equipaje y lo llevas, tu chófer puede irse antes de que salgas.'**
+  String get bookingFlightCheckedBagHelp;
+
+  /// Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las {time}.'**
+  String rideFlightDelayed(String time);
+
+  /// Vuelos (pasajero): vuelo cancelado o desviado en el viaje del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vuelo figura como cancelado o desviado. Central revisará tu reserva.'**
+  String get rideFlightDisrupted;
+
+  /// Vuelos (pasajero): título de la tarjeta del vuelo del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo'**
+  String get driverFlightCardTitle;
+
+  /// Vuelos (pasajero): estado del vuelo en la tarjeta del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado: {status}'**
+  String driverFlightStatus(String status);
 
   /// Vuelos: estado del vuelo (scheduled).
   ///

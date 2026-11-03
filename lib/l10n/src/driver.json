@@ -811,30 +811,6 @@
     "en": "Airport pickup",
     "pt": "Embarque no aeroporto"
   },
-  "driverFlightExitLabel": {
-    "description": "Antes de la salida del aeropuerto por la que sale el pasajero.",
-    "es": "Tu pasajero sale por",
-    "en": "Your passenger comes out through",
-    "pt": "Seu passageiro sai por"
-  },
-  "driverFlightAskType": {
-    "description": "Sin tipo de vuelo: pedir al chófer que lo consulte.",
-    "es": "Consulta con el pasajero si su vuelo es nacional o internacional",
-    "en": "Ask the passenger whether their flight is domestic or international",
-    "pt": "Pergunte ao passageiro se o voo é nacional ou internacional"
-  },
-  "driverFlightNumber": {
-    "description": "Enlace con el número de vuelo.",
-    "es": "Vuelo {flight}",
-    "en": "Flight {flight}",
-    "pt": "Voo {flight}",
-    "placeholders": {
-      "flight": {
-        "type": "String",
-        "example": "OB 760"
-      }
-    }
-  },
   "driverFlightCheckStatus": {
     "description": "Enlace al sitio de estado de vuelos (dominio, no se traduce).",
     "es": "Ver estado en mivuelo.att.gob.bo",

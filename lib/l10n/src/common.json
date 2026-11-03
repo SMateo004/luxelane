@@ -567,18 +567,6 @@
     "en": "International",
     "pt": "Internacional"
   },
-  "commonAirportDomesticExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo nacional.",
-    "es": "Salida de llegadas nacionales",
-    "en": "Domestic arrivals exit",
-    "pt": "Saída do desembarque nacional"
-  },
-  "commonAirportInternationalExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo internacional.",
-    "es": "Salida de llegadas internacionales",
-    "en": "International arrivals exit",
-    "pt": "Saída do desembarque internacional"
-  },
   "commonOriginNoCoords": {
     "description": "Error: la dirección de recogida no tiene coordenadas.",
     "es": "No pudimos ubicar la recogida en el mapa. Elige otra dirección.",

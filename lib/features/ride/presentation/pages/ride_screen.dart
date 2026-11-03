@@ -18,6 +18,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../booking/presentation/widgets/flight_step_fields.dart';
 import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
@@ -482,6 +483,14 @@ class _RideScreenState extends State<RideScreen> {
                   pickup: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Vuelo sin datos en vivo, retrasado, cancelado o
+                      // desviado: dicho claramente (Parte B de vuelos).
+                      if (_booking?.flight case final f?
+                          when _status != BookingStatus.completed &&
+                              _status != BookingStatus.cancelled) ...[
+                        RiderFlightStatusNote(flight: f),
+                        const SizedBox(height: LuxSpacing.sm),
+                      ],
                       _pickupSection(),
                       if (!receiptBelowDriver(_status)) _paymentSection(),
                     ],

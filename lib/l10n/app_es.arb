@@ -2108,14 +2108,6 @@
   "@commonFlightInternational": {
     "description": "Tipo de vuelo: llega desde el extranjero."
   },
-  "commonAirportDomesticExit": "Salida de llegadas nacionales",
-  "@commonAirportDomesticExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo nacional."
-  },
-  "commonAirportInternationalExit": "Salida de llegadas internacionales",
-  "@commonAirportInternationalExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo internacional."
-  },
   "commonOriginNoCoords": "No pudimos ubicar la recogida en el mapa. Elige otra dirección.",
   "@commonOriginNoCoords": {
     "description": "Error: la dirección de recogida no tiene coordenadas."
@@ -3137,24 +3129,6 @@
   "driverFlightAirportPickup": "Recogida en aeropuerto",
   "@driverFlightAirportPickup": {
     "description": "Tarjeta del vuelo sin aeropuerto conocido."
-  },
-  "driverFlightExitLabel": "Tu pasajero sale por",
-  "@driverFlightExitLabel": {
-    "description": "Antes de la salida del aeropuerto por la que sale el pasajero."
-  },
-  "driverFlightAskType": "Consulta con el pasajero si su vuelo es nacional o internacional",
-  "@driverFlightAskType": {
-    "description": "Sin tipo de vuelo: pedir al chófer que lo consulte."
-  },
-  "driverFlightNumber": "Vuelo {flight}",
-  "@driverFlightNumber": {
-    "description": "Enlace con el número de vuelo.",
-    "placeholders": {
-      "flight": {
-        "type": "String",
-        "example": "OB 760"
-      }
-    }
   },
   "driverFlightCheckStatus": "Ver estado en mivuelo.att.gob.bo",
   "@driverFlightCheckStatus": {
@@ -4275,6 +4249,92 @@
   "regErrorGeneric": "No pudimos completar este paso. Inténtalo de nuevo.",
   "@regErrorGeneric": {
     "description": "Error del registro de chóferes: el servidor respondió «(otro)»."
+  },
+  "bookingErrorFlightConfigMissing": "Aún no se pueden reservar recogidas con vuelo. Inténtalo más tarde.",
+  "@bookingErrorFlightConfigMissing": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «flight_config_missing»."
+  },
+  "bookingErrorAirportUnknown": "Este aeropuerto aún no está disponible para recogidas.",
+  "@bookingErrorAirportUnknown": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «airport_unknown»."
+  },
+  "bookingErrorFlightNotAirportPickup": "El vuelo solo se indica cuando la recogida es en el aeropuerto de llegada.",
+  "@bookingErrorFlightNotAirportPickup": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «flight_not_airport_pickup»."
+  },
+  "bookingFlightSectionTitle": "Tu vuelo",
+  "@bookingFlightSectionTitle": {
+    "description": "Vuelos (pasajero): título del paso del vuelo en la reserva de aeropuerto."
+  },
+  "bookingFlightAirline": "Aerolínea (opcional)",
+  "@bookingFlightAirline": {
+    "description": "Vuelos (pasajero): campo aerolínea (opcional)."
+  },
+  "bookingFlightDate": "Fecha del vuelo",
+  "@bookingFlightDate": {
+    "description": "Vuelos (pasajero): campo fecha del vuelo."
+  },
+  "bookingFlightTime": "Hora de llegada según tu billete",
+  "@bookingFlightTime": {
+    "description": "Vuelos (pasajero): campo hora de llegada del billete."
+  },
+  "bookingFlightPickDate": "Elegir fecha",
+  "@bookingFlightPickDate": {
+    "description": "Vuelos (pasajero): elegir la fecha."
+  },
+  "bookingFlightPickTime": "Elegir hora",
+  "@bookingFlightPickTime": {
+    "description": "Vuelos (pasajero): elegir la hora."
+  },
+  "bookingFlightDateMissing": "Indica la fecha del vuelo",
+  "@bookingFlightDateMissing": {
+    "description": "Vuelos (pasajero): falta la fecha."
+  },
+  "bookingFlightTimeMissing": "Indica la hora de llegada de tu billete",
+  "@bookingFlightTimeMissing": {
+    "description": "Vuelos (pasajero): falta la hora."
+  },
+  "bookingFlightCheckedBagQuestion": "¿Llevas equipaje facturado?",
+  "@bookingFlightCheckedBagQuestion": {
+    "description": "Vuelos (pasajero): pregunta del equipaje facturado."
+  },
+  "bookingFlightCheckedBagYes": "Sí, con equipaje facturado",
+  "@bookingFlightCheckedBagYes": {
+    "description": "Vuelos (pasajero): respuesta: con equipaje facturado."
+  },
+  "bookingFlightCheckedBagNo": "No, solo de mano",
+  "@bookingFlightCheckedBagNo": {
+    "description": "Vuelos (pasajero): respuesta: sin equipaje facturado."
+  },
+  "bookingFlightCheckedBagHelp": "Si declaras sin equipaje y lo llevas, tu chófer puede irse antes de que salgas.",
+  "@bookingFlightCheckedBagHelp": {
+    "description": "Vuelos (pasajero): ayuda sobria sobre el equipaje facturado."
+  },
+  "rideFlightDelayed": "Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las {time}.",
+  "@rideFlightDelayed": {
+    "description": "Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightDisrupted": "Tu vuelo figura como cancelado o desviado. Central revisará tu reserva.",
+  "@rideFlightDisrupted": {
+    "description": "Vuelos (pasajero): vuelo cancelado o desviado en el viaje del pasajero."
+  },
+  "driverFlightCardTitle": "Vuelo",
+  "@driverFlightCardTitle": {
+    "description": "Vuelos (pasajero): título de la tarjeta del vuelo del chófer."
+  },
+  "driverFlightStatus": "Estado: {status}",
+  "@driverFlightStatus": {
+    "description": "Vuelos (pasajero): estado del vuelo en la tarjeta del chófer.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
   },
   "flightStatusScheduled": "Programado",
   "@flightStatusScheduled": {

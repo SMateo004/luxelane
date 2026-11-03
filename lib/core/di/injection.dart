@@ -1,3 +1,4 @@
+import '../../features/booking/data/airport_repository.dart';
 import '../../features/business/data/business_lead_repository.dart';
 import '../../features/driver_registration/data/driver_registration_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -110,6 +111,9 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<VehicleRepository>(
     () => VehicleRepositoryImpl(firestore: sl()),
+  );
+  sl.registerLazySingleton<AirportRepository>(
+    () => FirestoreAirportRepository(sl()),
   );
   sl.registerLazySingleton<DriverRegistrationRepository>(
     () => DriverRegistrationRepositoryImpl(functions: sl()),

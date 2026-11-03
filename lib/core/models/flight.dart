@@ -209,3 +209,48 @@ class Airport {
     );
   }
 }
+
+/// Lo que la app manda en quoteBooking y createBooking (flight). El
+/// servidor normaliza el número, calcula readyAt y fija el estado.
+class FlightRequest {
+  const FlightRequest({
+    required this.airportCode,
+    required this.flightType,
+    this.airline,
+    required this.flightNumber,
+    required this.flightDate,
+    required this.scheduledArrival,
+    required this.hasCheckedBag,
+  });
+
+  final String airportCode;
+  final FlightType flightType;
+  final String? airline;
+  final String flightNumber;
+
+  /// Fecha local del vuelo (solo se usan año, mes y día).
+  final DateTime flightDate;
+
+  /// Hora programada según el billete, «HH:MM» local.
+  final String scheduledArrival;
+  final bool hasCheckedBag;
+
+  static String _two(int v) => v.toString().padLeft(2, '0');
+
+  String get flightDateWire =>
+      '${flightDate.year}-${_two(flightDate.month)}-${_two(flightDate.day)}';
+
+  Map<String, dynamic> toJson() => {
+        'airportCode': airportCode,
+        'flightType': flightType.name,
+        if (airline != null && airline!.trim().isNotEmpty)
+          'airline': airline!.trim(),
+        'flightNumber': flightNumber,
+        'flightDate': flightDateWire,
+        'scheduledArrival': scheduledArrival,
+        'hasCheckedBag': hasCheckedBag,
+      };
+
+  /// Clave para saber si hay que volver a cotizar.
+  String get key => toJson().values.join('|');
+}

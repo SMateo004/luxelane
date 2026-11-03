@@ -1575,12 +1575,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonFlightInternational => 'International';
 
   @override
-  String get commonAirportDomesticExit => 'Domestic arrivals exit';
-
-  @override
-  String get commonAirportInternationalExit => 'International arrivals exit';
-
-  @override
   String get commonOriginNoCoords =>
       'We could not find the pickup on the map. Choose another address.';
 
@@ -2319,18 +2313,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverFlightAirportPickup => 'Airport pickup';
-
-  @override
-  String get driverFlightExitLabel => 'Your passenger comes out through';
-
-  @override
-  String get driverFlightAskType =>
-      'Ask the passenger whether their flight is domestic or international';
-
-  @override
-  String driverFlightNumber(String flight) {
-    return 'Flight $flight';
-  }
 
   @override
   String get driverFlightCheckStatus => 'Check status at mivuelo.att.gob.bo';
@@ -3231,6 +3213,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get regErrorGeneric => 'We couldn\'t complete this step. Try again.';
+
+  @override
+  String get bookingErrorFlightConfigMissing =>
+      'Pickups with a flight cannot be booked yet. Try again later.';
+
+  @override
+  String get bookingErrorAirportUnknown =>
+      'This airport is not available for pickups yet.';
+
+  @override
+  String get bookingErrorFlightNotAirportPickup =>
+      'The flight is only entered when the pickup is at the arrival airport.';
+
+  @override
+  String get bookingFlightSectionTitle => 'Your flight';
+
+  @override
+  String get bookingFlightAirline => 'Airline (optional)';
+
+  @override
+  String get bookingFlightDate => 'Flight date';
+
+  @override
+  String get bookingFlightTime => 'Arrival time on your ticket';
+
+  @override
+  String get bookingFlightPickDate => 'Choose date';
+
+  @override
+  String get bookingFlightPickTime => 'Choose time';
+
+  @override
+  String get bookingFlightDateMissing => 'Enter the flight date';
+
+  @override
+  String get bookingFlightTimeMissing =>
+      'Enter the arrival time on your ticket';
+
+  @override
+  String get bookingFlightCheckedBagQuestion => 'Do you have checked luggage?';
+
+  @override
+  String get bookingFlightCheckedBagYes => 'Yes, checked luggage';
+
+  @override
+  String get bookingFlightCheckedBagNo => 'No, carry-on only';
+
+  @override
+  String get bookingFlightCheckedBagHelp =>
+      'If you say you have no checked luggage but you do, your chauffeur may leave before you come out.';
+
+  @override
+  String rideFlightDelayed(String time) {
+    return 'Your flight shows a delay. Your chauffeur will be at the pickup point at $time.';
+  }
+
+  @override
+  String get rideFlightDisrupted =>
+      'Your flight shows as cancelled or diverted. Our team will review your booking.';
+
+  @override
+  String get driverFlightCardTitle => 'Flight';
+
+  @override
+  String driverFlightStatus(String status) {
+    return 'Status: $status';
+  }
 
   @override
   String get flightStatusScheduled => 'Scheduled';

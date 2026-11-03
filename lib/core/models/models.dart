@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
+import 'flight.dart';
 import 'place_model.dart';
 import 'trip_preferences.dart';
 
@@ -515,6 +516,8 @@ class Booking {
     this.cancellationFeeBasis,
     this.noShowAvailableAt,
     this.lastReleaseReason,
+    this.flightRequest,
+    this.flight,
   });
 
   final String id;
@@ -549,6 +552,13 @@ class Booking {
 
   /// IATA code of the pickup airport, e.g. "VVI" (airport pickups only).
   final String? pickupAirport;
+
+  /// Solo al cotizar y reservar: el vuelo que declara el pasajero (no se
+  /// lee de Firestore).
+  final FlightRequest? flightRequest;
+
+  /// El vuelo de la reserva tal como lo guarda el servidor (con readyAt).
+  final FlightInfo? flight;
   final int? hours;
   final int passengerCount;
   final int luggageCount;
@@ -694,6 +704,7 @@ class Booking {
             ? (j['noShowAvailableAt'] as Timestamp).toDate()
             : null,
         lastReleaseReason: (j['lastRelease'] as Map?)?['reason'] as String?,
+        flight: FlightInfo.fromMap(j['flight'], readyAt: j['readyAt']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -769,6 +780,8 @@ class Booking {
         cancellationFeeBasis: cancellationFeeBasis,
         noShowAvailableAt: noShowAvailableAt,
         lastReleaseReason: lastReleaseReason,
+        flightRequest: flightRequest,
+        flight: flight,
       );
 }
 
@@ -1087,14 +1100,30 @@ String cancellationBasisLabel(String? basis) => switch (basis) {
 /// cobra. [approximateDistance] indica que la ruta por calles no estuvo
 /// disponible y se usó la línea recta con el factor de ruta del admin.
 class BookingQuote {
-  const BookingQuote({required this.price, this.approximateDistance = false});
+  const BookingQuote({
+    required this.price,
+    this.approximateDistance = false,
+    this.readyAt,
+    this.pickupPointMissing = false,
+  });
 
   final double price;
   final bool approximateDistance;
 
+  /// Con vuelo: hora a la que el chófer estará en el punto de recogida
+  /// (la calcula el servidor con la hora del vuelo y los minutos de salida).
+  final DateTime? readyAt;
+
+  /// El aeropuerto aún no tiene punto de recogida para ese tipo de vuelo.
+  final bool pickupPointMissing;
+
   factory BookingQuote.fromJson(Map<String, dynamic> j) => BookingQuote(
         price: (j['price'] as num).toDouble(),
         approximateDistance: j['distanceSource'] == 'fallback',
+        readyAt: j['readyAt'] is num
+            ? DateTime.fromMillisecondsSinceEpoch((j['readyAt'] as num).toInt())
+            : null,
+        pickupPointMissing: j['pickupPointMissing'] == true,
       );
 }
 

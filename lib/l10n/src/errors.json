@@ -508,5 +508,23 @@
     "es": "No pudimos completar este paso. Inténtalo de nuevo.",
     "en": "We couldn't complete this step. Try again.",
     "pt": "Não foi possível concluir esta etapa. Tente novamente."
+  },
+  "bookingErrorFlightConfigMissing": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «flight_config_missing».",
+    "es": "Aún no se pueden reservar recogidas con vuelo. Inténtalo más tarde.",
+    "en": "Pickups with a flight cannot be booked yet. Try again later.",
+    "pt": "Ainda não é possível reservar buscas com voo. Tente mais tarde."
+  },
+  "bookingErrorAirportUnknown": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «airport_unknown».",
+    "es": "Este aeropuerto aún no está disponible para recogidas.",
+    "en": "This airport is not available for pickups yet.",
+    "pt": "Este aeroporto ainda não está disponível para buscas."
+  },
+  "bookingErrorFlightNotAirportPickup": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «flight_not_airport_pickup».",
+    "es": "El vuelo solo se indica cuando la recogida es en el aeropuerto de llegada.",
+    "en": "The flight is only entered when the pickup is at the arrival airport.",
+    "pt": "O voo só é informado quando a busca é no aeroporto de chegada."
   }
 }
