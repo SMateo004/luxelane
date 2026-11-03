@@ -607,7 +607,7 @@
     "description": "Error: falta el número de vuelo en una recogida en el aeropuerto.",
     "es": "Indica tu número de vuelo: con él calculamos la hora de recogida.",
     "en": "Enter your flight number: we use it to work out your pickup time.",
-    "pt": "Informe o número do voo: com ele calculamos o horário da busca."
+    "pt": "Informe o número do voo: com ele calculamos o horário de embarque."
   },
   "commonFlightNumberInvalid": {
     "description": "Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen).",
