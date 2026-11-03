@@ -4,6 +4,41 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/vuelos, Parte A (A1–A10, commit 46bb704, 2026-11-03)
+
+Desde cierre/integracion c0b38fe. Emuladores de Firestore, Storage y Auth con
+`demo-luxelane`; reglas e integración sin las variables de proxy de la sesión.
+Minutos de salida, espera, tarifas, recargo nocturno, aeropuertos y vuelos de
+las pruebas: FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           312 archivos, 0 cambiados       0
+flutter test                                  pasa           944/944                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           729/729 (32 de 32 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1976/1976 (28 de 28 suites)     0
+npm run test:integration (demo-luxelane)      pasa           468/468 (50 de 50 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de c0b38fe con los tests de 46bb704, código de salida 1:
+
+```
+Test Suites: 2 failed, 26 passed, 28 total
+Tests:       32 failed, 1944 passed, 1976 total
+
+● aeropuertos y caché › airports: con sesión se lee; sin sesión, no; nadie escribe desde el cliente
+● aeropuertos y caché › airportsPublic: lo lee cualquiera, nadie lo escribe
+● airports/{code} › admin|ana|asig|beto|bloq|libre|nover › leer y listar (14)
+● airportsPublic/{code} › admin|ana|anon|asig|beto|bloq|libre|nover › leer y listar (16)
+```
+
 ## cierre/integracion tras fusionar cierre/registro-chofer (commit 005f5a9, 2026-11-03)
 
 Fusión `git merge --no-ff cierre/registro-chofer` (hasta ad7110b: Partes A,
