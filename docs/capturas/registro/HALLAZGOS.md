@@ -72,6 +72,10 @@ comprueba registration_pages_test.dart. NO VERIFICADO en un navegador real.
 
 ## Hallazgos
 
+0. Las capturas muestran el nombre anterior del certificado («Certificado
+   penal»); después volvió a llamarse «Certificado de antecedentes» (en:
+   «Criminal record certificate», pt: «Certidão de antecedentes criminais»).
+
 1. La nota libre del admin al rechazar sale tal como la escribió (en español),
    también con la app en inglés o portugués; el motivo de la lista sí se traduce.
 2. Con el texto al 200 %, el icono de los botones no crece con el texto.

@@ -365,7 +365,7 @@ En **staging**, con un Android y un iPhone, y anotar el resultado:
    (`Cache-Control: private, no-store`).
 4. **Permisos de cámara y fotos en iOS**: el aviso del sistema muestra el
    texto de `NSCameraUsageDescription` y `NSPhotoLibraryUsageDescription`
-   (solo en español: los `InfoPlist.strings` por idioma están pendientes).
+   en el idioma del teléfono (es, en o pt, de `InfoPlist.strings`).
 5. **Web**: el registro deja completar datos y vehículo, y no ofrece subir
    documentos ni la foto en vivo.
 
