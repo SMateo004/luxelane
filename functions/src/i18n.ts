@@ -168,9 +168,9 @@ export const MESSAGES = {
   // se ven en la pantalla bloqueada. Sin promesas.
   'flight_time_changed_rider.title': { es: 'Cambió la hora de recogida', en: 'Pickup time changed', pt: 'O horário de embarque mudou' },
   'flight_time_changed_rider.body': {
-    es: 'Por el horario de tu vuelo, tu chófer te esperará en el punto de recogida a las {time}.',
-    en: 'Because of your flight schedule, your chauffeur will wait for you at the pickup point at {time}.',
-    pt: 'Pelo horário do seu voo, seu motorista vai esperar você no ponto de embarque às {time}.',
+    es: 'Por el horario de tu vuelo, la hora de recogida pasa a las {time}.',
+    en: 'Because of your flight schedule, your pickup time is now {time}.',
+    pt: 'Pelo horário do seu voo, o horário de embarque passa a ser {time}.',
   },
   'flight_time_changed_driver.title': { es: 'Cambió la hora de un viaje', en: 'A trip time changed', pt: 'O horário de uma viagem mudou' },
   'flight_time_changed_driver.body': {

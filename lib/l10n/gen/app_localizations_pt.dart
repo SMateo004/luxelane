@@ -3285,7 +3285,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String rideFlightDelayed(String time) {
-    return 'Seu voo aparece atrasado. Seu motorista estará no ponto de embarque às $time.';
+    return 'Seu voo aparece atrasado. Novo horário de embarque: $time.';
   }
 
   @override
@@ -3333,7 +3333,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String flightDriverWillBeAt(String time) {
-    return 'Seu motorista estará no ponto de embarque às $time';
+    return 'Horário de embarque no ponto: $time';
   }
 
   @override

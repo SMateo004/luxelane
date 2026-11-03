@@ -73,9 +73,9 @@
   },
   "rideFlightDelayed": {
     "description": "Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.",
-    "es": "Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las {time}.",
-    "en": "Your flight shows a delay. Your chauffeur will be at the pickup point at {time}.",
-    "pt": "Seu voo aparece atrasado. Seu motorista estará no ponto de embarque às {time}.",
+    "es": "Tu vuelo figura con retraso. Nueva hora de recogida: {time}.",
+    "en": "Your flight shows a delay. New pickup time: {time}.",
+    "pt": "Seu voo aparece atrasado. Novo horário de embarque: {time}.",
     "placeholders": {
       "time": {
         "type": "String"

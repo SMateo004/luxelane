@@ -1110,7 +1110,7 @@ class BookingQuote {
   final double price;
   final bool approximateDistance;
 
-  /// Con vuelo: hora a la que el chófer estará en el punto de recogida
+  /// Con vuelo: hora de recogida en el punto
   /// (la calcula el servidor con la hora del vuelo y los minutos de salida).
   final DateTime? readyAt;
 

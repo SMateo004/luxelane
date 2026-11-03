@@ -5773,7 +5773,7 @@ abstract class AppLocalizations {
   /// Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.
   ///
   /// In es, this message translates to:
-  /// **'Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las {time}.'**
+  /// **'Tu vuelo figura con retraso. Nueva hora de recogida: {time}.'**
   String rideFlightDelayed(String time);
 
   /// Vuelos (pasajero): vuelo cancelado o desviado en el viaje del pasajero.
@@ -5851,7 +5851,7 @@ abstract class AppLocalizations {
   /// Vuelos: el pasajero ve a qué hora estará el chófer en el punto.
   ///
   /// In es, this message translates to:
-  /// **'Tu chófer estará en el punto de recogida a las {time}'**
+  /// **'Hora de recogida en el punto: {time}'**
   String flightDriverWillBeAt(String time);
 
   /// Vuelos: hora estimada de llegada.

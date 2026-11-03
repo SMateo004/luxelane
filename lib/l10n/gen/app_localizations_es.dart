@@ -3279,7 +3279,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String rideFlightDelayed(String time) {
-    return 'Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las $time.';
+    return 'Tu vuelo figura con retraso. Nueva hora de recogida: $time.';
   }
 
   @override
@@ -3327,7 +3327,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String flightDriverWillBeAt(String time) {
-    return 'Tu chófer estará en el punto de recogida a las $time';
+    return 'Hora de recogida en el punto: $time';
   }
 
   @override

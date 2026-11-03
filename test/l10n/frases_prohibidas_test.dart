@@ -31,6 +31,8 @@ const _porIdioma = <String, Map<String, String>>{
         r'esperar[aá]\s+(lo\s+que|el\s+tiempo\s+que)|espera\s+ilimitada|sin\s+l[ií]mite\s+de\s+espera|te\s+esperar[aá]\s+siempre',
     'ajuste automático':
         r'(ajustamos|adaptamos|actualizamos)\s+(autom[aá]ticamente\s+)?(la\s+hora|tu\s+recogida)|se\s+ajusta\s+(sola|autom[aá]ticamente)',
+    'el chófer estará a la hora':
+        r'tu\s+ch[oó]fer\s+(te\s+esperar[aá]|estar[aá])\s+en\s+el\s+punto',
   },
   'en': {
     'garantías': r'guarantee',
@@ -70,6 +72,8 @@ const _porIdioma = <String, Map<String, String>>{
         r'wait\s+as\s+long\s+as|unlimited\s+wait|no\s+waiting\s+limit|will\s+always\s+wait',
     'ajuste automático':
         r'(adjust|update)s?\s+(your\s+pickup|the\s+time)\s+automatically|automatically\s+(adjust|update)',
+    'el chófer estará a la hora':
+        r'your\s+chauffeur\s+will\s+(wait\s+for\s+you|be)\s+at\s+the\s+pickup',
   },
   'pt': {
     'garantías': r'garanti',
@@ -109,6 +113,8 @@ const _porIdioma = <String, Map<String, String>>{
         r'esperar[aá]\s+o\s+tempo\s+que|espera\s+ilimitada|sem\s+limite\s+de\s+espera|sempre\s+esperar[aá]',
     'ajuste automático':
         r'(ajustamos|atualizamos)\s+(automaticamente\s+)?(o\s+hor[aá]rio|sua\s+busca)|ajusta\s+automaticamente',
+    'el chófer estará a la hora':
+        r'seu\s+motorista\s+(vai\s+esperar|estar[aá])\s+(voc[eê]\s+)?no\s+ponto',
   },
 };
 

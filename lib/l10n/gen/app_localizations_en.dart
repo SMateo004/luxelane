@@ -3266,7 +3266,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String rideFlightDelayed(String time) {
-    return 'Your flight shows a delay. Your chauffeur will be at the pickup point at $time.';
+    return 'Your flight shows a delay. New pickup time: $time.';
   }
 
   @override
@@ -3315,7 +3315,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String flightDriverWillBeAt(String time) {
-    return 'Your chauffeur will be at the pickup point at $time';
+    return 'Pickup time at the point: $time';
   }
 
   @override

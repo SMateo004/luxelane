@@ -4310,7 +4310,7 @@
   "@bookingFlightCheckedBagHelp": {
     "description": "Vuelos (pasajero): ayuda sobria sobre el equipaje facturado."
   },
-  "rideFlightDelayed": "Tu vuelo figura con retraso. Tu chófer estará en el punto de recogida a las {time}.",
+  "rideFlightDelayed": "Tu vuelo figura con retraso. Nueva hora de recogida: {time}.",
   "@rideFlightDelayed": {
     "description": "Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.",
     "placeholders": {
@@ -4382,7 +4382,7 @@
       }
     }
   },
-  "flightDriverWillBeAt": "Tu chófer estará en el punto de recogida a las {time}",
+  "flightDriverWillBeAt": "Hora de recogida en el punto: {time}",
   "@flightDriverWillBeAt": {
     "description": "Vuelos: el pasajero ve a qué hora estará el chófer en el punto.",
     "placeholders": {
