@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-149 celdas permitidas, 2 con ⚠.
+179 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
@@ -360,6 +360,89 @@ Ninguna celda permitida.
 
 - leer: flota.
 - listar: flota.
+
+## `airports/{code}`
+
+**pasajero dueño**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+**otro pasajero**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+**chófer verif. asignado**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+**chófer verif. no asignado**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+**chófer no verificado**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+**usuario bloqueado**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+**admin**
+
+- leer: nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer.
+- listar: elegir el aeropuerto en la reserva.
+
+## `airportsPublic/{code}`
+
+**anónimo**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**pasajero dueño**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**otro pasajero**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**chófer verif. asignado**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**chófer verif. no asignado**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**chófer no verificado**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**usuario bloqueado**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+**admin**
+
+- leer: selector de aeropuerto sin sesión: código, nombre y ciudad.
+- listar: selector de aeropuerto sin sesión.
+
+## `flightBoard/{id}`
+
+Ninguna celda permitida.
 
 ## `pricingRules/{id}`
 

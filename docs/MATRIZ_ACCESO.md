@@ -60,6 +60,9 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `paymentRefs/{ref}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `paymentOperations/{key}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · · · · | L Li · · · | L Li · · · |
+| `airports/{code}` | sí | · · · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · |
+| `airportsPublic/{code}` | sí | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · |
+| `flightBoard/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · |
 | `config/global` | nueva | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · |
 | `config/finance` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · |
@@ -99,6 +102,9 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `paymentRefs/{ref}`: Unicidad de la referencia del pago (A1): solo el servidor.
 - `paymentOperations/{key}`: Números de operación ya usados en una confirmación (A4): solo el servidor.
 - `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8) y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).
+- `airports/{code}`: Aeropuertos y puntos de recogida (vuelos, A9): los lee quien tiene sesión; solo los escribe adminUpsertAirport.
+- `airportsPublic/{code}`: Lo mínimo para el selector sin sesión (código, nombre, ciudad); lo escribe adminUpsertAirport.
+- `flightBoard/{id}`: Caché de la fuente de vuelos (A6): solo el servidor.
 - `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión). Las escribe adminUpdatePricingRule (Parte A), sin campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).
 - `config/global`: Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Los ajustes del panel van por adminUpdateConfig (Parte A). Nadie la borra (H9).
 - `config/finance`: Comisión y parámetros internos: el admin la lee; la comisión se cambia con adminUpdateConfig (entre 0 y 100, Parte A). Nadie la borra.
