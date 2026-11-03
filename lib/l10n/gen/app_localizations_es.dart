@@ -2793,7 +2793,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get regDocTypeLicenseBack => 'Licencia de conducir (reverso)';
 
   @override
-  String get regDocTypeCriminalRecord => 'Certificado penal';
+  String get regDocTypeCriminalRecord => 'Certificado de antecedentes';
 
   @override
   String get regDocTypeVehicleOwnership =>

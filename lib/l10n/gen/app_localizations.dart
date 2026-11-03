@@ -4939,7 +4939,7 @@ abstract class AppLocalizations {
   /// Registro de chófer: nombre del documento de tipo criminal_record (app del chófer y panel).
   ///
   /// In es, this message translates to:
-  /// **'Certificado penal'**
+  /// **'Certificado de antecedentes'**
   String get regDocTypeCriminalRecord;
 
   /// Registro de chófer: nombre del documento de tipo vehicle_ownership (app del chófer y panel).

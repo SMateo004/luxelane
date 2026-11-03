@@ -95,6 +95,10 @@ const _pendientesDeDecision = <String, String>{
   'businessLead': '«te contactamos en menos de un día hábil» a empresas',
 };
 
+/// Clave del nombre del documento de antecedentes (registro de chóferes):
+/// la única que puede decir «antecedentes».
+const _antecedentesKey = 'regDocTypeCriminalRecord';
+
 /// Textos de un idioma: los valores del .arb y los del catálogo del servidor.
 List<String> _texts(String locale) {
   final arb = jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
@@ -123,7 +127,17 @@ void main() {
     for (final entry in _porIdioma[locale]!.entries) {
       test('$locale: nadie promete «${entry.key}»', () {
         final re = RegExp(entry.value, caseSensitive: false);
-        expect(texts.where(re.hasMatch).toList(), isEmpty);
+        // Única excepción, por clave: el nombre del documento del registro
+        // de chóferes («Certidão de antecedentes criminais»).
+        final allowed = entry.key == 'verificación de antecedentes'
+            ? '$_antecedentesKey: '
+            : null;
+        expect(
+            texts
+                .where((t) => allowed == null || !t.startsWith(allowed))
+                .where(re.hasMatch)
+                .toList(),
+            isEmpty);
       });
     }
   }
@@ -159,5 +173,18 @@ void main() {
         RegExp(_porIdioma['pt']!['garantías']!, caseSensitive: false)
             .hasMatch('Pontualidade garantida'),
         isTrue);
+  });
+
+  test('pt: «antecedentes» sigue vetado fuera de esa clave', () {
+    final re = RegExp(_porIdioma['pt']!['verificación de antecedentes']!,
+        caseSensitive: false);
+    expect(re.hasMatch('motoristas com antecedentes verificados'), isTrue);
+    final otros = _texts('pt')
+        .where((t) => !t.startsWith('$_antecedentesKey: '))
+        .where(re.hasMatch)
+        .toList();
+    expect(otros, isEmpty);
+    expect(_texts('pt'),
+        contains('$_antecedentesKey: Certidão de antecedentes criminais'));
   });
 }

@@ -806,7 +806,7 @@
   "regDocTypeNationalIdBack": "Documento de identidade (verso)",
   "regDocTypeLicenseFront": "Carteira de motorista (frente)",
   "regDocTypeLicenseBack": "Carteira de motorista (verso)",
-  "regDocTypeCriminalRecord": "Certidão criminal",
+  "regDocTypeCriminalRecord": "Certidão de antecedentes criminais",
   "regDocTypeVehicleOwnership": "Documento de propriedade do veículo",
   "regDocTypeVehicleSoat": "Seguro obrigatório de acidentes (SOAT)",
   "regDocTypeVehicleInspection": "Inspeção técnica do veículo",

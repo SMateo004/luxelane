@@ -2801,7 +2801,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get regDocTypeLicenseBack => 'Carteira de motorista (verso)';
 
   @override
-  String get regDocTypeCriminalRecord => 'Certidão criminal';
+  String get regDocTypeCriminalRecord => 'Certidão de antecedentes criminais';
 
   @override
   String get regDocTypeVehicleOwnership =>

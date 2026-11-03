@@ -3754,7 +3754,7 @@
   "@regDocTypeLicenseBack": {
     "description": "Registro de chófer: nombre del documento de tipo license_back (app del chófer y panel)."
   },
-  "regDocTypeCriminalRecord": "Certificado penal",
+  "regDocTypeCriminalRecord": "Certificado de antecedentes",
   "@regDocTypeCriminalRecord": {
     "description": "Registro de chófer: nombre del documento de tipo criminal_record (app del chófer y panel)."
   },
