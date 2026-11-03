@@ -1608,7 +1608,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get commonFlightNumberMissing =>
-      'Informe o número do seu voo para buscarmos você a tempo.';
+      'Informe o número do voo: com ele calculamos o horário da busca.';
 
   @override
   String get commonFlightNumberInvalid =>

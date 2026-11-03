@@ -21,6 +21,16 @@ const _porIdioma = <String, Map<String, String>>{
         r'verificaci[oó]n\s+de\s+(la\s+)?identidad|identidad\s+verificada|verificamos\s+(tu\s+)?identidad',
     'biometría':
         r'biom[eé]tric|prueba\s+de\s+vida|reconocimiento\s+facial|comparaci[oó]n\s+(de\s+)?(rostro|cara)',
+    // Vuelos (Prompt 15, B6): la hora sale de un dato que puede faltar o
+    // estar viejo; nada de llegar «a tiempo» ni de esperar sin límite.
+    'llegaremos a tiempo':
+        r'(llegaremos|llegar|recogerte|buscarte)\s+a\s+tiempo|nunca\s+llegamos\s+tarde|sin\s+retrasos|puntual(es|idad)?\b',
+    'vuelo en tiempo real':
+        r'vuelo[^\n]{0,40}tiempo\s+real|tiempo\s+real[^\n]{0,40}vuelo|monitoreamos\s+tu\s+vuelo|vigilamos\s+tu\s+vuelo|rastreamos\s+tu\s+vuelo',
+    'espera sin límite':
+        r'esperar[aá]\s+(lo\s+que|el\s+tiempo\s+que)|espera\s+ilimitada|sin\s+l[ií]mite\s+de\s+espera|te\s+esperar[aá]\s+siempre',
+    'ajuste automático':
+        r'(ajustamos|adaptamos|actualizamos)\s+(autom[aá]ticamente\s+)?(la\s+hora|tu\s+recogida)|se\s+ajusta\s+(sola|autom[aá]ticamente)',
   },
   'en': {
     'garantías': r'guarantee',
@@ -52,6 +62,14 @@ const _porIdioma = <String, Map<String, String>>{
         r'identity\s+verification|verif\w*\s+(your\s+)?identity|identity\s+(is\s+)?verified',
     'biometría':
         r'biometric|liveness|proof\s+of\s+life|facial\s+recognition|face\s+(match|comparison)',
+    'llegaremos a tiempo':
+        r"\bon[\s-]+time\b|we('ll|\s+will)\s+be\s+there|never\s+late|no\s+delays|punctual",
+    'vuelo en tiempo real':
+        r'flight[^\n]{0,40}real[\s-]time|real[\s-]time[^\n]{0,40}flight|live\s+flight\s+tracking|we\s+(monitor|track|watch)\s+your\s+flight',
+    'espera sin límite':
+        r'wait\s+as\s+long\s+as|unlimited\s+wait|no\s+waiting\s+limit|will\s+always\s+wait',
+    'ajuste automático':
+        r'(adjust|update)s?\s+(your\s+pickup|the\s+time)\s+automatically|automatically\s+(adjust|update)',
   },
   'pt': {
     'garantías': r'garanti',
@@ -83,6 +101,14 @@ const _porIdioma = <String, Map<String, String>>{
         r'verifica[cç][aã]o\s+de\s+identidade|identidade\s+verificada|verificamos\s+(a\s+sua\s+|sua\s+)?identidade',
     'biometría':
         r'biom[eé]tric|prova\s+de\s+vida|reconhecimento\s+facial|compara[cç][aã]o\s+(de\s+)?rosto',
+    'llegaremos a tiempo':
+        r'(chegaremos|chegar|busc\w*\s+voc[eê])\s+a\s+tempo|nunca\s+atras|sem\s+atrasos|pontua(l|is)\b',
+    'vuelo en tiempo real':
+        r'voo[^\n]{0,40}tempo\s+real|tempo\s+real[^\n]{0,40}voo|monitoramos\s+seu\s+voo|acompanhamos\s+seu\s+voo\s+ao\s+vivo|rastreamos\s+seu\s+voo',
+    'espera sin límite':
+        r'esperar[aá]\s+o\s+tempo\s+que|espera\s+ilimitada|sem\s+limite\s+de\s+espera|sempre\s+esperar[aá]',
+    'ajuste automático':
+        r'(ajustamos|atualizamos)\s+(automaticamente\s+)?(o\s+hor[aá]rio|sua\s+busca)|ajusta\s+automaticamente',
   },
 };
 
@@ -173,6 +199,28 @@ void main() {
         RegExp(_porIdioma['pt']!['garantías']!, caseSensitive: false)
             .hasMatch('Pontualidade garantida'),
         isTrue);
+  });
+
+  test(
+      'vuelos: la comprobación detecta las promesas de hora en los tres idiomas',
+      () {
+    for (final (l, k, bad) in [
+      ('es', 'llegaremos a tiempo', 'Tranquilo, llegaremos a tiempo'),
+      ('es', 'garantías', 'Garantizamos tu recogida'),
+      ('es', 'vuelo en tiempo real', 'Vemos tu vuelo en tiempo real'),
+      ('es', 'llegaremos a tiempo', 'Indica tu vuelo para recogerte a tiempo'),
+      ('es', 'espera sin límite', 'Tu chófer esperará lo que haga falta'),
+      ('en', 'llegaremos a tiempo', 'Your chauffeur will be on time'),
+      ('en', 'garantías', 'On-time guarantee'),
+      ('en', 'vuelo en tiempo real', 'Real-time flight tracking'),
+      ('pt', 'llegaremos a tiempo', 'Chegaremos a tempo'),
+      ('pt', 'garantías', 'Garantimos sua busca'),
+      ('pt', 'espera sin límite', 'O motorista esperará o tempo que for'),
+    ]) {
+      expect(RegExp(_porIdioma[l]![k]!, caseSensitive: false).hasMatch(bad),
+          isTrue,
+          reason: '$l/$k: $bad');
+    }
   });
 
   test('pt: «antecedentes» sigue vetado fuera de esa clave', () {

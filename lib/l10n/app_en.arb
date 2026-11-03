@@ -461,7 +461,7 @@
   "commonOriginOutsideArea": "For now we operate in {cities}. Choose a pickup in one of those cities.",
   "commonDestinationOtherCity": "The destination must be in {city}, the same city as the pickup.",
   "commonDestinationSameCity": "The destination must be in the same city as the pickup.",
-  "commonFlightNumberMissing": "Enter your flight number so we can pick you up on time.",
+  "commonFlightNumberMissing": "Enter your flight number: we use it to work out your pickup time.",
   "commonFlightNumberInvalid": "Invalid flight number. Example: OB 760 or Z8 315.",
   "commonAppTitle": "Luxelane — Executive chauffeur service",
   "commonTabBook": "Book",

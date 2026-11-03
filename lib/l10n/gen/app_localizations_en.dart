@@ -1594,7 +1594,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonFlightNumberMissing =>
-      'Enter your flight number so we can pick you up on time.';
+      'Enter your flight number: we use it to work out your pickup time.';
 
   @override
   String get commonFlightNumberInvalid =>

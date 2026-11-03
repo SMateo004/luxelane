@@ -1602,7 +1602,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get commonFlightNumberMissing =>
-      'Indica tu número de vuelo para recogerte a tiempo.';
+      'Indica tu número de vuelo: con él calculamos la hora de recogida.';
 
   @override
   String get commonFlightNumberInvalid =>

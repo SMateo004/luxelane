@@ -2869,7 +2869,7 @@ abstract class AppLocalizations {
   /// Error: falta el número de vuelo en una recogida en el aeropuerto.
   ///
   /// In es, this message translates to:
-  /// **'Indica tu número de vuelo para recogerte a tiempo.'**
+  /// **'Indica tu número de vuelo: con él calculamos la hora de recogida.'**
   String get commonFlightNumberMissing;
 
   /// Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen).

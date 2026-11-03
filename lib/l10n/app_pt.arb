@@ -461,7 +461,7 @@
   "commonOriginOutsideArea": "Por enquanto operamos em {cities}. Escolha um embarque em uma dessas cidades.",
   "commonDestinationOtherCity": "O destino deve estar em {city}, a mesma cidade do embarque.",
   "commonDestinationSameCity": "O destino deve estar na mesma cidade do embarque.",
-  "commonFlightNumberMissing": "Informe o número do seu voo para buscarmos você a tempo.",
+  "commonFlightNumberMissing": "Informe o número do voo: com ele calculamos o horário da busca.",
   "commonFlightNumberInvalid": "Número de voo inválido. Exemplo: OB 760 ou Z8 315.",
   "commonAppTitle": "Luxelane — Serviço de motorista executivo",
   "commonTabBook": "Reservar",
