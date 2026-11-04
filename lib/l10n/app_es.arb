@@ -4498,6 +4498,42 @@
   "@regBodyVan": {
     "description": "Registro de chófer: tipo de carrocería van."
   },
+  "driverTripClosedCompletedTitle": "Viaje terminado",
+  "@driverTripClosedCompletedTitle": {
+    "description": "Ventana del chófer: cierre del viaje terminado."
+  },
+  "driverTripClosedCompletedBody": "Lo verás en tu historial.",
+  "@driverTripClosedCompletedBody": {
+    "description": "Ventana del chófer: dónde verá el viaje terminado."
+  },
+  "driverTripClosedNoShowTitle": "Marcaste que el pasajero no se presentó",
+  "@driverTripClosedNoShowTitle": {
+    "description": "Ventana del chófer: cierre tras marcar que el pasajero no se presentó."
+  },
+  "driverTripClosedNoShowBody": "Central revisará el viaje.",
+  "@driverTripClosedNoShowBody": {
+    "description": "Ventana del chófer: qué pasa tras «no se presentó»."
+  },
+  "driverTripClosedCancelledTitle": "El viaje se canceló",
+  "@driverTripClosedCancelledTitle": {
+    "description": "Ventana del chófer: el viaje se canceló mientras el chófer lo tenía abierto."
+  },
+  "driverTripClosedCancelledBody": "Ya no tienes que ir a la recogida.",
+  "@driverTripClosedCancelledBody": {
+    "description": "Ventana del chófer: tras la cancelación."
+  },
+  "driverTripClosedOtherTitle": "Este viaje ya no está a tu cargo",
+  "@driverTripClosedOtherTitle": {
+    "description": "Ventana del chófer: el viaje dejó de estar a cargo del chófer y no se sabe aún cómo terminó."
+  },
+  "driverTripClosedOtherBody": "Si tienes dudas, consulta con central.",
+  "@driverTripClosedOtherBody": {
+    "description": "Ventana del chófer: qué hacer si no sabe por qué."
+  },
+  "driverTripClosedBack": "Volver a solicitudes",
+  "@driverTripClosedBack": {
+    "description": "Ventana del chófer: botón para volver a las solicitudes."
+  },
   "errorTooManyAttempts": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
   "@errorTooManyAttempts": {
     "description": "Error: el servidor o Firebase limitó los intentos."

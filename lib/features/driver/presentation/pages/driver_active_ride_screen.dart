@@ -11,6 +11,7 @@ import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../bloc/driver_bloc.dart';
 import '../widgets/driver_preferences_card.dart';
 import '../widgets/driver_step_action.dart';
+import '../widgets/driver_trip_closed_view.dart';
 import '../widgets/flight_info_card.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
@@ -31,6 +32,11 @@ class DriverActiveRideScreen extends StatelessWidget {
         } catch (_) {}
 
         if (booking == null) {
+          // Ventana del chófer (A4): la reserva salió de su ventana mientras
+          // la tenía abierta. Cierre normal, no «viaje no encontrado».
+          if (state.closedTrips.containsKey(bookingId)) {
+            return DriverTripClosedView(status: state.closedTrips[bookingId]);
+          }
           return Scaffold(
             appBar: AppBar(),
             body: Center(child: Text(context.l10n.driverTripNotFound)),

@@ -3319,6 +3319,36 @@ class AppLocalizationsEs extends AppLocalizations {
   String get regBodyVan => 'Van';
 
   @override
+  String get driverTripClosedCompletedTitle => 'Viaje terminado';
+
+  @override
+  String get driverTripClosedCompletedBody => 'Lo verás en tu historial.';
+
+  @override
+  String get driverTripClosedNoShowTitle =>
+      'Marcaste que el pasajero no se presentó';
+
+  @override
+  String get driverTripClosedNoShowBody => 'Central revisará el viaje.';
+
+  @override
+  String get driverTripClosedCancelledTitle => 'El viaje se canceló';
+
+  @override
+  String get driverTripClosedCancelledBody =>
+      'Ya no tienes que ir a la recogida.';
+
+  @override
+  String get driverTripClosedOtherTitle => 'Este viaje ya no está a tu cargo';
+
+  @override
+  String get driverTripClosedOtherBody =>
+      'Si tienes dudas, consulta con central.';
+
+  @override
+  String get driverTripClosedBack => 'Volver a solicitudes';
+
+  @override
   String get errorTooManyAttempts =>
       'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
 

@@ -7,11 +7,13 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/driver_trip.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../driver_registration/data/driver_registration_repository.dart';
+import '../../data/driver_history_repository.dart';
 
 // ---------------------------------------------------------------------------
 // Events
@@ -78,6 +80,15 @@ class _DriverLocationTick extends DriverEvent {
 
 class _DriverLocationDenied extends DriverEvent {
   const _DriverLocationDenied();
+}
+
+/// Busca en el historial el estado final de un viaje que salió de la
+/// ventana del chófer (ventana del chófer, A4).
+class _DriverTripClosedLookup extends DriverEvent {
+  const _DriverTripClosedLookup(this.bookingId);
+  final String bookingId;
+  @override
+  List<Object?> get props => [bookingId];
 }
 
 class DriverBookingAccepted extends DriverEvent {
@@ -189,6 +200,7 @@ class DriverLoaded extends DriverState {
     this.updateRequired,
     this.updateSeq = 0,
     this.mfaBlock,
+    this.closedTrips = const {},
   });
 
   final User user;
@@ -220,6 +232,12 @@ class DriverLoaded extends DriverState {
   /// Con config/security.mfaEnforced, no se conecta sin el segundo factor
   /// en la sesión: qué le falta (null si nada).
   final SecondFactorState? mfaBlock;
+
+  /// Viajes que salieron de la ventana del chófer mientras la app los
+  /// tenía (ventana del chófer, A4): terminado, cancelado o «no se
+  /// presentó». El valor es el estado final; null mientras no se sabe
+  /// (se lee del resumen del historial) o si ya no es suyo.
+  final Map<String, BookingStatus?> closedTrips;
 
   /// Solicitudes que este chófer puede atender: de su clase de vehículo y
   /// sin descartar.
@@ -337,6 +355,7 @@ class DriverLoaded extends DriverState {
         noticeSeq,
         updateSeq,
         mfaBlock,
+        closedTrips,
       ];
 
   DriverLoaded copyWith({
@@ -351,6 +370,7 @@ class DriverLoaded extends DriverState {
     AppUpdateRequiredFailure? updateRequired,
     SecondFactorState? mfaBlock,
     bool clearMfaBlock = false,
+    Map<String, BookingStatus?>? closedTrips,
   }) =>
       DriverLoaded(
         user: user ?? this.user,
@@ -366,6 +386,7 @@ class DriverLoaded extends DriverState {
         updateRequired: updateRequired ?? this.updateRequired,
         updateSeq: updateRequired != null ? updateSeq + 1 : updateSeq,
         mfaBlock: clearMfaBlock ? null : (mfaBlock ?? this.mfaBlock),
+        closedTrips: closedTrips ?? this.closedTrips,
       );
 }
 
@@ -400,7 +421,14 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     required VehicleRepository vehicleRepository,
     required MapsService mapsService,
     DriverRegistrationRepository? registrationRepository,
+    DriverHistoryRepository? historyRepository,
+    List<Duration> historyRetryDelays = const [
+      Duration(seconds: 2),
+      Duration(seconds: 4),
+    ],
   })  : _bookingRepo = bookingRepository,
+        _history = historyRepository,
+        _historyRetryDelays = historyRetryDelays,
         _registration = registrationRepository,
         _tripFlow = tripFlowRepository,
         _userRepo = userRepository,
@@ -409,6 +437,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         super(const DriverInitial()) {
     on<DriverStarted>(_onStart);
     on<DriverBookingsWatched>(_onWatchBookings, transformer: _latest());
+    on<_DriverTripClosedLookup>(_onTripClosedLookup);
     on<DriverPendingBookingsWatched>(_onWatchPending, transformer: _latest());
     on<DriverAvailabilityToggled>(_onToggleAvailability);
     on<DriverLocationTrackingStarted>(_onStartTracking);
@@ -440,6 +469,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   /// Para saber si config/security.mfaEnforced aplica (la app no lee
   /// config/security) y si la sesión tiene el segundo factor.
   final DriverRegistrationRepository? _registration;
+  final DriverHistoryRepository? _history;
+  final List<Duration> _historyRetryDelays;
   bool? _mfaEnforced;
   StreamSubscription<Position>? _positionSub;
 
@@ -523,7 +554,24 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       _bookingRepo.watchDriverBookings(event.driverId),
       onData: (bookings) {
         if (state is! DriverLoaded) return state;
-        final next = (state as DriverLoaded).copyWith(bookings: bookings);
+        final cur = state as DriverLoaded;
+        // Ventana del chófer (A4): una reserva que estaba en la lista y ya no
+        // está salió de la ventana (terminada, cancelada, «no se presentó»
+        // o reasignada). No es un error: se recuerda para mostrar el cierre.
+        final ids = {for (final b in bookings) b.id};
+        final gone = [
+          for (final b in cur.bookings)
+            if (!ids.contains(b.id)) b.id,
+        ];
+        final closed = {
+          for (final e in cur.closedTrips.entries)
+            if (!ids.contains(e.key)) e.key: e.value,
+          for (final id in gone) id: cur.closedTrips[id],
+        };
+        for (final id in gone) {
+          if (closed[id] == null) add(_DriverTripClosedLookup(id));
+        }
+        final next = cur.copyWith(bookings: bookings, closedTrips: closed);
         // Con un viaje en curso la ubicación se comparte aunque el chófer
         // figure como ocupado.
         if (next.activeBooking != null && !next.isTracking) {
@@ -543,6 +591,39 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
             )
           : state,
     );
+  }
+
+  /// Estado final de un viaje que salió de la ventana, leído del resumen
+  /// del historial (lo escribe el servidor al cerrar la reserva; puede
+  /// tardar un momento: unos reintentos cortos).
+  Future<void> _onTripClosedLookup(
+    _DriverTripClosedLookup event,
+    Emitter<DriverState> emit,
+  ) async {
+    final history = _history;
+    if (history == null || state is! DriverLoaded) return;
+    final uid = (state as DriverLoaded).user.id;
+    for (var attempt = 0;; attempt++) {
+      DriverTripSummary? trip;
+      try {
+        trip = await history.getTrip(uid, event.bookingId);
+      } catch (_) {
+        trip = null;
+      }
+      if (state is! DriverLoaded) return;
+      final cur = state as DriverLoaded;
+      if (!cur.closedTrips.containsKey(event.bookingId) ||
+          cur.closedTrips[event.bookingId] != null) {
+        return;
+      }
+      if (trip != null) {
+        emit(cur.copyWith(
+            closedTrips: {...cur.closedTrips, event.bookingId: trip.status}));
+        return;
+      }
+      if (attempt >= _historyRetryDelays.length) return;
+      await Future<void>.delayed(_historyRetryDelays[attempt]);
+    }
   }
 
   Future<void> _onWatchProfile(
@@ -772,7 +853,16 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     DriverTripCompleted event,
     Emitter<DriverState> emit,
   ) async {
-    await _advance(emit, event.bookingId, BookingStatus.completed);
+    final ok = await _advance(emit, event.bookingId, BookingStatus.completed);
+    // Lo cerró el chófer: el estado final lo da la respuesta de
+    // advanceBooking, antes de que la reserva salga de la lista (A4).
+    if (ok && state is DriverLoaded) {
+      final cur = state as DriverLoaded;
+      emit(cur.copyWith(closedTrips: {
+        ...cur.closedTrips,
+        event.bookingId: BookingStatus.completed,
+      }));
+    }
   }
 
   Future<void> _onNoShow(
@@ -785,8 +875,15 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       return;
     }
     final ok = await _advance(emit, event.bookingId, BookingStatus.noShow);
-    if (ok) {
-      _notice(emit, L10n.current.driverNoticeNoShowReported);
+    if (ok && state is DriverLoaded) {
+      final cur = state as DriverLoaded;
+      emit(cur.copyWith(
+        notice: L10n.current.driverNoticeNoShowReported,
+        closedTrips: {
+          ...cur.closedTrips,
+          event.bookingId: BookingStatus.noShow
+        },
+      ));
     }
   }
 
