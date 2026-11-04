@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
 import 'core/config/app_check_setup.dart';
+import 'core/config/brand_fonts.dart';
 import 'core/config/emulator_setup.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_startup.dart';
@@ -24,27 +24,8 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Pre-load brand fonts so every TextStyle(fontFamily: 'Montserrat'/
-  // 'Cormorant Garamond') resolves correctly across the entire app —
-  // web and native.
-  GoogleFonts.config.allowRuntimeFetching = true;
-  await Future.wait([
-    GoogleFonts.pendingFonts([
-      GoogleFonts.montserrat(),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w300),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w500),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-      GoogleFonts.cormorantGaramond(),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
-      GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
-      GoogleFonts.cormorantGaramond(
-        fontWeight: FontWeight.w300,
-        fontStyle: FontStyle.italic,
-      ),
-    ]),
-  ]);
+  // Fuentes de marca: como mucho 8 s; sin red sigue con la del sistema.
+  await preloadBrandFonts();
 
   final firebase = await startFirebase(
     () => Firebase.initializeApp(
