@@ -93,6 +93,8 @@ lleva texto fijo, si falta un idioma o si cambian los marcadores.
 | incident_raised | admin | SOS nuevo | SOS en un viaje |
 | incident_cancel_requested | admin | quien pidió ayuda canceló el SOS | SOS cancelado: verificar por llamada |
 | incident_unacknowledged | admin | SOS sin reconocer (escalada) | SOS sin reconocer |
+| reminder_rider | pasajero | recordatorio programado (config/ops.reminderOffsetsMinutes.rider) | Tu viaje se acerca |
+| reminder_driver | chófer | recordatorio programado (config/ops.reminderOffsetsMinutes.driver) | Tienes un viaje próximo |
 
 Otros textos del servidor que ve una persona: el nombre del destino en el
 servicio por horas («Servicio por horas») y los nombres de las clases. Las

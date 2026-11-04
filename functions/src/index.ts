@@ -39,6 +39,7 @@ import { checkBookingPrice, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { summaryDriver, writeDriverHistory } from './driver_history';
+import * as reminders from './reminders';
 import { fromCents, toCents } from './money';
 
 admin.initializeApp();
@@ -1270,6 +1271,35 @@ export const applyRiderRating = onDocumentUpdated('bookings/{bookingId}', async 
 // cierre (chófer, pasajero o admin), y que suma el viaje
 // a su contador. Si el pasajero cancela, avisa al chófer.
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Recordatorios programados (Prompt 18, Parte A). Los disparadores
+// recalculan reminders.nextAt cuando cambia algo de la reserva (hora ancla,
+// chófer, estado) o su estado de pago; remindersJob envía lo vencido.
+// Disparadores y no cada camino: cubren todos los que escriben la reserva o
+// el pago, hoy y mañana (ver reminders.ts). Idempotentes, sin bucles: no
+// escriben si nada cambia.
+// ---------------------------------------------------------------------------
+
+const reminderDeps = (): reminders.ReminderDeps => ({ db, push: (tokens, title, body, data) => sendPush(tokens, title, body, data) });
+
+export const rescheduleRemindersOnBooking = onDocumentWritten({ document: 'bookings/{bookingId}', retry: true },
+  async (event) => {
+    if (!event.data?.after.exists) return;
+    await reminders.rescheduleReminders(reminderDeps(), event.params.bookingId);
+  });
+
+export const rescheduleRemindersOnPayment = onDocumentWritten(
+  { document: 'bookings/{bookingId}/payment/state', retry: true },
+  async (event) => {
+    await reminders.rescheduleReminders(reminderDeps(), event.params.bookingId);
+  });
+
+/** Cada 5 minutos (operación, no negocio): el retraso máximo de un aviso. */
+export const remindersJob = onSchedule('every 5 minutes', async () => {
+  const r = await reminders.runReminders(reminderDeps());
+  if (r.sent) logger.info('remindersJob', 'sent', r);
+});
 
 // ---------------------------------------------------------------------------
 // Ventana del chófer (decisión 2): resumen del viaje en

@@ -52,6 +52,7 @@ describe('catálogo', () => {
       'driver_application_approved', 'driver_application_needs_changes', 'driver_application_rejected',
       'driver_document_expired', 'driver_document_expiring',
       'flight_disrupted_driver', 'flight_disrupted_rider', 'flight_time_changed_driver', 'flight_time_changed_rider',
+      'reminder_driver', 'reminder_rider',
     ].sort());
   });
 });

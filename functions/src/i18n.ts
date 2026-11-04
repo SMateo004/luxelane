@@ -172,6 +172,20 @@ export const MESSAGES = {
     en: 'Because of your flight schedule, your pickup time is now {time}.',
     pt: 'Pelo horário do seu voo, o horário de embarque passa a ser {time}.',
   },
+  // Recordatorios (Prompt 18, A2): solo la hora, sin direcciones, nombres,
+  // vuelo ni código (se ven en la pantalla bloqueada). Sin promesas.
+  'reminder_rider.title': { es: 'Tu viaje se acerca', en: 'Your trip is coming up', pt: 'Sua viagem está chegando' },
+  'reminder_rider.body': {
+    es: 'Hora de recogida prevista: {time}. Los detalles están en la app.',
+    en: 'Scheduled pickup time: {time}. The details are in the app.',
+    pt: 'Horário de embarque previsto: {time}. Os detalhes estão no app.',
+  },
+  'reminder_driver.title': { es: 'Tienes un viaje próximo', en: 'You have an upcoming trip', pt: 'Você tem uma viagem em breve' },
+  'reminder_driver.body': {
+    es: 'Hora de recogida: {time}. Revisa los detalles en la app.',
+    en: 'Pickup time: {time}. Check the details in the app.',
+    pt: 'Horário de embarque: {time}. Confira os detalhes no app.',
+  },
   'flight_time_changed_driver.title': { es: 'Cambió la hora de un viaje', en: 'A trip time changed', pt: 'O horário de uma viagem mudou' },
   'flight_time_changed_driver.body': {
     es: 'Por el horario del vuelo, debes estar en el punto de recogida a las {time}. Mira el detalle en la app.',
@@ -258,6 +272,8 @@ export const NOTICES = {
   flight_time_changed_driver: ['flight_time_changed_driver.title', 'flight_time_changed_driver.body'],
   flight_disrupted_rider: ['flight_disrupted_rider.title', 'flight_disrupted_rider.body'],
   flight_disrupted_driver: ['flight_disrupted_driver.title', 'flight_disrupted_driver.body'],
+  reminder_rider: ['reminder_rider.title', 'reminder_rider.body'],
+  reminder_driver: ['reminder_driver.title', 'reminder_driver.body'],
 } as const satisfies Record<string, readonly [MessageKey, MessageKey]>;
 
 export type NoticeType = keyof typeof NOTICES;
