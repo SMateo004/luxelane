@@ -34,16 +34,23 @@ del entorno y no de la app, se repitieron en serie; ver al final).
    los leía como botones seleccionables: ahora 48 px como mínimo, botón con
    estado elegido. c2544d9, `test/flights/flight_type_selector_test.dart`.
 
-## Lo que la auditoría de semántica marca y no es de vuelos
+## Lo que la auditoría de semántica marcó y no es de vuelos
 
-- «Cancelar reserva» en el viaje del pasajero mide 27 px de alto (botón de
-  texto anterior a esta rama). Pendiente fuera de vuelos.
-- Los campos a medio cortar por el borde de la ventana (p. ej. «Fecha del
-  vuelo … 350x11») son los que la captura deja a medias: no son objetivos
-  pequeños de verdad.
-- El detalle del panel (v12) tiene un nodo interactivo sin etiqueta: el
-  panel sale siempre en español y queda fuera de la regla de 48 px de las
-  apps; NO VERIFICADO cuál es.
+- **«Cancelar reserva» con 27 px: falso positivo.** El botón
+  (`LuxButton.ghost`) mide 48 px de alto (350×48 a 390 px, 352×48 a
+  1280 px, 100 px con el texto al 200 %); la captura lo cortaba por el borde
+  de la ventana. `test/ride/cancel_button_size_test.dart` fija esos 48 px y
+  la auditoría del guion ya solo mide los objetivos enteros dentro de la
+  ventana.
+- Los campos a medio cortar por el borde (p. ej. «Fecha del vuelo … 350x11»)
+  eran el mismo falso positivo.
+- **Nodo sin etiqueta del detalle del panel (v12):** la X de cerrar del
+  diálogo de detalle de la reserva (`IconButton` sin `tooltip`,
+  `lib/features/admin/presentation/widgets/admin_sections.dart`, 48×48). Viene
+  de 4bb5f39 (2026-10-23), anterior a esta rama: no se toca aquí. La X de la
+  tarjeta de vuelo de esta rama (`admin_flight_card.dart`) sí tiene etiqueta.
+  El manifiesto guarda ahora rol, tamaño, posición y textos cercanos de cada
+  nodo sin etiqueta (`sinEtiquetaDetalle`).
 
 ## Del entorno de capturas (no de la app)
 

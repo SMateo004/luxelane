@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-04T02:04:28.313Z",
+  "generado": "2026-11-04T02:43:13.582Z",
   "idiomas": [
     "es"
   ],
@@ -227,15 +227,6 @@
     },
     {
       "idioma": "es",
-      "estado": "v12-panel-detalle",
-      "ancho": 390,
-      "escalaTexto": 1,
-      "archivo": "es/v12-panel-detalle_390.png",
-      "resultado": "ok",
-      "motivo": ""
-    },
-    {
-      "idioma": "es",
       "estado": "v13-panel-fijar",
       "ancho": 1280,
       "escalaTexto": 1,
@@ -321,24 +312,6 @@
       "ancho": 768,
       "escalaTexto": 1,
       "archivo": "es/v11-panel-cancelados_768.png",
-      "resultado": "ok",
-      "motivo": ""
-    },
-    {
-      "idioma": "es",
-      "estado": "v12-panel-detalle",
-      "ancho": 1280,
-      "escalaTexto": 1,
-      "archivo": "es/v12-panel-detalle_1280.png",
-      "resultado": "ok",
-      "motivo": ""
-    },
-    {
-      "idioma": "es",
-      "estado": "v12-panel-detalle",
-      "ancho": 768,
-      "escalaTexto": 1,
-      "archivo": "es/v12-panel-detalle_768.png",
       "resultado": "ok",
       "motivo": ""
     },
@@ -492,6 +465,33 @@
       "ancho": 1280,
       "escalaTexto": 1,
       "archivo": "es/v06-chofer-retrasado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "v12-panel-detalle",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/v12-panel-detalle_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "v12-panel-detalle",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/v12-panel-detalle_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "v12-panel-detalle",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/v12-panel-detalle_1280.png",
       "resultado": "ok",
       "motivo": ""
     }
@@ -664,22 +664,6 @@
         "Sin datos · 3",
         "Cancelados o desviados · 1",
         "Reserva V-CANC, vuelo VVI · Aerolínea de prueba ZZ303, Cancelado. Abrir el detalle. Chófer en el punto: 3 nov 2026 · 23:01"
-      ]
-    },
-    {
-      "idioma": "es",
-      "estado": "v12-panel-detalle",
-      "interactivos": 1,
-      "sinEtiqueta": 1,
-      "pequenos": [],
-      "textos": [
-        "Pasajero Ana Prueba",
-        "Chófer Luis Prueba",
-        "Origen Aeropuerto Internacional Viru Viru (prueba)",
-        "Destino Plaza 24 de Septiembre (prueba)",
-        "Fecha del servicio 03/11/2026 22:31",
-        "Servicio Solo ida · Business Class",
-        "Creada 03/11/2026 18:31"
       ]
     },
     {
@@ -900,6 +884,25 @@
         "Reservar RESERVAR",
         "Mis viajes MIS VIAJES",
         "Perfil PERFIL"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "v12-panel-detalle",
+      "interactivos": 1,
+      "sinEtiqueta": 1,
+      "sinEtiquetaDetalle": [
+        "button 48x48 @302,66 cerca de: Reserva #V-SIND Confirmado | Pasajero Ana Prueba | Chófer Luis Prueba"
+      ],
+      "pequenos": [],
+      "textos": [
+        "Pasajero Ana Prueba",
+        "Chófer Luis Prueba",
+        "Origen Aeropuerto Internacional Viru Viru (prueba)",
+        "Destino Plaza 24 de Septiembre (prueba)",
+        "Fecha del servicio 04/11/2026 00:43",
+        "Servicio Solo ida · Business Class",
+        "Creada 03/11/2026 20:43"
       ]
     }
   ]

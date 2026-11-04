@@ -169,7 +169,18 @@ async function audit(page) {
     return {
       interactivos: interactive.length,
       sinEtiqueta: interactive.filter((e) => !label(e) && !e.querySelector('input')).length,
-      pequenos: interactive.map((e) => ({ e, r: e.getBoundingClientRect() })).filter(({ r }) => r.width < 48 || r.height < 48)
+      // Para encontrarlos: rol, tamaño, posición y el texto más cercano.
+      sinEtiquetaDetalle: interactive.filter((e) => !label(e) && !e.querySelector('input')).map((e) => {
+        const r = e.getBoundingClientRect();
+        const near = nodes.filter((n) => n !== e && label(n)).map((n) => ({ n, d: Math.hypot(n.getBoundingClientRect().x - r.x, n.getBoundingClientRect().y - r.y) }))
+          .sort((a, b) => a.d - b.d).slice(0, 3).map(({ n }) => label(n).slice(0, 40));
+        return `${e.getAttribute('role') || e.tagName} ${Math.round(r.width)}x${Math.round(r.height)} @${Math.round(r.x)},${Math.round(r.y)} cerca de: ${near.join(' | ')}`;
+      }),
+      // Solo los que están enteros en la ventana: uno cortado por el borde
+      // (p. ej. «Cancelar reserva», 48 px) daba 27 px y no es pequeño.
+      pequenos: interactive.map((e) => ({ e, r: e.getBoundingClientRect() }))
+        .filter(({ r }) => r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth)
+        .filter(({ r }) => r.width < 48 || r.height < 48)
         .map(({ e, r }) => `${label(e).slice(0, 40)} ${Math.round(r.width)}x${Math.round(r.height)}`),
       textos: [...new Set(nodes.filter(vis).filter((e) => !e.querySelector('flt-semantics')).map(label).filter(Boolean))].slice(0, 40),
     };
