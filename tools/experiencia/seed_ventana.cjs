@@ -29,7 +29,7 @@ async function main() {
     settlement: { amount: 120, commissionPct: 20, platformCommission: 24, driverPayout: 96 }, ...extra,
   });
   const batch = db.batch();
-  const put = (id, data) => batch.set(db.doc(`driverHistory/chofer/trips/${id}`), data);
+  const put = (id, data) => batch.set(db.doc(`driverHistory/chofer2/trips/${id}`), data);
   put('h-hoy-1', trip('h-hoy-1', -90));
   put('h-hoy-2', trip('h-hoy-2', -30, { settlement: null, finalPrice: null, estimatedPrice: 95, riderRating: null }));
   put('h-ayer', trip('h-ayer', -26 * 60, { serviceType: 'byTheHour', dropoffArea: null, dropoffApprox: null,
@@ -37,7 +37,7 @@ async function main() {
     settlement: { amount: 300, commissionPct: 20, platformCommission: 60, driverPayout: 240 } }));
   put('h-reembolsado', trip('h-reembolsado', -3 * 24 * 60, { refunded: true, riderRating: 3 }));
   await batch.commit();
-  console.log(`Sembrado ${PROJECT}: historial FICTICIO de chofer (4 viajes); chofer2 sin historial.`);
+  console.log(`Sembrado ${PROJECT}: historial FICTICIO de chofer2 (4 viajes; sin viajes en curso, para ver «Ganancias de hoy»); chofer sin historial hasta que se cierre un viaje.`);
 }
 
 main().catch((e) => { console.error(String(e.message || e)); process.exit(1); });

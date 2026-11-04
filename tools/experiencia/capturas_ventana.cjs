@@ -118,10 +118,13 @@ async function closeWhileWatching(p, lang, w, status) {
 }
 
 // [app, estado, usuario, ir(page, lang, width)]
+// chofer2: historial sembrado y sin viajes en curso (el inicio muestra
+// «Ganancias de hoy»). chofer: sin historial hasta que w04/w05 cierran sus
+// viajes (por eso el vacío va antes).
 const S = [
-  ['d', 'w01-ganancias', 'chofer', async (p) => { await p.goto(L.url(L.DRIVER, '/driver/earnings')); await L.ready(p, 4000); }],
-  ['d', 'w02-ganancias-vacio', 'chofer2', async (p) => { await p.goto(L.url(L.DRIVER, '/driver/earnings')); await L.ready(p, 4000); }],
-  ['d', 'w03-inicio-hoy', 'chofer', async (p) => { await p.goto(L.url(L.DRIVER, '/driver')); await L.ready(p, 5000); }],
+  ['d', 'w01-ganancias', 'chofer2', async (p) => { await p.goto(L.url(L.DRIVER, '/driver/earnings')); await L.ready(p, 4000); }],
+  ['d', 'w02-ganancias-vacio', 'chofer', async (p) => { await p.goto(L.url(L.DRIVER, '/driver/earnings')); await L.ready(p, 4000); }],
+  ['d', 'w03-inicio-hoy', 'chofer2', async (p) => { await p.goto(L.url(L.DRIVER, '/driver')); await L.ready(p, 5000); }],
   ['d', 'w04-cierre-terminado', 'chofer', (p, l, w) => closeWhileWatching(p, l, w, 'completed')],
   ['d', 'w05-cierre-cancelado', 'chofer', (p, l, w) => closeWhileWatching(p, l, w, 'cancelled')],
 ];
