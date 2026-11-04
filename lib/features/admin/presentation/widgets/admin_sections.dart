@@ -7,6 +7,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../business/data/business_lead_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
@@ -543,7 +544,11 @@ class _BookingDetail extends StatelessWidget {
                     ),
                   ),
                   BookingStatusChip(status: booking.status),
+                  // Etiqueta para el lector de pantalla y la ayuda al pasar
+                  // el ratón (era el único botón sin nombre del detalle).
                   IconButton(
+                    key: const ValueKey('booking-detail-close'),
+                    tooltip: context.l10n.commonClose,
                     icon: const Icon(Icons.close_rounded),
                     onPressed: () => Navigator.pop(context),
                   ),
