@@ -862,6 +862,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminPrefsLoadingLabel => 'Loading trip preferences';
 
   @override
+  String get adminShareTitle => 'Tracking link';
+
+  @override
+  String get adminShareActive =>
+      'Active: anyone with the link can see the trip.';
+
+  @override
+  String get adminShareNone => 'No active link.';
+
+  @override
+  String get adminShareRevoke => 'Revoke link';
+
+  @override
+  String get adminShareRevokeTitle => 'Revoke the tracking link';
+
+  @override
+  String get adminShareRevokeMessage =>
+      'The link stops working immediately. It is recorded in the audit log with your reason.';
+
+  @override
+  String get adminShareReason => 'Reason (10 to 500 characters)';
+
+  @override
+  String get adminShareCancel => 'Cancel';
+
+  @override
+  String get adminShareRevokeDone => 'Link revoked';
+
+  @override
+  String get adminShareLoadFailed => 'Could not check the link.';
+
+  @override
+  String get adminShareRetry => 'Retry';
+
+  @override
+  String get adminUnassignedTitle => 'Paid, no chauffeur, close to pickup';
+
+  @override
+  String adminUnassignedRow(String code, String time) {
+    return '#$code · pickup $time';
+  }
+
+  @override
+  String adminUnassignedOpen(String code) {
+    return 'Open booking $code';
+  }
+
+  @override
   String get authLoginTitle => 'Sign in';
 
   @override

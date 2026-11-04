@@ -1,0 +1,99 @@
+{
+  "adminShareTitle": {
+    "description": "Panel: enlace de seguimiento de la reserva.",
+    "es": "Enlace de seguimiento",
+    "en": "Tracking link",
+    "pt": "Link de acompanhamento"
+  },
+  "adminShareActive": {
+    "description": "Panel: la reserva tiene un enlace activo.",
+    "es": "Activo: quien tenga el enlace ve el viaje.",
+    "en": "Active: anyone with the link can see the trip.",
+    "pt": "Ativo: quem tiver o link vê a viagem."
+  },
+  "adminShareNone": {
+    "description": "Panel: sin enlace activo.",
+    "es": "Sin enlace activo.",
+    "en": "No active link.",
+    "pt": "Sem link ativo."
+  },
+  "adminShareRevoke": {
+    "description": "Panel: botón para revocar el enlace.",
+    "es": "Revocar enlace",
+    "en": "Revoke link",
+    "pt": "Revogar link"
+  },
+  "adminShareRevokeTitle": {
+    "description": "Panel: título del diálogo de revocar.",
+    "es": "Revocar el enlace de seguimiento",
+    "en": "Revoke the tracking link",
+    "pt": "Revogar o link de acompanhamento"
+  },
+  "adminShareRevokeMessage": {
+    "description": "Panel: qué pasa al revocar.",
+    "es": "El enlace deja de funcionar en el acto. Queda en la auditoría con tu motivo.",
+    "en": "The link stops working immediately. It is recorded in the audit log with your reason.",
+    "pt": "O link deixa de funcionar na hora. Fica na auditoria com o seu motivo."
+  },
+  "adminShareReason": {
+    "description": "Panel: campo del motivo.",
+    "es": "Motivo (de 10 a 500 caracteres)",
+    "en": "Reason (10 to 500 characters)",
+    "pt": "Motivo (de 10 a 500 caracteres)"
+  },
+  "adminShareCancel": {
+    "description": "Panel: cancelar el diálogo.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "adminShareRevokeDone": {
+    "description": "Panel: enlace revocado.",
+    "es": "Enlace revocado",
+    "en": "Link revoked",
+    "pt": "Link revogado"
+  },
+  "adminShareLoadFailed": {
+    "description": "Panel: no se pudo leer el estado del enlace.",
+    "es": "No se pudo comprobar el enlace.",
+    "en": "Could not check the link.",
+    "pt": "Não foi possível verificar o link."
+  },
+  "adminShareRetry": {
+    "description": "Panel: reintentar.",
+    "es": "Reintentar",
+    "en": "Retry",
+    "pt": "Tentar novamente"
+  },
+  "adminUnassignedTitle": {
+    "description": "Panel: bandeja de reservas pagadas sin chófer cerca de la hora.",
+    "es": "Pagadas sin chófer, cerca de la hora",
+    "en": "Paid, no chauffeur, close to pickup",
+    "pt": "Pagas sem motorista, perto do horário"
+  },
+  "adminUnassignedRow": {
+    "description": "Panel: fila de la bandeja (código y hora de recogida).",
+    "es": "#{code} · recogida {time}",
+    "en": "#{code} · pickup {time}",
+    "pt": "#{code} · embarque {time}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "adminUnassignedOpen": {
+    "description": "Panel: abrir la reserva de la bandeja (lector de pantalla).",
+    "es": "Abrir la reserva {code}",
+    "en": "Open booking {code}",
+    "pt": "Abrir a reserva {code}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  }
+}

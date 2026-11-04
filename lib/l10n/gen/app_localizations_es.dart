@@ -864,6 +864,53 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminPrefsLoadingLabel => 'Cargando las preferencias del viaje';
 
   @override
+  String get adminShareTitle => 'Enlace de seguimiento';
+
+  @override
+  String get adminShareActive => 'Activo: quien tenga el enlace ve el viaje.';
+
+  @override
+  String get adminShareNone => 'Sin enlace activo.';
+
+  @override
+  String get adminShareRevoke => 'Revocar enlace';
+
+  @override
+  String get adminShareRevokeTitle => 'Revocar el enlace de seguimiento';
+
+  @override
+  String get adminShareRevokeMessage =>
+      'El enlace deja de funcionar en el acto. Queda en la auditoría con tu motivo.';
+
+  @override
+  String get adminShareReason => 'Motivo (de 10 a 500 caracteres)';
+
+  @override
+  String get adminShareCancel => 'Cancelar';
+
+  @override
+  String get adminShareRevokeDone => 'Enlace revocado';
+
+  @override
+  String get adminShareLoadFailed => 'No se pudo comprobar el enlace.';
+
+  @override
+  String get adminShareRetry => 'Reintentar';
+
+  @override
+  String get adminUnassignedTitle => 'Pagadas sin chófer, cerca de la hora';
+
+  @override
+  String adminUnassignedRow(String code, String time) {
+    return '#$code · recogida $time';
+  }
+
+  @override
+  String adminUnassignedOpen(String code) {
+    return 'Abrir la reserva $code';
+  }
+
+  @override
   String get authLoginTitle => 'Iniciar sesión';
 
   @override

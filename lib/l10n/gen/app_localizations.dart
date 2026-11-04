@@ -1546,6 +1546,90 @@ abstract class AppLocalizations {
   /// **'Cargando las preferencias del viaje'**
   String get adminPrefsLoadingLabel;
 
+  /// Panel: enlace de seguimiento de la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Enlace de seguimiento'**
+  String get adminShareTitle;
+
+  /// Panel: la reserva tiene un enlace activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Activo: quien tenga el enlace ve el viaje.'**
+  String get adminShareActive;
+
+  /// Panel: sin enlace activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin enlace activo.'**
+  String get adminShareNone;
+
+  /// Panel: botón para revocar el enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Revocar enlace'**
+  String get adminShareRevoke;
+
+  /// Panel: título del diálogo de revocar.
+  ///
+  /// In es, this message translates to:
+  /// **'Revocar el enlace de seguimiento'**
+  String get adminShareRevokeTitle;
+
+  /// Panel: qué pasa al revocar.
+  ///
+  /// In es, this message translates to:
+  /// **'El enlace deja de funcionar en el acto. Queda en la auditoría con tu motivo.'**
+  String get adminShareRevokeMessage;
+
+  /// Panel: campo del motivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo (de 10 a 500 caracteres)'**
+  String get adminShareReason;
+
+  /// Panel: cancelar el diálogo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get adminShareCancel;
+
+  /// Panel: enlace revocado.
+  ///
+  /// In es, this message translates to:
+  /// **'Enlace revocado'**
+  String get adminShareRevokeDone;
+
+  /// Panel: no se pudo leer el estado del enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo comprobar el enlace.'**
+  String get adminShareLoadFailed;
+
+  /// Panel: reintentar.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get adminShareRetry;
+
+  /// Panel: bandeja de reservas pagadas sin chófer cerca de la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagadas sin chófer, cerca de la hora'**
+  String get adminUnassignedTitle;
+
+  /// Panel: fila de la bandeja (código y hora de recogida).
+  ///
+  /// In es, this message translates to:
+  /// **'#{code} · recogida {time}'**
+  String adminUnassignedRow(String code, String time);
+
+  /// Panel: abrir la reserva de la bandeja (lector de pantalla).
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir la reserva {code}'**
+  String adminUnassignedOpen(String code);
+
   /// Título de la pantalla de inicio de sesión (web) y botón principal para entrar.
   ///
   /// In es, this message translates to:

@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get_it/get_it.dart';
 
 import '../../app/locale_controller.dart';
+import '../../features/admin/data/admin_share_repository.dart';
 import '../../features/admin/data/repositories/admin_payments_repository_impl.dart';
 import '../../features/admin/data/repositories/admin_repository_impl.dart';
 import '../../features/admin/domain/admin_payments.dart';
@@ -113,6 +114,9 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<VehicleRepository>(
     () => VehicleRepositoryImpl(firestore: sl()),
+  );
+  sl.registerLazySingleton<AdminShareRepository>(
+    () => FirebaseAdminShareRepository(),
   );
   sl.registerLazySingleton<TripShareRepository>(
     () => FunctionsTripShareRepository(),

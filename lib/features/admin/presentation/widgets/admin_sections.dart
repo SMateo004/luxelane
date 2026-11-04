@@ -20,6 +20,7 @@ import 'admin_booking_preferences.dart';
 import 'admin_finance_tab.dart';
 import 'admin_flight_card.dart';
 import 'admin_shared_widgets.dart';
+import 'admin_trip_share.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB: Panel  (estado del negocio y lo que requiere atención)
@@ -312,6 +313,8 @@ class _BookingsTabState extends State<BookingsTab> {
 
         return Column(
           children: [
+            // Pagadas sin chófer cerca de la hora (Prompt 18, C3).
+            const AdminUnassignedInbox(),
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 LuxSpacing.lg,
@@ -603,6 +606,9 @@ class _BookingDetail extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.sm),
                 AdminFlightCard(bookingId: booking.id),
               ],
+              // Viaje compartido (Prompt 18, C3): ver y revocar el enlace.
+              const SizedBox(height: LuxSpacing.sm),
+              AdminTripShareCard(bookingId: booking.id),
               const SizedBox(height: LuxSpacing.sm),
               AdminBookingPreferences(bookingId: booking.id),
               const SizedBox(height: LuxSpacing.sm),

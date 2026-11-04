@@ -1254,6 +1254,75 @@
   "@adminPrefsLoadingLabel": {
     "description": "Panel de admin: etiqueta de accesibilidad mientras se cargan las preferencias de la reserva."
   },
+  "adminShareTitle": "Enlace de seguimiento",
+  "@adminShareTitle": {
+    "description": "Panel: enlace de seguimiento de la reserva."
+  },
+  "adminShareActive": "Activo: quien tenga el enlace ve el viaje.",
+  "@adminShareActive": {
+    "description": "Panel: la reserva tiene un enlace activo."
+  },
+  "adminShareNone": "Sin enlace activo.",
+  "@adminShareNone": {
+    "description": "Panel: sin enlace activo."
+  },
+  "adminShareRevoke": "Revocar enlace",
+  "@adminShareRevoke": {
+    "description": "Panel: botón para revocar el enlace."
+  },
+  "adminShareRevokeTitle": "Revocar el enlace de seguimiento",
+  "@adminShareRevokeTitle": {
+    "description": "Panel: título del diálogo de revocar."
+  },
+  "adminShareRevokeMessage": "El enlace deja de funcionar en el acto. Queda en la auditoría con tu motivo.",
+  "@adminShareRevokeMessage": {
+    "description": "Panel: qué pasa al revocar."
+  },
+  "adminShareReason": "Motivo (de 10 a 500 caracteres)",
+  "@adminShareReason": {
+    "description": "Panel: campo del motivo."
+  },
+  "adminShareCancel": "Cancelar",
+  "@adminShareCancel": {
+    "description": "Panel: cancelar el diálogo."
+  },
+  "adminShareRevokeDone": "Enlace revocado",
+  "@adminShareRevokeDone": {
+    "description": "Panel: enlace revocado."
+  },
+  "adminShareLoadFailed": "No se pudo comprobar el enlace.",
+  "@adminShareLoadFailed": {
+    "description": "Panel: no se pudo leer el estado del enlace."
+  },
+  "adminShareRetry": "Reintentar",
+  "@adminShareRetry": {
+    "description": "Panel: reintentar."
+  },
+  "adminUnassignedTitle": "Pagadas sin chófer, cerca de la hora",
+  "@adminUnassignedTitle": {
+    "description": "Panel: bandeja de reservas pagadas sin chófer cerca de la hora."
+  },
+  "adminUnassignedRow": "#{code} · recogida {time}",
+  "@adminUnassignedRow": {
+    "description": "Panel: fila de la bandeja (código y hora de recogida).",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "adminUnassignedOpen": "Abrir la reserva {code}",
+  "@adminUnassignedOpen": {
+    "description": "Panel: abrir la reserva de la bandeja (lector de pantalla).",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "authLoginTitle": "Iniciar sesión",
   "@authLoginTitle": {
     "description": "Título de la pantalla de inicio de sesión (web) y botón principal para entrar."
