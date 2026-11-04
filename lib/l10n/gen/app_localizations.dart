@@ -9742,6 +9742,78 @@ abstract class AppLocalizations {
   /// **'Confirma ahora y sigue a tu chófer en tiempo real hasta la puerta.'**
   String get servicesImmediateClosingBody;
 
+  /// Viaje compartido: título de la tarjeta en el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Compartir el viaje'**
+  String get tripShareTitle;
+
+  /// Viaje compartido: qué verá quien reciba el enlace (antes de compartir).
+  ///
+  /// In es, this message translates to:
+  /// **'Quien reciba el enlace verá el estado del viaje, el nombre de pila del chófer, el vehículo y, mientras va hacia ti o te lleva, su posición. El enlace caduca al terminar el viaje.'**
+  String get tripShareExplain;
+
+  /// Viaje compartido: botón para crear y compartir el enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Compartir viaje'**
+  String get tripShareButton;
+
+  /// Viaje compartido: hay un enlace activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Enlace activo'**
+  String get tripShareActive;
+
+  /// Viaje compartido: qué significa el enlace activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Quien tenga el enlace puede seguir este viaje hasta que termine o dejes de compartirlo.'**
+  String get tripShareActiveBody;
+
+  /// Viaje compartido: revocar el enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Dejar de compartir'**
+  String get tripShareStop;
+
+  /// Viaje compartido: crear otro enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear un enlace nuevo'**
+  String get tripShareNew;
+
+  /// Viaje compartido: al crear otro, el anterior deja de servir.
+  ///
+  /// In es, this message translates to:
+  /// **'El enlace anterior dejará de funcionar.'**
+  String get tripShareNewNote;
+
+  /// Viaje compartido: texto que acompaña al enlace en la hoja de compartir. Sin promesas.
+  ///
+  /// In es, this message translates to:
+  /// **'Puedes seguir mi viaje aquí: {url}'**
+  String tripShareMessage(String url);
+
+  /// Viaje compartido: sin la dirección pública configurada en esta app.
+  ///
+  /// In es, this message translates to:
+  /// **'Compartir el viaje no está disponible en esta versión de la app.'**
+  String get tripShareUnavailable;
+
+  /// Viaje compartido: comprobando si hay un enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Comprobando el enlace…'**
+  String get tripShareLoading;
+
+  /// Chófer: aviso sobrio de que el pasajero puede compartir el seguimiento (C2).
+  ///
+  /// In es, this message translates to:
+  /// **'El pasajero puede compartir el seguimiento de este viaje: tu nombre de pila, el vehículo y, mientras vas hacia la recogida o en el viaje, tu posición.'**
+  String get driverTripShareNotice;
+
   /// Título de la pantalla Mis viajes.
   ///
   /// In es, this message translates to:

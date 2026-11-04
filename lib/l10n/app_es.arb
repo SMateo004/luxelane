@@ -7391,6 +7391,59 @@
   "@servicesImmediateClosingBody": {
     "description": "Recogida inmediata: texto del cierre."
   },
+  "tripShareTitle": "Compartir el viaje",
+  "@tripShareTitle": {
+    "description": "Viaje compartido: título de la tarjeta en el viaje."
+  },
+  "tripShareExplain": "Quien reciba el enlace verá el estado del viaje, el nombre de pila del chófer, el vehículo y, mientras va hacia ti o te lleva, su posición. El enlace caduca al terminar el viaje.",
+  "@tripShareExplain": {
+    "description": "Viaje compartido: qué verá quien reciba el enlace (antes de compartir)."
+  },
+  "tripShareButton": "Compartir viaje",
+  "@tripShareButton": {
+    "description": "Viaje compartido: botón para crear y compartir el enlace."
+  },
+  "tripShareActive": "Enlace activo",
+  "@tripShareActive": {
+    "description": "Viaje compartido: hay un enlace activo."
+  },
+  "tripShareActiveBody": "Quien tenga el enlace puede seguir este viaje hasta que termine o dejes de compartirlo.",
+  "@tripShareActiveBody": {
+    "description": "Viaje compartido: qué significa el enlace activo."
+  },
+  "tripShareStop": "Dejar de compartir",
+  "@tripShareStop": {
+    "description": "Viaje compartido: revocar el enlace."
+  },
+  "tripShareNew": "Crear un enlace nuevo",
+  "@tripShareNew": {
+    "description": "Viaje compartido: crear otro enlace."
+  },
+  "tripShareNewNote": "El enlace anterior dejará de funcionar.",
+  "@tripShareNewNote": {
+    "description": "Viaje compartido: al crear otro, el anterior deja de servir."
+  },
+  "tripShareMessage": "Puedes seguir mi viaje aquí: {url}",
+  "@tripShareMessage": {
+    "description": "Viaje compartido: texto que acompaña al enlace en la hoja de compartir. Sin promesas.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "tripShareUnavailable": "Compartir el viaje no está disponible en esta versión de la app.",
+  "@tripShareUnavailable": {
+    "description": "Viaje compartido: sin la dirección pública configurada en esta app."
+  },
+  "tripShareLoading": "Comprobando el enlace…",
+  "@tripShareLoading": {
+    "description": "Viaje compartido: comprobando si hay un enlace."
+  },
+  "driverTripShareNotice": "El pasajero puede compartir el seguimiento de este viaje: tu nombre de pila, el vehículo y, mientras vas hacia la recogida o en el viaje, tu posición.",
+  "@driverTripShareNotice": {
+    "description": "Chófer: aviso sobrio de que el pasajero puede compartir el seguimiento (C2)."
+  },
   "tripsTitle": "Mis viajes",
   "@tripsTitle": {
     "description": "Título de la pantalla Mis viajes."

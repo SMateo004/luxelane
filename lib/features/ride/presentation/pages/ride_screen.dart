@@ -23,6 +23,7 @@ import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../../../payments/presentation/widgets/payment_receipt.dart';
+import '../../../trip_share/presentation/trip_share_card.dart';
 import '../ride_load_error.dart';
 import '../ride_moments.dart';
 import '../widgets/cancel_booking_dialog.dart';
@@ -439,6 +440,21 @@ class _RideScreenState extends State<RideScreen> {
 
   /// Mientras el chófer espera, el código que el pasajero (o su invitado)
   /// le da al subir. Al verificarse, la tarjeta desaparece.
+  /// «Compartir viaje» (Prompt 18, C1): tras confirmar y en el viaje en
+  /// curso, hasta que el chófer termina.
+  List<Widget> _tripShare() => [
+        if (_booking case final b?
+            when b.status == BookingStatus.confirmed ||
+                b.status == BookingStatus.driverArriving ||
+                b.status == BookingStatus.driverArrived ||
+                b.status == BookingStatus.verified ||
+                b.status == BookingStatus.inProgress) ...[
+          const SizedBox(height: LuxSpacing.sm),
+          TripShareCard(bookingId: b.id),
+          const SizedBox(height: LuxSpacing.sm),
+        ],
+      ];
+
   /// Vuelo sin datos en vivo, retrasado, cancelado o desviado: dicho
   /// claramente, en el diseño móvil y en el ancho (Parte B de vuelos).
   List<Widget> _flightNote() => [
@@ -496,6 +512,7 @@ class _RideScreenState extends State<RideScreen> {
                     children: [
                       ..._flightNote(),
                       _pickupSection(),
+                      ..._tripShare(),
                       if (!receiptBelowDriver(_status)) _paymentSection(),
                     ],
                   ),
@@ -541,6 +558,7 @@ class _RideScreenState extends State<RideScreen> {
                           const SizedBox(height: LuxSpacing.lg),
                           ..._flightNote(),
                           _pickupSection(),
+                          ..._tripShare(),
                           if (!receiptBelowDriver(_status)) _paymentSection(),
                           _driverSection(),
                           if (receiptBelowDriver(_status)) _paymentSection(),

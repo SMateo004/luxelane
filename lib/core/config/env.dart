@@ -38,4 +38,12 @@ abstract class AppConfig {
   static const String googleIosClientId = String.fromEnvironment(
     'GOOGLE_IOS_CLIENT_ID',
   );
+
+  /// Dirección pública de la app del pasajero (p. ej. el dominio del
+  /// hosting), para el enlace del viaje compartido en el móvil
+  /// (`--dart-define=PUBLIC_WEB_BASE_URL=...`). En la web se usa el origen de
+  /// la propia página. Sin ella, en el móvil no se ofrece compartir.
+  static const String publicWebBaseUrl = String.fromEnvironment(
+    'PUBLIC_WEB_BASE_URL', // i18n-ignore: nombre de variable
+  );
 }

@@ -1,0 +1,79 @@
+{
+  "tripShareTitle": {
+    "description": "Viaje compartido: título de la tarjeta en el viaje.",
+    "es": "Compartir el viaje",
+    "en": "Share the trip",
+    "pt": "Compartilhar a viagem"
+  },
+  "tripShareExplain": {
+    "description": "Viaje compartido: qué verá quien reciba el enlace (antes de compartir).",
+    "es": "Quien reciba el enlace verá el estado del viaje, el nombre de pila del chófer, el vehículo y, mientras va hacia ti o te lleva, su posición. El enlace caduca al terminar el viaje.",
+    "en": "Whoever gets the link will see the trip status, the chauffeur’s first name, the vehicle and, while on the way to you or with you, their position. The link expires when the trip ends.",
+    "pt": "Quem receber o link verá o status da viagem, o primeiro nome do motorista, o veículo e, enquanto vai até você ou leva você, a posição dele. O link expira ao terminar a viagem."
+  },
+  "tripShareButton": {
+    "description": "Viaje compartido: botón para crear y compartir el enlace.",
+    "es": "Compartir viaje",
+    "en": "Share trip",
+    "pt": "Compartilhar viagem"
+  },
+  "tripShareActive": {
+    "description": "Viaje compartido: hay un enlace activo.",
+    "es": "Enlace activo",
+    "en": "Link active",
+    "pt": "Link ativo"
+  },
+  "tripShareActiveBody": {
+    "description": "Viaje compartido: qué significa el enlace activo.",
+    "es": "Quien tenga el enlace puede seguir este viaje hasta que termine o dejes de compartirlo.",
+    "en": "Anyone with the link can follow this trip until it ends or you stop sharing it.",
+    "pt": "Quem tiver o link pode acompanhar esta viagem até ela terminar ou você parar de compartilhar."
+  },
+  "tripShareStop": {
+    "description": "Viaje compartido: revocar el enlace.",
+    "es": "Dejar de compartir",
+    "en": "Stop sharing",
+    "pt": "Parar de compartilhar"
+  },
+  "tripShareNew": {
+    "description": "Viaje compartido: crear otro enlace.",
+    "es": "Crear un enlace nuevo",
+    "en": "Create a new link",
+    "pt": "Criar um link novo"
+  },
+  "tripShareNewNote": {
+    "description": "Viaje compartido: al crear otro, el anterior deja de servir.",
+    "es": "El enlace anterior dejará de funcionar.",
+    "en": "The previous link will stop working.",
+    "pt": "O link anterior deixará de funcionar."
+  },
+  "tripShareMessage": {
+    "description": "Viaje compartido: texto que acompaña al enlace en la hoja de compartir. Sin promesas.",
+    "es": "Puedes seguir mi viaje aquí: {url}",
+    "en": "You can follow my trip here: {url}",
+    "pt": "Você pode acompanhar minha viagem aqui: {url}",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "tripShareUnavailable": {
+    "description": "Viaje compartido: sin la dirección pública configurada en esta app.",
+    "es": "Compartir el viaje no está disponible en esta versión de la app.",
+    "en": "Sharing the trip isn’t available in this version of the app.",
+    "pt": "Compartilhar a viagem não está disponível nesta versão do app."
+  },
+  "tripShareLoading": {
+    "description": "Viaje compartido: comprobando si hay un enlace.",
+    "es": "Comprobando el enlace…",
+    "en": "Checking the link…",
+    "pt": "Verificando o link…"
+  },
+  "driverTripShareNotice": {
+    "description": "Chófer: aviso sobrio de que el pasajero puede compartir el seguimiento (C2).",
+    "es": "El pasajero puede compartir el seguimiento de este viaje: tu nombre de pila, el vehículo y, mientras vas hacia la recogida o en el viaje, tu posición.",
+    "en": "The passenger can share tracking of this trip: your first name, the vehicle and, while you head to the pickup or during the trip, your position.",
+    "pt": "O passageiro pode compartilhar o acompanhamento desta viagem: seu primeiro nome, o veículo e, enquanto vai ao embarque ou durante a viagem, sua posição."
+  }
+}

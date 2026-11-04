@@ -5590,6 +5590,48 @@ class AppLocalizationsPt extends AppLocalizations {
       'Confirme agora e acompanhe seu motorista em tempo real até a porta.';
 
   @override
+  String get tripShareTitle => 'Compartilhar a viagem';
+
+  @override
+  String get tripShareExplain =>
+      'Quem receber o link verá o status da viagem, o primeiro nome do motorista, o veículo e, enquanto vai até você ou leva você, a posição dele. O link expira ao terminar a viagem.';
+
+  @override
+  String get tripShareButton => 'Compartilhar viagem';
+
+  @override
+  String get tripShareActive => 'Link ativo';
+
+  @override
+  String get tripShareActiveBody =>
+      'Quem tiver o link pode acompanhar esta viagem até ela terminar ou você parar de compartilhar.';
+
+  @override
+  String get tripShareStop => 'Parar de compartilhar';
+
+  @override
+  String get tripShareNew => 'Criar um link novo';
+
+  @override
+  String get tripShareNewNote => 'O link anterior deixará de funcionar.';
+
+  @override
+  String tripShareMessage(String url) {
+    return 'Você pode acompanhar minha viagem aqui: $url';
+  }
+
+  @override
+  String get tripShareUnavailable =>
+      'Compartilhar a viagem não está disponível nesta versão do app.';
+
+  @override
+  String get tripShareLoading => 'Verificando o link…';
+
+  @override
+  String get driverTripShareNotice =>
+      'O passageiro pode compartilhar o acompanhamento desta viagem: seu primeiro nome, o veículo e, enquanto vai ao embarque ou durante a viagem, sua posição.';
+
+  @override
   String get tripsTitle => 'Minhas viagens';
 
   @override

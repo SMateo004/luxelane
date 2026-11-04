@@ -32,6 +32,7 @@ import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/usecases/profile_usecases.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/ride/data/repositories/trip_flow_repository_impl.dart';
+import '../../features/trip_share/data/trip_share_repository.dart';
 import '../auth/driver_device.dart';
 import '../auth/mfa.dart';
 import '../data/notification_repository_impl.dart';
@@ -112,6 +113,9 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<VehicleRepository>(
     () => VehicleRepositoryImpl(firestore: sl()),
+  );
+  sl.registerLazySingleton<TripShareRepository>(
+    () => FunctionsTripShareRepository(),
   );
   sl.registerLazySingleton<DriverHistoryRepository>(
     () => FirestoreDriverHistoryRepository(sl()),

@@ -5566,6 +5566,48 @@ class AppLocalizationsEn extends AppLocalizations {
       'Confirm now and follow your chauffeur in real time to your door.';
 
   @override
+  String get tripShareTitle => 'Share the trip';
+
+  @override
+  String get tripShareExplain =>
+      'Whoever gets the link will see the trip status, the chauffeur’s first name, the vehicle and, while on the way to you or with you, their position. The link expires when the trip ends.';
+
+  @override
+  String get tripShareButton => 'Share trip';
+
+  @override
+  String get tripShareActive => 'Link active';
+
+  @override
+  String get tripShareActiveBody =>
+      'Anyone with the link can follow this trip until it ends or you stop sharing it.';
+
+  @override
+  String get tripShareStop => 'Stop sharing';
+
+  @override
+  String get tripShareNew => 'Create a new link';
+
+  @override
+  String get tripShareNewNote => 'The previous link will stop working.';
+
+  @override
+  String tripShareMessage(String url) {
+    return 'You can follow my trip here: $url';
+  }
+
+  @override
+  String get tripShareUnavailable =>
+      'Sharing the trip isn’t available in this version of the app.';
+
+  @override
+  String get tripShareLoading => 'Checking the link…';
+
+  @override
+  String get driverTripShareNotice =>
+      'The passenger can share tracking of this trip: your first name, the vehicle and, while you head to the pickup or during the trip, your position.';
+
+  @override
   String get tripsTitle => 'My trips';
 
   @override
