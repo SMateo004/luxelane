@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
@@ -8,6 +9,7 @@ import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/locale_sync.dart';
+import '../../../../core/utils/display_name.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -468,6 +470,9 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               label: context.l10n.profileName,
               controller: _name,
               prefixIcon: Icons.person_outline_rounded,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(kDisplayNameMaxLength),
+              ],
               validator: (v) => v == null || v.trim().isEmpty
                   ? context.l10n.profileRequired
                   : null,

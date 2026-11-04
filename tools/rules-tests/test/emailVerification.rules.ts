@@ -10,7 +10,7 @@ beforeEach(async () => { await seed(env); });
 afterAll(async () => { await env?.cleanup(); });
 
 const signup = (uid: string, extra: Record<string, unknown>) =>
-  setDoc(doc(env.authenticatedContext(uid).firestore(), 'users', uid), { id: uid, role: 'rider', isActive: true, ...extra });
+  setDoc(doc(env.authenticatedContext(uid).firestore(), 'users', uid), { id: uid, role: 'rider', isActive: true, displayName: 'Nueva', ...extra });
 
 describe('alta propia (H6)', () => {
   test('sin verificar: se acepta', async () => {

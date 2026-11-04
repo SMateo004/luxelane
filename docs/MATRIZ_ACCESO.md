@@ -192,7 +192,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `bookings/{id}/payment`: Estado del pago de activa (A1): lo escribe solo el servidor; lo leen ana y el admin. El chófer asignado (asig) no lo lee: por eso no va en la reserva.
 - `paymentRefs/{ref}`: Unicidad de la referencia del pago (A1): solo el servidor.
 - `paymentOperations/{key}`: Números de operación ya usados en una confirmación (A4): solo el servidor.
-- `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8) y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).
+- `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio (id v_<uid>), inactivo; un bloqueado no (H8) y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).
 - `airports/{code}`: Aeropuertos y puntos de recogida (vuelos, A9): los lee quien tiene sesión; solo los escribe adminUpsertAirport.
 - `airportsPublic/{code}`: Lo mínimo para el selector sin sesión (código, nombre, ciudad); lo escribe adminUpsertAirport.
 - `flightBoard/{id}`: Caché de la fuente de vuelos (A6): solo el servidor.

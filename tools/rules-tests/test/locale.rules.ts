@@ -23,9 +23,9 @@ describe('users/{uid}.locale no se escribe desde el cliente', () => {
 
   test('el alta no trae idioma', async () => {
     await assertFails(setDoc(doc(db('nueva'), 'users', 'nueva'),
-      { id: 'nueva', role: 'rider', isActive: true, locale: 'en' }));
+      { id: 'nueva', role: 'rider', isActive: true, displayName: 'Nueva', locale: 'en' }));
     await assertFails(setDoc(doc(db('nueva'), 'users', 'nueva'),
-      { id: 'nueva', role: 'rider', isActive: true, localeSource: 'system' }));
+      { id: 'nueva', role: 'rider', isActive: true, displayName: 'Nueva', localeSource: 'system' }));
   });
 
   test('el admin desde el cliente, tampoco', async () => {

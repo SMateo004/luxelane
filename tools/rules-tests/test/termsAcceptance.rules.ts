@@ -11,7 +11,7 @@ afterAll(async () => { await env?.cleanup(); });
 
 const terms = { version: '2026-10', acceptedAt: new Date(), appVersion: '1.0.0' };
 const signup = (uid: string, extra: Record<string, unknown>) =>
-  setDoc(doc(env.authenticatedContext(uid).firestore(), 'users', uid), { id: uid, role: 'rider', isActive: true, ...extra });
+  setDoc(doc(env.authenticatedContext(uid).firestore(), 'users', uid), { id: uid, role: 'rider', isActive: true, displayName: 'Nueva', ...extra });
 
 describe('términos aceptados (B6)', () => {
   test('el alta propia no trae los términos puestos', async () => {

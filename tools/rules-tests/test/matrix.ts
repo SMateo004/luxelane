@@ -442,14 +442,14 @@ export const SPECS: Spec[] = [
     target: (r) => `vehicles/${r === 'bloq' ? 'v-bloq' : 'v-asig'}`,
     list: (db, r) => query(collection(db, 'vehicles'), where('driverId', '==', own(r, 'asig'))),
     create: (r) => ({
-      path: `vehicles/nuevo-${r}`,
+      path: `vehicles/v_${uidOf(r) ?? r}`,
       data: { driverId: uidOf(r) ?? 'nadie', make: 'Kia', model: 'Rio', plate: 'NUEVA', isActive: false },
     }),
     update: () => ({ color: 'Negro' }),
     expect: {
       ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', bloq: 'SSNNN', admin: 'SSNNN',
     },
-    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8) ' +
+    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio (id v_<uid>), inactivo; un bloqueado no (H8) ' +
       'y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).',
   },
   {

@@ -32,8 +32,8 @@ describe('perfil: tripPreferences no se escribe desde el cliente', () => {
 
   test('el alta no trae tripPreferences', async () => {
     await assertFails(setDoc(doc(db('nueva'), 'users', 'nueva'),
-      { id: 'nueva', role: 'rider', isActive: true, tripPreferences: PREFS }));
-    await assertSucceeds(setDoc(doc(db('nueva2'), 'users', 'nueva2'), { id: 'nueva2', role: 'rider', isActive: true }));
+      { id: 'nueva', role: 'rider', isActive: true, displayName: 'Nueva', tripPreferences: PREFS }));
+    await assertSucceeds(setDoc(doc(db('nueva2'), 'users', 'nueva2'), { id: 'nueva2', role: 'rider', isActive: true, displayName: 'Nueva' }));
   });
 
   test('tampoco el admin desde el cliente', async () => {

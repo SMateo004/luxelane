@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/utils/display_name.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../bloc/auth_bloc.dart';
@@ -184,6 +186,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   label: context.l10n.authNameLabel,
                   controller: _name,
                   prefixIcon: Icons.person_outline,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(kDisplayNameMaxLength),
+                  ],
                   validator: (v) => v == null || v.trim().isEmpty
                       ? context.l10n.authNameRequired
                       : null,

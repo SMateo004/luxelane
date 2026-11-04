@@ -36,7 +36,7 @@ describe('config/* no se borra (H9)', () => {
 
 describe('vehículos de un chófer bloqueado (H8)', () => {
   const vehicle = { driverId: 'bloq', make: 'Kia', model: 'Rio', plate: 'NUEVA', class: 'business', isActive: false };
-  const create = () => setDoc(doc(db('bloq'), 'vehicles', 'nuevo-bloq'), vehicle);
+  const create = () => setDoc(doc(db('bloq'), 'vehicles', 'v_bloq'), vehicle);
 
   test('bloqueado no registra; reactivado, sí', async () => {
     await assertFails(create());
