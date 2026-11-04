@@ -33,6 +33,13 @@ const _porIdioma = <String, Map<String, String>>{
         r'(ajustamos|adaptamos|actualizamos)\s+(autom[aá]ticamente\s+)?(la\s+hora|tu\s+recogida)|se\s+ajusta\s+(sola|autom[aá]ticamente)',
     'el chófer estará a la hora':
         r'tu\s+ch[oó]fer\s+(te\s+esperar[aá]|estar[aá])\s+en\s+el\s+punto',
+    // Avisos y viaje compartido (Prompt 18, C6): ni seguridad prometida ni
+    // hora de llegada prometida. «Por seguridad…» o «Seguro del vehículo»
+    // no son promesas y siguen permitidos.
+    'seguridad prometida':
+        r'(viaje|trayecto|llegada|traslado)\s+(100\s*%\s*)?segur[oa]|est(á|ás|ará|arás|amos)\s+(totalmente\s+)?segur[oa]|100\s*%\s*segur|totalmente\s+segur|siempre\s+segur',
+    'llegará a las':
+        r'llegar[áa]\s+a\s+las|te\s+recoger[áa]\s+a\s+las|estar[áa]\s+(all[íi]|ah[íi])\s+a\s+las',
   },
   'en': {
     'garantías': r'guarantee',
@@ -74,6 +81,9 @@ const _porIdioma = <String, Map<String, String>>{
         r'(adjust|update)s?\s+(your\s+pickup|the\s+time)\s+automatically|automatically\s+(adjust|update)',
     'el chófer estará a la hora':
         r'your\s+chauffeur\s+will\s+(wait\s+for\s+you|be)\s+at\s+the\s+pickup',
+    'seguridad prometida':
+        r"\b(safe|secure)\s+(trip|ride|journey|transfer)|(you|we)('ll|\s+will|\s+are|'re)\s+(be\s+)?(completely\s+)?safe|100\s*%\s*safe|completely\s+safe|always\s+safe",
+    'llegará a las': r'will\s+(arrive|pick\s+you\s+up|be\s+there)\s+at',
   },
   'pt': {
     'garantías': r'garanti',
@@ -115,6 +125,10 @@ const _porIdioma = <String, Map<String, String>>{
         r'(ajustamos|atualizamos)\s+(automaticamente\s+)?(o\s+hor[aá]rio|sua\s+busca)|ajusta\s+automaticamente',
     'el chófer estará a la hora':
         r'seu\s+motorista\s+(vai\s+esperar|estar[aá])\s+(voc[eê]\s+)?no\s+ponto',
+    'seguridad prometida':
+        r'viagem\s+(100\s*%\s*)?segura|(est[áa]|estar[áa]|estamos)\s+(totalmente\s+)?segur[oa]|100\s*%\s*segur|totalmente\s+segur|sempre\s+segur',
+    'llegará a las':
+        r'chegar[áa]\s+[àa]s|vai\s+(te\s+)?buscar\s+[àa]s|vai\s+buscar\s+voc[êe]\s+[àa]s|estar[áa]\s+l[áa]\s+[àa]s',
   },
 };
 
@@ -226,6 +240,44 @@ void main() {
       expect(RegExp(_porIdioma[l]![k]!, caseSensitive: false).hasMatch(bad),
           isTrue,
           reason: '$l/$k: $bad');
+    }
+  });
+
+  test(
+      'avisos y viaje compartido: detecta seguridad y hora prometidas en los tres idiomas',
+      () {
+    for (final (l, k, bad) in [
+      ('es', 'seguridad prometida', 'Disfruta de un viaje seguro'),
+      ('es', 'seguridad prometida', 'Con nosotros estarás totalmente seguro'),
+      ('es', 'garantías', 'Llegada garantizada'),
+      ('es', 'llegará a las', 'Tu chófer llegará a las 14:00'),
+      ('es', 'llegará a las', 'Te recogerá a las 9:30'),
+      ('en', 'seguridad prometida', 'Enjoy a safe ride'),
+      ('en', 'llegará a las', 'Your chauffeur will arrive at 2:00 PM'),
+      ('pt', 'seguridad prometida', 'Uma viagem segura'),
+      ('pt', 'llegará a las', 'O motorista chegará às 14:00'),
+    ]) {
+      expect(RegExp(_porIdioma[l]![k]!, caseSensitive: false).hasMatch(bad),
+          isTrue,
+          reason: '$l/$k: $bad');
+    }
+    // Lo que no es una promesa sigue permitido.
+    for (final ok in [
+      'Por seguridad, escribe tu contraseña',
+      'Seguro del vehículo',
+      'Hora de recogida prevista: 14:00'
+    ]) {
+      expect(
+          RegExp(_porIdioma['es']!['seguridad prometida']!,
+                  caseSensitive: false)
+              .hasMatch(ok),
+          isFalse,
+          reason: ok);
+      expect(
+          RegExp(_porIdioma['es']!['llegará a las']!, caseSensitive: false)
+              .hasMatch(ok),
+          isFalse,
+          reason: ok);
     }
   });
 
