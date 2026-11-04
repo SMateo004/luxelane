@@ -274,7 +274,11 @@ Qué se guarda y quién lo lee:
 - **No se presentó con vuelo**: solo con el vuelo aterrizado (hora real de la fuente o de un admin) y pasada la espera desde `readyAt`. Retrasado, sin datos, desviado o cancelado: rechazado; solo un admin lo fuerza (`adminForceNoShow`, motivo y auditoría).
 - **Precio**: con vuelo se cotiza y reserva con `readyAt` como hora de recogida (incluido el recargo nocturno de `config/pricing`), y no cambia después.
 - **Límites de la Parte A, cerrados en la Parte B**: cuando `readyAt` cambia (planificador o admin), `scheduledAt` y `openRequests/{id}.scheduledAt` cambian con él; los seis usos de la hora de recogida (limpieza diaria, chófer ocupado al asignar, retención de la tarjeta, aviso al liberar, reactivación y bandeja de pagos, solicitudes abiertas) lo siguen (`flight_followers.int.ts`). El precio no se recalcula: solo `booking_service.ts` llama a la tarifa (`price_fixed.test.ts`).
-- **Sigue abierto**: la lista fija de aeropuertos de `service_area.ts` (app y servidor) decide si la recogida es un aeropuerto; además, el aeropuerto debe existir en `airports`. Propuesta para pasarlo a `airports` con coordenadas y radio: pendiente de decisión del responsable.
+- **Lista fija de aeropuertos (decisión 4, DIFERIDA por el responsable, 2026-11-04)**: la detección de «recogida en aeropuerto» sigue en dos listas fijas de 11 aeropuertos, `AIRPORTS` en `functions/src/service_area.ts` y `ServiceArea.airports` en `lib/core/utils/service_area.dart`; además, el aeropuerto debe existir en `airports`. Mientras tanto, `airports_parity.test.ts` falla si las dos listas difieren en código IATA, nombre o coordenadas. Propuesta, sin implementar:
+  - `airports/{IATA}` añade `location {lat, lng}`, radio exacto (hoy 1,2 km en el código), radio para lugares con nombre «aeropuerto» (hoy 6 km) y `active`; `airportsPublic` copia ubicación y radios para la app sin sesión.
+  - `service_area.ts` se queda con ciudades y distancias; `AIRPORTS` pasa a una función pura `airportFor(lugar, aeropuertos)` con la colección leída con caché por instancia; la app deja de decidir con su lista y sigue el `pickupAirport` de la cotización.
+  - Migración solo con aprobación: copiar los 11 aeropuertos y radios que hoy están en el código (nada inventado), una versión calculando con los dos métodos y alertando si no coinciden, y luego borrar la constante.
+  - Precio: las claves de `fixedAirportFares` no cambian, pero un aeropuerto desactivado o borrado pasa sus viajes nuevos a tarifa de ciudad sin paso de vuelo, un cambio de radio cambia qué recogidas tienen tarifa fija y un aeropuerto nuevo no la tiene hasta cargar su clave. Las reservas ya creadas no cambian (precio fijo). Riesgo: un error en la colección cambia precios en silencio; mitigación propuesta: alerta cuando una recogida que era aeropuerto deja de serlo.
 
 ### N.1 Vuelos, Parte B
 
@@ -284,6 +288,8 @@ Qué se guarda y quién lo lee:
 - **Panel**: detalle del vuelo, formulario manual (motivo obligatorio, bloqueo, quitar bloqueo), bandejas y editor de aeropuertos; todo por callables con MFA y sesión reciente, con auditoría.
 - **Textos**: ninguna promesa de hora (`frases_prohibidas_test.dart`: llegar a tiempo, vuelo en tiempo real, espera sin límite, ajuste automático, garantías; es/en/pt).
 - **Enlace externo existente**: la tarjeta del chófer conserva el enlace a la página pública de vuelos de la ATT (abre el navegador; la app no lee nada de ella). NO VERIFICADO que esa página siga disponible.
+- **PENDIENTE: Prompt 15C (fuente de la ATT)**: la fuente automática de vuelos espera los datos de la página pública de la ATT (qué publica, con qué formato, cada cuánto y si se permite leerla). Hasta entonces `pollFlights` corre con `ManualFlightProvider`, que no encuentra nada: todo dato en vivo lo carga central a mano.
+- **PENDIENTE ANTES DEL PILOTO (recordatorio)**: el chófer asignado sigue leyendo la reserva entera después del viaje, con el número de vuelo (ver arriba en N); se trata en un prompt aparte antes del piloto.
 - **Fuente**: solo la manual (lo que fija un admin) y la de pruebas. La de la ATT no está implementada; la app y las callables de reserva nunca consultan una fuente externa, solo la caché.
 
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)

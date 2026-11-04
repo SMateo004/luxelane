@@ -71,6 +71,13 @@ describe('docs/AUDITORIA_LUXLANE.md', () => {
   it('D22 explica qué callables de admin quedan sin sesión máxima', () => {
     expect(row('D22')).toContain('acknowledgeIncident, closeIncident y resolveAlert');
   });
+
+  it('vuelos: decisión 4 diferida, Prompt 15C y el chófer que lee la reserva, pendientes', () => {
+    expect(audit).toMatch(/decisión 4, DIFERIDA/);
+    expect(audit).toContain('airports_parity.test.ts');
+    expect(audit).toMatch(/PENDIENTE: Prompt 15C \(fuente de la ATT\)/);
+    expect(audit).toMatch(/PENDIENTE ANTES DEL PILOTO[^\n]*lee la reserva entera/);
+  });
 });
 
 // 0.4: el diagnóstico de x-forwarded-for está apagado por defecto y
