@@ -4,6 +4,7 @@
  * sin preguntar) y las funciones retiradas tienen su borrado documentado.
  */
 import { describe, it, expect } from '@jest/globals';
+import { execFileSync } from 'child_process';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -210,5 +211,12 @@ describe('DEPLOY.md: ventana del chófer', () => {
     expect(section).toMatch(/no tienen resumen/);
     expect(section).toContain('writeDriverHistoryOnBooking');
     expect(section).toMatch(/no lee `driverHistory`/);
+  });
+});
+
+describe('repositorio limpio', () => {
+  it('ningún node_modules versionado (ni como enlace simbólico)', () => {
+    const files = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n');
+    expect(files.filter((f) => /(^|\/)node_modules(\/|$)/.test(f))).toEqual([]);
   });
 });
