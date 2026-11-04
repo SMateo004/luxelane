@@ -1,0 +1,933 @@
+{
+  "generado": "2026-11-04T20:21:45.119Z",
+  "capturas": [
+    {
+      "idioma": "es",
+      "estado": "activo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/activo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "activo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/activo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "activo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/activo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "activo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/activo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-posicion",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/sin-posicion_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-posicion",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/sin-posicion_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-posicion",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/sin-posicion_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-posicion",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/sin-posicion_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "terminado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/terminado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "terminado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/terminado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "terminado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/terminado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "terminado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/terminado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "revocado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/revocado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "revocado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/revocado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "revocado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/revocado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "revocado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/revocado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "invalido",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/invalido_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "invalido",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/invalido_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "invalido",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/invalido_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "invalido",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/invalido_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-javascript",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/sin-javascript_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-javascript",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/sin-javascript_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-javascript",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/sin-javascript_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "sin-javascript",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/sin-javascript_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "activo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/activo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "activo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/activo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "activo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/activo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "activo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/activo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-posicion",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/sin-posicion_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-posicion",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/sin-posicion_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-posicion",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/sin-posicion_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-posicion",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/sin-posicion_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "terminado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/terminado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "terminado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/terminado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "terminado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/terminado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "terminado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/terminado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "revocado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/revocado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "revocado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/revocado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "revocado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/revocado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "revocado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/revocado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "invalido",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/invalido_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "invalido",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/invalido_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "invalido",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/invalido_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "invalido",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/invalido_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-javascript",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/sin-javascript_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-javascript",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/sin-javascript_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-javascript",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/sin-javascript_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "sin-javascript",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/sin-javascript_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "activo",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/activo_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "activo",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/activo_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "activo",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/activo_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "activo",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/activo_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-posicion",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/sin-posicion_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-posicion",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/sin-posicion_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-posicion",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/sin-posicion_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-posicion",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/sin-posicion_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "terminado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/terminado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "terminado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/terminado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "terminado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/terminado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "terminado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/terminado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "revocado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/revocado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "revocado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/revocado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "revocado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/revocado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "revocado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/revocado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "invalido",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/invalido_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "invalido",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/invalido_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "invalido",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/invalido_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "invalido",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/invalido_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-javascript",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/sin-javascript_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-javascript",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/sin-javascript_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-javascript",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/sin-javascript_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "sin-javascript",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/sin-javascript_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    }
+  ],
+  "redLenta": {
+    "es": {
+      "bytes": 5561,
+      "msHastaEstado": 1333
+    },
+    "en": {
+      "bytes": 5507,
+      "msHastaEstado": 1339
+    },
+    "pt": {
+      "bytes": 5573,
+      "msHastaEstado": 1316
+    }
+  },
+  "lector": {
+    "es/activo": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Seguimiento del viaje\" [level=1]",
+        "  - status: El chófer va hacia la recogida",
+        "  - term: Hora de recogida prevista",
+        "  - definition: 16:56",
+        "  - term: Chófer",
+        "  - definition: Luis",
+        "  - term: Vehículo",
+        "  - definition: Marca de prueba · Modelo de prueba · Negro · PRB-123",
+        "  - term: Zona de recogida",
+        "  - definition: Aeropuerto",
+        "  - term: Zona de destino",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Última posición del chófer",
+        "  - definition:",
+        "    - text: Actualizada a las 16:20",
+        "    - link \"Ver en el mapa\":",
+        "      - /url: geo:-17.7001,-63.1502",
+        "  - paragraph: La página se actualiza sola."
+      ],
+      "pequenos": []
+    },
+    "es/sin-posicion": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Seguimiento del viaje\" [level=1]",
+        "  - status: Chófer asignado",
+        "  - term: Hora de recogida prevista",
+        "  - definition: 16:56",
+        "  - term: Chófer",
+        "  - definition: Luis",
+        "  - term: Vehículo",
+        "  - definition: Marca de prueba · Modelo de prueba · Negro · PRB-123",
+        "  - term: Zona de recogida",
+        "  - definition: Aeropuerto",
+        "  - term: Zona de destino",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Última posición del chófer",
+        "  - definition: Sin posición todavía",
+        "  - paragraph: La página se actualiza sola."
+      ],
+      "pequenos": []
+    },
+    "es/terminado": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Seguimiento del viaje\" [level=1]",
+        "  - status: Viaje terminado",
+        "  - paragraph: El seguimiento se cierra al terminar el viaje.",
+        "  - term: Hora de recogida prevista",
+        "  - definition: 16:56",
+        "  - term: Zona de recogida",
+        "  - definition: Aeropuerto",
+        "  - term: Zona de destino",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Última posición del chófer",
+        "  - definition: Sin posición todavía",
+        "  - paragraph: La página se actualiza sola."
+      ],
+      "pequenos": []
+    },
+    "es/revocado": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Seguimiento del viaje\" [level=1]",
+        "  - heading \"Enlace no disponible\" [level=2]",
+        "  - paragraph: Este enlace no existe, caducó o se dejó de compartir."
+      ],
+      "pequenos": []
+    },
+    "es/invalido": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Seguimiento del viaje\" [level=1]",
+        "  - heading \"Enlace no disponible\" [level=2]",
+        "  - paragraph: Este enlace no existe, caducó o se dejó de compartir."
+      ],
+      "pequenos": []
+    },
+    "es/sin-javascript": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Seguimiento del viaje\" [level=1]"
+      ],
+      "pequenos": []
+    },
+    "en/activo": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Trip tracking\" [level=1]",
+        "  - status: The chauffeur is on the way to the pickup",
+        "  - term: Scheduled pickup time",
+        "  - definition: 4:56 PM",
+        "  - term: Chauffeur",
+        "  - definition: Luis",
+        "  - term: Vehicle",
+        "  - definition: Marca de prueba · Modelo de prueba · Negro · PRB-123",
+        "  - term: Pickup area",
+        "  - definition: Aeropuerto",
+        "  - term: Destination area",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Chauffeur's last position",
+        "  - definition:",
+        "    - text: Updated at 4:20 PM",
+        "    - link \"View on the map\":",
+        "      - /url: geo:-17.7001,-63.1502",
+        "  - paragraph: This page updates by itself."
+      ],
+      "pequenos": []
+    },
+    "en/sin-posicion": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Trip tracking\" [level=1]",
+        "  - status: Chauffeur assigned",
+        "  - term: Scheduled pickup time",
+        "  - definition: 4:56 PM",
+        "  - term: Chauffeur",
+        "  - definition: Luis",
+        "  - term: Vehicle",
+        "  - definition: Marca de prueba · Modelo de prueba · Negro · PRB-123",
+        "  - term: Pickup area",
+        "  - definition: Aeropuerto",
+        "  - term: Destination area",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Chauffeur's last position",
+        "  - definition: No position yet",
+        "  - paragraph: This page updates by itself."
+      ],
+      "pequenos": []
+    },
+    "en/terminado": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Trip tracking\" [level=1]",
+        "  - status: Trip completed",
+        "  - paragraph: Tracking closes when the trip ends.",
+        "  - term: Scheduled pickup time",
+        "  - definition: 4:56 PM",
+        "  - term: Pickup area",
+        "  - definition: Aeropuerto",
+        "  - term: Destination area",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Chauffeur's last position",
+        "  - definition: No position yet",
+        "  - paragraph: This page updates by itself."
+      ],
+      "pequenos": []
+    },
+    "en/revocado": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Trip tracking\" [level=1]",
+        "  - heading \"Link not available\" [level=2]",
+        "  - paragraph: This link does not exist, has expired or is no longer shared."
+      ],
+      "pequenos": []
+    },
+    "en/invalido": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Trip tracking\" [level=1]",
+        "  - heading \"Link not available\" [level=2]",
+        "  - paragraph: This link does not exist, has expired or is no longer shared."
+      ],
+      "pequenos": []
+    },
+    "en/sin-javascript": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Trip tracking\" [level=1]"
+      ],
+      "pequenos": []
+    },
+    "pt/activo": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Acompanhamento da viagem\" [level=1]",
+        "  - status: O motorista está a caminho do embarque",
+        "  - term: Horário de embarque previsto",
+        "  - definition: 16:56",
+        "  - term: Motorista",
+        "  - definition: Luis",
+        "  - term: Veículo",
+        "  - definition: Marca de prueba · Modelo de prueba · Negro · PRB-123",
+        "  - term: Zona de embarque",
+        "  - definition: Aeropuerto",
+        "  - term: Zona de destino",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Última posição do motorista",
+        "  - definition:",
+        "    - text: Atualizada às 16:20",
+        "    - link \"Ver no mapa\":",
+        "      - /url: geo:-17.7001,-63.1502",
+        "  - paragraph: A página se atualiza sozinha."
+      ],
+      "pequenos": []
+    },
+    "pt/sin-posicion": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Acompanhamento da viagem\" [level=1]",
+        "  - status: Motorista designado",
+        "  - term: Horário de embarque previsto",
+        "  - definition: 16:56",
+        "  - term: Motorista",
+        "  - definition: Luis",
+        "  - term: Veículo",
+        "  - definition: Marca de prueba · Modelo de prueba · Negro · PRB-123",
+        "  - term: Zona de embarque",
+        "  - definition: Aeropuerto",
+        "  - term: Zona de destino",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Última posição do motorista",
+        "  - definition: Sem posição ainda",
+        "  - paragraph: A página se atualiza sozinha."
+      ],
+      "pequenos": []
+    },
+    "pt/terminado": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Acompanhamento da viagem\" [level=1]",
+        "  - status: Viagem concluída",
+        "  - paragraph: O acompanhamento se encerra ao terminar a viagem.",
+        "  - term: Horário de embarque previsto",
+        "  - definition: 16:56",
+        "  - term: Zona de embarque",
+        "  - definition: Aeropuerto",
+        "  - term: Zona de destino",
+        "  - definition: Santa Cruz de la Sierra",
+        "  - term: Última posição do motorista",
+        "  - definition: Sem posição ainda",
+        "  - paragraph: A página se atualiza sozinha."
+      ],
+      "pequenos": []
+    },
+    "pt/revocado": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Acompanhamento da viagem\" [level=1]",
+        "  - heading \"Link indisponível\" [level=2]",
+        "  - paragraph: Este link não existe, expirou ou deixou de ser compartilhado."
+      ],
+      "pequenos": []
+    },
+    "pt/invalido": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Acompanhamento da viagem\" [level=1]",
+        "  - heading \"Link indisponível\" [level=2]",
+        "  - paragraph: Este link não existe, expirou ou deixou de ser compartilhado."
+      ],
+      "pequenos": []
+    },
+    "pt/sin-javascript": {
+      "arbol": [
+        "- main:",
+        "  - heading \"Acompanhamento da viagem\" [level=1]"
+      ],
+      "pequenos": []
+    }
+  }
+}
