@@ -45,6 +45,10 @@ class _History implements DriverHistoryRepository {
         ? null
         : DriverTripSummary(bookingId: bookingId, status: s);
   }
+
+  @override
+  Stream<List<DriverTripSummary>> watchCompletedTrips(String driverId) =>
+      const Stream.empty();
 }
 
 final _now = DateTime(2026, 11, 20);

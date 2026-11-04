@@ -52,5 +52,34 @@
     "es": "Volver a solicitudes",
     "en": "Back to requests",
     "pt": "Voltar às solicitações"
+  },
+  "driverHistoryLoadFailed": {
+    "description": "Historial del chófer: no se pudieron leer los viajes terminados.",
+    "es": "No se pudieron cargar tus viajes terminados.",
+    "en": "We couldn't load your completed trips.",
+    "pt": "Não foi possível carregar suas viagens concluídas."
+  },
+  "driverHistoryLoading": {
+    "description": "Historial del chófer: lectura en curso (lector de pantalla).",
+    "es": "Cargando tus viajes terminados",
+    "en": "Loading your completed trips",
+    "pt": "Carregando suas viagens concluídas"
+  },
+  "driverEarningsTripArea": {
+    "description": "Ganancias: viaje por horas, con la zona de recogida (sin dirección exacta).",
+    "es": "Por horas · {area}",
+    "en": "By the hour · {area}",
+    "pt": "Por hora · {area}",
+    "placeholders": {
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsAreaUnknown": {
+    "description": "Ganancias: viaje sin zona registrada.",
+    "es": "Zona sin registrar",
+    "en": "Area not recorded",
+    "pt": "Zona não registrada"
   }
 }

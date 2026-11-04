@@ -82,6 +82,15 @@ class _DriverLocationDenied extends DriverEvent {
   const _DriverLocationDenied();
 }
 
+/// Escucha el historial del chófer (driverHistory, completados). También
+/// para reintentar tras un error.
+class DriverHistoryWatched extends DriverEvent {
+  const DriverHistoryWatched({required this.driverId});
+  final String driverId;
+  @override
+  List<Object?> get props => [driverId];
+}
+
 /// Busca en el historial el estado final de un viaje que salió de la
 /// ventana del chófer (ventana del chófer, A4).
 class _DriverTripClosedLookup extends DriverEvent {
@@ -201,6 +210,8 @@ class DriverLoaded extends DriverState {
     this.updateSeq = 0,
     this.mfaBlock,
     this.closedTrips = const {},
+    this.history,
+    this.historyFailed = false,
   });
 
   final User user;
@@ -239,6 +250,13 @@ class DriverLoaded extends DriverState {
   /// (se lee del resumen del historial) o si ya no es suyo.
   final Map<String, BookingStatus?> closedTrips;
 
+  /// Viajes completados del historial (driverHistory), del más reciente al
+  /// más antiguo. null mientras carga.
+  final List<DriverTripSummary>? history;
+
+  /// No se pudo leer el historial (se muestra el error y se reintenta).
+  final bool historyFailed;
+
   /// Solicitudes que este chófer puede atender: de su clase de vehículo y
   /// sin descartar.
   /// Una que el chófer acaba de aceptar ya está en [bookings] aunque el
@@ -266,17 +284,19 @@ class DriverLoaded extends DriverState {
     return list.isEmpty ? null : list.first;
   }
 
-  /// Viajes completados hoy (por la hora de recogida).
-  List<Booking> get completedToday {
+  /// Viajes completados (del historial; vacío mientras carga).
+  List<DriverTripSummary> get completedTrips => history ?? const [];
+
+  /// Viajes completados hoy (por la hora de fin, en la zona del teléfono).
+  List<DriverTripSummary> get completedToday {
     final now = DateTime.now();
-    return completedBookings
-        .where(
-          (b) =>
-              b.scheduledAt.year == now.year &&
-              b.scheduledAt.month == now.month &&
-              b.scheduledAt.day == now.day,
-        )
-        .toList();
+    return completedTrips.where((t) {
+      final at = t.endedAt?.toLocal();
+      return at != null &&
+          at.year == now.year &&
+          at.month == now.month &&
+          at.day == now.day;
+    }).toList();
   }
 
   double get todayEarnings {
@@ -309,20 +329,17 @@ class DriverLoaded extends DriverState {
     return null;
   }
 
-  List<Booking> get completedBookings =>
-      bookings.where((b) => b.status == BookingStatus.completed).toList();
-
   /// Reparto de un viaje: el fijado por el servidor al completarlo o, si aún
   /// no existe, uno provisional con la comisión por defecto.
   /// Un viaje reembolsado no deja ganancias.
-  BookingSettlement earningsOf(Booking b) => b.refunded
+  BookingSettlement earningsOf(DriverTripSummary t) => t.refunded
       ? const BookingSettlement(
           amount: 0,
           commissionPct: 0,
           platformCommission: 0,
           driverPayout: 0,
         )
-      : b.settlementOr(kDefaultCommissionPct);
+      : t.settlementOr(kDefaultCommissionPct);
 
   /// Ganancias netas del chófer (tarifa menos comisión de la plataforma).
   double get totalEarnings => _sum((s) => s.driverPayout);
@@ -334,10 +351,10 @@ class DriverLoaded extends DriverState {
 
   /// Algún viaje aún sin reparto confirmado por el servidor.
   bool get hasProvisionalEarnings =>
-      completedBookings.any((b) => b.settlement == null && !b.refunded);
+      completedTrips.any((t) => t.settlement == null && !t.refunded);
 
   double _sum(double Function(BookingSettlement) f) {
-    final total = completedBookings.fold(0.0, (s, b) => s + f(earningsOf(b)));
+    final total = completedTrips.fold(0.0, (s, t) => s + f(earningsOf(t)));
     return (total * 100).roundToDouble() / 100;
   }
 
@@ -356,6 +373,8 @@ class DriverLoaded extends DriverState {
         updateSeq,
         mfaBlock,
         closedTrips,
+        history,
+        historyFailed,
       ];
 
   DriverLoaded copyWith({
@@ -371,6 +390,8 @@ class DriverLoaded extends DriverState {
     SecondFactorState? mfaBlock,
     bool clearMfaBlock = false,
     Map<String, BookingStatus?>? closedTrips,
+    List<DriverTripSummary>? history,
+    bool? historyFailed,
   }) =>
       DriverLoaded(
         user: user ?? this.user,
@@ -387,6 +408,8 @@ class DriverLoaded extends DriverState {
         updateSeq: updateRequired != null ? updateSeq + 1 : updateSeq,
         mfaBlock: clearMfaBlock ? null : (mfaBlock ?? this.mfaBlock),
         closedTrips: closedTrips ?? this.closedTrips,
+        history: history ?? this.history,
+        historyFailed: historyFailed ?? this.historyFailed,
       );
 }
 
@@ -438,6 +461,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     on<DriverStarted>(_onStart);
     on<DriverBookingsWatched>(_onWatchBookings, transformer: _latest());
     on<_DriverTripClosedLookup>(_onTripClosedLookup);
+    on<DriverHistoryWatched>(_onWatchHistory, transformer: _latest());
     on<DriverPendingBookingsWatched>(_onWatchPending, transformer: _latest());
     on<DriverAvailabilityToggled>(_onToggleAvailability);
     on<DriverLocationTrackingStarted>(_onStartTracking);
@@ -529,6 +553,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       );
 
       add(DriverBookingsWatched(driverId: event.userId));
+      add(DriverHistoryWatched(driverId: event.userId));
       // Las solicitudes solo se leen verificado y con la cuenta activa (las
       // reglas lo exigen).
       if (profile.documentsVerified && user.isActive) {
@@ -589,6 +614,27 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
           ? (state as DriverLoaded).copyWith(
               notice: L10n.current.driverNoticeTripsLoadFailed,
             )
+          : state,
+    );
+  }
+
+  /// Historial del chófer (ventana del chófer, B1): ganancias de hoy y
+  /// pantalla de ganancias leen driverHistory, no las reservas.
+  Future<void> _onWatchHistory(
+    DriverHistoryWatched event,
+    Emitter<DriverState> emit,
+  ) async {
+    final history = _history;
+    if (history == null || state is! DriverLoaded) return;
+    emit((state as DriverLoaded).copyWith(historyFailed: false));
+    await emit.forEach<List<DriverTripSummary>>(
+      history.watchCompletedTrips(event.driverId),
+      onData: (trips) => state is DriverLoaded
+          ? (state as DriverLoaded)
+              .copyWith(history: trips, historyFailed: false)
+          : state,
+      onError: (_, __) => state is DriverLoaded
+          ? (state as DriverLoaded).copyWith(historyFailed: true)
           : state,
     );
   }

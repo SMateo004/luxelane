@@ -5950,6 +5950,30 @@ abstract class AppLocalizations {
   /// **'Volver a solicitudes'**
   String get driverTripClosedBack;
 
+  /// Historial del chófer: no se pudieron leer los viajes terminados.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar tus viajes terminados.'**
+  String get driverHistoryLoadFailed;
+
+  /// Historial del chófer: lectura en curso (lector de pantalla).
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando tus viajes terminados'**
+  String get driverHistoryLoading;
+
+  /// Ganancias: viaje por horas, con la zona de recogida (sin dirección exacta).
+  ///
+  /// In es, this message translates to:
+  /// **'Por horas · {area}'**
+  String driverEarningsTripArea(String area);
+
+  /// Ganancias: viaje sin zona registrada.
+  ///
+  /// In es, this message translates to:
+  /// **'Zona sin registrar'**
+  String get driverEarningsAreaUnknown;
+
   /// Error: el servidor o Firebase limitó los intentos.
   ///
   /// In es, this message translates to:

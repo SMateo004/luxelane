@@ -3341,6 +3341,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverTripClosedBack => 'Back to requests';
 
   @override
+  String get driverHistoryLoadFailed =>
+      'We couldn\'t load your completed trips.';
+
+  @override
+  String get driverHistoryLoading => 'Loading your completed trips';
+
+  @override
+  String driverEarningsTripArea(String area) {
+    return 'By the hour · $area';
+  }
+
+  @override
+  String get driverEarningsAreaUnknown => 'Area not recorded';
+
+  @override
   String get errorTooManyAttempts =>
       'Too many attempts. Wait a few minutes and try again.';
 

@@ -3349,6 +3349,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get driverTripClosedBack => 'Volver a solicitudes';
 
   @override
+  String get driverHistoryLoadFailed =>
+      'No se pudieron cargar tus viajes terminados.';
+
+  @override
+  String get driverHistoryLoading => 'Cargando tus viajes terminados';
+
+  @override
+  String driverEarningsTripArea(String area) {
+    return 'Por horas · $area';
+  }
+
+  @override
+  String get driverEarningsAreaUnknown => 'Zona sin registrar';
+
+  @override
   String get errorTooManyAttempts =>
       'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
 

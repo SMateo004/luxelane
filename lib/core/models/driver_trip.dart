@@ -45,6 +45,21 @@ class DriverTripSummary {
   final BookingSettlement? settlement;
   final bool refunded;
 
+  /// Importe cobrado: el final si existe, si no el estimado (como en la
+  /// reserva).
+  double get chargedAmount => finalPrice ?? estimatedPrice ?? 0;
+
+  /// Reparto vigente: el del servidor si corresponde al importe actual o,
+  /// si no, uno provisional con [commissionPct] (igual que la reserva).
+  BookingSettlement settlementOr(double commissionPct) {
+    final s = settlement;
+    if (s != null && (s.amount - chargedAmount).abs() < 0.005) return s;
+    return BookingSettlement.estimate(
+      chargedAmount,
+      commissionPct: s?.commissionPct ?? commissionPct,
+    );
+  }
+
   static DriverTripSummary fromMap(String id, Map<String, dynamic> j) {
     double? d(String k) => (j[k] as num?)?.toDouble();
     final ended = j['endedAt'];

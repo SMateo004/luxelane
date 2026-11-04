@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/error/failures.dart';
+import 'package:luxelane/core/models/driver_trip.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/repositories/repositories.dart';
 import 'package:luxelane/core/services/maps_service.dart';
@@ -80,6 +81,20 @@ Booking _makeBooking(
       estimatedPrice: 75,
       createdAt: _now,
       updatedAt: _now,
+      settlement: settlement,
+      refunded: refunded,
+    );
+
+/// Resumen del historial (driverHistory) de un viaje completado de 75 Bs.
+DriverTripSummary _trip({
+  BookingSettlement? settlement,
+  bool refunded = false,
+}) =>
+    DriverTripSummary(
+      bookingId: 'booking-1',
+      status: BookingStatus.completed,
+      endedAt: _now,
+      estimatedPrice: 75,
       settlement: settlement,
       refunded: refunded,
     );
@@ -489,16 +504,14 @@ void main() {
     });
 
     test('totalEarnings descuenta la comisión de los viajes completados', () {
-      final bookings = [
-        _makeBooking(BookingStatus.completed),
-        _makeBooking(BookingStatus.completed),
-        _makeBooking(BookingStatus.inProgress),
-      ];
+      // Ventana del chófer (B1): las ganancias salen del historial, no de
+      // las reservas (una en curso no cuenta).
       final state = DriverLoaded(
         user: _driverUser,
         profile: _driverProfile,
         isAvailable: true,
-        bookings: bookings,
+        bookings: [_makeBooking(BookingStatus.inProgress)],
+        history: [_trip(), _trip()],
       );
       // Sin reparto del servidor: comisión por defecto del 20 %.
       expect(state.grossEarnings, 150.0); // 75 + 75
@@ -518,10 +531,8 @@ void main() {
         user: _driverUser,
         profile: _driverProfile,
         isAvailable: true,
-        bookings: [
-          _makeBooking(BookingStatus.completed, settlement: settled),
-          _makeBooking(BookingStatus.completed, settlement: settled),
-        ],
+        bookings: const [],
+        history: [_trip(settlement: settled), _trip(settlement: settled)],
       );
       expect(state.totalEarnings, 135.0);
       expect(state.totalCommission, 15.0);
@@ -625,10 +636,8 @@ void main() {
         user: _driverUser,
         profile: _driverProfile,
         isAvailable: true,
-        bookings: [
-          _makeBooking(BookingStatus.completed),
-          _makeBooking(BookingStatus.completed, refunded: true),
-        ],
+        bookings: const [],
+        history: [_trip(), _trip(refunded: true)],
       );
       expect(state.grossEarnings, 75.0);
       expect(state.totalEarnings, 60.0);

@@ -4534,6 +4534,27 @@
   "@driverTripClosedBack": {
     "description": "Ventana del chófer: botón para volver a las solicitudes."
   },
+  "driverHistoryLoadFailed": "No se pudieron cargar tus viajes terminados.",
+  "@driverHistoryLoadFailed": {
+    "description": "Historial del chófer: no se pudieron leer los viajes terminados."
+  },
+  "driverHistoryLoading": "Cargando tus viajes terminados",
+  "@driverHistoryLoading": {
+    "description": "Historial del chófer: lectura en curso (lector de pantalla)."
+  },
+  "driverEarningsTripArea": "Por horas · {area}",
+  "@driverEarningsTripArea": {
+    "description": "Ganancias: viaje por horas, con la zona de recogida (sin dirección exacta).",
+    "placeholders": {
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsAreaUnknown": "Zona sin registrar",
+  "@driverEarningsAreaUnknown": {
+    "description": "Ganancias: viaje sin zona registrada."
+  },
   "errorTooManyAttempts": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
   "@errorTooManyAttempts": {
     "description": "Error: el servidor o Firebase limitó los intentos."
