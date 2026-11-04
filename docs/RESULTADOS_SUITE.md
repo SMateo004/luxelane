@@ -4,6 +4,39 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/avisos-compartir, Parte A (A1–A8, commit 82a8791, 2026-11-04)
+
+Desde cierre/integracion bcc8d8c. Emuladores de Firestore, Storage y Auth con
+`demo-luxelane`; reglas e integración sin las variables de proxy de la sesión.
+Desfases, minutos, secreto, sal, límites y datos de las pruebas: FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           337 archivos, 0 cambiados       0
+flutter test                                  pasa           1076/1076                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           796/796 (36 de 36 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           3875/3875 (30 de 30 suites)     0
+npm run test:integration (demo-luxelane)      pasa           549/549 (55 de 55 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de bcc8d8c con los tests de 82a8791, código de salida 0: la
+Parte A no cambia ningún permiso. `tripShares` ya la denegaba la regla por
+defecto (sin `match`) y el campo `reminders` ya lo protegían las listas de
+campos de las actualizaciones del pasajero y del chófer; el `match` nuevo
+solo lo deja escrito.
+
+```
+Test Suites: 30 passed, 30 total
+Tests:       3875 passed, 3875 total
+```
+
 ## cierre/integracion tras fusionar cierre/ventana-chofer (commit ac23fad, 2026-11-04)
 
 `git merge --no-ff cierre/ventana-chofer` sobre c3854f8 con el worktree
