@@ -18,7 +18,9 @@ import 'package:luxelane/l10n/l10n.dart';
 class _Bloc extends MockBloc<AdminEvent, AdminState> implements AdminBloc {}
 
 class _Repo implements AdminShareRepository {
-  _Repo({this.active = true, this.fail = false});
+  _Repo({this.active = true, this.fail = false}) {
+    addTearDown(() => alerts.close());
+  }
   bool active;
   bool fail;
   final revoked = <(String, String)>[];
@@ -119,7 +121,7 @@ void main() {
       'riderId': 'ana',
       'status': 'pending',
       'estimatedPrice': 100,
-      'scheduledAt': Timestamp.fromDate(DateTime(2026, 11, 20, 14, 0)),
+      'scheduledAt': Timestamp.fromDate(DateTime(2026, 11, 20, 14)),
       'origin': {
         'address': 'Origen (prueba)',
         'coordinates': const GeoPoint(-17.7, -63.1)
