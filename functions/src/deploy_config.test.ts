@@ -78,6 +78,17 @@ describe('docs/AUDITORIA_LUXLANE.md', () => {
     expect(audit).toMatch(/PENDIENTE: Prompt 15C \(fuente de la ATT\)/);
     expect(audit).toMatch(/PENDIENTE ANTES DEL PILOTO[^\n]*lee la reserva entera/);
   });
+
+  it('ventana del chófer: qué se guarda, quién lo lee y las preguntas para el abogado', () => {
+    const i = audit.indexOf('## O. Ventana del chófer');
+    const o = i < 0 ? '' : audit.slice(i, audit.indexOf('\n## ', i + 5));
+    expect(o).not.toBe('');
+    expect(o).toContain('driverHistory/{uid}/trips/{bookingId}');
+    expect(o).toContain('SUMMARY_FIELDS');
+    expect(o).toMatch(/PREGUNTAS PARA EL ABOGADO/);
+    expect(o).toMatch(/Retención del resumen/);
+    expect(o).toMatch(/deleteAccount/);
+  });
 });
 
 // 0.4: el diagnóstico de x-forwarded-for está apagado por defecto y

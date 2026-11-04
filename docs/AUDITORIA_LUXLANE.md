@@ -270,7 +270,7 @@ Qué se guarda y quién lo lee:
 
 - **Privacidad (A10)**: el número de vuelo, la aerolínea y el vuelo entero se tachan en los registros (`logger.ts`, prueba en errors.test.ts). En la Parte A no hay notificaciones de vuelo; las de la Parte B no llevarán el número en la pantalla bloqueada.
 - **Retención**: cuánto tiempo se guardan el vuelo de la reserva, su copia para el chófer y la caché `flightBoard`: **pendiente del abogado** (no se fija ningún plazo ni se programa borrado). `deleteAccount` no borra `flightBoard` (no tiene datos de la persona, solo vuelos por aeropuerto y fecha).
-- **PENDIENTE ANTES DEL PILOTO** (decisión del responsable, 2026-11-03: se trata en un prompt aparte): el chófer asignado lee la reserva entera también después del viaje (regla general de `bookings`), y con ella el número de vuelo en su historial. El vuelo se queda en la reserva; la copia `driverView/flight` tiene ventana (`confirmed` a `in_progress`).
+- **PENDIENTE ANTES DEL PILOTO, en curso en cierre/ventana-chofer (sección O; sin fusionar ni desplegar)** (decisión del responsable, 2026-11-03: se trata en un prompt aparte): el chófer asignado lee la reserva entera también después del viaje (regla general de `bookings`), y con ella el número de vuelo en su historial. El vuelo se queda en la reserva; la copia `driverView/flight` tiene ventana (`confirmed` a `in_progress`).
 - **No se presentó con vuelo**: solo con el vuelo aterrizado (hora real de la fuente o de un admin) y pasada la espera desde `readyAt`. Retrasado, sin datos, desviado o cancelado: rechazado; solo un admin lo fuerza (`adminForceNoShow`, motivo y auditoría).
 - **Precio**: con vuelo se cotiza y reserva con `readyAt` como hora de recogida (incluido el recargo nocturno de `config/pricing`), y no cambia después.
 - **Límites de la Parte A, cerrados en la Parte B**: cuando `readyAt` cambia (planificador o admin), `scheduledAt` y `openRequests/{id}.scheduledAt` cambian con él; los seis usos de la hora de recogida (limpieza diaria, chófer ocupado al asignar, retención de la tarjeta, aviso al liberar, reactivación y bandeja de pagos, solicitudes abiertas) lo siguen (`flight_followers.int.ts`). El precio no se recalcula: solo `booking_service.ts` llama a la tarifa (`price_fixed.test.ts`).
@@ -289,8 +289,27 @@ Qué se guarda y quién lo lee:
 - **Textos**: ninguna promesa de hora (`frases_prohibidas_test.dart`: llegar a tiempo, vuelo en tiempo real, espera sin límite, ajuste automático, garantías; es/en/pt).
 - **Enlace externo existente**: la tarjeta del chófer conserva el enlace a la página pública de vuelos de la ATT (abre el navegador; la app no lee nada de ella). NO VERIFICADO que esa página siga disponible.
 - **PENDIENTE: Prompt 15C (fuente de la ATT)**: la fuente automática de vuelos espera los datos de la página pública de la ATT (qué publica, con qué formato, cada cuánto y si se permite leerla). Hasta entonces `pollFlights` corre con `ManualFlightProvider`, que no encuentra nada: todo dato en vivo lo carga central a mano.
-- **PENDIENTE ANTES DEL PILOTO (recordatorio)**: el chófer asignado sigue leyendo la reserva entera después del viaje, con el número de vuelo (ver arriba en N); se trata en un prompt aparte antes del piloto.
+- **PENDIENTE ANTES DEL PILOTO (recordatorio)**: el chófer asignado sigue leyendo la reserva entera después del viaje, con el número de vuelo (ver arriba en N); se trata en un prompt aparte antes del piloto. En curso en cierre/ventana-chofer (sección O).
 - **Fuente**: solo la manual (lo que fija un admin) y la de pruebas. La de la ATT no está implementada; la app y las callables de reserva nunca consultan una fuente externa, solo la caché.
+
+## O. Ventana del chófer e historial sin datos del pasajero (cierre/ventana-chofer, Parte A)
+
+Decisiones del responsable (2026-11-04): el chófer asignado y activo lee la reserva y sus subcolecciones solo entre `confirmed` e `in_progress`; su historial sale de un resumen sin datos personales que escribe el servidor; lo leen el chófer dueño y el admin; la retención la decide el abogado.
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Reserva entera (pasajero, invitado, notas, direcciones exactas, vuelo, comentario de la valoración) | `bookings/{id}` | Pasajero dueño y admin siempre; el chófer asignado y activo solo de `confirmed` a `in_progress` | Servidor (y el pasajero, su valoración) |
+| Registro de transiciones, ubicación del chófer, teléfono del chófer, preferencias del pasajero | `bookings/{id}/events`, `tracking`, `driverContact`, `driverView` | Igual que la reserva para el chófer (misma ventana); el pasajero, como antes | Servidor (la ubicación, el chófer en el viaje vivo) |
+| Resumen del viaje terminado: `bookingId`, estado final, fecha y hora de fin, tipo de servicio, clase del vehículo, zona de origen y de destino (nombre de zona y coordenadas a dos decimales, como en `openRequests`), distancia, duración, estrellas de la valoración; y los importes que la pantalla de ganancias ya leía (`estimatedPrice`, `finalPrice`, `settlement`, `refunded`) | `driverHistory/{uid}/trips/{bookingId}` | El chófer dueño (también bloqueado: es suyo y no tiene datos del pasajero) y el admin | Solo el servidor (`writeDriverHistoryOnBooking`) |
+
+- **Sin datos personales**: ni `riderId`, ni nombres, teléfonos, correo, notas, invitado, direcciones exactas, vuelo, preferencias ni comentario de la valoración. Lista cerrada en `functions/src/driver_history.ts` (`SUMMARY_FIELDS`), con prueba campo por campo (`driver_history.test.ts`) y en el emulador (`driver_history.int.ts`, privacidad).
+- **Cómo se escribe**: un disparador sobre `bookings` (no cada camino) cubre todos los caminos que cierran una reserva con chófer y los datos que llegan después (valoración, reparto, corrección del importe, reembolso). Idempotente: si el resumen ya es igual no se escribe. Los caminos sin chófer (liberar, limpieza programada, cancelar una pendiente) no dejan resumen.
+- **Registros**: el disparador solo registra el id de la reserva y si escribió; el resumen no va a los registros.
+- **App anterior del chófer**: su consulta de reservas no lleva filtro de estado; con las reglas nuevas se rechaza entera y deja de ver también el viaje en curso. Por eso las reglas van al final, tras publicar la app nueva y subir `minDriverAppVersion` (DEPLOY.md, Parte B).
+- **PREGUNTAS PARA EL ABOGADO**:
+  1. Retención del resumen `driverHistory`: cuánto tiempo se guarda. No se programa ningún borrado ni se fija plazo.
+  2. Borrado de cuenta del chófer: `deleteAccount` hoy no toca `driverHistory` (el resumen queda). ¿Se borra, se conserva por obligación contable (lleva importes del reparto) o se anonimiza?
+  3. Borrado de cuenta del pasajero: el resumen no lleva su uid ni datos suyos; ¿basta con eso?
 
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
