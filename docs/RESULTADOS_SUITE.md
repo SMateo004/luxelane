@@ -4,6 +4,33 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/integracion tras fusionar cierre/vuelos (commit 44bbb52, 2026-11-04)
+
+`git merge --no-ff cierre/vuelos` sobre c0b38fe con el worktree limpio, sin
+conflictos (cierre/vuelos salía de c0b38fe). Incluye la revisión de la
+Parte B: test de paridad de aeropuertos servidor/app (5920b08), auditoría
+con la decisión 4 diferida y los pendientes (e05a094), «Cancelar reserva» a
+48 px con test (c53fdbd: ya medía 48; los 27 px eran la captura cortada) y
+la auditoría de capturas (5892e8d). Emuladores con `demo-luxelane`; reglas e
+integración sin las variables de proxy de la sesión. Datos de prueba
+FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           331 archivos, 0 cambiados       0
+flutter test                                  pasa           1047/1047                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           746/746 (34 de 34 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1976/1976 (28 de 28 suites)     0
+npm run test:integration (demo-luxelane)      pasa           488/488 (52 de 52 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+actionlint no está instalado en la sesión.
+
 ## cierre/vuelos, Parte B (B1–B7, commit 7b4e3c9; app final c2544d9, 2026-11-04)
 
 Desde la Parte A (961531f) con el panel de vuelos (a168f85, traído con
