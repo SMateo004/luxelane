@@ -4,6 +4,80 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/ventana-chofer, Parte A (A1–A6, commit a973dfb, 2026-11-04)
+
+Desde cierre/integracion c3854f8. Emuladores de Firestore, Storage y Auth con
+`demo-luxelane`; reglas e integración sin las variables de proxy de la sesión.
+Reservas, chóferes, importes y política de las pruebas: FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           335 archivos, 0 cambiados       0
+flutter test                                  pasa           1060/1060                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           753/753 (35 de 35 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           3832/3832 (29 de 29 suites)     0
+npm run test:integration (demo-luxelane)      pasa           503/503 (53 de 53 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de c3854f8 con los tests de a973dfb, `RULES_PATH=<reglas
+anteriores> firebase emulators:exec --only firestore,storage --project
+demo-luxelane "jest --runInBand --verbose"`, código de salida 1. Fallan
+exactamente las celdas que cambian: el chófer asignado deja de leer las
+reservas terminadas, canceladas o «no se presentó» y sus subcolecciones, la
+consulta sin filtro de estado se rechaza, y `driverHistory` se abre al chófer
+dueño y al admin.
+
+```
+Test Suites: 2 failed, 27 passed, 29 total
+Tests:       38 failed, 3794 passed, 3832 total
+
+● bookings/{id} · cancelled › asig › leer
+● bookings/{id} · cancelled › asig › listar
+● bookings/{id} · completed › asig › leer
+● bookings/{id} · completed › asig › listar
+● bookings/{id} · liberada › asig › listar
+● bookings/{id} · no_show › asig › leer
+● bookings/{id} · no_show › asig › listar
+● bookings/{id}/driverContact · cancelled › asig › leer
+● bookings/{id}/driverContact · cancelled › asig › listar
+● bookings/{id}/driverContact · completed › asig › leer
+● bookings/{id}/driverContact · completed › asig › listar
+● bookings/{id}/driverContact · no_show › asig › leer
+● bookings/{id}/driverContact · no_show › asig › listar
+● bookings/{id}/events · cancelled › asig › leer
+● bookings/{id}/events · cancelled › asig › listar
+● bookings/{id}/events · completed › asig › leer
+● bookings/{id}/events · completed › asig › listar
+● bookings/{id}/events · no_show › asig › leer
+● bookings/{id}/events · no_show › asig › listar
+● bookings/{id}/tracking · cancelled › asig › leer
+● bookings/{id}/tracking · cancelled › asig › listar
+● bookings/{id}/tracking · completed › asig › leer
+● bookings/{id}/tracking · completed › asig › listar
+● bookings/{id}/tracking · no_show › asig › leer
+● bookings/{id}/tracking · no_show › asig › listar
+● consultas del chófer sobre sus reservas › la consulta antigua (solo driverId, sin estado) se rechaza entera: la app anterior deja de ver sus viajes
+● consultas del chófer sobre sus reservas › pedir sus reservas terminadas por consulta se rechaza
+● driverHistory/{uid}/trips › admin › leer
+● driverHistory/{uid}/trips › admin › listar
+● driverHistory/{uid}/trips › asig › leer
+● driverHistory/{uid}/trips › asig › listar
+● driverHistory/{uid}/trips › bloq › leer
+● driverHistory/{uid}/trips › bloq › listar
+● driverHistory/{uid}/trips › el admin lo lee
+● driverHistory/{uid}/trips › el chófer dueño lee y lista su historial, del más reciente al más antiguo
+● fuera de la ventana › asignado y activo: no lee la reserva cancelled ni sus eventos
+● fuera de la ventana › asignado y activo: no lee la reserva completed ni sus eventos
+● fuera de la ventana › asignado y activo: no lee la reserva no_show ni sus eventos
+```
+
 ## cierre/integracion tras fusionar cierre/vuelos (commit 44bbb52, 2026-11-04)
 
 `git merge --no-ff cierre/vuelos` sobre c0b38fe con el worktree limpio, sin
