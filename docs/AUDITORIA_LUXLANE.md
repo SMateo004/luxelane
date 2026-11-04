@@ -314,6 +314,38 @@ Decisiones del responsable (2026-11-04): el chófer asignado y activo lee la res
   2. Borrado de cuenta del chófer: `deleteAccount` hoy no toca `driverHistory` (el resumen queda). ¿Se borra, se conserva por obligación contable (lleva importes del reparto) o se anonimiza?
   3. Borrado de cuenta del pasajero: el resumen no lleva su uid ni datos suyos; ¿basta con eso?
 
+## P. Recordatorios y viaje compartido (cierre/avisos-compartir, Parte A)
+
+### P.1 Recordatorios programados
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Plan de recordatorios: `nextAt`, claves enviadas y saltadas (`rider:60`, `driver:15`, `unassigned`), hora ancla y desde cuándo recibe cada persona; sin ids de personas salvo el del chófer actual (que ya está en la reserva) | `bookings/{id}.reminders` | Quien ya lee la reserva (pasajero dueño, chófer en su ventana, admin) | Solo el servidor (disparadores y `remindersJob`) |
+| Aviso en la bandeja | `users/{uid}/notifications/reminder_{reserva}_{clave}` | Su dueño | Servidor |
+| Alerta de reserva pagada sin chófer | `adminAlerts/unassigned_{reserva}` | Admin | Servidor |
+
+- **Pantalla bloqueada**: solo la hora de recogida; sin direcciones, nombres, vuelo ni código (`reminders.int.ts`).
+- **Push**: respeta `config/global.pushNotificationsEnabled`; la bandeja se escribe igual. Hoy no se limpian los tokens inválidos (no se hacía antes; un token inválido no corta el resto).
+- **Una sola vez**: la bandeja y la marca de enviado van en la misma transacción; el push sale después del commit. Si la función cae entre el commit y el push, ese push se pierde (la bandeja queda): se prefirió no duplicar.
+
+### P.2 Viaje compartido (enlace público de seguimiento)
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Enlace: id = HMAC del token (`TRIP_SHARE_SECRET`), reserva, pasajero, activo, creado, tope técnico, revocado y por quién. **Nunca el token** | `tripShares/{hash}` | Ningún cliente (tampoco el admin desde el cliente); el servidor | `createTripShare`, `revokeTripShare`, `adminRevokeTripShare` |
+| Lo que ve quien abre el enlace, sin sesión: estado en lenguaje sencillo, hora de recogida prevista, nombre de pila del chófer, marca, modelo, color y placa, zona de recogida y de destino, y la última posición del chófer con su hora **solo entre driver_arriving e in_progress** | Respuesta de `sharedTrip` (no se guarda) | Cualquiera que tenga el enlace | — |
+| Contador de lecturas por IP | `rateLimits/sharedTrip_ip__{hash}` | Nadie desde el cliente | Servidor (IP con HMAC de `RATE_LIMIT_SALT`) |
+
+- **Nunca en la página**: teléfono, apellido, precio, pago, notas, preferencias, vuelo, código de recogida, correo, identificadores internos ni la dirección exacta del pasajero (prueba campo por campo en `trip_share.int.ts`).
+- **El token no sale del navegador de quien lo tiene**: va en el fragmento (`/t#<token>`), que el navegador no envía al pedir la página ni en el `Referer`; la página lo manda en el cuerpo de un POST. Así no queda en los registros de peticiones de Hosting ni de Cloud Run (que guardan la URL), ni en los nuestros (`logs_privacy.int.ts`).
+- **Caducidad**: estado final + `config/ops.tripShareGraceMinutes` (sin la clave, al instante) y como mucho 24 h desde que se crea (tope técnico, `TRIP_SHARE_MAX_HOURS`). Un enlace por reserva; el pasajero o un admin (con auditoría) lo revocan. Enlace inexistente, caducado, revocado o mal formado: la misma respuesta.
+- **Riesgo de compartir una posición en vivo con un enlace público**: quien tenga el enlace (también si se reenvía o se filtra) ve dónde está el vehículo, y con él al pasajero, mientras el viaje dura; y ve el nombre de pila y la placa del chófer. Mitigaciones: solo lo crea el pasajero dueño, la posición solo en el tramo del viaje, caduca sola, se revoca al instante, no se indexa, no tiene caché, no envía Referer, el token no se puede adivinar (128 bits) ni se guarda. Lo que no se puede evitar: que alguien con el enlace lo reenvíe o haga capturas.
+- **PREGUNTAS PARA EL ABOGADO**:
+  1. Consentimiento del chófer: su nombre de pila, su vehículo y su posición quedan visibles para personas que no son el pasajero. ¿Basta con informarle (la app del chófer lo dirá, C2) o hace falta consentimiento expreso en su contrato o en el registro?
+  2. Retención de `tripShares` (sin token ni posición: reserva, pasajero, fechas) y de los contadores por IP con hash: cuánto tiempo. No se programa borrado.
+  3. ¿Hace falta un aviso al pasajero sobre lo que ve quien reciba el enlace antes de compartirlo? (La app lo mostrará en la hoja de compartir, C1.)
+  4. Borrado de cuenta del pasajero: ¿se revocan y borran sus enlaces? Hoy `deleteAccount` no los toca.
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.

@@ -80,6 +80,17 @@ describe('docs/AUDITORIA_LUXLANE.md', () => {
     expect(audit).toMatch(/PENDIENTE ANTES DEL PILOTO[^\n]*lee la reserva entera/);
   });
 
+  it('avisos y viaje compartido: qué se guarda, el riesgo de la posición en vivo y las preguntas para el abogado', () => {
+    const i = audit.indexOf('## P. Recordatorios y viaje compartido');
+    const p = i < 0 ? '' : audit.slice(i, audit.indexOf('\n## ', i + 5));
+    expect(p).not.toBe('');
+    expect(p).toContain('tripShares/{hash}');
+    expect(p).toMatch(/Nunca el token/);
+    expect(p).toMatch(/Riesgo de compartir una posición en vivo/);
+    expect(p).toMatch(/Consentimiento del chófer/);
+    expect(p).toMatch(/Retención de `tripShares`/);
+  });
+
   it('ventana del chófer: qué se guarda, quién lo lee y las preguntas para el abogado', () => {
     const i = audit.indexOf('## O. Ventana del chófer');
     const o = i < 0 ? '' : audit.slice(i, audit.indexOf('\n## ', i + 5));

@@ -15,6 +15,7 @@ import { cancelIncident, escalateIncidents, raiseIncident } from '../incidents';
 import { updatePreferences as updatePreferencesFn } from '../index';
 import { createBooking } from '../booking_service';
 import { randomUUID } from 'crypto';
+import { createTripShare, handleSharedTrip, hashToken, revokeTripShare } from '../trip_share';
 
 const db = admin.firestore();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,7 +25,7 @@ const LNG = -63.1353456;
 const captured: string[] = [];
 
 async function clear(): Promise<void> {
-  for (const col of ['bookings', 'incidents', 'incidentRateLimits', 'adminAlerts', 'users', 'config', 'pricingRules', 'paymentRefs', 'rateLimits']) {
+  for (const col of ['bookings', 'incidents', 'incidentRateLimits', 'adminAlerts', 'users', 'config', 'pricingRules', 'paymentRefs', 'rateLimits', 'tripShares']) {
     const snap = await db.collection(col).get();
     for (const d of snap.docs) await db.recursiveDelete(d.ref);
   }
@@ -126,5 +127,24 @@ describe('logs sin código de recogida ni ubicaciones', () => {
     expect(all).not.toContain('privada-123');
     expect(all).not.toContain('privada-456');
     expect(all).not.toContain('music.example.com');
+  });
+
+  it('viaje compartido (Prompt 18): ni el token ni su hash en los logs', async () => {
+    const SECRET = 'secreto-ficticio';
+    const deps = { db, secret: SECRET };
+    await db.doc('users/ana').set({ role: 'rider', isActive: true });
+    await db.doc('bookings/compartido').set({ riderId: 'ana', driverId: 'chofer', status: 'in_progress',
+      scheduledAt: admin.firestore.Timestamp.now() });
+    const { token } = await createTripShare(deps, 'ana', { bookingId: 'compartido' });
+    const before = captured.length;
+    await handleSharedTrip({ ...deps, salt: 'sal-ficticia' }, { method: 'POST', ip: '203.0.113.9', body: { token } });
+    await handleSharedTrip({ ...deps, salt: 'sal-ficticia' }, { method: 'GET', ip: '203.0.113.9' });
+    await revokeTripShare(deps, 'ana', { bookingId: 'compartido' });
+    await handleSharedTrip({ ...deps, salt: 'sal-ficticia' }, { method: 'POST', ip: '203.0.113.9', body: { token } });
+    const all = captured.join('\n');
+    expect(captured.length).toBeGreaterThan(before);
+    expect(all).not.toContain(token);
+    expect(all).not.toContain(hashToken(SECRET, token));
+    expect(all).not.toContain('203.0.113.9');
   });
 });
