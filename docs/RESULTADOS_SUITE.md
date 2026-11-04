@@ -4,7 +4,7 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
-## cierre/vuelos, Parte B (B1–B7, commit 7b4e3c9, 2026-11-04)
+## cierre/vuelos, Parte B (B1–B7, commit 7b4e3c9; app final c2544d9, 2026-11-04)
 
 Desde la Parte A (961531f) con el panel de vuelos (a168f85, traído con
 cherry-pick). Emuladores de Firestore, Storage y Auth con `demo-luxelane`;
@@ -25,6 +25,19 @@ tools/pricing: npm test                       pasa           pass 10, fail 0    
 actionlint ci.yml                             NO EJECUTADO   —                               —
 ```
 
+Después, c2544d9 (selector de tipo de vuelo a 48 px, hallazgo de las
+capturas) solo toca la app; repetido sobre c2544d9:
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           330 archivos, 0 cambiados       0
+flutter test                                  pasa           1044/1044                       0
+```
+
+Capturas (`tools/experiencia/capturas_vuelos.cjs`): 126 de 126 «ok»
+(docs/capturas/vuelos/HALLAZGOS.md).
+
 ### Reglas anteriores con los tests nuevos
 
 La Parte B no cambia `firestore.rules` ni `storage.rules`. `firestore.rules`
@@ -43,6 +56,7 @@ Tests:       32 failed, 1944 passed, 1976 total
 Tarea                                   Test                                               Sin el cambio
 B4 nota del vuelo en el diseño ancho    ride_and_request_flight_test (768 y 1280 px)       2 fallan
 B5 solicitud con aeropuerto y tipo      ride_and_request_flight_test (es, en, pt)          3 fallan
+B4 selector de vuelo a 48 px            flight_type_selector_test (texto x1 y x2)          2 fallan
 B6 frases prohibidas de vuelos          frases_prohibidas_test («on time» en inglés)       falla
 B7 DEPLOY.md de vuelos                  deploy_config.test.ts (sección «Vuelos»)           falla
 ```
