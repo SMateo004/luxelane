@@ -4,6 +4,49 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/ventana-chofer, Parte B (B1–B4, commit fa7ef65, 2026-11-04)
+
+Sobre la Parte A (2fc95a1). Emuladores de Firestore, Storage y Auth con
+`demo-luxelane`; reglas e integración sin las variables de proxy de la sesión.
+Historial, importes y reservas de las pruebas: FICTICIOS. Trinquete de textos
+fijos: 0 (trinquete y vigilados).
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           337 archivos, 0 cambiados       0
+flutter test                                  pasa           1076/1076                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           756/756 (35 de 35 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           3832/3832 (29 de 29 suites)     0
+npm run test:integration (demo-luxelane)      pasa           503/503 (53 de 53 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+Capturas de la ventana del chófer             pasa           60/60                           —
+```
+
+### Reglas anteriores con los tests nuevos
+
+La Parte B no cambia las reglas. `firestore.rules` de c3854f8 con los tests
+de fa7ef65, código de salida 1: los mismos 38 fallos que en la Parte A (lista
+literal arriba, en la Parte A).
+
+```
+Test Suites: 2 failed, 27 passed, 29 total
+Tests:       38 failed, 3794 passed, 3832 total
+```
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                                      Test                                                Sin el cambio
+B1 ganancias desde driverHistory           driver_earnings_screen_test, driver_history_test    no compilan (history)
+B2 X del detalle de la reserva             booking_detail_close_test                           2 fallan
+B4 DEPLOY.md de la ventana del chófer      deploy_config.test.ts (sección «Ventana»)           falla
+Enlace node_modules fuera del repositorio  deploy_config.test.ts («repositorio limpio»)        falla (en 2fc95a1)
+```
+
 ## cierre/ventana-chofer, Parte A (A1–A6, commit a973dfb, 2026-11-04)
 
 Desde cierre/integracion c3854f8. Emuladores de Firestore, Storage y Auth con
