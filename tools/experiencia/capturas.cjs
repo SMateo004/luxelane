@@ -23,7 +23,8 @@ const SOLO = opt('--solo', '');
 const WIDTHS = opt('--anchos', '390,768,1280').split(',').map(Number);
 
 function seed() {
-  execFileSync('node', [path.join(__dirname, 'seed.cjs')], {
+  // seed_vuelos.cjs: aeropuerto y minutos FICTICIOS para reservar con vuelo.
+  for (const f of ['seed.cjs', 'seed_vuelos.cjs']) execFileSync('node', [path.join(__dirname, f)], {
     env: { ...process.env, GCLOUD_PROJECT: 'demo-luxelane', FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080',
       FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099' },
     stdio: 'ignore',
@@ -123,7 +124,31 @@ async function toBooking(p, w, { dest = 'plaza', horas = false } = {}) {
 /** Datos del vuelo (la recogida es en el aeropuerto) y, en móvil, al paso 3. */
 async function toSummary(p, w) {
   if (w < SPLIT) { await L.tap(p, 'Continuar'); await sleep(2500); }
-  await L.type(p, 'Número de vuelo', 'PRB 123'); await L.tap(p, 'Nacional'); await sleep(500);
+  // Paso «Tu vuelo» (vuelos, B4): tipo primero, número, fecha (mañana),
+  // hora (la que propone el selector) y equipaje facturado. Desde 1100 px
+  // el resumen tiene su propio desplazamiento: la rueda va sobre él.
+  const tapIn = async (text) => {
+    const { height } = p.viewportSize();
+    let el = p.getByRole('button', { name: text }).first();
+    if (!(await el.count())) el = p.getByText(text).first();
+    for (let i = 0; i < 30; i++) {
+      const box = (await el.count()) ? await el.boundingBox({ timeout: 500 }).catch(() => null) : null;
+      if (box && box.y >= 0 && box.y + box.height <= height) break;
+      await p.mouse.move(w >= SPLIT ? w * 0.84 : w / 2, height / 2); await p.mouse.wheel(0, 300); await sleep(250);
+      if (!(await el.count())) el = p.getByRole('button', { name: text }).first();
+    }
+    await el.click();
+  };
+  await tapIn('Nacional'); await sleep(500);
+  await L.type(p, 'Número de vuelo', 'ZZ 123');
+  await tapIn('Elegir fecha'); await sleep(1200);
+  const tomorrow = new Date(Date.now() + 20 * 3_600_000).getUTCDate();
+  const day = p.getByRole('button', { name: new RegExp(`^${tomorrow}\\b`) });
+  if (await day.count()) await day.first().click();
+  await sleep(500); await p.getByRole('button', { name: /^(OK|Aceptar)$/i }).first().click(); await sleep(800);
+  await tapIn('Elegir hora'); await sleep(1200);
+  await p.getByRole('button', { name: /^(OK|Aceptar)$/i }).first().click(); await sleep(800);
+  await tapIn('Sí, con equipaje facturado'); await sleep(1500);
   if (w < SPLIT) { await L.tap(p, 'Continuar'); await sleep(5000); } else await sleep(3000);
 }
 const BK = (state, o) => add('F2-reserva', `pantalla-${state}`, o);

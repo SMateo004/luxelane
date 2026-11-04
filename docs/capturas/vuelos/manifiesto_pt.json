@@ -1,0 +1,588 @@
+{
+  "generado": "2026-11-04T02:08:01.568Z",
+  "idiomas": [
+    "pt"
+  ],
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "capturas": [
+    {
+      "idioma": "pt",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v03-viaje-sin-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v03-viaje-sin-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v04-viaje-retrasado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v04-viaje-retrasado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v04-viaje-retrasado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v04-viaje-retrasado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v05-viaje-cancelado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v05-viaje-cancelado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v06-chofer-retrasado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v07-chofer-sin-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v08-chofer-sin-punto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v08-chofer-sin-punto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v08-chofer-sin-punto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v08-chofer-sin-punto_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v09-chofer-solicitud_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v09-chofer-solicitud_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v09-chofer-solicitud_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v09-chofer-solicitud_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v03-viaje-sin-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v03-viaje-sin-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v01-paso-vuelo-nacional_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v01-paso-vuelo-nacional_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v01-paso-vuelo-nacional_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v01-paso-vuelo-nacional_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v02-paso-vuelo-sin-punto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v02-paso-vuelo-sin-punto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v02-paso-vuelo-sin-punto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v02-paso-vuelo-sin-punto_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v05-viaje-cancelado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v05-viaje-cancelado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v06-chofer-retrasado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v06-chofer-retrasado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/v06-chofer-retrasado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/v07-chofer-sin-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/v07-chofer-sin-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/v07-chofer-sin-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    }
+  ],
+  "semantica": [
+    {
+      "idioma": "pt",
+      "estado": "v04-viaje-retrasado",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar ao início",
+        "L",
+        "LUXELANE",
+        "Mapa indisponível",
+        "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui.",
+        "Etapa 1 de 4",
+        "Confirmada",
+        "Sua reserva está confirmada. Avisaremos você quando seu motorista sair ao seu encontro.",
+        "Seu voo aparece atrasado. Novo horário de embarque: 23:21.",
+        "Luis Prueba",
+        "Marca de prueba Modelo de prueba · Negro",
+        "4.9",
+        "PRB-CHO",
+        "Cancelar reserva Cancelar reserva",
+        "Reservar RESERVAR",
+        "Minhas viagens MINHAS VIAGENS",
+        "Perfil PERFIL"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v05-viaje-cancelado",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar ao início",
+        "L",
+        "LUXELANE",
+        "Mapa indisponível",
+        "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui.",
+        "Etapa 1 de 4",
+        "Confirmada",
+        "Sua reserva está confirmada. Avisaremos você quando seu motorista sair ao seu encontro.",
+        "Seu voo aparece como cancelado ou desviado. A central vai revisar sua reserva.",
+        "Luis Prueba",
+        "Marca de prueba Modelo de prueba · Negro",
+        "4.9",
+        "PRB-CHO",
+        "Cancelar reserva Cancelar reserva",
+        "Reservar RESERVAR",
+        "Minhas viagens MINHAS VIAGENS",
+        "Perfil PERFIL"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v08-chofer-sin-punto",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "L",
+        "LUXELANE",
+        "Etapa 1 de 4",
+        "Confirmada",
+        "Siga até o ponto de embarque.",
+        "Aeropuerto Internacional Viru Viru (prueba)",
+        "Plaza 24 de Septiembre (prueba)",
+        "INTERNACIONAL",
+        "Voo · Aerolínea de prueba · ZZ404",
+        "Status: Programado",
+        "Mapa indisponível",
+        "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui.",
+        "Sem dados do voo ao vivo: horário programado 23:51",
+        "Esteja no ponto às 00:26",
+        "Ponto a confirmar com a central",
+        "Ver status em mivuelo.att.gob.bo",
+        "Tarifa estimada",
+        "Bs 120",
+        "Sair para o embarque Sair para o embarque Deslize para confirmar",
+        "Não posso fazer esta viagem"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v09-chofer-solicitud",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Solicitações",
+        "DISPONÍVEIS PARA VOCÊ",
+        "Centro Hoje · 23:31 · saindo de Aeropuerto Bs 120 Pendente Business Class · ~16 km · 1 pax Idiomas: Espanhol, Inglês Aceitar viagem Aceitar viagem",
+        "Centro Hoje · 23:31 · saindo de Aeropuerto Bs 120 Pendente Business Class · ~16 km · 1 pax Aeroporto VVI · Nacional Aceitar viagem Aceitar viagem",
+        "Dirigir Guia 1 de 4",
+        "Solicitações Guia 2 de 4",
+        "Ganhos",
+        "Perfil Guia 4 de 4"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v03-viaje-sin-datos",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar ao início",
+        "L",
+        "LUXELANE",
+        "Mapa indisponível",
+        "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui.",
+        "Etapa 1 de 4",
+        "Confirmada",
+        "Sua reserva está confirmada. Avisaremos você quando seu motorista sair ao seu encontro.",
+        "Sem dados do voo ao vivo: horário programado 22:01",
+        "Luis Prueba",
+        "Marca de prueba Modelo de prueba · Negro",
+        "4.9",
+        "PRB-CHO",
+        "Cancelar reserva Cancelar reserva",
+        "Reservar RESERVAR",
+        "Minhas viagens MINHAS VIAGENS",
+        "Perfil PERFIL"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v01-paso-vuelo-nacional",
+      "interactivos": 12,
+      "sinEtiqueta": 1,
+      "pequenos": [
+        " 28x28"
+      ],
+      "textos": [
+        "Voltar",
+        "2",
+        "3",
+        "Veículo",
+        "Detalhes",
+        "Confirmar",
+        "0",
+        "Embarque no aeroporto: informe o número do voo para que seu motorista o tenha.",
+        "Tipo de voo *",
+        "Nacional",
+        "Internacional",
+        "Data do voo: 4 de nov. de 2026",
+        "Horário de chegada na sua passagem: 12:00",
+        "Sim, com bagagem despachada",
+        "Não, só de mão",
+        "Se você declarar sem bagagem e tiver, seu motorista pode ir embora antes de você sair.",
+        "Puerta de llegadas nacionales (punto ficticio) Frente a la salida, junto al cartel de prueba. Dato ficticio. Horário de embarque no ponto: 12:30",
+        "PREÇO FINAL",
+        "Bs 53",
+        "Continuar Continuar",
+        "Reservar RESERVAR",
+        "Minhas viagens MINHAS VIAGENS",
+        "Perfil PERFIL"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "interactivos": 10,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "2",
+        "3",
+        "Veículo",
+        "Detalhes",
+        "Confirmar",
+        "Data do voo: 4 de nov. de 2026",
+        "Horário de chegada na sua passagem: 12:00",
+        "Sim, com bagagem despachada",
+        "Não, só de mão",
+        "Se você declarar sem bagagem e tiver, seu motorista pode ir embora antes de você sair.",
+        "Ponto a confirmar com a central Horário de embarque no ponto: 12:55",
+        "Alterar para esta viagem",
+        "PREÇO FINAL",
+        "Bs 53",
+        "Continuar Continuar",
+        "Reservar RESERVAR",
+        "Minhas viagens MINHAS VIAGENS",
+        "Perfil PERFIL"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v06-chofer-retrasado",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "L",
+        "LUXELANE",
+        "Etapa 1 de 4",
+        "Confirmada",
+        "Siga até o ponto de embarque.",
+        "Aeropuerto Internacional Viru Viru (prueba)",
+        "Plaza 24 de Septiembre (prueba)",
+        "NACIONAL",
+        "Voo · Aerolínea de prueba · ZZ202",
+        "Status: Atrasado",
+        "Chegada estimada: 23:57",
+        "Esteja no ponto às 00:27",
+        "Mapa indisponível",
+        "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui.",
+        "Puerta de llegadas nacionales (punto ficticio)",
+        "Frente a la salida, junto al cartel de prueba. Dato ficticio.",
+        "Ver status em mivuelo.att.gob.bo",
+        "Tarifa estimada",
+        "Bs 120",
+        "Sair para o embarque Sair para o embarque Deslize para confirmar",
+        "Não posso fazer esta viagem"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "v07-chofer-sin-datos",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Voltar",
+        "L",
+        "LUXELANE",
+        "Etapa 1 de 4",
+        "Confirmada",
+        "Siga até o ponto de embarque.",
+        "Aeropuerto Internacional Viru Viru (prueba)",
+        "Plaza 24 de Septiembre (prueba)",
+        "NACIONAL",
+        "Voo · Aerolínea de prueba · ZZ101",
+        "Status: Programado",
+        "Sem dados do voo ao vivo: horário programado 23:07",
+        "Esteja no ponto às 23:37",
+        "Mapa indisponível",
+        "O mapa não pode ser exibido agora. Os dados da viagem continuam aqui.",
+        "Puerta de llegadas nacionales (punto ficticio)",
+        "Frente a la salida, junto al cartel de prueba. Dato ficticio.",
+        "Ver status em mivuelo.att.gob.bo",
+        "Tarifa estimada",
+        "Bs 120",
+        "Sair para o embarque Sair para o embarque Deslize para confirmar",
+        "Não posso fazer esta viagem"
+      ]
+    }
+  ]
+}

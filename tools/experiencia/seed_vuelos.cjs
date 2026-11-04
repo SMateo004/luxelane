@@ -92,13 +92,13 @@ async function main() {
   batch.set(db.doc('adminAlerts/vuelo-por-verificar'), { type: 'flight_unverified', severity: 'low', bookingId: 'v-sindatos',
     resolved: false, createdAt: at(-30), message: 'Vuelo indicado por el pasajero, sin verificar. (dato de prueba)' });
   // Retrasado, fijado por central con bloqueo manual.
-  flightBooking('v-retrasado', { status: 'confirmed', arrMin: 60, estMin: 140, flightStatus: 'delayed', source: 'admin',
-    quality: 'fresh', lock: true, number: 'ZZ202' });
+  flightBooking('v-retrasado', { status: 'confirmed', arrMin: 60, estMin: 140, flightStatus: 'delayed', source: 'manual',
+    quality: 'ok', lock: true, number: 'ZZ202' });
   batch.set(db.doc('admin_logs/vuelo-fijado'), { action: 'set_flight_info', targetId: 'v-retrasado', targetType: 'booking',
     adminId: 'admin', adminEmail: 'admin@prueba.test', actorRole: 'admin', reason: 'Confirmado con la aerolínea (dato de prueba)',
     timestamp: at(-5), createdAt: at(-5) });
   // Cancelado: alerta alta, la reserva no se cancela sola.
-  flightBooking('v-cancelado', { status: 'confirmed', arrMin: 120, flightStatus: 'cancelled', source: 'admin', quality: 'fresh',
+  flightBooking('v-cancelado', { status: 'confirmed', arrMin: 120, flightStatus: 'cancelled', source: 'manual', quality: 'ok',
     lock: true, number: 'ZZ303' });
   batch.set(db.doc('adminAlerts/vuelo-cancelado'), { type: 'flight_disrupted', severity: 'high', bookingId: 'v-cancelado',
     resolved: false, createdAt: at(-4), message: 'El vuelo figura como cancelado. Revisa la reserva. (dato de prueba)' });

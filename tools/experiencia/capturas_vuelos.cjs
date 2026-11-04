@@ -26,6 +26,8 @@ const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] :
 const LANGS = opt('--idiomas', 'es,en,pt').split(',');
 const WIDTHS = opt('--anchos', '390,768,1280').split(',').map(Number);
 const SOLO = opt('--solo', '');
+// Varios procesos a la vez (uno por idioma): cada uno con su manifiesto.
+const MANIFEST = opt('--manifiesto', 'manifiesto.json');
 const BROWSER_LOCALE = { es: 'es-BO', en: 'en-US', pt: 'pt-BR' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const SPLIT = 1100;
@@ -108,6 +110,25 @@ async function toFlightStep(p, w, l, type) {
   await p.mouse.wheel(0, 260); await sleep(1500);
 }
 
+/**
+ * Inicio de sesión que espera al botón real: con la semántica aún sin crear,
+ * L.tap caía en el título «Iniciar sesión» y no enviaba nada.
+ */
+async function login(page, base, email, home, labels) {
+  await page.goto(L.url(base, home)); await L.ready(page);
+  // Texto insertado de una vez: tecla a tecla, Flutter web a veces pierde
+  // alguna y el emulador responde INVALID_PASSWORD.
+  for (const [label, value] of [[labels.email, email], [labels.password, 'prueba-123']]) {
+    const field = page.getByLabel(label, { exact: false }).first();
+    await field.click(); await page.keyboard.press('Control+A'); await page.keyboard.press('Delete');
+    await page.keyboard.insertText(value); await sleep(300);
+  }
+  const btn = page.getByRole('button', { name: named(labels.submit) });
+  for (let i = 0; i < 20 && !(await btn.count()); i++) await sleep(500);
+  await btn.first().click();
+  await sleep(4000); await L.ready(page, 500);
+}
+
 async function openPanel(p) {
   await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
   const entry = p.getByRole('button', { name: /^Vuelos/ }).first();
@@ -156,11 +177,12 @@ async function audit(page) {
 }
 
 (async () => {
-  seed();
+  // Con varios procesos, se siembra una vez antes (seed.cjs recrea las cuentas).
+  if (!args.includes('--sin-siembra')) seed();
   const manifest = { generado: new Date().toISOString(), idiomas: LANGS, anchos: WIDTHS, capturas: [], semantica: [] };
   const b = await L.browser();
   for (const [app, name, user, go] of S.filter((x) => !SOLO || x[1].startsWith(SOLO))) {
-    const langs = app === 'p' ? ['es'] : LANGS;
+    const langs = app === 'p' ? LANGS.filter((l) => l === 'es') : LANGS;
     for (const lang of langs) {
       const variants = WIDTHS.map((w) => ({ w, scale: 1 }));
       if (app !== 'p' && WIDTHS.includes(390)) variants.push({ w: 390, scale: 2 });
@@ -175,6 +197,11 @@ async function audit(page) {
           }, 16 * scale);
         }
         const page = await ctx.newPage();
+        // Motivo del rechazo del emulador de Auth, si lo hay (para el manifiesto).
+        let authError = '';
+        page.on('response', async (r) => {
+          if (r.url().includes('signInWithPassword') && r.status() >= 400) authError = (await r.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160);
+        });
         let estado = 'ok'; let motivo = '';
         try {
           const labels = L.LOGIN_LABELS[lang] ?? L.LOGIN_LABELS.es;
@@ -186,12 +213,12 @@ async function audit(page) {
             for (let i = 0; i < 15; i++) { if (!(await onLogin())) return true; await sleep(1000); }
             return false;
           };
-          await L.login(page, base, `${user}@prueba.test`, home, labels);
+          await login(page, base, `${user}@prueba.test`, home, labels);
           if (!(await loggedIn())) {
             await page.reload(); await L.ready(page, 2000);
-            await L.login(page, base, `${user}@prueba.test`, home, labels);
+            await login(page, base, `${user}@prueba.test`, home, labels);
           }
-          if (!(await loggedIn())) throw new Error('sigue en el inicio de sesión');
+          if (!(await loggedIn())) throw new Error(`sigue en el inicio de sesión ${authError}`);
           await go(page, lang, w);
           if (await onLogin()) throw new Error('sigue en el inicio de sesión');
           await L.hideEmulatorBanner(page);
@@ -209,7 +236,7 @@ async function audit(page) {
     }
   }
   await b.close();
-  const mf = path.join(OUT, 'manifiesto.json');
+  const mf = path.join(OUT, MANIFEST);
   let out = manifest;
   if (SOLO && fs.existsSync(mf)) {
     const old = JSON.parse(fs.readFileSync(mf, 'utf8'));
