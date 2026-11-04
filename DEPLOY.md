@@ -385,6 +385,49 @@ En **staging**, con un Android y un iPhone, y anotar el resultado:
 - `config/ops.tripShareGraceMinutes`: minutos que el enlace de seguimiento
   sigue abierto tras terminar el viaje. **Si falta**, caduca al terminar.
 
+Los ajustes de recordatorios se cambian **solo en `config/ops` desde la
+consola** (el panel no los edita). El panel muestra la bandeja de reservas
+pagadas sin chófer cerca de la hora (Operaciones) y el enlace de seguimiento
+de cada reserva (detalle), con «Revocar enlace».
+
+### Secretos y configuración del viaje compartido (responsable)
+- **`TRIP_SHARE_SECRET`** (`firebase functions:secrets:set TRIP_SHARE_SECRET`):
+  HMAC del token del enlace. **Sin él**, no se crean enlaces y ninguno
+  funciona (falla cerrado). CI comprueba que exista antes de desplegar.
+  Cambiarlo invalida todos los enlaces activos.
+- **`RATE_LIMIT_SALT`** (ya existía): también seudonimiza la IP del límite de
+  lecturas de `/t`. Sin ella, `/t` responde 503.
+- **`PUBLIC_WEB_BASE_URL`** (`--dart-define` al compilar las apps móviles):
+  dirección pública de la app del pasajero (el dominio del hosting), para el
+  enlace que se comparte. **Sin ella**, la app móvil no ofrece «Compartir
+  viaje» (lo explica); en la web se usa el origen de la propia página.
+- Índices: `remindersJob` consulta `reminders.nextAt` (índice automático de
+  un campo) y `tripShares` por `bookingId` y `active` (igualdades: índices
+  automáticos). No hay índices compuestos nuevos. NO VERIFICADO en
+  producción.
+
+### Orden
+1. **Functions** (`deploy --only functions`): `remindersJob`, los dos
+   disparadores de recordatorios, las callables del viaje compartido y
+   `sharedTrip`. Antes, el secreto `TRIP_SHARE_SECRET`.
+2. **Hosting del pasajero** (`deploy --only hosting:rider`): los rewrites
+   `/t` y `/t/**` → `sharedTrip` y sus cabeceras. Sin este paso, `/t` abre la
+   app (el comodín `**`).
+3. **Apps** (pasajero y chófer) y **panel**, publicados (con
+   `PUBLIC_WEB_BASE_URL`).
+4. **`minAppVersion`** a la versión de este paso (solo si se quiere que todos
+   vean «Compartir viaje» y la explicación del permiso; no es obligatorio).
+5. **Reglas al final** (`deploy --only firestore:rules`): solo deja escrito
+   el `match` de `tripShares` (no cambia ningún permiso).
+
+### Qué ve una app anterior
+- **Pasajero**: recibe los recordatorios (son push y bandeja del servidor);
+  no ve «Compartir viaje». Un enlace creado desde la app nueva funciona igual.
+- **Chófer**: recibe sus recordatorios; no ve la línea de que el pasajero
+  puede compartir el seguimiento.
+- **Panel anterior**: sin la bandeja de reservas sin chófer ni la revocación;
+  las alertas `booking_unassigned` salen en la lista general de alertas.
+
 ### Push en iOS y Android (pasos manuales en tu cuenta; nada lo fija el código)
 - **Clave APNs**: en developer.apple.com (Certificates, IDs & Profiles →
   Keys) crea una clave con «Apple Push Notifications service (APNs)» y súbela

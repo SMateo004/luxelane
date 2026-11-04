@@ -346,6 +346,14 @@ Decisiones del responsable (2026-11-04): el chófer asignado y activo lee la res
   3. ¿Hace falta un aviso al pasajero sobre lo que ve quien reciba el enlace antes de compartirlo? (La app lo mostrará en la hoja de compartir, C1.)
   4. Borrado de cuenta del pasajero: ¿se revocan y borran sus enlaces? Hoy `deleteAccount` no los toca.
 
+### P.3 Parte C (apps, panel y página)
+
+- **Pasajero**: antes de compartir, la app le dice qué verá quien reciba el enlace (estado, nombre de pila del chófer, vehículo y, en camino, su posición) y que caduca al terminar; puede dejar de compartir o crear otro (el anterior deja de servir). El token solo está en el enlace que comparte; la app no lo guarda.
+- **Chófer**: una línea en su viaje le dice que el pasajero puede compartir el seguimiento (nombre de pila, vehículo y posición). Es información, no consentimiento: la pregunta al abogado sigue abierta.
+- **Panel**: ve si una reserva tiene enlace activo (sin el token) y lo revoca con motivo; queda en la auditoría.
+- **Permiso de avisos**: explicación propia y sobria antes de la petición del sistema, solo si aún no se pidió; «Ahora no» no pide nada.
+- **Página pública**: unos 5,5 KB por carga; sin fuentes, imágenes ni scripts de terceros; el token nunca sale del navegador hacia los registros del servidor.
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.

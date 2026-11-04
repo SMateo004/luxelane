@@ -260,6 +260,22 @@ describe('DEPLOY.md: recordatorios', () => {
     const index = readFileSync(join(root, 'functions', 'src', 'index.ts'), 'utf8');
     expect(index).toMatch(/remindersJob = onSchedule\('every 5 minutes'/);
   });
+  it('orden: functions → hosting → apps → minAppVersion → reglas al final', () => {
+    const at = (s: string) => section.indexOf(s);
+    expect(at('1. **Functions**')).toBeGreaterThan(-1);
+    expect(at('1. **Functions**')).toBeLessThan(at('2. **Hosting del pasajero**'));
+    expect(at('2. **Hosting del pasajero**')).toBeLessThan(at('3. **Apps**'));
+    expect(at('3. **Apps**')).toBeLessThan(at('4. **`minAppVersion`**'));
+    expect(at('4. **`minAppVersion`**')).toBeLessThan(at('5. **Reglas al final**'));
+  });
+  it.each(['TRIP_SHARE_SECRET', 'PUBLIC_WEB_BASE_URL'])('%s y qué pasa sin él', (k) => {
+    const line = section.split("\n- ").find((b) => b.includes("**`" + k + "`**")) ?? "";
+    expect(line).toMatch(/Sin (él|ella)/);
+  });
+  it('dice qué ve una app anterior y que los ajustes de recordatorios van por la consola', () => {
+    expect(section).toContain('### Qué ve una app anterior');
+    expect(section).toMatch(/solo en `config\/ops` desde la\s+consola/);
+  });
   it('pasos manuales de los push: clave APNs y capacidad en el App ID', () => {
     expect(section).toMatch(/Clave APNs/);
     expect(section).toMatch(/Capacidad Push Notifications/);
