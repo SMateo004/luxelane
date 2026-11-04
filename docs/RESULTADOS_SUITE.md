@@ -4,6 +4,49 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/vuelos, Parte B (B1–B7, commit 7b4e3c9, 2026-11-04)
+
+Desde la Parte A (961531f) con el panel de vuelos (a168f85, traído con
+cherry-pick). Emuladores de Firestore, Storage y Auth con `demo-luxelane`;
+reglas e integración sin las variables de proxy de la sesión. Aeropuerto,
+punto de recogida, minutos de config/ops y vuelos de las pruebas: FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           107 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           329 archivos, 0 cambiados       0
+flutter test                                  pasa           1042/1042                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           743/743 (33 de 33 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           1976/1976 (28 de 28 suites)     0
+npm run test:integration (demo-luxelane)      pasa           488/488 (52 de 52 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+### Reglas anteriores con los tests nuevos
+
+La Parte B no cambia `firestore.rules` ni `storage.rules`. `firestore.rules`
+de c0b38fe (antes de vuelos) con los tests de 7b4e3c9, código de salida 1:
+los mismos 32 fallos que en la Parte A (las reglas de `airports` y
+`airportsPublic` no existían).
+
+```
+Test Suites: 2 failed, 26 passed, 28 total
+Tests:       32 failed, 1944 passed, 1976 total
+```
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                                   Test                                               Sin el cambio
+B4 nota del vuelo en el diseño ancho    ride_and_request_flight_test (768 y 1280 px)       2 fallan
+B5 solicitud con aeropuerto y tipo      ride_and_request_flight_test (es, en, pt)          3 fallan
+B6 frases prohibidas de vuelos          frases_prohibidas_test («on time» en inglés)       falla
+B7 DEPLOY.md de vuelos                  deploy_config.test.ts (sección «Vuelos»)           falla
+```
+
 ## cierre/vuelos, Parte A (A1–A10, commit 46bb704, 2026-11-03)
 
 Desde cierre/integracion c0b38fe. Emuladores de Firestore, Storage y Auth con
