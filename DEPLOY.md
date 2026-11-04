@@ -369,6 +369,22 @@ En **staging**, con un Android y un iPhone, y anotar el resultado:
 5. **Web**: el registro deja completar datos y vehículo, y no ofrece subir
    documentos ni la foto en vivo.
 
+## Recordatorios y viaje compartido (cierre/avisos-compartir)
+
+### Recordatorios: claves de config/ops (responsable; nada lo fija el código)
+- `config/ops.reminderOffsetsMinutes = { rider: [..], driver: [..] }`:
+  minutos antes de la hora de recogida (`scheduledAt`). **Cada desfase debe
+  ser de 15 minutos o más**: `remindersJob` corre cada 5 minutos, así que un
+  recordatorio puede salir hasta 5 minutos tarde; con desfases más cortos
+  llegaría casi a la hora de recogida o después de que el chófer llegue (y
+  entonces ya no sale). **Si falta o está vacía**, esa persona no recibe
+  recordatorios.
+- `config/ops.unassignedAlertMinutes`: minutos antes de la hora de recogida
+  en que una reserva pagada sin chófer genera una alerta alta para central.
+  **Si falta**, no hay alerta.
+- `config/ops.tripShareGraceMinutes`: minutos que el enlace de seguimiento
+  sigue abierto tras terminar el viaje. **Si falta**, caduca al terminar.
+
 ## Ventana del chófer e historial (cierre/ventana-chofer, Partes A y B)
 
 El chófer asignado lee la reserva y sus subcolecciones (`events`,

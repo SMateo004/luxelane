@@ -250,3 +250,18 @@ describe('hosting del pasajero: viaje compartido', () => {
     expect(JSON.stringify(t)).not.toMatch(/Content-Security-Policy/);
   });
 });
+
+describe('DEPLOY.md: recordatorios', () => {
+  const i = deploy.indexOf('## Recordatorios y viaje compartido');
+  const section = i < 0 ? '' : deploy.slice(i, deploy.indexOf('\n## ', i + 5));
+  it('los desfases deben ser de 15 minutos o más porque remindersJob corre cada 5', () => {
+    expect(section).toMatch(/15 minutos o más/);
+    expect(section).toMatch(/remindersJob` corre cada 5 minutos/);
+    const index = readFileSync(join(root, 'functions', 'src', 'index.ts'), 'utf8');
+    expect(index).toMatch(/remindersJob = onSchedule\('every 5 minutes'/);
+  });
+  it.each(['reminderOffsetsMinutes', 'unassignedAlertMinutes', 'tripShareGraceMinutes'])('%s y qué pasa si falta', (k) => {
+    const line = section.split('\n- ').find((b) => b.includes(k)) ?? '';
+    expect(line).toMatch(/Si falta/);
+  });
+});
