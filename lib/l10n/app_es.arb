@@ -656,6 +656,596 @@
   "@adminDrvAppAllowOnlineDone": {
     "description": "Panel, solicitudes de chófer: aviso tras autorizar."
   },
+  "adminFlightsSection": "Vuelos",
+  "@adminFlightsSection": {
+    "description": "Panel, vuelos: nombre de la sección del menú."
+  },
+  "adminFlightsSectionSubtitle": "Vuelos de llegada por revisar y aeropuertos con sus puntos de recogida.",
+  "@adminFlightsSectionSubtitle": {
+    "description": "Panel, vuelos: subtítulo de la sección."
+  },
+  "adminFlightsTabInbox": "Bandeja",
+  "@adminFlightsTabInbox": {
+    "description": "Panel, vuelos: pestaña de la bandeja."
+  },
+  "adminFlightsTabAirports": "Aeropuertos",
+  "@adminFlightsTabAirports": {
+    "description": "Panel, vuelos: pestaña de aeropuertos."
+  },
+  "adminFlightsInboxToVerify": "Por verificar",
+  "@adminFlightsInboxToVerify": {
+    "description": "Panel, vuelos: filtro: vuelos que solo declaró el pasajero."
+  },
+  "adminFlightsInboxNoData": "Sin datos",
+  "@adminFlightsInboxNoData": {
+    "description": "Panel, vuelos: filtro: vuelos sin datos en vivo o con datos viejos."
+  },
+  "adminFlightsInboxDisrupted": "Cancelados o desviados",
+  "@adminFlightsInboxDisrupted": {
+    "description": "Panel, vuelos: filtro: vuelos cancelados o desviados."
+  },
+  "adminFlightsInboxTruncated": "Se leyeron las primeras {count} reservas con vuelo: puede haber más.",
+  "@adminFlightsInboxTruncated": {
+    "description": "Panel, vuelos: la lista está recortada; {count} es el máximo leído.",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "200"
+      }
+    }
+  },
+  "adminFlightsInboxEmptyToVerify": "No hay vuelos por verificar",
+  "@adminFlightsInboxEmptyToVerify": {
+    "description": "Panel, vuelos: bandeja vacía (por verificar)."
+  },
+  "adminFlightsInboxEmptyNoData": "No hay vuelos sin datos",
+  "@adminFlightsInboxEmptyNoData": {
+    "description": "Panel, vuelos: bandeja vacía (sin datos)."
+  },
+  "adminFlightsInboxEmptyDisrupted": "No hay vuelos cancelados ni desviados",
+  "@adminFlightsInboxEmptyDisrupted": {
+    "description": "Panel, vuelos: bandeja vacía (cancelados o desviados)."
+  },
+  "adminFlightsInboxEmptyHint": "Aquí aparecen las reservas con vuelo que piden revisión.",
+  "@adminFlightsInboxEmptyHint": {
+    "description": "Panel, vuelos: explicación bajo la bandeja vacía."
+  },
+  "adminFlightsInboxError": "No se pudo cargar la bandeja de vuelos",
+  "@adminFlightsInboxError": {
+    "description": "Panel, vuelos: no se pudo leer la bandeja."
+  },
+  "adminFlightsRetry": "Reintentar",
+  "@adminFlightsRetry": {
+    "description": "Panel, vuelos: botón para volver a intentar."
+  },
+  "adminFlightsRowReadyAt": "Chófer en el punto: {time}",
+  "@adminFlightsRowReadyAt": {
+    "description": "Panel, vuelos: fila: hora a la que el chófer debe estar en el punto.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:35"
+      }
+    }
+  },
+  "adminFlightsRowNoReadyAt": "Sin hora de recogida",
+  "@adminFlightsRowNoReadyAt": {
+    "description": "Panel, vuelos: fila: sin hora de recogida calculada."
+  },
+  "adminFlightsRowSemantics": "Reserva {code}, vuelo {flight}, {status}. Abrir el detalle",
+  "@adminFlightsRowSemantics": {
+    "description": "Panel, vuelos: lector de pantalla de una fila de la bandeja.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "AB12CD"
+      },
+      "flight": {
+        "type": "String",
+        "example": "VVI OB 760"
+      },
+      "status": {
+        "type": "String",
+        "example": "Retrasado"
+      }
+    }
+  },
+  "adminFlightsBookingTitle": "Reserva #{code}",
+  "@adminFlightsBookingTitle": {
+    "description": "Panel, vuelos: título del detalle cuando la reserva no está en la lista del panel.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "AB12CD"
+      }
+    }
+  },
+  "adminFlightsClose": "Cerrar",
+  "@adminFlightsClose": {
+    "description": "Panel, vuelos: botón para cerrar el detalle."
+  },
+  "adminFlightCardTitle": "Vuelo",
+  "@adminFlightCardTitle": {
+    "description": "Panel, vuelos: título de la tarjeta del vuelo en el detalle de la reserva."
+  },
+  "adminFlightAirport": "Aeropuerto",
+  "@adminFlightAirport": {
+    "description": "Panel, vuelos: fila: aeropuerto."
+  },
+  "adminFlightAirline": "Aerolínea",
+  "@adminFlightAirline": {
+    "description": "Panel, vuelos: fila: aerolínea."
+  },
+  "adminFlightNumber": "Número de vuelo",
+  "@adminFlightNumber": {
+    "description": "Panel, vuelos: fila: número de vuelo."
+  },
+  "adminFlightType": "Tipo",
+  "@adminFlightType": {
+    "description": "Panel, vuelos: fila: tipo de vuelo (nacional o internacional)."
+  },
+  "adminFlightDate": "Fecha del vuelo",
+  "@adminFlightDate": {
+    "description": "Panel, vuelos: fila: fecha del vuelo."
+  },
+  "adminFlightScheduled": "Llegada programada",
+  "@adminFlightScheduled": {
+    "description": "Panel, vuelos: fila: llegada programada."
+  },
+  "adminFlightEstimated": "Llegada estimada",
+  "@adminFlightEstimated": {
+    "description": "Panel, vuelos: fila: llegada estimada."
+  },
+  "adminFlightActual": "Llegada real",
+  "@adminFlightActual": {
+    "description": "Panel, vuelos: fila: llegada real."
+  },
+  "adminFlightStatus": "Estado del vuelo",
+  "@adminFlightStatus": {
+    "description": "Panel, vuelos: fila: estado del vuelo."
+  },
+  "adminFlightQuality": "Calidad del dato",
+  "@adminFlightQuality": {
+    "description": "Panel, vuelos: fila: calidad del dato."
+  },
+  "adminFlightQualityOk": "Al día",
+  "@adminFlightQualityOk": {
+    "description": "Panel, vuelos: calidad del dato: reciente."
+  },
+  "adminFlightQualityStale": "Desactualizado",
+  "@adminFlightQualityStale": {
+    "description": "Panel, vuelos: calidad del dato: viejo."
+  },
+  "adminFlightQualityNone": "Sin datos en vivo",
+  "@adminFlightQualityNone": {
+    "description": "Panel, vuelos: calidad del dato: solo lo declarado por el pasajero."
+  },
+  "adminFlightSource": "Fuente",
+  "@adminFlightSource": {
+    "description": "Panel, vuelos: fila: quién dio el último dato."
+  },
+  "adminFlightSourcePassenger": "Pasajero",
+  "@adminFlightSourcePassenger": {
+    "description": "Panel, vuelos: fuente: el pasajero."
+  },
+  "adminFlightSourceManual": "Central",
+  "@adminFlightSourceManual": {
+    "description": "Panel, vuelos: fuente: un admin de central."
+  },
+  "adminFlightSourceAuto": "Automático",
+  "@adminFlightSourceAuto": {
+    "description": "Panel, vuelos: fuente: consulta automática."
+  },
+  "adminFlightCheckedBag": "Equipaje facturado",
+  "@adminFlightCheckedBag": {
+    "description": "Panel, vuelos: fila: lleva equipaje facturado."
+  },
+  "adminFlightYes": "Sí",
+  "@adminFlightYes": {
+    "description": "Panel, vuelos: sí."
+  },
+  "adminFlightNo": "No",
+  "@adminFlightNo": {
+    "description": "Panel, vuelos: no."
+  },
+  "adminFlightLastChange": "Último cambio",
+  "@adminFlightLastChange": {
+    "description": "Panel, vuelos: fila: último cambio del vuelo."
+  },
+  "adminFlightLastObserved": "Último dato leído",
+  "@adminFlightLastObserved": {
+    "description": "Panel, vuelos: fila: última vez que se leyó el dato."
+  },
+  "adminFlightTimesNote": "Horas de Bolivia (La Paz, UTC−4).",
+  "@adminFlightTimesNote": {
+    "description": "Panel, vuelos: aclaración de la zona horaria de las horas."
+  },
+  "adminFlightReadyAt": "El chófer debe estar a las {time}",
+  "@adminFlightReadyAt": {
+    "description": "Panel, vuelos: hora a la que el chófer debe estar en el punto de recogida.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:35"
+      }
+    }
+  },
+  "adminFlightNoReadyAt": "Sin hora de recogida calculada",
+  "@adminFlightNoReadyAt": {
+    "description": "Panel, vuelos: sin hora de recogida calculada."
+  },
+  "adminFlightLocked": "Bloqueo manual: las fuentes automáticas no cambian estos datos.",
+  "@adminFlightLocked": {
+    "description": "Panel, vuelos: indicador de bloqueo manual activo."
+  },
+  "adminFlightUnlocked": "Sin bloqueo manual",
+  "@adminFlightUnlocked": {
+    "description": "Panel, vuelos: sin bloqueo manual."
+  },
+  "adminFlightLockTag": "Bloqueo manual",
+  "@adminFlightLockTag": {
+    "description": "Panel, vuelos: etiqueta corta de bloqueo manual."
+  },
+  "adminFlightSetBy": "Fijado por {who} el {date}",
+  "@adminFlightSetBy": {
+    "description": "Panel, vuelos: quién y cuándo fijó los datos a mano.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "admin@example.com"
+      },
+      "date": {
+        "type": "String",
+        "example": "20/11/2026 14:35"
+      }
+    }
+  },
+  "adminFlightLockClearedBy": "Bloqueo quitado por {who} el {date}",
+  "@adminFlightLockClearedBy": {
+    "description": "Panel, vuelos: quién y cuándo quitó el bloqueo manual.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "admin@example.com"
+      },
+      "date": {
+        "type": "String",
+        "example": "20/11/2026 14:35"
+      }
+    }
+  },
+  "adminFlightChangeReason": "Motivo: {reason}",
+  "@adminFlightChangeReason": {
+    "description": "Panel, vuelos: motivo del último cambio manual.",
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "example": "Llamada a la aerolínea"
+      }
+    }
+  },
+  "adminFlightAdminUnknown": "un administrador",
+  "@adminFlightAdminUnknown": {
+    "description": "Panel, vuelos: autor sin correo conocido."
+  },
+  "adminFlightLoadError": "No se pudieron leer los datos del vuelo",
+  "@adminFlightLoadError": {
+    "description": "Panel, vuelos: no se pudo leer el vuelo."
+  },
+  "adminFlightSetButton": "Fijar datos del vuelo",
+  "@adminFlightSetButton": {
+    "description": "Panel, vuelos: botón para fijar los datos del vuelo a mano."
+  },
+  "adminFlightClearLockButton": "Quitar bloqueo manual",
+  "@adminFlightClearLockButton": {
+    "description": "Panel, vuelos: botón para quitar el bloqueo manual."
+  },
+  "adminFlightForceNoShowButton": "Marcar no se presentó",
+  "@adminFlightForceNoShowButton": {
+    "description": "Panel, vuelos: botón para marcar que el pasajero no se presentó."
+  },
+  "adminFlightSetTitle": "Fijar datos del vuelo",
+  "@adminFlightSetTitle": {
+    "description": "Panel, vuelos: título del diálogo para fijar el vuelo."
+  },
+  "adminFlightSetMessage": "Los datos quedan fijados a mano, con bloqueo manual: ninguna fuente automática los cambia hasta quitar el bloqueo. La hora del chófer se vuelve a calcular.",
+  "@adminFlightSetMessage": {
+    "description": "Panel, vuelos: explicación del diálogo para fijar el vuelo."
+  },
+  "adminFlightSetStatusLabel": "Estado del vuelo",
+  "@adminFlightSetStatusLabel": {
+    "description": "Panel, vuelos: campo: estado del vuelo."
+  },
+  "adminFlightSetPick": "Elegir fecha y hora",
+  "@adminFlightSetPick": {
+    "description": "Panel, vuelos: botón para elegir fecha y hora."
+  },
+  "adminFlightSetClearTime": "Quitar hora",
+  "@adminFlightSetClearTime": {
+    "description": "Panel, vuelos: botón para dejar la hora vacía."
+  },
+  "adminFlightSetNoTime": "Sin hora",
+  "@adminFlightSetNoTime": {
+    "description": "Panel, vuelos: sin hora elegida."
+  },
+  "adminFlightSetTimeSemantics": "{label}: {value}. Cambiar",
+  "@adminFlightSetTimeSemantics": {
+    "description": "Panel, vuelos: lector de pantalla del selector de hora.",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Llegada real"
+      },
+      "value": {
+        "type": "String",
+        "example": "20/11/2026 · 14:35"
+      }
+    }
+  },
+  "adminFlightSetActualRequired": "Con «Aterrizó» la llegada real es obligatoria",
+  "@adminFlightSetActualRequired": {
+    "description": "Panel, vuelos: error: con «Aterrizó» la llegada real es obligatoria."
+  },
+  "adminFlightReasonLabel": "Motivo (de 10 a 500 caracteres)",
+  "@adminFlightReasonLabel": {
+    "description": "Panel, vuelos: campo de motivo."
+  },
+  "adminFlightReasonShort": "El motivo necesita al menos 10 caracteres",
+  "@adminFlightReasonShort": {
+    "description": "Panel, vuelos: error: motivo corto."
+  },
+  "adminFlightCancel": "Cancelar",
+  "@adminFlightCancel": {
+    "description": "Panel, vuelos: botón cancelar."
+  },
+  "adminFlightSetConfirm": "Fijar datos",
+  "@adminFlightSetConfirm": {
+    "description": "Panel, vuelos: botón para confirmar los datos del vuelo."
+  },
+  "adminFlightSetDone": "Datos del vuelo fijados",
+  "@adminFlightSetDone": {
+    "description": "Panel, vuelos: aviso: datos fijados."
+  },
+  "adminFlightClearLockTitle": "Quitar bloqueo manual",
+  "@adminFlightClearLockTitle": {
+    "description": "Panel, vuelos: título: quitar bloqueo manual."
+  },
+  "adminFlightClearLockMessage": "Las fuentes automáticas podrán volver a actualizar este vuelo.",
+  "@adminFlightClearLockMessage": {
+    "description": "Panel, vuelos: explicación de quitar el bloqueo."
+  },
+  "adminFlightClearLockConfirm": "Quitar bloqueo",
+  "@adminFlightClearLockConfirm": {
+    "description": "Panel, vuelos: botón para quitar el bloqueo."
+  },
+  "adminFlightClearLockDone": "Bloqueo manual quitado",
+  "@adminFlightClearLockDone": {
+    "description": "Panel, vuelos: aviso: bloqueo quitado."
+  },
+  "adminFlightForceNoShowTitle": "Marcar no se presentó",
+  "@adminFlightForceNoShowTitle": {
+    "description": "Panel, vuelos: título: marcar que el pasajero no se presentó."
+  },
+  "adminFlightForceNoShowMessage": "La reserva #{code} pasará a «No se presentó». No se cobra nada: el pago se decide después en la reserva.",
+  "@adminFlightForceNoShowMessage": {
+    "description": "Panel, vuelos: explicación de marcar que no se presentó; {code} es la reserva.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "AB12CD"
+      }
+    }
+  },
+  "adminFlightForceNoShowConfirm": "Marcar no se presentó",
+  "@adminFlightForceNoShowConfirm": {
+    "description": "Panel, vuelos: botón para confirmar que no se presentó."
+  },
+  "adminFlightForceNoShowDone": "Reserva marcada como no se presentó",
+  "@adminFlightForceNoShowDone": {
+    "description": "Panel, vuelos: aviso: marcada como no se presentó."
+  },
+  "adminFlightErrConfigMissing": "Faltan los minutos de salida del aeropuerto en la configuración de operaciones.",
+  "@adminFlightErrConfigMissing": {
+    "description": "Panel, vuelos: error flight_config_missing."
+  },
+  "adminFlightErrNoFlight": "Esta reserva no tiene vuelo.",
+  "@adminFlightErrNoFlight": {
+    "description": "Panel, vuelos: error booking_without_flight."
+  },
+  "adminFlightErrNotFound": "La reserva ya no existe.",
+  "@adminFlightErrNotFound": {
+    "description": "Panel, vuelos: error booking_not_found."
+  },
+  "adminFlightErrInvalidTransition": "La reserva ya no está en «Chófer en el punto».",
+  "@adminFlightErrInvalidTransition": {
+    "description": "Panel, vuelos: error invalid_transition."
+  },
+  "adminFlightErrNoShowDisabled": "«No se presentó» no está habilitado: falta la política de cancelación.",
+  "@adminFlightErrNoShowDisabled": {
+    "description": "Panel, vuelos: error no_show_disabled."
+  },
+  "adminFlightErrInvalid": "Revisa los datos: alguno no es válido.",
+  "@adminFlightErrInvalid": {
+    "description": "Panel, vuelos: error de datos no válidos."
+  },
+  "adminFlightErrPermission": "No tienes permiso para esta acción.",
+  "@adminFlightErrPermission": {
+    "description": "Panel, vuelos: error de permiso."
+  },
+  "adminFlightErrGeneric": "No se pudo completar la acción. Inténtalo de nuevo.",
+  "@adminFlightErrGeneric": {
+    "description": "Panel, vuelos: error genérico."
+  },
+  "adminAirportsAdd": "Nuevo aeropuerto",
+  "@adminAirportsAdd": {
+    "description": "Panel, vuelos: botón para crear un aeropuerto."
+  },
+  "adminAirportsEmpty": "Aún no hay aeropuertos",
+  "@adminAirportsEmpty": {
+    "description": "Panel, vuelos: lista de aeropuertos vacía."
+  },
+  "adminAirportsEmptyHint": "Crea uno para definir sus puntos de recogida.",
+  "@adminAirportsEmptyHint": {
+    "description": "Panel, vuelos: explicación bajo la lista vacía."
+  },
+  "adminAirportsError": "No se pudieron cargar los aeropuertos",
+  "@adminAirportsError": {
+    "description": "Panel, vuelos: no se pudo leer la lista de aeropuertos."
+  },
+  "adminAirportPointSet": "{type}: con punto",
+  "@adminAirportPointSet": {
+    "description": "Panel, vuelos: etiqueta: el aeropuerto tiene punto para ese tipo de vuelo.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Nacional"
+      }
+    }
+  },
+  "adminAirportPointMissing": "{type}: sin punto",
+  "@adminAirportPointMissing": {
+    "description": "Panel, vuelos: etiqueta: el aeropuerto no tiene punto para ese tipo de vuelo.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Nacional"
+      }
+    }
+  },
+  "adminAirportEditSemantics": "Editar el aeropuerto {code}",
+  "@adminAirportEditSemantics": {
+    "description": "Panel, vuelos: lector de pantalla: editar un aeropuerto.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "VVI"
+      }
+    }
+  },
+  "adminAirportEditTitle": "Editar aeropuerto {code}",
+  "@adminAirportEditTitle": {
+    "description": "Panel, vuelos: título del editor de un aeropuerto existente.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "VVI"
+      }
+    }
+  },
+  "adminAirportNewTitle": "Nuevo aeropuerto",
+  "@adminAirportNewTitle": {
+    "description": "Panel, vuelos: título del editor de un aeropuerto nuevo."
+  },
+  "adminAirportCode": "Código (3 letras)",
+  "@adminAirportCode": {
+    "description": "Panel, vuelos: campo: código del aeropuerto."
+  },
+  "adminAirportCodeInvalid": "Tres letras mayúsculas, por ejemplo VVI",
+  "@adminAirportCodeInvalid": {
+    "description": "Panel, vuelos: error del código."
+  },
+  "adminAirportCodeLocked": "El código no se cambia una vez creado",
+  "@adminAirportCodeLocked": {
+    "description": "Panel, vuelos: ayuda: el código no se cambia."
+  },
+  "adminAirportName": "Nombre",
+  "@adminAirportName": {
+    "description": "Panel, vuelos: campo: nombre del aeropuerto."
+  },
+  "adminAirportNameInvalid": "Entre 2 y 120 caracteres",
+  "@adminAirportNameInvalid": {
+    "description": "Panel, vuelos: error del nombre."
+  },
+  "adminAirportCity": "Ciudad",
+  "@adminAirportCity": {
+    "description": "Panel, vuelos: campo: ciudad."
+  },
+  "adminAirportCityInvalid": "Entre 2 y 80 caracteres",
+  "@adminAirportCityInvalid": {
+    "description": "Panel, vuelos: error de la ciudad."
+  },
+  "adminAirportTimeZone": "Zona horaria: La Paz (UTC−4)",
+  "@adminAirportTimeZone": {
+    "description": "Panel, vuelos: zona horaria fija del aeropuerto."
+  },
+  "adminAirportPointTitle": "Punto de recogida · {type}",
+  "@adminAirportPointTitle": {
+    "description": "Panel, vuelos: título del punto de recogida de un tipo de vuelo.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Nacional"
+      }
+    }
+  },
+  "adminAirportPointName": "Nombre del punto",
+  "@adminAirportPointName": {
+    "description": "Panel, vuelos: campo: nombre del punto."
+  },
+  "adminAirportPointNameInvalid": "Entre 1 y 80 caracteres",
+  "@adminAirportPointNameInvalid": {
+    "description": "Panel, vuelos: error del nombre del punto."
+  },
+  "adminAirportPointInstructions": "Indicaciones",
+  "@adminAirportPointInstructions": {
+    "description": "Panel, vuelos: campo: indicaciones del punto."
+  },
+  "adminAirportPointInstructionsInvalid": "Hasta 500 caracteres",
+  "@adminAirportPointInstructionsInvalid": {
+    "description": "Panel, vuelos: error de las indicaciones."
+  },
+  "adminAirportLat": "Latitud",
+  "@adminAirportLat": {
+    "description": "Panel, vuelos: campo: latitud."
+  },
+  "adminAirportLng": "Longitud",
+  "@adminAirportLng": {
+    "description": "Panel, vuelos: campo: longitud."
+  },
+  "adminAirportLatInvalid": "Latitud entre -90 y 90",
+  "@adminAirportLatInvalid": {
+    "description": "Panel, vuelos: error de la latitud."
+  },
+  "adminAirportLngInvalid": "Longitud entre -180 y 180",
+  "@adminAirportLngInvalid": {
+    "description": "Panel, vuelos: error de la longitud."
+  },
+  "adminAirportZeroInvalid": "Las coordenadas (0, 0) no son válidas",
+  "@adminAirportZeroInvalid": {
+    "description": "Panel, vuelos: error: coordenadas (0, 0)."
+  },
+  "adminAirportPointRemove": "Quitar punto",
+  "@adminAirportPointRemove": {
+    "description": "Panel, vuelos: botón para quitar el punto."
+  },
+  "adminAirportPointAdd": "Añadir punto",
+  "@adminAirportPointAdd": {
+    "description": "Panel, vuelos: botón para añadir el punto."
+  },
+  "adminAirportPointNone": "Sin punto: el chófer verá «Punto por confirmar con central».",
+  "@adminAirportPointNone": {
+    "description": "Panel, vuelos: sin punto definido para ese tipo de vuelo."
+  },
+  "adminAirportPointWillRemove": "El punto se quitará al guardar.",
+  "@adminAirportPointWillRemove": {
+    "description": "Panel, vuelos: el punto se quitará al guardar."
+  },
+  "adminAirportSave": "Guardar",
+  "@adminAirportSave": {
+    "description": "Panel, vuelos: botón guardar."
+  },
+  "adminAirportSaved": "Aeropuerto guardado",
+  "@adminAirportSaved": {
+    "description": "Panel, vuelos: aviso: aeropuerto guardado."
+  },
+  "adminAirportFixErrors": "Revisa los campos marcados",
+  "@adminAirportFixErrors": {
+    "description": "Panel, vuelos: aviso: hay campos con error."
+  },
+  "adminAirportErrInvalid": "Algún dato no es válido: revisa código, nombre, ciudad y coordenadas.",
+  "@adminAirportErrInvalid": {
+    "description": "Panel, vuelos: error de datos no válidos al guardar el aeropuerto."
+  },
   "adminPrefsEmpty": "Sin preferencias para este viaje",
   "@adminPrefsEmpty": {
     "description": "Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje."
@@ -2108,14 +2698,6 @@
   "@commonFlightInternational": {
     "description": "Tipo de vuelo: llega desde el extranjero."
   },
-  "commonAirportDomesticExit": "Salida de llegadas nacionales",
-  "@commonAirportDomesticExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo nacional."
-  },
-  "commonAirportInternationalExit": "Salida de llegadas internacionales",
-  "@commonAirportInternationalExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo internacional."
-  },
   "commonOriginNoCoords": "No pudimos ubicar la recogida en el mapa. Elige otra dirección.",
   "@commonOriginNoCoords": {
     "description": "Error: la dirección de recogida no tiene coordenadas."
@@ -2144,7 +2726,7 @@
   "@commonDestinationSameCity": {
     "description": "Error: el destino está lejos de una recogida que no está en una ciudad conocida."
   },
-  "commonFlightNumberMissing": "Indica tu número de vuelo para recogerte a tiempo.",
+  "commonFlightNumberMissing": "Indica tu número de vuelo: con él calculamos la hora de recogida.",
   "@commonFlightNumberMissing": {
     "description": "Error: falta el número de vuelo en una recogida en el aeropuerto."
   },
@@ -3137,24 +3719,6 @@
   "driverFlightAirportPickup": "Recogida en aeropuerto",
   "@driverFlightAirportPickup": {
     "description": "Tarjeta del vuelo sin aeropuerto conocido."
-  },
-  "driverFlightExitLabel": "Tu pasajero sale por",
-  "@driverFlightExitLabel": {
-    "description": "Antes de la salida del aeropuerto por la que sale el pasajero."
-  },
-  "driverFlightAskType": "Consulta con el pasajero si su vuelo es nacional o internacional",
-  "@driverFlightAskType": {
-    "description": "Sin tipo de vuelo: pedir al chófer que lo consulte."
-  },
-  "driverFlightNumber": "Vuelo {flight}",
-  "@driverFlightNumber": {
-    "description": "Enlace con el número de vuelo.",
-    "placeholders": {
-      "flight": {
-        "type": "String",
-        "example": "OB 760"
-      }
-    }
   },
   "driverFlightCheckStatus": "Ver estado en mivuelo.att.gob.bo",
   "@driverFlightCheckStatus": {
@@ -4275,6 +4839,186 @@
   "regErrorGeneric": "No pudimos completar este paso. Inténtalo de nuevo.",
   "@regErrorGeneric": {
     "description": "Error del registro de chóferes: el servidor respondió «(otro)»."
+  },
+  "bookingErrorFlightConfigMissing": "Aún no se pueden reservar recogidas con vuelo. Inténtalo más tarde.",
+  "@bookingErrorFlightConfigMissing": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «flight_config_missing»."
+  },
+  "bookingErrorAirportUnknown": "Este aeropuerto aún no está disponible para recogidas.",
+  "@bookingErrorAirportUnknown": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «airport_unknown»."
+  },
+  "bookingErrorFlightNotAirportPickup": "El vuelo solo se indica cuando la recogida es en el aeropuerto de llegada.",
+  "@bookingErrorFlightNotAirportPickup": {
+    "description": "Error de la reserva con vuelo: el servidor respondió «flight_not_airport_pickup»."
+  },
+  "bookingFlightSectionTitle": "Tu vuelo",
+  "@bookingFlightSectionTitle": {
+    "description": "Vuelos (pasajero): título del paso del vuelo en la reserva de aeropuerto."
+  },
+  "bookingFlightAirline": "Aerolínea (opcional)",
+  "@bookingFlightAirline": {
+    "description": "Vuelos (pasajero): campo aerolínea (opcional)."
+  },
+  "bookingFlightDate": "Fecha del vuelo",
+  "@bookingFlightDate": {
+    "description": "Vuelos (pasajero): campo fecha del vuelo."
+  },
+  "bookingFlightTime": "Hora de llegada según tu billete",
+  "@bookingFlightTime": {
+    "description": "Vuelos (pasajero): campo hora de llegada del billete."
+  },
+  "bookingFlightPickDate": "Elegir fecha",
+  "@bookingFlightPickDate": {
+    "description": "Vuelos (pasajero): elegir la fecha."
+  },
+  "bookingFlightPickTime": "Elegir hora",
+  "@bookingFlightPickTime": {
+    "description": "Vuelos (pasajero): elegir la hora."
+  },
+  "bookingFlightDateMissing": "Indica la fecha del vuelo",
+  "@bookingFlightDateMissing": {
+    "description": "Vuelos (pasajero): falta la fecha."
+  },
+  "bookingFlightTimeMissing": "Indica la hora de llegada de tu billete",
+  "@bookingFlightTimeMissing": {
+    "description": "Vuelos (pasajero): falta la hora."
+  },
+  "bookingFlightCheckedBagQuestion": "¿Llevas equipaje facturado?",
+  "@bookingFlightCheckedBagQuestion": {
+    "description": "Vuelos (pasajero): pregunta del equipaje facturado."
+  },
+  "bookingFlightCheckedBagYes": "Sí, con equipaje facturado",
+  "@bookingFlightCheckedBagYes": {
+    "description": "Vuelos (pasajero): respuesta: con equipaje facturado."
+  },
+  "bookingFlightCheckedBagNo": "No, solo de mano",
+  "@bookingFlightCheckedBagNo": {
+    "description": "Vuelos (pasajero): respuesta: sin equipaje facturado."
+  },
+  "bookingFlightCheckedBagHelp": "Si declaras sin equipaje y lo llevas, tu chófer puede irse antes de que salgas.",
+  "@bookingFlightCheckedBagHelp": {
+    "description": "Vuelos (pasajero): ayuda sobria sobre el equipaje facturado."
+  },
+  "rideFlightDelayed": "Tu vuelo figura con retraso. Nueva hora de recogida: {time}.",
+  "@rideFlightDelayed": {
+    "description": "Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightDisrupted": "Tu vuelo figura como cancelado o desviado. Central revisará tu reserva.",
+  "@rideFlightDisrupted": {
+    "description": "Vuelos (pasajero): vuelo cancelado o desviado en el viaje del pasajero."
+  },
+  "driverFlightCardTitle": "Vuelo",
+  "@driverFlightCardTitle": {
+    "description": "Vuelos (pasajero): título de la tarjeta del vuelo del chófer."
+  },
+  "driverFlightStatus": "Estado: {status}",
+  "@driverFlightStatus": {
+    "description": "Vuelos (pasajero): estado del vuelo en la tarjeta del chófer.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "driverRequestAirportFlight": "Aeropuerto {airport} · {type}",
+  "@driverRequestAirportFlight": {
+    "description": "Vuelos: solicitud abierta con recogida en aeropuerto; solo aeropuerto y tipo de vuelo, nunca el número.",
+    "placeholders": {
+      "airport": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "flightStatusScheduled": "Programado",
+  "@flightStatusScheduled": {
+    "description": "Vuelos: estado del vuelo (scheduled)."
+  },
+  "flightStatusDelayed": "Retrasado",
+  "@flightStatusDelayed": {
+    "description": "Vuelos: estado del vuelo (delayed)."
+  },
+  "flightStatusLanded": "Aterrizó",
+  "@flightStatusLanded": {
+    "description": "Vuelos: estado del vuelo (landed)."
+  },
+  "flightStatusCancelled": "Cancelado",
+  "@flightStatusCancelled": {
+    "description": "Vuelos: estado del vuelo (cancelled)."
+  },
+  "flightStatusDiverted": "Desviado",
+  "@flightStatusDiverted": {
+    "description": "Vuelos: estado del vuelo (diverted)."
+  },
+  "flightStatusUnknown": "Sin datos",
+  "@flightStatusUnknown": {
+    "description": "Vuelos: estado del vuelo (unknown)."
+  },
+  "flightPickupPointPending": "Punto por confirmar con central",
+  "@flightPickupPointPending": {
+    "description": "Vuelos: sin punto de recogida definido para el aeropuerto."
+  },
+  "flightNoLiveData": "Sin datos de vuelo en vivo: hora programada {time}",
+  "@flightNoLiveData": {
+    "description": "Vuelos: sin datos en vivo; solo la hora programada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightBeAtPointAt": "Debes estar en el punto a las {time}",
+  "@flightBeAtPointAt": {
+    "description": "Vuelos: el chófer debe estar en el punto de recogida a esa hora.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightDriverWillBeAt": "Hora de recogida en el punto: {time}",
+  "@flightDriverWillBeAt": {
+    "description": "Vuelos: el pasajero ve a qué hora estará el chófer en el punto.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightEstimatedArrival": "Llegada estimada: {time}",
+  "@flightEstimatedArrival": {
+    "description": "Vuelos: hora estimada de llegada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightScheduledArrival": "Llegada programada: {time}",
+  "@flightScheduledArrival": {
+    "description": "Vuelos: hora programada de llegada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightActualArrival": "Aterrizó: {time}",
+  "@flightActualArrival": {
+    "description": "Vuelos: hora real de llegada.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
   "homePickOriginTitle": "Seleccionar lugar de recogida",
   "@homePickOriginTitle": {

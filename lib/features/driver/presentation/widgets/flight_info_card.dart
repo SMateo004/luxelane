@@ -1,115 +1,212 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../booking/data/airport_repository.dart';
 
 /// ATT (Autoridad de Transportes) flight status site.
 final _miVueloUrl = Uri.parse('https://mivuelo.att.gob.bo/');
 
-// Generic exits for a pickup airport we don't have on file.
-const _anyAirport = ServiceAirport('', '', 0, 0);
+/// Copia del vuelo para el chófer asignado (bookings/{id}/driverView/flight,
+/// la escribe el servidor y solo se lee de confirmed a in_progress).
+abstract class DriverFlightSource {
+  Stream<FlightInfo?> watch(String bookingId);
+}
 
-/// Airport pickup details for the driver: where the passenger comes out and
-/// the flight number, which opens the ATT flight tracker. Renders nothing for
-/// bookings without a flight.
+class FirestoreDriverFlightSource implements DriverFlightSource {
+  FirestoreDriverFlightSource([FirebaseFirestore? db]) : _db = db;
+  final FirebaseFirestore? _db;
+
+  @override
+  Stream<FlightInfo?> watch(String bookingId) =>
+      (_db ?? FirebaseFirestore.instance)
+          .collection('bookings')
+          .doc(bookingId)
+          .collection('driverView')
+          .doc('flight')
+          .snapshots()
+          .map((s) => s.exists ? FlightInfo.fromMap(s.data()) : null)
+          // Fuera de la ventana o sin red: lo que diga la reserva.
+          .handleError((_) {});
+}
+
+/// Tarjeta «Vuelo» del chófer (Parte B de vuelos): aerolínea, número,
+/// estado, hora estimada, «Debes estar en el punto a las HH:MM» y el punto
+/// de recogida del tipo de vuelo (o «Punto por confirmar con central»). Sin
+/// datos en vivo lo dice. Nada para reservas sin vuelo.
 class FlightInfoCard extends StatelessWidget {
-  const FlightInfoCard({super.key, required this.booking});
-  final Booking booking;
+  const FlightInfoCard({
+    super.key,
+    required this.booking,
+    this.flights,
+    this.airports,
+  });
 
-  ServiceAirport? get _airport =>
+  final Booking booking;
+  final DriverFlightSource? flights;
+  final AirportRepository? airports;
+
+  ServiceAirport? get _legacyAirport =>
       ServiceArea.airportByIata(booking.pickupAirport) ??
       ServiceArea.airportFor(booking.origin);
 
   @override
   Widget build(BuildContext context) {
-    final flight = booking.flightNumber;
-    if (flight == null || flight.isEmpty) return const SizedBox.shrink();
-    final airport = _airport;
-    final type = FlightType.fromName(booking.flightType);
+    final number = booking.flightNumber;
+    if ((number == null || number.isEmpty) && booking.flight == null) {
+      return const SizedBox.shrink();
+    }
+    final source = flights ?? FirestoreDriverFlightSource();
+    final repo = airports ?? FirestoreAirportRepository();
+    return StreamBuilder<FlightInfo?>(
+      stream: source.watch(booking.id),
+      builder: (context, snap) {
+        final f = snap.data ?? booking.flight;
+        final code =
+            f?.airportCode ?? booking.pickupAirport ?? _legacyAirport?.iata;
+        final type = f?.flightType ?? FlightType.fromName(booking.flightType);
+        return StreamBuilder<Airport?>(
+          stream: code == null ? Stream.value(null) : repo.watch(code),
+          builder: (context, airportSnap) => _FlightCardBody(
+            flight: f,
+            number: f?.flightNumber ?? number ?? '',
+            type: type,
+            airport: airportSnap.data,
+            airportLabel: airportSnap.data?.name ?? _legacyAirport?.name,
+            legacyAirport: _legacyAirport,
+          ),
+        );
+      },
+    );
+  }
+}
 
+class _FlightCardBody extends StatelessWidget {
+  const _FlightCardBody({
+    required this.flight,
+    required this.number,
+    required this.type,
+    required this.airport,
+    required this.airportLabel,
+    required this.legacyAirport,
+  });
+
+  final FlightInfo? flight;
+  final String number;
+  final FlightType? type;
+  final Airport? airport;
+  final String? airportLabel;
+  final ServiceAirport? legacyAirport;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.l10n;
+    final f = flight;
+    final point = type == null ? null : airport?.pointFor(type!);
+    Widget line(String text, {TextStyle? style}) => Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(text, style: style ?? LuxTypography.bodyMedium),
+        );
     return Container(
+      key: const ValueKey('driver-flight-card'),
       width: double.infinity,
       padding: const EdgeInsets.all(LuxSpacing.md),
       decoration: BoxDecoration(
         color: LuxColors.sapphireTint,
         borderRadius: BorderRadius.circular(LuxRadius.sm),
-        border: Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
+        border: Border.all(color: LuxColors.sapphire.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.flight_land_rounded,
-                size: 16,
-                color: LuxColors.sapphire,
+              const ExcludeSemantics(
+                child: Icon(Icons.flight_land_rounded,
+                    size: 16, color: LuxColors.sapphire),
               ),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
-                child: Text(
-                  airport?.name ?? context.l10n.driverFlightAirportPickup,
-                  style: LuxTypography.caption,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    airportLabel ?? t.driverFlightAirportPickup,
+                    style: LuxTypography.caption,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
-              if (type != null) _Tag(type.label),
+              if (type != null) _Tag(type!.label),
             ],
           ),
           const SizedBox(height: LuxSpacing.sm),
-          Text(context.l10n.driverFlightExitLabel,
-              style: LuxTypography.caption),
-          const SizedBox(height: 2),
           Text(
-            type == null
-                ? context.l10n.driverFlightAskType
-                : (airport ?? _anyAirport).exitFor(type),
-            style: LuxTypography.bodyLarge,
+            [
+              t.driverFlightCardTitle,
+              if (f?.airline != null) f!.airline!,
+              number,
+            ].join(' · '),
+            style: LuxTypography.titleMedium,
           ),
-          const SizedBox(height: LuxSpacing.md),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(LuxRadius.sm),
-              onTap: () => openFlightTracker(context, flight, airport),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  children: [
-                    Text(
-                      context.l10n.driverFlightNumber(flight),
-                      style: LuxTypography.bodyLarge.copyWith(
-                        color: LuxColors.sapphire,
-                        decoration: TextDecoration.underline,
-                        decorationColor: LuxColors.sapphire,
+          if (f != null) ...[
+            line(t.driverFlightStatus(f.status.label)),
+            if (f.actualArrival != null)
+              line(t.flightActualArrival(LuxFormat.time(f.actualArrival!)))
+            else if (f.estimatedArrival != null)
+              line(t
+                  .flightEstimatedArrival(LuxFormat.time(f.estimatedArrival!))),
+            if (f.noLiveData && f.scheduledArrival != null)
+              line(t.flightNoLiveData(LuxFormat.time(f.scheduledArrival!))),
+            if (f.readyAt != null)
+              line(
+                t.flightBeAtPointAt(LuxFormat.time(f.readyAt!)),
+                style: LuxTypography.bodyLarge
+                    .copyWith(fontWeight: FontWeight.w600),
+              ),
+          ],
+          const SizedBox(height: LuxSpacing.sm),
+          Text(point?.name ?? t.flightPickupPointPending,
+              style: LuxTypography.bodyLarge),
+          if (point != null && point.instructions.isNotEmpty)
+            line(point.instructions),
+          if (number.isNotEmpty) ...[
+            const SizedBox(height: LuxSpacing.sm),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(LuxRadius.sm),
+                onTap: () => openFlightTracker(context, number, legacyAirport),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          t.driverFlightCheckStatus,
+                          style: LuxTypography.bodyMedium.copyWith(
+                            color: LuxColors.sapphire,
+                            decoration: TextDecoration.underline,
+                            decorationColor: LuxColors.sapphire,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    const Icon(
-                      Icons.open_in_new_rounded,
-                      size: 14,
-                      color: LuxColors.sapphire,
-                    ),
-                    const SizedBox(width: LuxSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        context.l10n.driverFlightCheckStatus,
-                        style: LuxTypography.caption,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                      const SizedBox(width: 6),
+                      const Icon(Icons.open_in_new_rounded,
+                          size: 14, color: LuxColors.sapphire),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -173,7 +270,7 @@ class _Tag extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: LuxColors.sapphire.withOpacity(0.18),
+          color: LuxColors.sapphire.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(LuxRadius.sm),
         ),
         child: Text(

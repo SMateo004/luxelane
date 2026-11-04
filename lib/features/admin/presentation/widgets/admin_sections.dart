@@ -17,6 +17,7 @@ import '../bloc/admin_bloc.dart';
 import 'admin_booking_events.dart';
 import 'admin_booking_preferences.dart';
 import 'admin_finance_tab.dart';
+import 'admin_flight_card.dart';
 import 'admin_shared_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -236,6 +237,9 @@ enum AdminSection {
 
   /// Solicitudes de chófer (B2). Su nombre sale de los .arb.
   driverApplications,
+
+  /// Vuelos de llegada y aeropuertos (B3). Su nombre sale de los .arb.
+  flights,
   vehicles,
   users,
   business,
@@ -589,6 +593,11 @@ class _BookingDetail extends StatelessWidget {
                   valueColor: LuxColors.error,
                 ),
               ...cancellationRows(booking),
+              // Vuelo de llegada (B3): solo las recogidas en aeropuerto.
+              if (booking.pickupAirport != null) ...[
+                const SizedBox(height: LuxSpacing.sm),
+                AdminFlightCard(bookingId: booking.id),
+              ],
               const SizedBox(height: LuxSpacing.sm),
               AdminBookingPreferences(bookingId: booking.id),
               const SizedBox(height: LuxSpacing.sm),

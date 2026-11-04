@@ -27,6 +27,7 @@ import { updatePreferencesSchema } from './preferences';
 import {
   decideSchema, docUrlSchema, expiriesSchema, overrideSchema as allowOnlineSchema, purgeSchema, reviewSchema, stepSchema, uploadSchema,
 } from './driver_application';
+import { clearLockSchema, forceNoShowSchema, setFlightSchema, upsertAirportSchema } from './flight';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -252,6 +253,40 @@ const CASES: Record<string, Case> = {
     wrongType: { type: 'license_front', version: '1' },
     extreme: [{ type: 'selfie', version: 1 }, { type: 'license_front', version: 0 }, { type: 'license_front', version: 1_000_000 },
       { type: 'license_front', version: 21 }],
+  },
+  adminSetFlightInfo: {
+    schema: setFlightSchema,
+    valid: { bookingId: ID, status: 'landed', actualArrival: 1_900_000_000_000, reason: 'Llamé a la aerolínea (prueba)' },
+    wrongType: { bookingId: ID, status: 'landed', actualArrival: '1900000000000', reason: 'Llamé a la aerolínea (prueba)' },
+    extreme: [
+      { bookingId: ID, status: 'landed', reason: 'Sin hora real no se marca aterrizado' },
+      { bookingId: ID, status: 'otro', reason: 'Estado fuera de la lista cerrada' },
+      { bookingId: ID, status: 'delayed', reason: 'corto' },
+    ],
+  },
+  adminClearFlightLock: {
+    schema: clearLockSchema, valid: { bookingId: ID, reason: 'La fuente ya da datos (prueba)' },
+    wrongType: { bookingId: 5, reason: 'La fuente ya da datos (prueba)' }, extreme: [{ bookingId: ID, reason: 'x' }],
+  },
+  adminForceNoShow: {
+    schema: forceNoShowSchema, valid: { bookingId: ID, reason: 'Esperó 40 min y llamó dos veces (prueba)' },
+    wrongType: { bookingId: ID, reason: 12 }, extreme: [{ bookingId: LONG_ID, reason: 'Esperó 40 min y llamó dos veces' }],
+  },
+  adminUpsertAirport: {
+    schema: upsertAirportSchema,
+    valid: { code: 'ZZZ', name: 'Aeropuerto de prueba', city: 'Ciudad', pickupPoints: {
+      domestic: { name: 'Salida nacional', instructions: 'Frente a la puerta 1 (ficticio)', lat: -17.6, lng: -63.1 } },
+    reason: 'Alta del aeropuerto (prueba)' },
+    wrongType: { code: 'ZZZ', name: 'Aeropuerto', city: 'Ciudad', pickupPoints: { domestic: { name: 'x', instructions: '',
+      lat: '-17', lng: -63 } }, reason: 'Alta del aeropuerto (prueba)' },
+    extreme: [
+      { code: 'zz', name: 'Aeropuerto', city: 'Ciudad', pickupPoints: {}, reason: 'Alta del aeropuerto (prueba)' },
+      { code: 'ZZZ', name: 'Aeropuerto', city: 'Ciudad', timeZone: 'America/Lima', pickupPoints: {}, reason: 'Alta del aeropuerto (prueba)' },
+      { code: 'ZZZ', name: 'Aeropuerto', city: 'Ciudad', pickupPoints: { domestic: { name: 'P', instructions: '', lat: 91, lng: 0 } },
+        reason: 'Alta del aeropuerto (prueba)' },
+      { code: 'ZZZ', name: 'Aeropuerto', city: 'Ciudad', pickupPoints: { domestic: { name: 'P', instructions: '', lat: 0, lng: 0 } },
+        reason: 'Alta del aeropuerto (prueba)' },
+    ],
   },
   adminListDocExpiries: {
     schema: expiriesSchema, valid: { days: 30 }, wrongType: { days: '30' }, extreme: [{ days: 0 }, { days: 366 }, { days: 30, x: 1 }],

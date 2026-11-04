@@ -160,14 +160,9 @@ void main() {
       expect(ServiceArea.airportFor(_scz), isNull);
     });
 
-    test('airport city and arrivals exit by flight type', () {
+    test('airport city and flight type parsing', () {
       final lpb = ServiceArea.airportByIata('LPB')!;
       expect(lpb.cityName, 'La Paz');
-      expect(lpb.exitFor(FlightType.domestic), contains('nacionales'));
-      expect(
-        lpb.exitFor(FlightType.international),
-        contains('internacionales'),
-      );
       expect(FlightType.fromName('international'), FlightType.international);
       expect(FlightType.fromName(null), isNull);
     });

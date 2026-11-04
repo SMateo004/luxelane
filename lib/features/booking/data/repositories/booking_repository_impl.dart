@@ -349,6 +349,8 @@ Map<String, dynamic> bookingRequestData(
     'serviceType': b.serviceType.name,
     if (hourly) 'hours': b.hours ?? 2,
     if (appVersion != null) 'appVersion': appVersion,
+    // Con vuelo, la hora de recogida la calcula el servidor (readyAt).
+    if (b.flightRequest != null) 'flight': b.flightRequest!.toJson(),
     if (!quote) ...{
       'passengerCount': b.passengerCount,
       'luggageCount': b.luggageCount,
@@ -397,6 +399,10 @@ Failure bookingFailureFor(String code, Object? details) {
     'service_unavailable' => t.bookingErrorServiceUnavailable,
     'invalid_hours' => t.bookingErrorInvalidHours,
     'past_pickup' => t.bookingPickupPast,
+    // Reserva con vuelo (prompt de vuelos).
+    'flight_config_missing' => t.bookingErrorFlightConfigMissing,
+    'airport_unknown' => t.bookingErrorAirportUnknown,
+    'flight_not_airport_pickup' => t.bookingErrorFlightNotAirportPickup,
     'inactive_user' => t.bookingErrorInactiveUser,
     'unauthenticated' => t.bookingErrorSignIn,
     // Ningún método de pago activo (config/ops): no se crea la reserva.

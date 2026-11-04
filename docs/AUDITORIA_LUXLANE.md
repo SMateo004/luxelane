@@ -256,6 +256,42 @@ Preguntas para el abogado:
   3. Las pruebas en dispositivo real de DEPLOY.md («Registro de chóferes»): EXIF quitado, cámara frontal en la foto en vivo, URL firmada de 5 minutos sin caché, permisos de cámara y fotos en iOS y web sin subidas.
 - **Matriz**: la Parte B no cambia `firestore.rules` ni `storage.rules`.
 
+## N. Vuelos de llegada (cierre/vuelos, Parte A)
+
+Qué se guarda y quién lo lee:
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Vuelo (aeropuerto, tipo, aerolínea, número, fecha, hora programada, equipaje facturado, estimada, real, estado, fuente, calidad del dato, bloqueo manual) y `readyAt` | `bookings/{id}.flight`, `bookings/{id}.readyAt` | Pasajero dueño, admin y el chófer asignado (como toda la reserva, también en su historial) | Solo el servidor: `createBooking`, `adminSetFlightInfo`, `adminClearFlightLock` |
+| Copia para el chófer (sin fuente ni bloqueo) | `bookings/{id}/driverView/flight` | Chófer asignado y activo entre `confirmed` e `in_progress` (misma regla que `driverView/preferences`), pasajero dueño y admin | Solo el servidor |
+| Aeropuertos y puntos de recogida nacional e internacional | `airports/{código}` | Cualquiera con sesión | `adminUpsertAirport` (MFA, sesión reciente, motivo, auditoría) |
+| Código, nombre y ciudad del aeropuerto | `airportsPublic/{código}` | Cualquiera (selector sin sesión) | `adminUpsertAirport` |
+| Caché de la fuente por aeropuerto y fecha | `flightBoard/{AEROPUERTO_AAAA-MM-DD}` | Nadie desde el cliente | Solo el servidor (planificador, Parte B) |
+
+- **Privacidad (A10)**: el número de vuelo, la aerolínea y el vuelo entero se tachan en los registros (`logger.ts`, prueba en errors.test.ts). En la Parte A no hay notificaciones de vuelo; las de la Parte B no llevarán el número en la pantalla bloqueada.
+- **Retención**: cuánto tiempo se guardan el vuelo de la reserva, su copia para el chófer y la caché `flightBoard`: **pendiente del abogado** (no se fija ningún plazo ni se programa borrado). `deleteAccount` no borra `flightBoard` (no tiene datos de la persona, solo vuelos por aeropuerto y fecha).
+- **PENDIENTE ANTES DEL PILOTO** (decisión del responsable, 2026-11-03: se trata en un prompt aparte): el chófer asignado lee la reserva entera también después del viaje (regla general de `bookings`), y con ella el número de vuelo en su historial. El vuelo se queda en la reserva; la copia `driverView/flight` tiene ventana (`confirmed` a `in_progress`).
+- **No se presentó con vuelo**: solo con el vuelo aterrizado (hora real de la fuente o de un admin) y pasada la espera desde `readyAt`. Retrasado, sin datos, desviado o cancelado: rechazado; solo un admin lo fuerza (`adminForceNoShow`, motivo y auditoría).
+- **Precio**: con vuelo se cotiza y reserva con `readyAt` como hora de recogida (incluido el recargo nocturno de `config/pricing`), y no cambia después.
+- **Límites de la Parte A, cerrados en la Parte B**: cuando `readyAt` cambia (planificador o admin), `scheduledAt` y `openRequests/{id}.scheduledAt` cambian con él; los seis usos de la hora de recogida (limpieza diaria, chófer ocupado al asignar, retención de la tarjeta, aviso al liberar, reactivación y bandeja de pagos, solicitudes abiertas) lo siguen (`flight_followers.int.ts`). El precio no se recalcula: solo `booking_service.ts` llama a la tarifa (`price_fixed.test.ts`).
+- **Lista fija de aeropuertos (decisión 4, DIFERIDA por el responsable, 2026-11-04)**: la detección de «recogida en aeropuerto» sigue en dos listas fijas de 11 aeropuertos, `AIRPORTS` en `functions/src/service_area.ts` y `ServiceArea.airports` en `lib/core/utils/service_area.dart`; además, el aeropuerto debe existir en `airports`. Mientras tanto, `airports_parity.test.ts` falla si las dos listas difieren en código IATA, nombre o coordenadas. Propuesta, sin implementar:
+  - `airports/{IATA}` añade `location {lat, lng}`, radio exacto (hoy 1,2 km en el código), radio para lugares con nombre «aeropuerto» (hoy 6 km) y `active`; `airportsPublic` copia ubicación y radios para la app sin sesión.
+  - `service_area.ts` se queda con ciudades y distancias; `AIRPORTS` pasa a una función pura `airportFor(lugar, aeropuertos)` con la colección leída con caché por instancia; la app deja de decidir con su lista y sigue el `pickupAirport` de la cotización.
+  - Migración solo con aprobación: copiar los 11 aeropuertos y radios que hoy están en el código (nada inventado), una versión calculando con los dos métodos y alertando si no coinciden, y luego borrar la constante.
+  - Precio: las claves de `fixedAirportFares` no cambian, pero un aeropuerto desactivado o borrado pasa sus viajes nuevos a tarifa de ciudad sin paso de vuelo, un cambio de radio cambia qué recogidas tienen tarifa fija y un aeropuerto nuevo no la tiene hasta cargar su clave. Las reservas ya creadas no cambian (precio fijo). Riesgo: un error en la colección cambia precios en silencio; mitigación propuesta: alerta cuando una recogida que era aeropuerto deja de serlo.
+
+### N.1 Vuelos, Parte B
+
+- **Planificador `pollFlights`** (cada 5 minutos): solo reservas con `flightActive == true`; puntos de revisión de `config/ops.flightCheckpointsMinutes` y `flightPollMinutes` (sin ellos no hace nada); solo lee la caché `flightBoard` y la fuente configurada, que hoy es la manual (no encuentra nada). Con bloqueo manual no pisa los datos del admin: alerta `flight_source_differs` una vez por dato distinto. Dato viejo (`flightStaleMinutes`): calidad `stale` y alerta `flight_data_stale` una vez por episodio.
+- **Avisos** (push y bandeja, es/en/pt del catálogo del servidor): cambio de la hora de recogida igual o mayor que `flightNotifyThresholdMinutes` respecto del último aviso; vuelo cancelado o desviado (una vez por estado, alerta alta a central; la reserva nunca se cancela sola). **No llevan número de vuelo ni aerolínea** (pantalla bloqueada): solo la hora nueva.
+- **Chófer**: la tarjeta «Vuelo» lee solo `driverView/flight` y solo en la ventana `confirmed` a `in_progress`; la solicitud abierta lleva solo aeropuerto y tipo de vuelo, sin número.
+- **Panel**: detalle del vuelo, formulario manual (motivo obligatorio, bloqueo, quitar bloqueo), bandejas y editor de aeropuertos; todo por callables con MFA y sesión reciente, con auditoría.
+- **Textos**: ninguna promesa de hora (`frases_prohibidas_test.dart`: llegar a tiempo, vuelo en tiempo real, espera sin límite, ajuste automático, garantías; es/en/pt).
+- **Enlace externo existente**: la tarjeta del chófer conserva el enlace a la página pública de vuelos de la ATT (abre el navegador; la app no lee nada de ella). NO VERIFICADO que esa página siga disponible.
+- **PENDIENTE: Prompt 15C (fuente de la ATT)**: la fuente automática de vuelos espera los datos de la página pública de la ATT (qué publica, con qué formato, cada cuánto y si se permite leerla). Hasta entonces `pollFlights` corre con `ManualFlightProvider`, que no encuentra nada: todo dato en vivo lo carga central a mano.
+- **PENDIENTE ANTES DEL PILOTO (recordatorio)**: el chófer asignado sigue leyendo la reserva entera después del viaje, con el número de vuelo (ver arriba en N); se trata en un prompt aparte antes del piloto.
+- **Fuente**: solo la manual (lo que fija un admin) y la de pruebas. La de la ATT no está implementada; la app y las callables de reserva nunca consultan una fuente externa, solo la caché.
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.

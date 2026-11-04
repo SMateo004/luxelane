@@ -31,7 +31,9 @@ import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../auth/presentation/widgets/terms_required_dialog.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../data/airport_repository.dart';
 import '../bloc/booking_bloc.dart';
+import '../widgets/flight_step_fields.dart';
 import '../widgets/trip_preferences_step.dart';
 import '../widgets/vehicle_details.dart';
 import '../widgets/vehicle_visuals.dart';
@@ -86,6 +88,9 @@ class _BookingScreenState extends State<BookingScreen> {
   TripPreferences? _tripPrefs;
   String _flight = '';
   FlightType? _flightType;
+
+  /// Aerolínea, fecha, hora del billete y equipaje facturado (Tu vuelo).
+  FlightDraft _flightDraft = const FlightDraft();
   bool _flightAttempted = false; // show the flight errors only after a try
   bool _bookForSelf = true;
   int _capacityTab = 0; // 0 = Luggage, 1 = Seating
@@ -142,7 +147,18 @@ class _BookingScreenState extends State<BookingScreen> {
         _formData?.destination?.lat,
         _formData?.destination?.lng,
         _formData?.scheduledAt.millisecondsSinceEpoch,
+        // Con vuelo, la hora de recogida (y el precio) dependen de él.
+        _flightRequest?.key,
       ].join('|');
+
+  /// El vuelo a cotizar y reservar (solo recogida en aeropuerto y completo).
+  FlightRequest? get _flightRequest => _airportPickup
+      ? _flightDraft.toRequest(
+          airportCode: ServiceArea.airportFor(_formData!.origin)?.iata,
+          type: _flightType,
+          number: _flight,
+        )
+      : null;
 
   /// Cotización vigente para la selección actual, o null.
   BookingQuote? get _freshQuote =>
@@ -221,6 +237,7 @@ class _BookingScreenState extends State<BookingScreen> {
       createdAt: now,
       updatedAt: now,
       hours: _service == ServiceType.byTheHour ? _hours : null,
+      flightRequest: _flightRequest,
     );
   }
 
@@ -294,7 +311,14 @@ class _BookingScreenState extends State<BookingScreen> {
       : null;
 
   bool _checkFlight() {
-    final error = _flightError ?? _flightTypeError;
+    final error = _flightTypeError ??
+        _flightError ??
+        (_airportPickup && _flightDraft.date == null
+            ? context.l10n.bookingFlightDateMissing
+            : null) ??
+        (_airportPickup && _flightDraft.time == null
+            ? context.l10n.bookingFlightTimeMissing
+            : null);
     if (error == null) return true;
     setState(() => _flightAttempted = true);
     showLuxSnackbar(context, error, isError: true);
@@ -533,6 +557,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 : null,
             hours: _service == ServiceType.byTheHour ? _hours : null,
             preferences: _tripPrefs,
+            flightRequest: _flightRequest,
           ),
         );
   }
@@ -1476,6 +1501,21 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _flightField() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Tu vuelo: primero nacional o internacional (cambia el punto).
+          if (_airportPickup) ...[
+            Semantics(
+              header: true,
+              child: Text(context.l10n.bookingFlightSectionTitle,
+                  style: LuxTypography.titleMedium),
+            ),
+            const SizedBox(height: LuxSpacing.sm),
+            FlightTypeSelector(
+              value: _flightType,
+              errorText: _flightAttempted ? _flightTypeError : null,
+              onChanged: (t) => setState(() => _flightType = t),
+            ),
+            const SizedBox(height: LuxSpacing.md),
+          ],
           _LightTextField(
             label: _airportPickup
                 ? context.l10n.bookingFlightNumberRequired
@@ -1491,11 +1531,23 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           if (_airportPickup) ...[
             const SizedBox(height: 12),
-            _FlightTypeSelector(
-              value: _flightType,
-              errorText: _flightAttempted ? _flightTypeError : null,
-              onChanged: (t) => setState(() => _flightType = t),
+            FlightDetailsFields(
+              draft: _flightDraft,
+              showErrors: _flightAttempted,
+              onChanged: (d) => setState(() => _flightDraft = d),
             ),
+            if (_flightType != null &&
+                ServiceArea.airportFor(_formData!.origin) != null) ...[
+              const SizedBox(height: LuxSpacing.md),
+              FlightPickupInfo(
+                airportCode: ServiceArea.airportFor(_formData!.origin)!.iata,
+                flightType: _flightType!,
+                readyAt: _freshQuote?.readyAt,
+                repository: sl.isRegistered<AirportRepository>()
+                    ? sl<AirportRepository>()
+                    : FirestoreAirportRepository(),
+              ),
+            ],
           ],
         ],
       );
@@ -2789,8 +2841,8 @@ class _FlightNote extends StatelessWidget {
 // ── FLIGHT TYPE (airport pickups) ─────────────────────────────────────────────
 
 /// National or international: the driver waits at a different arrivals exit.
-class _FlightTypeSelector extends StatelessWidget {
-  const _FlightTypeSelector({
+class FlightTypeSelector extends StatelessWidget {
+  const FlightTypeSelector({
     required this.value,
     required this.onChanged,
     this.errorText,
@@ -2819,46 +2871,58 @@ class _FlightTypeSelector extends StatelessWidget {
                 if (t != FlightType.values.first)
                   const SizedBox(width: LuxSpacing.sm),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      LuxHaptics.tap();
-                      onChanged(t);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: value == t ? _kPanelAccent : _kCardBg,
-                        borderRadius: BorderRadius.circular(_kMobileRadius),
-                        border: Border.all(
-                          color: value == t
-                              ? _kPanelAccent
-                              : errorText != null
-                                  ? Colors.red.shade700
-                                  : _kBorder,
+                  // Vuelos (B4, hallazgo de las capturas): 48 px como mínimo y
+                  // leído como botón seleccionado o no.
+                  child: Semantics(
+                    button: true,
+                    selected: value == t,
+                    excludeSemantics: true,
+                    label: t.label,
+                    onTap: () => onChanged(t),
+                    child: GestureDetector(
+                      onTap: () {
+                        LuxHaptics.tap();
+                        onChanged(t);
+                      },
+                      child: Container(
+                        constraints: const BoxConstraints(
+                            minHeight: kMinInteractiveDimension),
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: value == t ? _kPanelAccent : _kCardBg,
+                          borderRadius: BorderRadius.circular(_kMobileRadius),
+                          border: Border.all(
+                            color: value == t
+                                ? _kPanelAccent
+                                : errorText != null
+                                    ? Colors.red.shade700
+                                    : _kBorder,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            t == FlightType.domestic
-                                ? Icons.flight_land_rounded
-                                : Icons.public_rounded,
-                            size: 16,
-                            color: value == t ? Colors.white : _kTextSub,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            t.label,
-                            style: TextStyle(
-                              fontFamily: kSans,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: value == t ? Colors.white : _kTextPrimary,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              t == FlightType.domestic
+                                  ? Icons.flight_land_rounded
+                                  : Icons.public_rounded,
+                              size: 16,
+                              color: value == t ? Colors.white : _kTextSub,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 6),
+                            Text(
+                              t.label,
+                              style: TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    value == t ? Colors.white : _kTextPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

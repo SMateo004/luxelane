@@ -1,0 +1,110 @@
+{
+  "flightStatusScheduled": {
+    "description": "Vuelos: estado del vuelo (scheduled).",
+    "es": "Programado",
+    "en": "Scheduled",
+    "pt": "Programado"
+  },
+  "flightStatusDelayed": {
+    "description": "Vuelos: estado del vuelo (delayed).",
+    "es": "Retrasado",
+    "en": "Delayed",
+    "pt": "Atrasado"
+  },
+  "flightStatusLanded": {
+    "description": "Vuelos: estado del vuelo (landed).",
+    "es": "Aterrizó",
+    "en": "Landed",
+    "pt": "Pousou"
+  },
+  "flightStatusCancelled": {
+    "description": "Vuelos: estado del vuelo (cancelled).",
+    "es": "Cancelado",
+    "en": "Cancelled",
+    "pt": "Cancelado"
+  },
+  "flightStatusDiverted": {
+    "description": "Vuelos: estado del vuelo (diverted).",
+    "es": "Desviado",
+    "en": "Diverted",
+    "pt": "Desviado"
+  },
+  "flightStatusUnknown": {
+    "description": "Vuelos: estado del vuelo (unknown).",
+    "es": "Sin datos",
+    "en": "No data",
+    "pt": "Sem dados"
+  },
+  "flightPickupPointPending": {
+    "description": "Vuelos: sin punto de recogida definido para el aeropuerto.",
+    "es": "Punto por confirmar con central",
+    "en": "Pickup point to be confirmed by our team",
+    "pt": "Ponto a confirmar com a central"
+  },
+  "flightNoLiveData": {
+    "description": "Vuelos: sin datos en vivo; solo la hora programada.",
+    "es": "Sin datos de vuelo en vivo: hora programada {time}",
+    "en": "No live flight data: scheduled time {time}",
+    "pt": "Sem dados do voo ao vivo: horário programado {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightBeAtPointAt": {
+    "description": "Vuelos: el chófer debe estar en el punto de recogida a esa hora.",
+    "es": "Debes estar en el punto a las {time}",
+    "en": "Be at the pickup point at {time}",
+    "pt": "Esteja no ponto às {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightDriverWillBeAt": {
+    "description": "Vuelos: el pasajero ve a qué hora estará el chófer en el punto.",
+    "es": "Hora de recogida en el punto: {time}",
+    "en": "Pickup time at the point: {time}",
+    "pt": "Horário de embarque no ponto: {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightEstimatedArrival": {
+    "description": "Vuelos: hora estimada de llegada.",
+    "es": "Llegada estimada: {time}",
+    "en": "Estimated arrival: {time}",
+    "pt": "Chegada estimada: {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightScheduledArrival": {
+    "description": "Vuelos: hora programada de llegada.",
+    "es": "Llegada programada: {time}",
+    "en": "Scheduled arrival: {time}",
+    "pt": "Chegada programada: {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "flightActualArrival": {
+    "description": "Vuelos: hora real de llegada.",
+    "es": "Aterrizó: {time}",
+    "en": "Landed: {time}",
+    "pt": "Pousou: {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
+}

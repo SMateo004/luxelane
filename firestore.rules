@@ -569,6 +569,31 @@ service cloud.firestore {
     // adminUpdatePricingRule, con los campos públicos (A8.8, C3).
     // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
+    // Vuelos (prompt de vuelos, A9 y A6)
+    // airports/{código}: nombre, ciudad, zona horaria y puntos de recogida
+    // nacional e internacional. Lo lee quien tiene sesión (la app los
+    // muestra en la reserva y al chófer). Solo lo escribe adminUpsertAirport.
+    // airportsPublic/{código}: lo mínimo para el selector sin sesión
+    // (código, nombre y ciudad).
+    // flightBoard/{aeropuerto_fecha}: caché de la fuente de vuelos; solo el
+    // servidor.
+    // -------------------------------------------------------------------------
+
+    match /airports/{code} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    match /airportsPublic/{code} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /flightBoard/{boardId} {
+      allow read, write: if false;
+    }
+
     match /pricingRules/{ruleId} {
       allow read:   if true;
       // Crear, cambiar y desactivar: adminUpdatePricingRule (Parte A).

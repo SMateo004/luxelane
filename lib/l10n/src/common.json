@@ -567,18 +567,6 @@
     "en": "International",
     "pt": "Internacional"
   },
-  "commonAirportDomesticExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo nacional.",
-    "es": "Salida de llegadas nacionales",
-    "en": "Domestic arrivals exit",
-    "pt": "Saída do desembarque nacional"
-  },
-  "commonAirportInternationalExit": {
-    "description": "Para el chófer: por dónde sale el pasajero de un vuelo internacional.",
-    "es": "Salida de llegadas internacionales",
-    "en": "International arrivals exit",
-    "pt": "Saída do desembarque internacional"
-  },
   "commonOriginNoCoords": {
     "description": "Error: la dirección de recogida no tiene coordenadas.",
     "es": "No pudimos ubicar la recogida en el mapa. Elige otra dirección.",
@@ -617,9 +605,9 @@
   },
   "commonFlightNumberMissing": {
     "description": "Error: falta el número de vuelo en una recogida en el aeropuerto.",
-    "es": "Indica tu número de vuelo para recogerte a tiempo.",
-    "en": "Enter your flight number so we can pick you up on time.",
-    "pt": "Informe o número do seu voo para buscarmos você a tempo."
+    "es": "Indica tu número de vuelo: con él calculamos la hora de recogida.",
+    "en": "Enter your flight number: we use it to work out your pickup time.",
+    "pt": "Informe o número do voo: com ele calculamos o horário de embarque."
   },
   "commonFlightNumberInvalid": {
     "description": "Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen).",

@@ -42,4 +42,4 @@ fi
 exec env -u HTTPS_PROXY -u https_proxy -u GLOBAL_AGENT_HTTPS_PROXY -u npm_config_https_proxy \
   -u YARN_HTTPS_PROXY -u HTTP_PROXY -u http_proxy \
   "$FIREBASE" emulators:exec --only auth,firestore,storage --project "$PROJECT" \
-  "node tools/experiencia/seed.cjs && node tools/experiencia/seed_registro.cjs && (node tools/experiencia/callables.cjs & node tools/experiencia/serve.cjs)"
+  "node tools/experiencia/seed.cjs && node tools/experiencia/seed_registro.cjs && node tools/experiencia/seed_vuelos.cjs && (node tools/experiencia/callables.cjs & node tools/experiencia/serve.cjs)"

@@ -4,6 +4,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/lux_format.dart';
+import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -148,6 +149,30 @@ class _RequestCard extends StatelessWidget {
               ),
             ],
           ),
+          // Vuelos (B5): antes de aceptar, solo el aeropuerto y el tipo de
+          // vuelo; el número y la hora derivada se ven al aceptar.
+          if (r.pickupAirport case final airport?)
+            if (FlightType.fromName(r.flightType) case final type?) ...[
+              const SizedBox(height: LuxSpacing.xs),
+              Row(
+                children: [
+                  const Icon(Icons.flight_land_outlined,
+                      size: 14, color: LuxColors.inkSecondary),
+                  const SizedBox(width: LuxSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      context.l10n.driverRequestAirportFlight(
+                        airport,
+                        type == FlightType.domestic
+                            ? context.l10n.commonFlightDomestic
+                            : context.l10n.commonFlightInternational,
+                      ),
+                      style: LuxTypography.caption,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           if (r.languagesSummary case final langs?) ...[
             const SizedBox(height: LuxSpacing.xs),
             _LanguagesLine(text: langs),

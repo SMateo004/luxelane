@@ -9,11 +9,14 @@ import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/mfa_reminder_banner.dart';
 import '../../../auth/presentation/widgets/reauth_dialog.dart';
+import '../../data/flights_admin_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_alerts_tab.dart';
 import '../widgets/admin_driver_applications_tab.dart';
 import '../widgets/admin_finance_tab.dart';
+import '../widgets/admin_flight_card.dart';
+import '../widgets/admin_flights_tab.dart';
 import '../widgets/admin_incidents_strip.dart';
 import '../widgets/admin_payments_tab.dart';
 import '../widgets/admin_pricing_tab.dart';
@@ -52,6 +55,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.pricing: Icons.sell_outlined,
     AdminSection.drivers: Icons.badge_outlined,
     AdminSection.driverApplications: Icons.assignment_ind_outlined,
+    AdminSection.flights: Icons.flight_land_outlined,
     AdminSection.vehicles: Icons.directions_car_outlined,
     AdminSection.users: Icons.people_outline,
     AdminSection.business: Icons.business_outlined,
@@ -70,6 +74,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.payments,
         AdminSection.drivers,
         AdminSection.driverApplications,
+        AdminSection.flights,
         AdminSection.vehicles,
       ],
     ),
@@ -106,13 +111,18 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   };
 
   /// Las secciones nuevas toman el nombre de los .arb.
-  String _label(AdminSection s) => s == AdminSection.driverApplications
-      ? context.l10n.adminDrvAppSection
-      : _labels[s]!;
+  String _label(AdminSection s) => switch (s) {
+        AdminSection.driverApplications => context.l10n.adminDrvAppSection,
+        AdminSection.flights => context.l10n.adminFlightsSection,
+        _ => _labels[s]!,
+      };
 
-  String? _subtitle(AdminSection s) => s == AdminSection.driverApplications
-      ? context.l10n.adminDrvAppSectionSubtitle
-      : _subtitles[s];
+  String? _subtitle(AdminSection s) => switch (s) {
+        AdminSection.driverApplications =>
+          context.l10n.adminDrvAppSectionSubtitle,
+        AdminSection.flights => context.l10n.adminFlightsSectionSubtitle,
+        _ => _subtitles[s],
+      };
 
   void _go(AdminSection s) {
     if (s != _section) LuxHaptics.tap();
@@ -394,6 +404,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         ),
       );
 
+  /// Desde la bandeja de vuelos: el detalle completo si la reserva está en
+  /// la lista del panel; si no, solo la tarjeta del vuelo.
+  Future<void> _openFlightBooking(
+    BuildContext context,
+    String bookingId,
+    FlightsAdminRepository repository,
+  ) =>
+      context.read<AdminBloc>().state.bookings.any((b) => b.id == bookingId)
+          ? showBookingDetail(context, bookingId)
+          : showFlightBookingDialog(context, bookingId, repository);
+
   Widget _sectionBody() => switch (_section) {
         AdminSection.dashboard => DashboardTab(onNavigate: _go),
         AdminSection.operations => const BookingsTab(),
@@ -402,6 +423,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.pricing => const PricingTab(),
         AdminSection.drivers => const DriversTab(),
         AdminSection.driverApplications => const DriverApplicationsTab(),
+        AdminSection.flights => FlightsTab(onOpenBooking: _openFlightBooking),
         AdminSection.vehicles => const VehiclesTab(),
         AdminSection.business => const BusinessLeadsTab(),
         AdminSection.users => const UsersTab(),

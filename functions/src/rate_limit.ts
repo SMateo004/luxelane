@@ -80,6 +80,11 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   adminAllowDriverOnline: per10min(30),
   adminPurgeDriverDocuments: perHour(10),
   adminListDocExpiries: per10min(30),
+  // Vuelos: cambios a mano del admin.
+  adminSetFlightInfo: per10min(60),
+  adminClearFlightLock: per10min(30),
+  adminForceNoShow: per10min(30),
+  adminUpsertAirport: per10min(30),
   // Al abrir la app del chófer.
   registerDriverDevice: per10min(20),
   // Escrituras de admin (Parte A).

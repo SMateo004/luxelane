@@ -1,0 +1,592 @@
+{
+  "generado": "2026-11-04T02:02:03.498Z",
+  "idiomas": [
+    "en"
+  ],
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "capturas": [
+    {
+      "idioma": "en",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v03-viaje-sin-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v03-viaje-sin-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v03-viaje-sin-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v03-viaje-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v03-viaje-sin-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v04-viaje-retrasado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v04-viaje-retrasado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v04-viaje-retrasado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v04-viaje-retrasado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v04-viaje-retrasado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v05-viaje-cancelado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v05-viaje-cancelado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v05-viaje-cancelado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v06-chofer-retrasado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v06-chofer-retrasado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v06-chofer-retrasado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v07-chofer-sin-datos_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v07-chofer-sin-datos_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v08-chofer-sin-punto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v08-chofer-sin-punto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v08-chofer-sin-punto_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v09-chofer-solicitud_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v09-chofer-solicitud_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v05-viaje-cancelado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v05-viaje-cancelado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v08-chofer-sin-punto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v08-chofer-sin-punto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v01-paso-vuelo-nacional_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v01-paso-vuelo-nacional_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v01-paso-vuelo-nacional_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v01-paso-vuelo-nacional",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v01-paso-vuelo-nacional_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v02-paso-vuelo-sin-punto_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/v02-paso-vuelo-sin-punto_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v02-paso-vuelo-sin-punto_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v02-paso-vuelo-sin-punto_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v06-chofer-retrasado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/v06-chofer-retrasado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v07-chofer-sin-datos_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v07-chofer-sin-datos",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v07-chofer-sin-datos_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/v09-chofer-solicitud_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "v09-chofer-solicitud",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/v09-chofer-solicitud_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    }
+  ],
+  "semantica": [
+    {
+      "idioma": "en",
+      "estado": "v03-viaje-sin-datos",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Cancel booking Cancel booking 350x43"
+      ],
+      "textos": [
+        "Back to home",
+        "L",
+        "LUXELANE",
+        "Map unavailable",
+        "The map cannot be shown right now. Your trip details are still here.",
+        "Step 1 of 4",
+        "Confirmed",
+        "Your booking is confirmed. We will let you know when your chauffeur sets off.",
+        "No live flight data: scheduled time 10:01 PM",
+        "Luis Prueba",
+        "Marca de prueba Modelo de prueba · Negro",
+        "4.9",
+        "PRB-CHO",
+        "Cancel booking Cancel booking",
+        "Book BOOK",
+        "My trips MY TRIPS",
+        "Profile PROFILE"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v04-viaje-retrasado",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Cancel booking Cancel booking 350x27"
+      ],
+      "textos": [
+        "Back to home",
+        "L",
+        "LUXELANE",
+        "Map unavailable",
+        "The map cannot be shown right now. Your trip details are still here.",
+        "Step 1 of 4",
+        "Confirmed",
+        "Your booking is confirmed. We will let you know when your chauffeur sets off.",
+        "Your flight shows a delay. New pickup time: 11:21 PM.",
+        "Luis Prueba",
+        "Marca de prueba Modelo de prueba · Negro",
+        "4.9",
+        "PRB-CHO",
+        "Cancel booking Cancel booking",
+        "Book BOOK",
+        "My trips MY TRIPS",
+        "Profile PROFILE"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v05-viaje-cancelado",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Cancel booking Cancel booking 350x27"
+      ],
+      "textos": [
+        "Back to home",
+        "L",
+        "LUXELANE",
+        "Map unavailable",
+        "The map cannot be shown right now. Your trip details are still here.",
+        "Step 1 of 4",
+        "Confirmed",
+        "Your booking is confirmed. We will let you know when your chauffeur sets off.",
+        "Your flight shows as cancelled or diverted. Our team will review your booking.",
+        "Luis Prueba",
+        "Marca de prueba Modelo de prueba · Negro",
+        "4.9",
+        "PRB-CHO",
+        "Cancel booking Cancel booking",
+        "Book BOOK",
+        "My trips MY TRIPS",
+        "Profile PROFILE"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v06-chofer-retrasado",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Back",
+        "L",
+        "LUXELANE",
+        "Step 1 of 4",
+        "Confirmed",
+        "Head to the pickup point.",
+        "Aeropuerto Internacional Viru Viru (prueba)",
+        "Plaza 24 de Septiembre (prueba)",
+        "DOMESTIC",
+        "Flight · Aerolínea de prueba · ZZ202",
+        "Status: Delayed",
+        "Estimated arrival: 10:51 PM",
+        "Be at the pickup point at 11:21 PM",
+        "Map unavailable",
+        "The map cannot be shown right now. Your trip details are still here.",
+        "Puerta de llegadas nacionales (punto ficticio)",
+        "Frente a la salida, junto al cartel de prueba. Dato ficticio.",
+        "Check status at mivuelo.att.gob.bo",
+        "Estimated fare",
+        "Bs 120",
+        "Head to pickup Head to pickup Slide to confirm",
+        "I can't do this trip"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v08-chofer-sin-punto",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Back",
+        "L",
+        "LUXELANE",
+        "Step 1 of 4",
+        "Confirmed",
+        "Head to the pickup point.",
+        "Aeropuerto Internacional Viru Viru (prueba)",
+        "Plaza 24 de Septiembre (prueba)",
+        "INTERNATIONAL",
+        "Flight · Aerolínea de prueba · ZZ404",
+        "Status: Scheduled",
+        "Map unavailable",
+        "No live flight data: scheduled time 11:51 PM",
+        "The map cannot be shown right now. Your trip details are still here.",
+        "Be at the pickup point at 12:26 AM",
+        "Pickup point to be confirmed by our team",
+        "Check status at mivuelo.att.gob.bo",
+        "Estimated fare",
+        "Bs 120",
+        "Head to pickup Head to pickup Slide to confirm",
+        "I can't do this trip"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v01-paso-vuelo-nacional",
+      "interactivos": 10,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Arrival time on your ticket: 12:00 PM 350x23"
+      ],
+      "textos": [
+        "Back",
+        "2",
+        "3",
+        "Vehicle",
+        "Details",
+        "Confirm",
+        "Flight date: Nov 4, 2026",
+        "Arrival time on your ticket: 12:00 PM",
+        "Yes, checked luggage",
+        "No, carry-on only",
+        "If you say you have no checked luggage but you do, your chauffeur may leave before you come out.",
+        "Puerta de llegadas nacionales (punto ficticio) Frente a la salida, junto al cartel de prueba. Dato ficticio. Pickup time at the point: 12:30 PM",
+        "Change for this trip",
+        "FINAL PRICE",
+        "Bs 53",
+        "Continue Continue",
+        "Book BOOK",
+        "My trips MY TRIPS",
+        "Profile PROFILE"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v02-paso-vuelo-sin-punto",
+      "interactivos": 10,
+      "sinEtiqueta": 0,
+      "pequenos": [
+        "Flight date: Nov 4, 2026 350x11"
+      ],
+      "textos": [
+        "Back",
+        "2",
+        "3",
+        "Vehicle",
+        "Details",
+        "Confirm",
+        "Flight date: Nov 4, 2026",
+        "Arrival time on your ticket: 12:00 PM",
+        "Yes, checked luggage",
+        "No, carry-on only",
+        "If you say you have no checked luggage but you do, your chauffeur may leave before you come out.",
+        "Pickup point to be confirmed by our team Pickup time at the point: 12:55 PM",
+        "Change for this trip",
+        "FINAL PRICE",
+        "Bs 53",
+        "Continue Continue",
+        "Book BOOK",
+        "My trips MY TRIPS",
+        "Profile PROFILE"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v07-chofer-sin-datos",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Back",
+        "L",
+        "LUXELANE",
+        "Step 1 of 4",
+        "Confirmed",
+        "Head to the pickup point.",
+        "Aeropuerto Internacional Viru Viru (prueba)",
+        "Plaza 24 de Septiembre (prueba)",
+        "DOMESTIC",
+        "Flight · Aerolínea de prueba · ZZ101",
+        "Status: Scheduled",
+        "No live flight data: scheduled time 11:07 PM",
+        "Be at the pickup point at 11:37 PM",
+        "Map unavailable",
+        "The map cannot be shown right now. Your trip details are still here.",
+        "Puerta de llegadas nacionales (punto ficticio)",
+        "Frente a la salida, junto al cartel de prueba. Dato ficticio.",
+        "Check status at mivuelo.att.gob.bo",
+        "Estimated fare",
+        "Bs 120",
+        "Head to pickup Head to pickup Slide to confirm",
+        "I can't do this trip"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "v09-chofer-solicitud",
+      "interactivos": 5,
+      "sinEtiqueta": 0,
+      "pequenos": [],
+      "textos": [
+        "Requests",
+        "AVAILABLE TO YOU",
+        "Centro Tomorrow · 12:37 AM · from Aeropuerto Bs 120 Pending Business Class · ~16 km · 1 pax Languages: Spanish, English Accept trip Accept trip",
+        "Centro Tomorrow · 12:37 AM · from Aeropuerto Bs 120 Pending Business Class · ~16 km · 1 pax Airport VVI · Domestic Accept trip Accept trip",
+        "Drive Tab 1 of 4",
+        "Requests Tab 2 of 4",
+        "Earnings",
+        "Profile Tab 4 of 4"
+      ]
+    }
+  ]
+}

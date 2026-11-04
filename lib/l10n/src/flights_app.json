@@ -1,0 +1,122 @@
+{
+  "bookingFlightSectionTitle": {
+    "description": "Vuelos (pasajero): título del paso del vuelo en la reserva de aeropuerto.",
+    "es": "Tu vuelo",
+    "en": "Your flight",
+    "pt": "Seu voo"
+  },
+  "bookingFlightAirline": {
+    "description": "Vuelos (pasajero): campo aerolínea (opcional).",
+    "es": "Aerolínea (opcional)",
+    "en": "Airline (optional)",
+    "pt": "Companhia aérea (opcional)"
+  },
+  "bookingFlightDate": {
+    "description": "Vuelos (pasajero): campo fecha del vuelo.",
+    "es": "Fecha del vuelo",
+    "en": "Flight date",
+    "pt": "Data do voo"
+  },
+  "bookingFlightTime": {
+    "description": "Vuelos (pasajero): campo hora de llegada del billete.",
+    "es": "Hora de llegada según tu billete",
+    "en": "Arrival time on your ticket",
+    "pt": "Horário de chegada na sua passagem"
+  },
+  "bookingFlightPickDate": {
+    "description": "Vuelos (pasajero): elegir la fecha.",
+    "es": "Elegir fecha",
+    "en": "Choose date",
+    "pt": "Escolher data"
+  },
+  "bookingFlightPickTime": {
+    "description": "Vuelos (pasajero): elegir la hora.",
+    "es": "Elegir hora",
+    "en": "Choose time",
+    "pt": "Escolher horário"
+  },
+  "bookingFlightDateMissing": {
+    "description": "Vuelos (pasajero): falta la fecha.",
+    "es": "Indica la fecha del vuelo",
+    "en": "Enter the flight date",
+    "pt": "Informe a data do voo"
+  },
+  "bookingFlightTimeMissing": {
+    "description": "Vuelos (pasajero): falta la hora.",
+    "es": "Indica la hora de llegada de tu billete",
+    "en": "Enter the arrival time on your ticket",
+    "pt": "Informe o horário de chegada da passagem"
+  },
+  "bookingFlightCheckedBagQuestion": {
+    "description": "Vuelos (pasajero): pregunta del equipaje facturado.",
+    "es": "¿Llevas equipaje facturado?",
+    "en": "Do you have checked luggage?",
+    "pt": "Você tem bagagem despachada?"
+  },
+  "bookingFlightCheckedBagYes": {
+    "description": "Vuelos (pasajero): respuesta: con equipaje facturado.",
+    "es": "Sí, con equipaje facturado",
+    "en": "Yes, checked luggage",
+    "pt": "Sim, com bagagem despachada"
+  },
+  "bookingFlightCheckedBagNo": {
+    "description": "Vuelos (pasajero): respuesta: sin equipaje facturado.",
+    "es": "No, solo de mano",
+    "en": "No, carry-on only",
+    "pt": "Não, só de mão"
+  },
+  "bookingFlightCheckedBagHelp": {
+    "description": "Vuelos (pasajero): ayuda sobria sobre el equipaje facturado.",
+    "es": "Si declaras sin equipaje y lo llevas, tu chófer puede irse antes de que salgas.",
+    "en": "If you say you have no checked luggage but you do, your chauffeur may leave before you come out.",
+    "pt": "Se você declarar sem bagagem e tiver, seu motorista pode ir embora antes de você sair."
+  },
+  "rideFlightDelayed": {
+    "description": "Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.",
+    "es": "Tu vuelo figura con retraso. Nueva hora de recogida: {time}.",
+    "en": "Your flight shows a delay. New pickup time: {time}.",
+    "pt": "Seu voo aparece atrasado. Novo horário de embarque: {time}.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightDisrupted": {
+    "description": "Vuelos (pasajero): vuelo cancelado o desviado en el viaje del pasajero.",
+    "es": "Tu vuelo figura como cancelado o desviado. Central revisará tu reserva.",
+    "en": "Your flight shows as cancelled or diverted. Our team will review your booking.",
+    "pt": "Seu voo aparece como cancelado ou desviado. A central vai revisar sua reserva."
+  },
+  "driverFlightCardTitle": {
+    "description": "Vuelos (pasajero): título de la tarjeta del vuelo del chófer.",
+    "es": "Vuelo",
+    "en": "Flight",
+    "pt": "Voo"
+  },
+  "driverFlightStatus": {
+    "description": "Vuelos (pasajero): estado del vuelo en la tarjeta del chófer.",
+    "es": "Estado: {status}",
+    "en": "Status: {status}",
+    "pt": "Status: {status}",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "driverRequestAirportFlight": {
+    "description": "Vuelos: solicitud abierta con recogida en aeropuerto; solo aeropuerto y tipo de vuelo, nunca el número.",
+    "es": "Aeropuerto {airport} · {type}",
+    "en": "Airport {airport} · {type}",
+    "pt": "Aeroporto {airport} · {type}",
+    "placeholders": {
+      "airport": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -199,6 +199,18 @@ export const ALLOWED: Record<string, Cells> = {
       listar: { why: 'flota' },
     },
   },
+  'airports/{code}': {
+    ...Object.fromEntries((['ana', 'beto', 'asig', 'libre', 'nover', 'bloq', 'admin'] as Role[]).map((r) => [r, {
+      leer: { why: 'nombre del aeropuerto y punto de recogida (nacional o internacional) en la reserva y para el chófer' },
+      listar: { why: 'elegir el aeropuerto en la reserva' },
+    }])),
+  },
+  'airportsPublic/{code}': {
+    ...Object.fromEntries((['anon', 'ana', 'beto', 'asig', 'libre', 'nover', 'bloq', 'admin'] as Role[]).map((r) => [r, {
+      leer: { why: 'selector de aeropuerto sin sesión: código, nombre y ciudad' },
+      listar: { why: 'selector de aeropuerto sin sesión' },
+    }])),
+  },
   'pricingRules/{id}': {
     ...Object.fromEntries((['anon', 'ana', 'beto', 'asig', 'libre', 'nover', 'bloq'] as Role[]).map((r) => [r, {
       leer: { why: 'tarifas públicas: la web las muestra sin sesión' },

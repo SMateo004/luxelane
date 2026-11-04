@@ -71,6 +71,13 @@ describe('docs/AUDITORIA_LUXLANE.md', () => {
   it('D22 explica qué callables de admin quedan sin sesión máxima', () => {
     expect(row('D22')).toContain('acknowledgeIncident, closeIncident y resolveAlert');
   });
+
+  it('vuelos: decisión 4 diferida, Prompt 15C y el chófer que lee la reserva, pendientes', () => {
+    expect(audit).toMatch(/decisión 4, DIFERIDA/);
+    expect(audit).toContain('airports_parity.test.ts');
+    expect(audit).toMatch(/PENDIENTE: Prompt 15C \(fuente de la ATT\)/);
+    expect(audit).toMatch(/PENDIENTE ANTES DEL PILOTO[^\n]*lee la reserva entera/);
+  });
 });
 
 // 0.4: el diagnóstico de x-forwarded-for está apagado por defecto y
@@ -152,4 +159,25 @@ describe('DEPLOY.md: registro de chóferes', () => {
     'pruebas en dispositivo real: %s', (item) => {
       expect(section).toContain(item);
     });
+});
+
+describe('DEPLOY.md: vuelos', () => {
+  const i = deploy.indexOf('## Vuelos (cierre/vuelos');
+  const section = i < 0 ? '' : deploy.slice(i, deploy.indexOf('\n## ', i + 5));
+  it('orden: functions, apps, versión mínima y reglas al final', () => {
+    expect(section).not.toBe('');
+    const at = (s: string) => section.indexOf(s);
+    expect(at('1. **Functions**')).toBeGreaterThan(-1);
+    expect(at('1. **Functions**')).toBeLessThan(at('**Apps**'));
+    expect(at('**Apps**')).toBeLessThan(at('**`minAppVersion`**'));
+    expect(at('**`minAppVersion`**')).toBeLessThan(at('**Reglas al final'));
+  });
+  it.each(['airports/{IATA}', 'flightExitMinutes', 'flightNotifyThresholdMinutes', 'flightCheckpointsMinutes',
+    'flightPollMinutes', 'flightStaleMinutes', 'noShowWaitMinutes'])('menciona %s y qué pasa si falta', (k) => {
+    const line = section.split('\n- ').find((b) => b.includes(k)) ?? '';
+    expect(line).toMatch(/Si\s+falta/);
+  });
+  it('dice qué ve una app anterior', () => {
+    expect(section).toContain('### Qué ve una app anterior');
+  });
 });

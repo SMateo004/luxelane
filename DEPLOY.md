@@ -369,6 +369,71 @@ En **staging**, con un Android y un iPhone, y anotar el resultado:
 5. **Web**: el registro deja completar datos y vehículo, y no ofrece subir
    documentos ni la foto en vivo.
 
+## Vuelos (cierre/vuelos, Partes A y B)
+
+Recogida en aeropuerto con vuelo: el servidor calcula `readyAt` (llegada
+efectiva + minutos de salida de `config/ops`) y `scheduledAt` lo sigue; el
+precio queda fijo al crear la reserva. No hay proveedor de vuelos en vivo:
+`pollFlights` usa `ManualFlightProvider` (no encuentra nada) y la central
+carga los datos a mano con `adminSetFlightInfo`. **Ningún valor de abajo lo
+fija el código**: los de los tests son ficticios.
+
+### Pasos manuales previos (responsable; nada de esto lo fija el código)
+- **`airports/{IATA}`** (con el editor de aeropuertos del panel, que llama a
+  `adminUpsertAirport` y mantiene la copia `airportsPublic/{IATA}`): nombre,
+  ciudad, zona `America/La_Paz` y, por tipo de vuelo (`domestic`,
+  `international`), el punto de recogida (nombre, instrucciones,
+  coordenadas). No hay puntos precargados. **Si falta el aeropuerto**, la
+  reserva con vuelo se rechaza (`airport_unknown`). **Si falta el punto** de
+  ese tipo, la reserva se crea, el pasajero y el chófer ven «Punto por
+  confirmar con central» y central recibe la alerta `pickup_point_missing`.
+- **`config/ops.flightExitMinutes`**: `{domestic, international}` ×
+  `{noCheckedBag, checkedBag}`, minutos desde que aterriza hasta que el
+  pasajero sale. **Si falta**, la reserva con vuelo se rechaza
+  (`flight_config_missing`) y la app lo dice; sin vuelo todo sigue igual.
+- **`config/ops.flightNotifyThresholdMinutes`**: cambio mínimo de `readyAt`
+  (respecto del último aviso) para avisar al pasajero y al chófer. **Si
+  falta**, no se avisa a nadie: solo la alerta `flight_time_changed` a central.
+- **`config/ops.flightCheckpointsMinutes`** (lista de minutos antes de la
+  llegada efectiva) y **`config/ops.flightPollMinutes`** (cada cuánto desde
+  el último punto hasta que aterriza). **Si falta cualquiera**, `pollFlights`
+  no consulta nada (`skipped`) y los datos solo cambian a mano.
+- **`config/ops.flightStaleMinutes`**: sin observación nueva en ese tiempo,
+  el dato se marca viejo y central recibe `flight_data_stale`. **Si falta**,
+  nunca se marca viejo.
+- **`config/ops.cancellationPolicy.noShowWaitMinutes`**: espera desde
+  `readyAt` antes de poder marcar «no aparece» en un viaje con vuelo (y solo
+  si el vuelo aterrizó). **Si falta**, el chófer no puede marcarlo
+  (`no_show_disabled`); un admin puede forzarlo con `adminForceNoShow`.
+
+### Orden
+1. **Functions** (`deploy --only functions`): las callables del admin
+   (`adminSetFlightInfo`, `adminClearFlightLock`, `adminForceNoShow`,
+   `adminUpsertAirport`), `createBooking` con `trip.flight` y la tarea
+   `pollFlights` cada 5 minutos. La consulta de `pollFlights`
+   (`flightActive == true`) usa el índice automático de un campo: no hay
+   índice nuevo. Una app antigua sigue funcionando.
+2. Cargar **aeropuertos y claves de `config/ops`** (arriba).
+3. **Apps** (pasajero y chófer) y el **panel**, publicados.
+4. **`minAppVersion`** y **`minDriverAppVersion`** a la versión de este paso.
+5. **Reglas al final, a mano** (`deploy --only firestore:rules`): `airports`
+   (lectura con sesión), `airportsPublic` (lectura pública), `flightBoard`
+   (solo servidor) y `driverView/flight`.
+
+### Qué ve una app anterior
+- **Pasajero**: no manda `trip.flight`; la reserva se crea como antes, con
+  `flightNumber` y `flightType` sueltos, la hora que eligió y sin `readyAt`;
+  `pollFlights` no la mira y la central no recibe avisos de ese vuelo.
+- **Chófer**: lee `flightNumber` y `flightType` de la reserva y su tarjeta
+  antigua; no ve el punto ni la hora de recogida derivada. Si la central
+  cambia los datos del vuelo, la app antigua ve la nueva `scheduledAt`.
+- **Panel anterior**: sin detalle de vuelo, formulario manual ni editor de
+  aeropuertos; las alertas nuevas salen en la lista general de alertas.
+- **Antes de las reglas**: la app nueva no puede leer `airports` ni
+  `driverView/flight` (sin permiso): el paso muestra «Punto por confirmar
+  con central» y la tarjeta del chófer, la hora programada. Por eso las
+  reglas no esperan mucho tras el paso 4.
+
 ## Orden de despliegue de createBooking (D2)
 
 Las reservas pasan a crearse solo en el servidor (`createBooking`), que

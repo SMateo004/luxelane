@@ -814,6 +814,726 @@ abstract class AppLocalizations {
   /// **'Chófer autorizado para ponerse en línea.'**
   String get adminDrvAppAllowOnlineDone;
 
+  /// Panel, vuelos: nombre de la sección del menú.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelos'**
+  String get adminFlightsSection;
+
+  /// Panel, vuelos: subtítulo de la sección.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelos de llegada por revisar y aeropuertos con sus puntos de recogida.'**
+  String get adminFlightsSectionSubtitle;
+
+  /// Panel, vuelos: pestaña de la bandeja.
+  ///
+  /// In es, this message translates to:
+  /// **'Bandeja'**
+  String get adminFlightsTabInbox;
+
+  /// Panel, vuelos: pestaña de aeropuertos.
+  ///
+  /// In es, this message translates to:
+  /// **'Aeropuertos'**
+  String get adminFlightsTabAirports;
+
+  /// Panel, vuelos: filtro: vuelos que solo declaró el pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Por verificar'**
+  String get adminFlightsInboxToVerify;
+
+  /// Panel, vuelos: filtro: vuelos sin datos en vivo o con datos viejos.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos'**
+  String get adminFlightsInboxNoData;
+
+  /// Panel, vuelos: filtro: vuelos cancelados o desviados.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelados o desviados'**
+  String get adminFlightsInboxDisrupted;
+
+  /// Panel, vuelos: la lista está recortada; {count} es el máximo leído.
+  ///
+  /// In es, this message translates to:
+  /// **'Se leyeron las primeras {count} reservas con vuelo: puede haber más.'**
+  String adminFlightsInboxTruncated(String count);
+
+  /// Panel, vuelos: bandeja vacía (por verificar).
+  ///
+  /// In es, this message translates to:
+  /// **'No hay vuelos por verificar'**
+  String get adminFlightsInboxEmptyToVerify;
+
+  /// Panel, vuelos: bandeja vacía (sin datos).
+  ///
+  /// In es, this message translates to:
+  /// **'No hay vuelos sin datos'**
+  String get adminFlightsInboxEmptyNoData;
+
+  /// Panel, vuelos: bandeja vacía (cancelados o desviados).
+  ///
+  /// In es, this message translates to:
+  /// **'No hay vuelos cancelados ni desviados'**
+  String get adminFlightsInboxEmptyDisrupted;
+
+  /// Panel, vuelos: explicación bajo la bandeja vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Aquí aparecen las reservas con vuelo que piden revisión.'**
+  String get adminFlightsInboxEmptyHint;
+
+  /// Panel, vuelos: no se pudo leer la bandeja.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la bandeja de vuelos'**
+  String get adminFlightsInboxError;
+
+  /// Panel, vuelos: botón para volver a intentar.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get adminFlightsRetry;
+
+  /// Panel, vuelos: fila: hora a la que el chófer debe estar en el punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer en el punto: {time}'**
+  String adminFlightsRowReadyAt(String time);
+
+  /// Panel, vuelos: fila: sin hora de recogida calculada.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin hora de recogida'**
+  String get adminFlightsRowNoReadyAt;
+
+  /// Panel, vuelos: lector de pantalla de una fila de la bandeja.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva {code}, vuelo {flight}, {status}. Abrir el detalle'**
+  String adminFlightsRowSemantics(String code, String flight, String status);
+
+  /// Panel, vuelos: título del detalle cuando la reserva no está en la lista del panel.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva #{code}'**
+  String adminFlightsBookingTitle(String code);
+
+  /// Panel, vuelos: botón para cerrar el detalle.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar'**
+  String get adminFlightsClose;
+
+  /// Panel, vuelos: título de la tarjeta del vuelo en el detalle de la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo'**
+  String get adminFlightCardTitle;
+
+  /// Panel, vuelos: fila: aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Aeropuerto'**
+  String get adminFlightAirport;
+
+  /// Panel, vuelos: fila: aerolínea.
+  ///
+  /// In es, this message translates to:
+  /// **'Aerolínea'**
+  String get adminFlightAirline;
+
+  /// Panel, vuelos: fila: número de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de vuelo'**
+  String get adminFlightNumber;
+
+  /// Panel, vuelos: fila: tipo de vuelo (nacional o internacional).
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo'**
+  String get adminFlightType;
+
+  /// Panel, vuelos: fila: fecha del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha del vuelo'**
+  String get adminFlightDate;
+
+  /// Panel, vuelos: fila: llegada programada.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada programada'**
+  String get adminFlightScheduled;
+
+  /// Panel, vuelos: fila: llegada estimada.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada estimada'**
+  String get adminFlightEstimated;
+
+  /// Panel, vuelos: fila: llegada real.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada real'**
+  String get adminFlightActual;
+
+  /// Panel, vuelos: fila: estado del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado del vuelo'**
+  String get adminFlightStatus;
+
+  /// Panel, vuelos: fila: calidad del dato.
+  ///
+  /// In es, this message translates to:
+  /// **'Calidad del dato'**
+  String get adminFlightQuality;
+
+  /// Panel, vuelos: calidad del dato: reciente.
+  ///
+  /// In es, this message translates to:
+  /// **'Al día'**
+  String get adminFlightQualityOk;
+
+  /// Panel, vuelos: calidad del dato: viejo.
+  ///
+  /// In es, this message translates to:
+  /// **'Desactualizado'**
+  String get adminFlightQualityStale;
+
+  /// Panel, vuelos: calidad del dato: solo lo declarado por el pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos en vivo'**
+  String get adminFlightQualityNone;
+
+  /// Panel, vuelos: fila: quién dio el último dato.
+  ///
+  /// In es, this message translates to:
+  /// **'Fuente'**
+  String get adminFlightSource;
+
+  /// Panel, vuelos: fuente: el pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get adminFlightSourcePassenger;
+
+  /// Panel, vuelos: fuente: un admin de central.
+  ///
+  /// In es, this message translates to:
+  /// **'Central'**
+  String get adminFlightSourceManual;
+
+  /// Panel, vuelos: fuente: consulta automática.
+  ///
+  /// In es, this message translates to:
+  /// **'Automático'**
+  String get adminFlightSourceAuto;
+
+  /// Panel, vuelos: fila: lleva equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje facturado'**
+  String get adminFlightCheckedBag;
+
+  /// Panel, vuelos: sí.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí'**
+  String get adminFlightYes;
+
+  /// Panel, vuelos: no.
+  ///
+  /// In es, this message translates to:
+  /// **'No'**
+  String get adminFlightNo;
+
+  /// Panel, vuelos: fila: último cambio del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Último cambio'**
+  String get adminFlightLastChange;
+
+  /// Panel, vuelos: fila: última vez que se leyó el dato.
+  ///
+  /// In es, this message translates to:
+  /// **'Último dato leído'**
+  String get adminFlightLastObserved;
+
+  /// Panel, vuelos: aclaración de la zona horaria de las horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Horas de Bolivia (La Paz, UTC−4).'**
+  String get adminFlightTimesNote;
+
+  /// Panel, vuelos: hora a la que el chófer debe estar en el punto de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer debe estar a las {time}'**
+  String adminFlightReadyAt(String time);
+
+  /// Panel, vuelos: sin hora de recogida calculada.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin hora de recogida calculada'**
+  String get adminFlightNoReadyAt;
+
+  /// Panel, vuelos: indicador de bloqueo manual activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueo manual: las fuentes automáticas no cambian estos datos.'**
+  String get adminFlightLocked;
+
+  /// Panel, vuelos: sin bloqueo manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin bloqueo manual'**
+  String get adminFlightUnlocked;
+
+  /// Panel, vuelos: etiqueta corta de bloqueo manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueo manual'**
+  String get adminFlightLockTag;
+
+  /// Panel, vuelos: quién y cuándo fijó los datos a mano.
+  ///
+  /// In es, this message translates to:
+  /// **'Fijado por {who} el {date}'**
+  String adminFlightSetBy(String who, String date);
+
+  /// Panel, vuelos: quién y cuándo quitó el bloqueo manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueo quitado por {who} el {date}'**
+  String adminFlightLockClearedBy(String who, String date);
+
+  /// Panel, vuelos: motivo del último cambio manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo: {reason}'**
+  String adminFlightChangeReason(String reason);
+
+  /// Panel, vuelos: autor sin correo conocido.
+  ///
+  /// In es, this message translates to:
+  /// **'un administrador'**
+  String get adminFlightAdminUnknown;
+
+  /// Panel, vuelos: no se pudo leer el vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron leer los datos del vuelo'**
+  String get adminFlightLoadError;
+
+  /// Panel, vuelos: botón para fijar los datos del vuelo a mano.
+  ///
+  /// In es, this message translates to:
+  /// **'Fijar datos del vuelo'**
+  String get adminFlightSetButton;
+
+  /// Panel, vuelos: botón para quitar el bloqueo manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar bloqueo manual'**
+  String get adminFlightClearLockButton;
+
+  /// Panel, vuelos: botón para marcar que el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar no se presentó'**
+  String get adminFlightForceNoShowButton;
+
+  /// Panel, vuelos: título del diálogo para fijar el vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Fijar datos del vuelo'**
+  String get adminFlightSetTitle;
+
+  /// Panel, vuelos: explicación del diálogo para fijar el vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Los datos quedan fijados a mano, con bloqueo manual: ninguna fuente automática los cambia hasta quitar el bloqueo. La hora del chófer se vuelve a calcular.'**
+  String get adminFlightSetMessage;
+
+  /// Panel, vuelos: campo: estado del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado del vuelo'**
+  String get adminFlightSetStatusLabel;
+
+  /// Panel, vuelos: botón para elegir fecha y hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir fecha y hora'**
+  String get adminFlightSetPick;
+
+  /// Panel, vuelos: botón para dejar la hora vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar hora'**
+  String get adminFlightSetClearTime;
+
+  /// Panel, vuelos: sin hora elegida.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin hora'**
+  String get adminFlightSetNoTime;
+
+  /// Panel, vuelos: lector de pantalla del selector de hora.
+  ///
+  /// In es, this message translates to:
+  /// **'{label}: {value}. Cambiar'**
+  String adminFlightSetTimeSemantics(String label, String value);
+
+  /// Panel, vuelos: error: con «Aterrizó» la llegada real es obligatoria.
+  ///
+  /// In es, this message translates to:
+  /// **'Con «Aterrizó» la llegada real es obligatoria'**
+  String get adminFlightSetActualRequired;
+
+  /// Panel, vuelos: campo de motivo.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo (de 10 a 500 caracteres)'**
+  String get adminFlightReasonLabel;
+
+  /// Panel, vuelos: error: motivo corto.
+  ///
+  /// In es, this message translates to:
+  /// **'El motivo necesita al menos 10 caracteres'**
+  String get adminFlightReasonShort;
+
+  /// Panel, vuelos: botón cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get adminFlightCancel;
+
+  /// Panel, vuelos: botón para confirmar los datos del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Fijar datos'**
+  String get adminFlightSetConfirm;
+
+  /// Panel, vuelos: aviso: datos fijados.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos del vuelo fijados'**
+  String get adminFlightSetDone;
+
+  /// Panel, vuelos: título: quitar bloqueo manual.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar bloqueo manual'**
+  String get adminFlightClearLockTitle;
+
+  /// Panel, vuelos: explicación de quitar el bloqueo.
+  ///
+  /// In es, this message translates to:
+  /// **'Las fuentes automáticas podrán volver a actualizar este vuelo.'**
+  String get adminFlightClearLockMessage;
+
+  /// Panel, vuelos: botón para quitar el bloqueo.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar bloqueo'**
+  String get adminFlightClearLockConfirm;
+
+  /// Panel, vuelos: aviso: bloqueo quitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueo manual quitado'**
+  String get adminFlightClearLockDone;
+
+  /// Panel, vuelos: título: marcar que el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar no se presentó'**
+  String get adminFlightForceNoShowTitle;
+
+  /// Panel, vuelos: explicación de marcar que no se presentó; {code} es la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'La reserva #{code} pasará a «No se presentó». No se cobra nada: el pago se decide después en la reserva.'**
+  String adminFlightForceNoShowMessage(String code);
+
+  /// Panel, vuelos: botón para confirmar que no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar no se presentó'**
+  String get adminFlightForceNoShowConfirm;
+
+  /// Panel, vuelos: aviso: marcada como no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva marcada como no se presentó'**
+  String get adminFlightForceNoShowDone;
+
+  /// Panel, vuelos: error flight_config_missing.
+  ///
+  /// In es, this message translates to:
+  /// **'Faltan los minutos de salida del aeropuerto en la configuración de operaciones.'**
+  String get adminFlightErrConfigMissing;
+
+  /// Panel, vuelos: error booking_without_flight.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva no tiene vuelo.'**
+  String get adminFlightErrNoFlight;
+
+  /// Panel, vuelos: error booking_not_found.
+  ///
+  /// In es, this message translates to:
+  /// **'La reserva ya no existe.'**
+  String get adminFlightErrNotFound;
+
+  /// Panel, vuelos: error invalid_transition.
+  ///
+  /// In es, this message translates to:
+  /// **'La reserva ya no está en «Chófer en el punto».'**
+  String get adminFlightErrInvalidTransition;
+
+  /// Panel, vuelos: error no_show_disabled.
+  ///
+  /// In es, this message translates to:
+  /// **'«No se presentó» no está habilitado: falta la política de cancelación.'**
+  String get adminFlightErrNoShowDisabled;
+
+  /// Panel, vuelos: error de datos no válidos.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los datos: alguno no es válido.'**
+  String get adminFlightErrInvalid;
+
+  /// Panel, vuelos: error de permiso.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes permiso para esta acción.'**
+  String get adminFlightErrPermission;
+
+  /// Panel, vuelos: error genérico.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar la acción. Inténtalo de nuevo.'**
+  String get adminFlightErrGeneric;
+
+  /// Panel, vuelos: botón para crear un aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo aeropuerto'**
+  String get adminAirportsAdd;
+
+  /// Panel, vuelos: lista de aeropuertos vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay aeropuertos'**
+  String get adminAirportsEmpty;
+
+  /// Panel, vuelos: explicación bajo la lista vacía.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea uno para definir sus puntos de recogida.'**
+  String get adminAirportsEmptyHint;
+
+  /// Panel, vuelos: no se pudo leer la lista de aeropuertos.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar los aeropuertos'**
+  String get adminAirportsError;
+
+  /// Panel, vuelos: etiqueta: el aeropuerto tiene punto para ese tipo de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'{type}: con punto'**
+  String adminAirportPointSet(String type);
+
+  /// Panel, vuelos: etiqueta: el aeropuerto no tiene punto para ese tipo de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'{type}: sin punto'**
+  String adminAirportPointMissing(String type);
+
+  /// Panel, vuelos: lector de pantalla: editar un aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar el aeropuerto {code}'**
+  String adminAirportEditSemantics(String code);
+
+  /// Panel, vuelos: título del editor de un aeropuerto existente.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar aeropuerto {code}'**
+  String adminAirportEditTitle(String code);
+
+  /// Panel, vuelos: título del editor de un aeropuerto nuevo.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo aeropuerto'**
+  String get adminAirportNewTitle;
+
+  /// Panel, vuelos: campo: código del aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Código (3 letras)'**
+  String get adminAirportCode;
+
+  /// Panel, vuelos: error del código.
+  ///
+  /// In es, this message translates to:
+  /// **'Tres letras mayúsculas, por ejemplo VVI'**
+  String get adminAirportCodeInvalid;
+
+  /// Panel, vuelos: ayuda: el código no se cambia.
+  ///
+  /// In es, this message translates to:
+  /// **'El código no se cambia una vez creado'**
+  String get adminAirportCodeLocked;
+
+  /// Panel, vuelos: campo: nombre del aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get adminAirportName;
+
+  /// Panel, vuelos: error del nombre.
+  ///
+  /// In es, this message translates to:
+  /// **'Entre 2 y 120 caracteres'**
+  String get adminAirportNameInvalid;
+
+  /// Panel, vuelos: campo: ciudad.
+  ///
+  /// In es, this message translates to:
+  /// **'Ciudad'**
+  String get adminAirportCity;
+
+  /// Panel, vuelos: error de la ciudad.
+  ///
+  /// In es, this message translates to:
+  /// **'Entre 2 y 80 caracteres'**
+  String get adminAirportCityInvalid;
+
+  /// Panel, vuelos: zona horaria fija del aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Zona horaria: La Paz (UTC−4)'**
+  String get adminAirportTimeZone;
+
+  /// Panel, vuelos: título del punto de recogida de un tipo de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de recogida · {type}'**
+  String adminAirportPointTitle(String type);
+
+  /// Panel, vuelos: campo: nombre del punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del punto'**
+  String get adminAirportPointName;
+
+  /// Panel, vuelos: error del nombre del punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Entre 1 y 80 caracteres'**
+  String get adminAirportPointNameInvalid;
+
+  /// Panel, vuelos: campo: indicaciones del punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Indicaciones'**
+  String get adminAirportPointInstructions;
+
+  /// Panel, vuelos: error de las indicaciones.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta 500 caracteres'**
+  String get adminAirportPointInstructionsInvalid;
+
+  /// Panel, vuelos: campo: latitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Latitud'**
+  String get adminAirportLat;
+
+  /// Panel, vuelos: campo: longitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Longitud'**
+  String get adminAirportLng;
+
+  /// Panel, vuelos: error de la latitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Latitud entre -90 y 90'**
+  String get adminAirportLatInvalid;
+
+  /// Panel, vuelos: error de la longitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Longitud entre -180 y 180'**
+  String get adminAirportLngInvalid;
+
+  /// Panel, vuelos: error: coordenadas (0, 0).
+  ///
+  /// In es, this message translates to:
+  /// **'Las coordenadas (0, 0) no son válidas'**
+  String get adminAirportZeroInvalid;
+
+  /// Panel, vuelos: botón para quitar el punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar punto'**
+  String get adminAirportPointRemove;
+
+  /// Panel, vuelos: botón para añadir el punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir punto'**
+  String get adminAirportPointAdd;
+
+  /// Panel, vuelos: sin punto definido para ese tipo de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin punto: el chófer verá «Punto por confirmar con central».'**
+  String get adminAirportPointNone;
+
+  /// Panel, vuelos: el punto se quitará al guardar.
+  ///
+  /// In es, this message translates to:
+  /// **'El punto se quitará al guardar.'**
+  String get adminAirportPointWillRemove;
+
+  /// Panel, vuelos: botón guardar.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get adminAirportSave;
+
+  /// Panel, vuelos: aviso: aeropuerto guardado.
+  ///
+  /// In es, this message translates to:
+  /// **'Aeropuerto guardado'**
+  String get adminAirportSaved;
+
+  /// Panel, vuelos: aviso: hay campos con error.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los campos marcados'**
+  String get adminAirportFixErrors;
+
+  /// Panel, vuelos: error de datos no válidos al guardar el aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Algún dato no es válido: revisa código, nombre, ciudad y coordenadas.'**
+  String get adminAirportErrInvalid;
+
   /// Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje.
   ///
   /// In es, this message translates to:
@@ -2842,18 +3562,6 @@ abstract class AppLocalizations {
   /// **'Internacional'**
   String get commonFlightInternational;
 
-  /// Para el chófer: por dónde sale el pasajero de un vuelo nacional.
-  ///
-  /// In es, this message translates to:
-  /// **'Salida de llegadas nacionales'**
-  String get commonAirportDomesticExit;
-
-  /// Para el chófer: por dónde sale el pasajero de un vuelo internacional.
-  ///
-  /// In es, this message translates to:
-  /// **'Salida de llegadas internacionales'**
-  String get commonAirportInternationalExit;
-
   /// Error: la dirección de recogida no tiene coordenadas.
   ///
   /// In es, this message translates to:
@@ -2881,7 +3589,7 @@ abstract class AppLocalizations {
   /// Error: falta el número de vuelo en una recogida en el aeropuerto.
   ///
   /// In es, this message translates to:
-  /// **'Indica tu número de vuelo para recogerte a tiempo.'**
+  /// **'Indica tu número de vuelo: con él calculamos la hora de recogida.'**
   String get commonFlightNumberMissing;
 
   /// Error: el número de vuelo no tiene un formato válido (los ejemplos no se traducen).
@@ -4125,24 +4833,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Recogida en aeropuerto'**
   String get driverFlightAirportPickup;
-
-  /// Antes de la salida del aeropuerto por la que sale el pasajero.
-  ///
-  /// In es, this message translates to:
-  /// **'Tu pasajero sale por'**
-  String get driverFlightExitLabel;
-
-  /// Sin tipo de vuelo: pedir al chófer que lo consulte.
-  ///
-  /// In es, this message translates to:
-  /// **'Consulta con el pasajero si su vuelo es nacional o internacional'**
-  String get driverFlightAskType;
-
-  /// Enlace con el número de vuelo.
-  ///
-  /// In es, this message translates to:
-  /// **'Vuelo {flight}'**
-  String driverFlightNumber(String flight);
 
   /// Enlace al sitio de estado de vuelos (dominio, no se traduce).
   ///
@@ -5709,6 +6399,204 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No pudimos completar este paso. Inténtalo de nuevo.'**
   String get regErrorGeneric;
+
+  /// Error de la reserva con vuelo: el servidor respondió «flight_config_missing».
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no se pueden reservar recogidas con vuelo. Inténtalo más tarde.'**
+  String get bookingErrorFlightConfigMissing;
+
+  /// Error de la reserva con vuelo: el servidor respondió «airport_unknown».
+  ///
+  /// In es, this message translates to:
+  /// **'Este aeropuerto aún no está disponible para recogidas.'**
+  String get bookingErrorAirportUnknown;
+
+  /// Error de la reserva con vuelo: el servidor respondió «flight_not_airport_pickup».
+  ///
+  /// In es, this message translates to:
+  /// **'El vuelo solo se indica cuando la recogida es en el aeropuerto de llegada.'**
+  String get bookingErrorFlightNotAirportPickup;
+
+  /// Vuelos (pasajero): título del paso del vuelo en la reserva de aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vuelo'**
+  String get bookingFlightSectionTitle;
+
+  /// Vuelos (pasajero): campo aerolínea (opcional).
+  ///
+  /// In es, this message translates to:
+  /// **'Aerolínea (opcional)'**
+  String get bookingFlightAirline;
+
+  /// Vuelos (pasajero): campo fecha del vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha del vuelo'**
+  String get bookingFlightDate;
+
+  /// Vuelos (pasajero): campo hora de llegada del billete.
+  ///
+  /// In es, this message translates to:
+  /// **'Hora de llegada según tu billete'**
+  String get bookingFlightTime;
+
+  /// Vuelos (pasajero): elegir la fecha.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir fecha'**
+  String get bookingFlightPickDate;
+
+  /// Vuelos (pasajero): elegir la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir hora'**
+  String get bookingFlightPickTime;
+
+  /// Vuelos (pasajero): falta la fecha.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la fecha del vuelo'**
+  String get bookingFlightDateMissing;
+
+  /// Vuelos (pasajero): falta la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la hora de llegada de tu billete'**
+  String get bookingFlightTimeMissing;
+
+  /// Vuelos (pasajero): pregunta del equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Llevas equipaje facturado?'**
+  String get bookingFlightCheckedBagQuestion;
+
+  /// Vuelos (pasajero): respuesta: con equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, con equipaje facturado'**
+  String get bookingFlightCheckedBagYes;
+
+  /// Vuelos (pasajero): respuesta: sin equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'No, solo de mano'**
+  String get bookingFlightCheckedBagNo;
+
+  /// Vuelos (pasajero): ayuda sobria sobre el equipaje facturado.
+  ///
+  /// In es, this message translates to:
+  /// **'Si declaras sin equipaje y lo llevas, tu chófer puede irse antes de que salgas.'**
+  String get bookingFlightCheckedBagHelp;
+
+  /// Vuelos (pasajero): vuelo con retraso en el viaje del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vuelo figura con retraso. Nueva hora de recogida: {time}.'**
+  String rideFlightDelayed(String time);
+
+  /// Vuelos (pasajero): vuelo cancelado o desviado en el viaje del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vuelo figura como cancelado o desviado. Central revisará tu reserva.'**
+  String get rideFlightDisrupted;
+
+  /// Vuelos (pasajero): título de la tarjeta del vuelo del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo'**
+  String get driverFlightCardTitle;
+
+  /// Vuelos (pasajero): estado del vuelo en la tarjeta del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado: {status}'**
+  String driverFlightStatus(String status);
+
+  /// Vuelos: solicitud abierta con recogida en aeropuerto; solo aeropuerto y tipo de vuelo, nunca el número.
+  ///
+  /// In es, this message translates to:
+  /// **'Aeropuerto {airport} · {type}'**
+  String driverRequestAirportFlight(String airport, String type);
+
+  /// Vuelos: estado del vuelo (scheduled).
+  ///
+  /// In es, this message translates to:
+  /// **'Programado'**
+  String get flightStatusScheduled;
+
+  /// Vuelos: estado del vuelo (delayed).
+  ///
+  /// In es, this message translates to:
+  /// **'Retrasado'**
+  String get flightStatusDelayed;
+
+  /// Vuelos: estado del vuelo (landed).
+  ///
+  /// In es, this message translates to:
+  /// **'Aterrizó'**
+  String get flightStatusLanded;
+
+  /// Vuelos: estado del vuelo (cancelled).
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get flightStatusCancelled;
+
+  /// Vuelos: estado del vuelo (diverted).
+  ///
+  /// In es, this message translates to:
+  /// **'Desviado'**
+  String get flightStatusDiverted;
+
+  /// Vuelos: estado del vuelo (unknown).
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos'**
+  String get flightStatusUnknown;
+
+  /// Vuelos: sin punto de recogida definido para el aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto por confirmar con central'**
+  String get flightPickupPointPending;
+
+  /// Vuelos: sin datos en vivo; solo la hora programada.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos de vuelo en vivo: hora programada {time}'**
+  String flightNoLiveData(String time);
+
+  /// Vuelos: el chófer debe estar en el punto de recogida a esa hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes estar en el punto a las {time}'**
+  String flightBeAtPointAt(String time);
+
+  /// Vuelos: el pasajero ve a qué hora estará el chófer en el punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Hora de recogida en el punto: {time}'**
+  String flightDriverWillBeAt(String time);
+
+  /// Vuelos: hora estimada de llegada.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada estimada: {time}'**
+  String flightEstimatedArrival(String time);
+
+  /// Vuelos: hora programada de llegada.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada programada: {time}'**
+  String flightScheduledArrival(String time);
+
+  /// Vuelos: hora real de llegada.
+  ///
+  /// In es, this message translates to:
+  /// **'Aterrizó: {time}'**
+  String flightActualArrival(String time);
 
   /// Título del mapa para elegir el punto de recogida.
   ///

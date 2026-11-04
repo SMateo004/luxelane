@@ -18,6 +18,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../booking/presentation/widgets/flight_step_fields.dart';
 import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
@@ -438,6 +439,17 @@ class _RideScreenState extends State<RideScreen> {
 
   /// Mientras el chófer espera, el código que el pasajero (o su invitado)
   /// le da al subir. Al verificarse, la tarjeta desaparece.
+  /// Vuelo sin datos en vivo, retrasado, cancelado o desviado: dicho
+  /// claramente, en el diseño móvil y en el ancho (Parte B de vuelos).
+  List<Widget> _flightNote() => [
+        if (_booking?.flight case final f?
+            when _status != BookingStatus.completed &&
+                _status != BookingStatus.cancelled) ...[
+          RiderFlightStatusNote(flight: f),
+          const SizedBox(height: LuxSpacing.sm),
+        ],
+      ];
+
   Widget _pickupSection() {
     // Confirmación visible de que el código funcionó y del fin del viaje
     // (antes la tarjeta solo desaparecía, E31).
@@ -482,6 +494,7 @@ class _RideScreenState extends State<RideScreen> {
                   pickup: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      ..._flightNote(),
                       _pickupSection(),
                       if (!receiptBelowDriver(_status)) _paymentSection(),
                     ],
@@ -526,6 +539,7 @@ class _RideScreenState extends State<RideScreen> {
                         children: [
                           Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
+                          ..._flightNote(),
                           _pickupSection(),
                           if (!receiptBelowDriver(_status)) _paymentSection(),
                           _driverSection(),

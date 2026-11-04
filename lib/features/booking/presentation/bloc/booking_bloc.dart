@@ -41,6 +41,7 @@ class BookingCreateRequested extends BookingEvent {
     this.quotedPrice,
     required this.requestId,
     this.preferences,
+    this.flightRequest,
   });
   final Place origin;
   final Place destination;
@@ -70,6 +71,10 @@ class BookingCreateRequested extends BookingEvent {
   /// para que el servidor copie las del perfil.
   final TripPreferences? preferences;
 
+  /// Vuelo de llegada (recogida en aeropuerto): el servidor calcula la hora
+  /// de recogida con él.
+  final FlightRequest? flightRequest;
+
   /// La misma solicitud con el precio nuevo, tras confirmarlo el pasajero.
   BookingCreateRequested withQuotedPrice(double price) =>
       BookingCreateRequested(
@@ -91,6 +96,7 @@ class BookingCreateRequested extends BookingEvent {
         quotedPrice: price,
         requestId: requestId,
         preferences: preferences,
+        flightRequest: flightRequest,
       );
 
   @override
@@ -287,6 +293,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       pickupAirport: event.pickupAirport,
       hours: event.hours,
       requestedPreferences: event.preferences,
+      flightRequest: event.flightRequest,
     );
     final result = await _repo.createBooking(
       booking,

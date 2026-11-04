@@ -394,6 +394,37 @@ export const SPECS: Spec[] = [
       'y un aspirante sin verificar tampoco: lo registra saveDriverStep (A10).',
   },
   {
+    name: 'airports/{code}',
+    covered: true,
+    target: () => 'airports/VVI',
+    list: (db) => query(collection(db, 'airports')),
+    create: () => ({ path: 'airports/ZZZ', data: { code: 'ZZZ', name: 'Nuevo', city: 'Ciudad' } }),
+    update: () => ({ name: 'Cambiado desde el cliente' }),
+    expect: { ...allRoles('SSNNN'), anon: none },
+    note: 'Aeropuertos y puntos de recogida (vuelos, A9): los lee quien tiene sesión; solo los escribe ' +
+      'adminUpsertAirport.',
+  },
+  {
+    name: 'airportsPublic/{code}',
+    covered: true,
+    target: () => 'airportsPublic/VVI',
+    list: (db) => query(collection(db, 'airportsPublic')),
+    create: () => ({ path: 'airportsPublic/ZZZ', data: { code: 'ZZZ', name: 'Nuevo', city: 'Ciudad' } }),
+    update: () => ({ name: 'Cambiado desde el cliente' }),
+    expect: allRoles('SSNNN'),
+    note: 'Lo mínimo para el selector sin sesión (código, nombre, ciudad); lo escribe adminUpsertAirport.',
+  },
+  {
+    name: 'flightBoard/{id}',
+    covered: true,
+    target: () => 'flightBoard/VVI_2026-11-20',
+    list: (db) => query(collection(db, 'flightBoard')),
+    create: () => ({ path: 'flightBoard/VVI_2026-11-21', data: { flights: {} } }),
+    update: () => ({ flights: {} }),
+    expect: allRoles(none),
+    note: 'Caché de la fuente de vuelos (A6): solo el servidor.',
+  },
+  {
     name: 'pricingRules/{id}',
     covered: false,
     target: () => 'pricingRules/business_oneWay',
@@ -539,6 +570,11 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   for (const uid of ['asig', 'bloq']) {
     await put(`vehicles/v-${uid}`, { driverId: uid, make: 'Toyota', model: 'Camry', plate: `P-${uid}`, isActive: true });
   }
+  await put('airports/VVI', { code: 'VVI', name: 'Aeropuerto (prueba)', city: 'Santa Cruz', timeZone: 'America/La_Paz',
+    pickupPoints: { domestic: { name: 'Salida nacional (ficticia)', instructions: '', lat: -17.64, lng: -63.13 },
+      international: null } });
+  await put('airportsPublic/VVI', { code: 'VVI', name: 'Aeropuerto (prueba)', city: 'Santa Cruz' });
+  await put('flightBoard/VVI_2026-11-20', { airportCode: 'VVI', flightDate: '2026-11-20', flights: {} });
   await put('pricingRules/business_oneWay', {
     basePriceUsd: 50, pricePerKmUsd: 3, pricePerHourUsd: 0, minimumPriceUsd: 60, isActive: true,
   });

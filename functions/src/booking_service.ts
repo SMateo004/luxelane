@@ -17,6 +17,8 @@ import { storeLinks, updateRequired } from './app_version';
 import { driverViewDoc, driverViewRef, loadPlaylistHosts, sanitizePreferences, profilePreferences } from './preferences';
 import { AppLocale, DEFAULT_LOCALE, localeOf, t } from './i18n';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
+import { driverFlightRef, driverFlightView, resolveFlight, ResolvedFlight } from './flight';
+import { flightIsActive } from './flight_updates';
 
 export interface BookingDeps {
   db: admin.firestore.Firestore;
@@ -153,8 +155,16 @@ export async function quoteBooking(deps: BookingDeps, uid: string | undefined, d
   await requireActiveRider(deps.db, uid);
   await requireSupportedApp(deps.db, data);
   const trip = parse<QuoteInput>(quoteSchema, data);
-  const priced = await priceTrip(deps, trip);
-  return { price: priced.price, breakdown: priced.breakdown, distanceSource: priced.distanceSource };
+  // Con vuelo, la recogida es readyAt (la calcula el servidor): con ella se
+  // cotiza, también un posible recargo por la hora (decisión 6).
+  const resolved = trip.flight
+    ? await resolveFlight(deps.db, trip.flight, trip, deps.now?.() ?? Date.now())
+    : null;
+  const priced = await priceTrip(deps, resolved ? { ...trip, scheduledAt: resolved.readyAt } : trip);
+  return {
+    price: priced.price, breakdown: priced.breakdown, distanceSource: priced.distanceSource,
+    ...(resolved ? { readyAt: resolved.readyAt, pickupPointMissing: resolved.pickupPointMissing } : {}),
+  };
 }
 
 const geo = (p: PlaceIn & { name?: string; address?: string }) => ({
@@ -208,8 +218,14 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     throw bookingError('failed-precondition', 'payments_unavailable');
   }
 
+  // Vuelo (A1/A4): la hora de recogida es readyAt, calculada aquí; el precio
+  // se fija con ella y no cambia aunque el vuelo se retrase (decisión 6).
+  const resolved: ResolvedFlight | null = input.flight
+    ? await resolveFlight(deps.db, input.flight, input, deps.now?.() ?? Date.now())
+    : null;
+  const effective = resolved ? { ...input, scheduledAt: resolved.readyAt } : input;
   // El nombre del destino por horas, en el idioma del pasajero.
-  const priced = await priceTrip(deps, input, localeOf(user));
+  const priced = await priceTrip(deps, effective, localeOf(user));
   // El pasajero vio un precio menor: no se cobra más sin que lo confirme.
   if (input.quotedPrice !== undefined && priced.price > input.quotedPrice) {
     throw bookingError('failed-precondition', 'price_changed', { price: priced.price });
@@ -233,7 +249,7 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     driverId: null,
     origin: geo(input.origin),
     destination: geo(priced.destination),
-    scheduledAt: admin.firestore.Timestamp.fromMillis(input.scheduledAt),
+    scheduledAt: admin.firestore.Timestamp.fromMillis(effective.scheduledAt),
     class: input.vehicleClass,
     vehicleClass: input.vehicleClass,
     serviceType: input.serviceType,
@@ -245,8 +261,16 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     updatedAt: now,
     notes: input.notes?.trim() || null,
     ...(input.guest ? { guest: input.guest } : {}),
-    flightNumber: input.flightNumber ?? null,
-    flightType: pickupAirport ? input.flightType ?? null : null,
+    // Las apps anteriores leen flightNumber y flightType sueltos.
+    flightNumber: resolved?.flight.flightNumber ?? input.flightNumber ?? null,
+    flightType: resolved?.flight.flightType ?? (pickupAirport ? input.flightType ?? null : null),
+    ...(resolved ? {
+      // notifiedReadyAt: desde dónde se miden los avisos de cambio de hora.
+      flight: { ...resolved.flight, notifiedReadyAt: admin.firestore.Timestamp.fromMillis(resolved.readyAt) },
+      readyAt: admin.firestore.Timestamp.fromMillis(resolved.readyAt),
+      // El planificador (pollFlights) solo lee las reservas con esto en true.
+      flightActive: flightIsActive('pending', resolved.flight.status, resolved.flight.actualArrival !== null),
+    } : {}),
     pickupAirport,
     hours: input.serviceType === 'byTheHour' ? input.hours ?? null : null,
     passengerCount: input.passengerCount,
@@ -280,6 +304,25 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
       bookingId: ref.id, riderId: uid!, price: priced.price, paymentRef, now, windowMinutes,
       methodsOffered: payments.enabled,
     });
+    if (resolved) {
+      tx.set(driverFlightRef(db, ref.id), driverFlightView(resolved.flight, resolved.readyAt, now));
+      // Revisión a mano: el vuelo lo declaró el pasajero y nadie lo comprobó.
+      if (resolved.flight.source === 'passenger') {
+        tx.set(db.collection('adminAlerts').doc(), {
+          type: 'flight_unverified', severity: 'low', bookingId: ref.id, createdAt: now, resolved: false,
+          message: 'Vuelo por verificar: lo declaró el pasajero. Compruébalo y fíjalo en el panel si hace falta.',
+        });
+      }
+      // Sin punto de recogida para ese tipo de vuelo: el chófer verá «Punto
+      // por confirmar con central».
+      if (resolved.pickupPointMissing) {
+        tx.set(db.collection('adminAlerts').doc(), {
+          type: 'pickup_point_missing', severity: 'medium', bookingId: ref.id, createdAt: now, resolved: false,
+          message: `El aeropuerto ${resolved.flight.airportCode} no tiene punto de recogida ${
+            resolved.flight.flightType === 'domestic' ? 'nacional' : 'internacional'}. Defínelo y avisa al chófer.`,
+        });
+      }
+    }
     if (priced.distanceSource === 'fallback') {
       tx.set(db.collection('adminAlerts').doc(), {
         type: 'distance_fallback',

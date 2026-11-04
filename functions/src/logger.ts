@@ -24,7 +24,9 @@ const SENSITIVE_KEY = new RegExp(
   'notes?|playlist_?url|url|(trip_?|ride_?|rider_?)?preferences|' +
   // Registro de chóferes: cédula, licencia, nombre, rutas y archivos.
   '(national_?)?id_?number|national_?id|license_?number|licence_?number|full_?name|' +
-  '(storage_?|file_?)?path|file_?name|signed_?url|plate)$', 'i');
+  '(storage_?|file_?)?path|file_?name|signed_?url|plate|' +
+  // Vuelos: el número y el vuelo entero (A10).
+  'flight_?number|flight|airline)$', 'i');
 
 /** Algoritmo de Luhn: distingue una tarjeta de un número largo cualquiera. */
 function luhn(digits: string): boolean {

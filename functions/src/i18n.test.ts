@@ -8,7 +8,7 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import * as ts from 'typescript';
 import {
-  APP_LOCALES, formatMoney, localeOf, MESSAGES, MessageKey, notice, NOTICES, placeholdersOf, t, vehicleClassName,
+  APP_LOCALES, formatLocalTime, formatMoney, localeOf, MESSAGES, MessageKey, notice, NOTICES, placeholdersOf, t, vehicleClassName,
 } from './i18n';
 
 describe('catálogo', () => {
@@ -51,7 +51,26 @@ describe('catálogo', () => {
       'ride_started', 'rider_no_show', 'trip_cancelled_by_rider',
       'driver_application_approved', 'driver_application_needs_changes', 'driver_application_rejected',
       'driver_document_expired', 'driver_document_expiring',
+      'flight_disrupted_driver', 'flight_disrupted_rider', 'flight_time_changed_driver', 'flight_time_changed_rider',
     ].sort());
+  });
+});
+
+describe('avisos de vuelo (Parte B)', () => {
+  it('hora local de La Paz en cada idioma y sin número de vuelo en el texto', () => {
+    const at = Date.UTC(2026, 10, 20, 22, 5); // 18:05 en La Paz
+    expect(formatLocalTime(at, 'es')).toBe('18:05');
+    expect(formatLocalTime(at, 'pt')).toBe('18:05');
+    expect(formatLocalTime(at, 'en')).toMatch(/^6:05\sPM$/);
+    for (const l of APP_LOCALES) {
+      const n = notice('flight_time_changed_rider', l, { time: formatLocalTime(at, l) });
+      expect(n.body).toContain(formatLocalTime(at, l));
+      for (const type of ['flight_time_changed_rider', 'flight_time_changed_driver', 'flight_disrupted_rider',
+        'flight_disrupted_driver'] as const) {
+        const x = notice(type, l, { time: '18:05' });
+        expect(`${x.title} ${x.body}`).not.toMatch(/\b[A-Z0-9]{2}\d{1,4}\b/);
+      }
+    }
   });
 });
 
@@ -159,7 +178,7 @@ describe('ningún aviso usa texto fijo', () => {
 describe('preferencias: nada en push ni en la pantalla de bloqueo (B2)', () => {
   it('los avisos solo llevan importe, clase y referencia, nunca preferencias', () => {
     const used = new Set(Object.values(MESSAGES).flatMap((m) => placeholdersOf(m.es)));
-    expect([...used].sort()).toEqual(['amount', 'days', 'ref', 'vehicleClass']);
+    expect([...used].sort()).toEqual(['amount', 'days', 'ref', 'time', 'vehicleClass']);
   });
 
   it('ningún envío de push lee la copia de preferencias ni sus campos', () => {

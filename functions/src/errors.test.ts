@@ -157,6 +157,18 @@ describe('logger: redacción', () => {
     expect(logs).toContain('b123');
   });
 
+  it('vuelos (A10): ni el número de vuelo ni la aerolínea salen en el log', async () => {
+    const logs = await captureLogs(() => logger.info('prueba', 'vuelo actualizado', {
+      bookingId: 'b123',
+      flightNumber: 'ZZ123',
+      airline: 'Aerolínea de prueba',
+      flight: { flightNumber: 'ZZ456', airportCode: 'VVI', status: 'landed' },
+      input: { flight: { flightNumber: 'ZZ789' } },
+    }));
+    for (const s of ['ZZ123', 'ZZ456', 'ZZ789', 'Aerolínea de prueba']) expect(logs).not.toContain(s);
+    expect(logs).toContain('b123');
+  });
+
   it('no confunde un número largo cualquiera con una tarjeta', () => {
     expect(redact('timestamp 1700000000000')).toBe('timestamp 1700000000000');
   });
