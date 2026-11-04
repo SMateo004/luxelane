@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-179 celdas permitidas, 2 con ⚠.
+403 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
@@ -230,6 +230,629 @@ Ninguna celda permitida.
 
 - leer: estado de incidentes de la reserva.
 - listar: igual que leer.
+
+## `bookings/{id} · confirmed`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la reserva dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · driver_arriving`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la reserva dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · driver_arrived`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la reserva dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · verified`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la reserva dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · in_progress`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la reserva dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · completed`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · cancelled`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · no_show`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id} · liberada`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la reserva.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · confirmed`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el registro de transiciones dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · driver_arriving`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el registro de transiciones dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · driver_arrived`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el registro de transiciones dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · verified`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el registro de transiciones dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · in_progress`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el registro de transiciones dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · completed`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · cancelled`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · no_show`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/events · liberada`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el registro de transiciones.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · confirmed`
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la ubicación del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · driver_arriving`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la ubicación del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la ubicación del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+- crear: publica su ubicación (solo lat, lng y hora del servidor) mientras el viaje está vivo.
+- actualizar: actualiza su ubicación en las mismas condiciones.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · driver_arrived`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la ubicación del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la ubicación del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+- crear: publica su ubicación (solo lat, lng y hora del servidor) mientras el viaje está vivo.
+- actualizar: actualiza su ubicación en las mismas condiciones.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · verified`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la ubicación del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la ubicación del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+- crear: publica su ubicación (solo lat, lng y hora del servidor) mientras el viaje está vivo.
+- actualizar: actualiza su ubicación en las mismas condiciones.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · in_progress`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee la ubicación del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee la ubicación del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+- crear: publica su ubicación (solo lat, lng y hora del servidor) mientras el viaje está vivo.
+- actualizar: actualiza su ubicación en las mismas condiciones.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · completed`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · cancelled`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · no_show`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/tracking · liberada`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · confirmed`
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el teléfono del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · driver_arriving`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el teléfono del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el teléfono del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · driver_arrived`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el teléfono del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el teléfono del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · verified`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el teléfono del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el teléfono del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · in_progress`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee el teléfono del chófer mientras el chófer va, espera o lo lleva.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee el teléfono del chófer dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · completed`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · cancelled`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · no_show`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverContact · liberada`
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · confirmed`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee las preferencias del pasajero para el viaje dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · driver_arriving`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee las preferencias del pasajero para el viaje dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · driver_arrived`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee las preferencias del pasajero para el viaje dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · verified`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee las preferencias del pasajero para el viaje dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · in_progress`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo lee las preferencias del pasajero para el viaje dentro de su ventana (confirmed a in_progress).
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · completed`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · cancelled`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · no_show`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
+
+## `bookings/{id}/driverView · liberada`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño lee las preferencias del pasajero para el viaje.
+- listar: igual que leer.
+
+**admin**
+
+- leer: operación.
+- listar: operación.
 
 ## `incidents/{id}`
 
@@ -563,4 +1186,21 @@ Ninguna celda permitida.
 
 - leer: auditoría.
 - listar: auditoría.
+
+## `driverHistory/{uid}/trips`
+
+**chófer verif. asignado**
+
+- leer: el chófer lee el resumen de sus viajes terminados (sin datos del pasajero).
+- listar: su historial.
+
+**usuario bloqueado**
+
+- leer: un chófer bloqueado sigue leyendo su propio historial: es suyo y no tiene datos del pasajero.
+- listar: igual que leer.
+
+**admin**
+
+- leer: soporte y operación.
+- listar: soporte y operación.
 <!-- permitidos:fin -->

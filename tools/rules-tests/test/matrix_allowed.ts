@@ -2,7 +2,9 @@
 // revisión humana de docs/MATRIZ_ACCESO_PERMITIDOS.md. `warn` marca con ⚠
 // las celdas que parecen más amplias de lo necesario. Un test exige una
 // razón para cada celda permitida y ninguna para las denegadas.
-import { OPS, Op, Role, ROLE_LABELS, ROLES, SPECS, allowed } from './matrix';
+import {
+  OPS, Op, Role, ROLE_LABELS, ROLES, SPECS, STATE_ROWS, WINDOW_SUBS, allowed, windowSpecName,
+} from './matrix';
 
 export interface Why { why: string; warn?: string }
 type Cells = Partial<Record<Role, Partial<Record<Op, Why>>>>;
@@ -265,6 +267,43 @@ const OP_LABEL: Record<Op, string> = {
 };
 
 /** Celdas permitidas sin razón, o con razón pero denegadas. */
+// Ventana del chófer (decisión 1): razones de las filas por estado.
+const SUB_WHAT: Record<string, string> = {
+  '': 'la reserva', events: 'el registro de transiciones', tracking: 'la ubicación del chófer',
+  driverContact: 'el teléfono del chófer', driverView: 'las preferencias del pasajero para el viaje',
+};
+for (const sub of WINDOW_SUBS) {
+  for (const st of STATE_ROWS) {
+    const spec = SPECS.find((x) => x.name === windowSpecName(sub, st))!;
+    const what = SUB_WHAT[sub];
+    const cells: Cells = {};
+    const set = (r: Role, o: Op, why: string) => {
+      if (allowed(spec, r, o)) (cells[r] ??= {})[o] = { why };
+    };
+    set('ana', 'leer', `el pasajero dueño lee ${what}` +
+      (sub === 'tracking' || sub === 'driverContact' ? ' mientras el chófer va, espera o lo lleva' : ''));
+    set('ana', 'listar', 'igual que leer');
+    set('asig', 'leer', `el chófer asignado y activo lee ${what} dentro de su ventana (confirmed a in_progress)`);
+    set('asig', 'listar', 'igual que leer');
+    set('asig', 'crear', 'publica su ubicación (solo lat, lng y hora del servidor) mientras el viaje está vivo');
+    set('asig', 'actualizar', 'actualiza su ubicación en las mismas condiciones');
+    set('admin', 'leer', 'operación');
+    set('admin', 'listar', 'operación');
+    ALLOWED[spec.name] = cells;
+  }
+}
+ALLOWED['driverHistory/{uid}/trips'] = {
+  asig: {
+    leer: { why: 'el chófer lee el resumen de sus viajes terminados (sin datos del pasajero)' },
+    listar: { why: 'su historial' },
+  },
+  bloq: {
+    leer: { why: 'un chófer bloqueado sigue leyendo su propio historial: es suyo y no tiene datos del pasajero' },
+    listar: { why: 'igual que leer' },
+  },
+  admin: { leer: { why: 'soporte y operación' }, listar: { why: 'soporte y operación' } },
+};
+
 export function allowedProblems(): string[] {
   const out: string[] = [];
   for (const s of SPECS) {

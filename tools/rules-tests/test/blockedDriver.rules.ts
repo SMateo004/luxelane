@@ -61,7 +61,9 @@ describe('chófer verificado con isActive == false', () => {
 
     const reads: [string, () => Promise<unknown>][] = [
       ['la reserva', () => getDoc(doc(db(), 'bookings', 'activaBloq'))],
-      ['sus reservas por consulta', () => getDocs(query(collection(db(), 'bookings'), where('driverId', '==', 'bloq')))],
+      // Ventana del chófer: la consulta lleva el filtro de estado de la ventana.
+      ['sus reservas por consulta', () => getDocs(query(collection(db(), 'bookings'), where('driverId', '==', 'bloq'),
+        where('status', 'in', ['confirmed', 'driver_arriving', 'driver_arrived', 'verified', 'in_progress'])))],
       ['los eventos', () => getDocs(collection(db(), 'bookings', 'activaBloq', 'events'))],
       ['el seguimiento', () => getDoc(doc(db(), 'bookings', 'activaBloq', 'tracking', 'driver'))],
       ['el contacto', () => getDoc(doc(db(), 'bookings', 'activaBloq', 'driverContact', 'phone'))],

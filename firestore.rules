@@ -45,6 +45,21 @@ service cloud.firestore {
         .data.get('isActive', true) == true;
     }
 
+    // Ventana del chófer asignado (ventana del chófer, decisión 1): lee la
+    // reserva y sus subcolecciones desde que se le asigna hasta que termina
+    // el trayecto, igual que driverView. Terminada, cancelada, no se
+    // presentó o liberada: ya no la lee; su historial sale de driverHistory.
+    function inDriverWindow(status) {
+      return status in ['confirmed', 'driver_arriving', 'driver_arrived',
+        'verified', 'in_progress'];
+    }
+
+    // El chófer asignado y activo, dentro de la ventana.
+    function isWindowDriver(b) {
+      return b.get('driverId', null) == request.auth.uid && isActiveUser() &&
+        inDriverWindow(b.get('status', ''));
+    }
+
     // Chófer habilitado para ver solicitudes: verificado por el admin y con
     // la cuenta activa (no bloqueada).
     function isVerifiedDriver() {
@@ -259,8 +274,7 @@ service cloud.firestore {
       // ver los datos del pasajero en el acto (matriz, H1).
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
-        (resource.data.get('driverId', null) == request.auth.uid &&
-          isActiveUser()) ||
+        isWindowDriver(resource.data) ||
         isAdmin()
       );
 
@@ -320,7 +334,7 @@ service cloud.firestore {
 
         allow read: if isAuthenticated() && (
           (booking().riderId == request.auth.uid && isLive(booking().status)) ||
-          (booking().get('driverId', null) == request.auth.uid && isActiveUser()) ||
+          isWindowDriver(booking()) ||
           isAdmin()
         );
         allow create, update: if docId == 'driver' &&
@@ -346,8 +360,7 @@ service cloud.firestore {
           (contactBooking().riderId == request.auth.uid &&
             contactBooking().status in
               ['driver_arriving', 'driver_arrived', 'verified', 'in_progress']) ||
-          (contactBooking().get('driverId', null) == request.auth.uid &&
-            isActiveUser()) ||
+          isWindowDriver(contactBooking()) ||
           isAdmin()
         );
         allow write: if false;
@@ -365,10 +378,7 @@ service cloud.firestore {
 
         allow read: if isAuthenticated() && (
           viewBooking().riderId == request.auth.uid ||
-          (isDriver() && isActiveUser() &&
-            viewBooking().get('driverId', null) == request.auth.uid &&
-            viewBooking().status in ['confirmed', 'driver_arriving',
-              'driver_arrived', 'verified', 'in_progress']) ||
+          (isDriver() && isWindowDriver(viewBooking())) ||
           isAdmin()
         );
         allow write: if false;
@@ -400,8 +410,7 @@ service cloud.firestore {
 
         allow read: if isAuthenticated() && (
           eventsBooking().riderId == request.auth.uid ||
-          (eventsBooking().get('driverId', null) == request.auth.uid &&
-            isActiveUser()) ||
+          isWindowDriver(eventsBooking()) ||
           isAdmin()
         );
         allow create, update, delete: if false;
@@ -495,6 +504,21 @@ service cloud.firestore {
     // /openRequests/{bookingId} — lo que un chófer ve antes de aceptar: clase,
     // hora, precio, zona aproximada. La escribe y borra el servidor.
     // -------------------------------------------------------------------------
+
+    // Historial del chófer (ventana del chófer, decisiones 2 y 3): resumen
+    // sin datos personales que escribe el servidor al cerrar la reserva
+    // (writeDriverHistory). Lo lee el chófer dueño (también bloqueado: es
+    // suyo y no tiene datos del pasajero) y el admin; nadie lo escribe
+    // desde el cliente.
+    match /driverHistory/{uid} {
+      allow read, write: if false;
+
+      match /trips/{bookingId} {
+        allow read: if isAuthenticated() &&
+          (request.auth.uid == uid || isAdmin());
+        allow write: if false;
+      }
+    }
 
     match /openRequests/{bookingId} {
       allow read:  if isVerifiedDriver() || isAdmin();
