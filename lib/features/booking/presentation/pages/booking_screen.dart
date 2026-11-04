@@ -1509,7 +1509,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: LuxTypography.titleMedium),
             ),
             const SizedBox(height: LuxSpacing.sm),
-            _FlightTypeSelector(
+            FlightTypeSelector(
               value: _flightType,
               errorText: _flightAttempted ? _flightTypeError : null,
               onChanged: (t) => setState(() => _flightType = t),
@@ -2841,8 +2841,8 @@ class _FlightNote extends StatelessWidget {
 // ── FLIGHT TYPE (airport pickups) ─────────────────────────────────────────────
 
 /// National or international: the driver waits at a different arrivals exit.
-class _FlightTypeSelector extends StatelessWidget {
-  const _FlightTypeSelector({
+class FlightTypeSelector extends StatelessWidget {
+  const FlightTypeSelector({
     required this.value,
     required this.onChanged,
     this.errorText,
@@ -2871,46 +2871,58 @@ class _FlightTypeSelector extends StatelessWidget {
                 if (t != FlightType.values.first)
                   const SizedBox(width: LuxSpacing.sm),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      LuxHaptics.tap();
-                      onChanged(t);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: value == t ? _kPanelAccent : _kCardBg,
-                        borderRadius: BorderRadius.circular(_kMobileRadius),
-                        border: Border.all(
-                          color: value == t
-                              ? _kPanelAccent
-                              : errorText != null
-                                  ? Colors.red.shade700
-                                  : _kBorder,
+                  // Vuelos (B4, hallazgo de las capturas): 48 px como mínimo y
+                  // leído como botón seleccionado o no.
+                  child: Semantics(
+                    button: true,
+                    selected: value == t,
+                    excludeSemantics: true,
+                    label: t.label,
+                    onTap: () => onChanged(t),
+                    child: GestureDetector(
+                      onTap: () {
+                        LuxHaptics.tap();
+                        onChanged(t);
+                      },
+                      child: Container(
+                        constraints: const BoxConstraints(
+                            minHeight: kMinInteractiveDimension),
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: value == t ? _kPanelAccent : _kCardBg,
+                          borderRadius: BorderRadius.circular(_kMobileRadius),
+                          border: Border.all(
+                            color: value == t
+                                ? _kPanelAccent
+                                : errorText != null
+                                    ? Colors.red.shade700
+                                    : _kBorder,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            t == FlightType.domestic
-                                ? Icons.flight_land_rounded
-                                : Icons.public_rounded,
-                            size: 16,
-                            color: value == t ? Colors.white : _kTextSub,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            t.label,
-                            style: TextStyle(
-                              fontFamily: kSans,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: value == t ? Colors.white : _kTextPrimary,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              t == FlightType.domestic
+                                  ? Icons.flight_land_rounded
+                                  : Icons.public_rounded,
+                              size: 16,
+                              color: value == t ? Colors.white : _kTextSub,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 6),
+                            Text(
+                              t.label,
+                              style: TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    value == t ? Colors.white : _kTextPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
