@@ -4,6 +4,41 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/integracion tras fusionar cierre/reglas-usuarios y cierre/fuentes-limite (commit b192aa6, 2026-11-04)
+
+`git merge --no-ff cierre/reglas-usuarios` y `git merge --no-ff
+cierre/fuentes-limite` sobre bcc8d8c, sin conflictos (las dos salen de
+bcc8d8c). Emuladores con `demo-luxelane`; reglas e integración sin las
+variables de proxy de la sesión. Datos de prueba FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           341 archivos, 0 cambiados       0
+flutter test                                  pasa           1085/1085                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           756/756 (35 de 35 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           3852/3852 (30 de 30 suites)     0
+npm run test:integration (demo-luxelane)      pasa           503/503 (53 de 53 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint .github/workflows/ci.yml           pasa           sin avisos (v1.7.7)             0
+```
+
+actionlint 1.7.7 del release oficial (suma SHA-256 comprobada); sin
+shellcheck instalado, así que no revisa los bloques `run:`.
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de bcc8d8c con los tests de d35a132
+(`RULES_PATH=<reglas de bcc8d8c> npm run test:rules`): fallan los 16 casos
+de hueco de `userIntegrity.rules.ts` y nada más.
+
+```
+Test Suites: 1 failed, 29 passed, 30 total
+Tests:       16 failed, 3836 passed, 3852 total
+```
+
 ## cierre/integracion tras fusionar cierre/ventana-chofer (commit ac23fad, 2026-11-04)
 
 `git merge --no-ff cierre/ventana-chofer` sobre c3854f8 con el worktree
