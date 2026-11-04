@@ -4,6 +4,31 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/integracion tras fusionar cierre/ventana-chofer (commit ac23fad, 2026-11-04)
+
+`git merge --no-ff cierre/ventana-chofer` sobre c3854f8 con el worktree
+limpio, sin conflictos (cierre/ventana-chofer salía de c3854f8). Tras la
+fusión, `git ls-files` no lista ningún `node_modules` ni ningún enlace
+simbólico (el enlace `tools/experiencia/node_modules` de 33f03a2 sale con
+936deca). Emuladores con `demo-luxelane`; reglas e integración sin las
+variables de proxy de la sesión. Datos de prueba FICTICIOS.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           337 archivos, 0 cambiados       0
+flutter test                                  pasa           1076/1076                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           756/756 (35 de 35 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           3832/3832 (29 de 29 suites)     0
+npm run test:integration (demo-luxelane)      pasa           503/503 (53 de 53 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+actionlint no está instalado en la sesión.
+
 ## cierre/ventana-chofer, Parte B (B1–B4, commit fa7ef65, 2026-11-04)
 
 Sobre la Parte A (2fc95a1). Emuladores de Firestore, Storage y Auth con
