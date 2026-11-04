@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../../special/presentation/widgets/special_services_sheet.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/design/lux_promise.dart';
@@ -582,6 +583,8 @@ class _MobileBottomPanel extends StatelessWidget {
                   ),
               ],
             ),
+            // Servicios especiales (aerotaxi, paseos): al final y en voz baja.
+            const Center(child: MoreServicesLink()),
           ],
         ),
       ),

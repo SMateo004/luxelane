@@ -21,6 +21,13 @@ abstract class AppConfig {
 
   static bool get enableLogs => isDev;
 
+  /// Conecta la app a los emuladores locales de Firebase (pruebas en vivo).
+  /// `--dart-define=USE_EMULATORS=true`. Nunca activo en producción.
+  static const bool useEmulators =
+      bool.fromEnvironment('USE_EMULATORS', defaultValue: false);
+  static const String emulatorHost =
+      String.fromEnvironment('EMULATOR_HOST', defaultValue: 'localhost');
+
   static const String fcmVapidKey = String.fromEnvironment('FCM_VAPID_KEY');
 
   /// OAuth *Web* client ID of the Firebase project (Google Cloud Console →

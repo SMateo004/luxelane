@@ -20,12 +20,26 @@ class Place {
   LatLng get latLng => LatLng(lat, lng);
 
   factory Place.fromJson(Map<String, dynamic> json) {
-    final geo = json['coordinates'] as GeoPoint;
+    // Tolerante: documentos antiguos guardan lat/lng sueltos y algunos no
+    // tienen dirección. Sin coordenadas no hay lugar válido.
+    final geo = json['coordinates'];
+    final double lat;
+    final double lng;
+    if (geo is GeoPoint) {
+      lat = geo.latitude;
+      lng = geo.longitude;
+    } else if (json['lat'] is num && json['lng'] is num) {
+      lat = (json['lat'] as num).toDouble();
+      lng = (json['lng'] as num).toDouble();
+    } else {
+      throw const FormatException('Lugar sin coordenadas');
+    }
+    final name = json['name'] as String? ?? '';
     return Place(
-      name: json['name'] as String? ?? '',
-      address: json['address'] as String,
-      lat: geo.latitude,
-      lng: geo.longitude,
+      name: name,
+      address: json['address'] as String? ?? name,
+      lat: lat,
+      lng: lng,
     );
   }
 

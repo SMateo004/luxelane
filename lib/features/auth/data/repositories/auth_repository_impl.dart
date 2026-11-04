@@ -117,11 +117,16 @@ class AuthRepositoryImpl implements AuthRepository {
         // are granted by an admin.
         role: role,
         createdAt: DateTime.now(),
-        isVerified: true,
+        // Se verifica con el correo; las reglas rechazan un "true" falso.
+        isVerified: false,
         isActive: true,
         fcmTokens: const [],
       );
       await _db.collection('users').doc(user.id).set(user.toJson());
+      // Unirse a una empresa exige el correo verificado.
+      try {
+        await cred.user!.sendEmailVerification();
+      } catch (_) {/* no impide usar la app */}
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(_emailErrorMessage(e.code)));

@@ -47,6 +47,12 @@ export interface PriceCheck {
 export function checkBookingPrice(
   booking: { estimatedPrice?: number; hours?: number | null; serviceType?: string },
   rule: FareRule | undefined,
+  /**
+   * Distancia en línea recta entre recogida y destino. La ruta por calles
+   * nunca es más corta, así que base + km en línea recta × tarifa es un
+   * mínimo seguro: atrapa precios manipulados sin rechazar los legítimos.
+   */
+  straightKm = 0,
 ): PriceCheck {
   if (!rule) return { ok: false, reason: 'unknown_fare' };
   if (rule.isActive === false) return { ok: false, reason: 'fare_disabled' };
@@ -57,6 +63,11 @@ export function checkBookingPrice(
     expectedMinimum = Math.max(
       expectedMinimum,
       rule.basePriceUsd + booking.hours * rule.pricePerHourUsd,
+    );
+  } else if (booking.serviceType !== 'byTheHour' && straightKm > 0) {
+    expectedMinimum = Math.max(
+      expectedMinimum,
+      rule.basePriceUsd + straightKm * rule.pricePerKmUsd,
     );
   }
   // Tolerancia de céntimos por redondeo en el cliente.

@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
@@ -7,8 +8,13 @@ import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
-import { rankCandidates } from './assignment';
+import { distanceKm, rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
+import { checkCorporateBooking } from './corporate_functions';
+
+// Programa para empresas y servicios especiales (módulos propios).
+export * from './corporate_functions';
+export * from './special_functions';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -32,7 +38,10 @@ interface BookingDoc {
   riderId: string;
   // Place.toJson guarda la posición como GeoPoint en `coordinates`.
   origin?: { coordinates?: admin.firestore.GeoPoint };
+  destination?: { coordinates?: admin.firestore.GeoPoint } | null;
   driverId?: string;
+  paymentMethod?: string;
+  companyId?: string | null;
   status: BookingStatus;
   // La app guarda la clase en `class`; `vehicleClass` es el nombre antiguo.
   class?: string;
@@ -253,7 +262,7 @@ async function captureBookingPayment(
       amount: captured,
       currency: intent.currency ?? 'bob',
       status: intent.status === 'succeeded' ? 'captured' : 'failed',
-      createdAt: admin.firestore.Timestamp.now(),
+      createdAt: Timestamp.now(),
     };
 
     const batch = db.batch();
@@ -341,7 +350,7 @@ export const refundPayment = onCall(async (req) => {
     if (payment.stripePaymentIntentId) {
       await stripe.refundIntent(payment.stripePaymentIntentId);
     }
-    const now = admin.firestore.Timestamp.now();
+    const now = Timestamp.now();
     const batch = db.batch();
     batch.update(paymentRef, {
       status: 'refunded' as PaymentStatus,
@@ -520,7 +529,7 @@ export const deleteAccount = onCall(async (req) => {
     targetId: uid,
     targetType: 'user',
     details: `Cuenta eliminada por el usuario (${user?.role ?? 'sin perfil'})`,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
   });
   await batch.commit();
 
@@ -600,14 +609,28 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     : vehicleClass === 'firstClass' && global.firstClassEnabled !== true
       ? 'class_disabled'
       : null;
+  // La ruta por calles nunca es más corta que la línea recta: base + km en
+  // línea recta × tarifa es un mínimo seguro contra precios manipulados.
+  const o = booking.origin?.coordinates;
+  const d = booking.destination?.coordinates;
+  const straightKm = o && d
+    ? distanceKm({ lat: o.latitude, lng: o.longitude }, { lat: d.latitude, lng: d.longitude })
+    : 0;
   const check = blocked
     ? { ok: false as const, reason: blocked, expectedMinimum: undefined }
-    : checkBookingPrice(booking, rule);
+    : checkBookingPrice(booking, rule, straightKm);
   if (!check.ok) {
     logger.warn('onBookingCreated', 'pricing review', { bookingId: event.params.bookingId, ...check });
     await event.data!.ref.update({
       pricingReview: { reason: check.reason, expectedMinimum: check.expectedMinimum ?? null },
     });
+  }
+
+  // Cuenta de empresa: miembro activo, empresa aprobada y dentro de límites;
+  // si no procede se cancela con el motivo y no se ofrece a chóferes.
+  if (booking.paymentMethod === 'corporate') {
+    const ok = await checkCorporateBooking(event.data!.ref, booking as never);
+    if (!ok) return;
   }
 
   logger.info('onBookingCreated', 'notifying drivers', {
@@ -675,7 +698,7 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     type,
     isRead: false,
     bookingId: event.params.bookingId,
-    createdAt: admin.firestore.Timestamp.now(),
+    createdAt: Timestamp.now(),
   });
 
   const tokens = await getUserTokens(after.riderId);
@@ -694,7 +717,7 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
   if (!before || !after || before.driverId === after.driverId) return;
 
   if (!after.driverId) {
-    await event.data!.after.ref.update({ driverInfo: admin.firestore.FieldValue.delete() });
+    await event.data!.after.ref.update({ driverInfo: FieldValue.delete() });
     return;
   }
   const [userSnap, vehicleSnap] = await Promise.all([
@@ -847,7 +870,7 @@ export const backfillSettlements = onCall({ timeoutSeconds: 540 }, async (req) =
     targetId: 'bookings',
     targetType: 'finance',
     details: `${settled} de ${scanned} viajes completados repartidos`,
-    createdAt: admin.firestore.Timestamp.now(),
+    createdAt: Timestamp.now(),
   });
   logger.info('backfillSettlements', 'done', { scanned, settled });
   return { scanned, settled };
@@ -873,7 +896,7 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
     const bookingSnap = await tx.get(bookingRef);
     const status = (bookingSnap.data() as BookingDoc | undefined)?.status;
     if (!status || status === 'completed' || status === 'cancelled') return;
-    tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
+    tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: Timestamp.now() });
   });
 });
 
@@ -942,7 +965,7 @@ export const assignNearestDriver = onCall(async (req) => {
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
-        updatedAt: admin.firestore.Timestamp.now(),
+        updatedAt: Timestamp.now(),
       });
       tx.update(driverRef, { isAvailable: false });
       return 'assigned';
@@ -998,7 +1021,7 @@ export const acceptBooking = onCall(async (req) => {
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
-        updatedAt: admin.firestore.Timestamp.now(),
+        updatedAt: Timestamp.now(),
       });
       tx.update(driverRef, { isAvailable: false });
     });
@@ -1036,11 +1059,11 @@ export const scheduledCleanup = onSchedule('every 24 hours', async () => {
   const staleSnap = await db
     .collection('bookings')
     .where('status', '==', 'pending')
-    .where('scheduledAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('scheduledAt', '<', Timestamp.fromDate(cutoff))
     .get();
 
   // Un batch admite 500 escrituras.
-  const now = admin.firestore.Timestamp.now();
+  const now = Timestamp.now();
   for (let i = 0; i < staleSnap.docs.length; i += 500) {
     const batch = db.batch();
     staleSnap.docs.slice(i, i + 500).forEach((doc) => {

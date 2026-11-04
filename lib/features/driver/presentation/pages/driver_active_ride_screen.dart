@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
@@ -308,7 +309,7 @@ class _RideInfoRow extends StatelessWidget {
               children: [
                 const Text('Tarifa estimada', style: LuxTypography.caption),
                 Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
+                  LuxFormat.bs(booking.chargedAmount),
                   style: LuxTypography.bodyLarge
                       .copyWith(color: LuxColors.sapphire),
                 ),

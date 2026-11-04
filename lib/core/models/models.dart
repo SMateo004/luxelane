@@ -24,6 +24,8 @@ class User {
     this.stripeCustomerId,
     required this.fcmTokens,
     this.ridePreferences = RidePreferences.none,
+    this.companyId,
+    this.companyRole,
   });
 
   final String id;
@@ -41,6 +43,13 @@ class User {
 
   /// Cómo le gusta viajar (silencio, temperatura…); el chófer lo ve.
   final RidePreferences ridePreferences;
+
+  /// Empresa a la que pertenece (programa para empresas) y su papel en ella:
+  /// `admin` o `employee`. Los asigna el servidor.
+  final String? companyId;
+  final String? companyRole;
+
+  bool get isCompanyAdmin => companyId != null && companyRole == 'admin';
 
   factory User.fromJson(Map<String, dynamic> j) => User(
         id: j['id'] as String,
@@ -64,6 +73,8 @@ class User {
         stripeCustomerId: j['stripeCustomerId'] as String?,
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
         ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
+        companyId: j['companyId'] as String?,
+        companyRole: j['companyRole'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -108,6 +119,8 @@ class User {
         stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
         fcmTokens: fcmTokens ?? this.fcmTokens,
         ridePreferences: ridePreferences ?? this.ridePreferences,
+        companyId: companyId,
+        companyRole: companyRole,
       );
 }
 
@@ -485,6 +498,11 @@ class Booking {
     this.cardPayment = false,
     this.cardPaymentFailed = false,
     this.riderPreferences = RidePreferences.none,
+    this.paymentMethod,
+    this.companyId,
+    this.costCenter,
+    this.statementId,
+    this.riderName,
   });
 
   final String id;
@@ -538,6 +556,22 @@ class Booking {
 
   /// El cobro automático con tarjeta falló; se cobra a mano.
   final bool cardPaymentFailed;
+
+  /// `corporate` cuando se carga a la cuenta de empresa del pasajero
+  /// ([companyId]); el resto de reservas no lo guardan.
+  final String? paymentMethod;
+  final String? companyId;
+
+  /// Centro de coste o motivo opcional (viajes de empresa).
+  final String? costCenter;
+
+  /// Extracto mensual de la empresa en el que se facturó.
+  final String? statementId;
+
+  /// Nombre del pasajero, copiado por el servidor en viajes de empresa.
+  final String? riderName;
+
+  bool get isCorporate => paymentMethod == 'corporate';
 
   /// Cobro con tarjeta aún por resolver por el servidor: no se registra a
   /// mano para no cobrar dos veces.
@@ -616,6 +650,11 @@ class Booking {
             j['stripePaymentMethodId'] != null,
         cardPaymentFailed: j['cardPaymentFailed'] == true,
         riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
+        paymentMethod: j['paymentMethod'] as String?,
+        companyId: j['companyId'] as String?,
+        costCenter: j['costCenter'] as String?,
+        statementId: j['statementId'] as String?,
+        riderName: j['riderName'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -642,6 +681,10 @@ class Booking {
         'hours': hours,
         'passengerCount': passengerCount,
         'luggageCount': luggageCount,
+        if (paymentMethod != null) 'paymentMethod': paymentMethod,
+        if (companyId != null) 'companyId': companyId,
+        if (costCenter != null && costCenter!.isNotEmpty)
+          'costCenter': costCenter,
       };
 
   Booking copyWith({
@@ -681,6 +724,11 @@ class Booking {
         cardPayment: cardPayment,
         cardPaymentFailed: cardPaymentFailed,
         riderPreferences: riderPreferences,
+        paymentMethod: paymentMethod,
+        companyId: companyId,
+        costCenter: costCenter,
+        statementId: statementId,
+        riderName: riderName,
       );
 }
 

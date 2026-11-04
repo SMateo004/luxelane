@@ -10,6 +10,7 @@ service-account*.json
 
 # Node (Cloud Functions)
 functions/node_modules/
+firestore-tests/node_modules/
 functions/lib/
 
 # macOS

@@ -118,6 +118,8 @@ class AuthAuthenticated extends AuthState {
         user.displayName,
         user.phone,
         user.photoUrl,
+        user.companyId,
+        user.companyRole,
       ];
 }
 

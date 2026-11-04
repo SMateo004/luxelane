@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,7 @@ import 'core/services/performance_service.dart';
 import 'core/services/pricing_catalog.dart';
 import 'core/utils/maps_web_loader.dart'
     if (dart.library.io) 'core/utils/maps_web_loader_stub.dart';
+import 'core/config/emulators.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -25,26 +27,35 @@ void main() async {
   // 'Cormorant Garamond') resolves correctly across the entire app —
   // web and native.
   GoogleFonts.config.allowRuntimeFetching = true;
-  await Future.wait([
-    GoogleFonts.pendingFonts([
-      GoogleFonts.montserrat(),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w300),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w500),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-      GoogleFonts.cormorantGaramond(),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
-      GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
-      GoogleFonts.cormorantGaramond(
-          fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
-    ]),
-  ]);
+  // Sin conexión a Google Fonts la app debe arrancar igual (con la fuente
+  // del sistema) en vez de quedarse en blanco.
+  try {
+    await Future.wait([
+      GoogleFonts.pendingFonts([
+        GoogleFonts.montserrat(),
+        GoogleFonts.montserrat(fontWeight: FontWeight.w300),
+        GoogleFonts.montserrat(fontWeight: FontWeight.w500),
+        GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+        GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+        GoogleFonts.cormorantGaramond(),
+        GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300),
+        GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
+        GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
+        GoogleFonts.cormorantGaramond(
+            fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
+      ]),
+    ]).timeout(const Duration(seconds: 8));
+  } catch (e) {
+    debugPrint('[Luxelane] fuentes no disponibles: $e');
+  }
 
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    if (AppConfig.useEmulators && !AppConfig.isProd) {
+      await useFirebaseEmulators(AppConfig.emulatorHost);
+    }
     // Admin-controlled switches (e.g. First Class availability).
     RemoteFlags.instance.listen(FirebaseFirestore.instance);
   } catch (e) {
@@ -103,6 +114,10 @@ void main() async {
           '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY');
     }
   }
+
+  // En pruebas en vivo, el árbol de accesibilidad permite manejar la app
+  // desde un navegador automatizado.
+  if (AppConfig.useEmulators) SemanticsBinding.instance.ensureSemantics();
 
   runApp(const LuxelaneApp());
 }

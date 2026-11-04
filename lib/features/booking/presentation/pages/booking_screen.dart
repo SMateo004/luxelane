@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -23,6 +24,8 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
+import '../../../business/data/business_repository.dart';
+import '../../../business/domain/business_models.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
@@ -82,6 +85,43 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _awaitingPaymentIntent = false;
   bool _payByCard = false;
   String? _pendingBookingId;
+
+  /// Cargar el viaje a la cuenta de empresa del usuario.
+  bool _corporate = false;
+  final _costCenter = TextEditingController();
+  StreamSubscription<Company?>? _companySub;
+  StreamSubscription<CompanyMember?>? _memberSub;
+  Company? _company;
+  CompanyMember? _member;
+  String? _watchingCompany;
+
+  /// La cuenta de empresa se ofrece si está activa y el usuario habilitado.
+  bool get _corporateAvailable =>
+      _company?.isActive == true && (_member?.active ?? false);
+
+  void _watchCompany() {
+    final auth = context.read<AuthBloc>().state;
+    final user = auth is AuthAuthenticated ? auth.user : null;
+    final cid = user?.companyId;
+    if (cid == _watchingCompany) return;
+    _watchingCompany = cid;
+    _companySub?.cancel();
+    _memberSub?.cancel();
+    _company = null;
+    _member = null;
+    if (cid == null || user == null) return;
+    final repo = sl<BusinessRepository>();
+    _companySub = repo.watchCompany(cid).listen((c) {
+      if (mounted) setState(() => _company = c);
+    }, onError: (Object _) {});
+    _memberSub = repo.watchMember(cid, user.id).listen((m) {
+      if (!mounted) return;
+      setState(() {
+        _member = m;
+        if (!_corporateAvailable) _corporate = false;
+      });
+    }, onError: (Object _) {});
+  }
 
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
@@ -146,6 +186,9 @@ class _BookingScreenState extends State<BookingScreen> {
     PricingCatalog.instance.removeListener(_onPricingChanged);
     _leftScrollCtrl.dispose();
     _cardsCtrl.dispose();
+    _costCenter.dispose();
+    _companySub?.cancel();
+    _memberSub?.cancel();
     super.dispose();
   }
 
@@ -261,10 +304,60 @@ class _BookingScreenState extends State<BookingScreen> {
     }
     // La reserva se crea primero y la tarjeta se autoriza contra ella: si la
     // tarjeta falla, se cancela la reserva y no queda ninguna retención.
-    _payByCard = _cardsSupported && _selectedCardId != null;
+    if (_corporate && !_corporateAvailable) {
+      setState(() => _corporate = false);
+      showLuxSnackbar(
+          context, 'La cuenta de empresa no está disponible ahora mismo.',
+          isError: true);
+      return;
+    }
+    // A cuenta de empresa no se autoriza ninguna tarjeta: se factura a fin
+    // de mes en el extracto de la empresa.
+    _payByCard = !_corporate && _cardsSupported && _selectedCardId != null;
     setState(() => _loading = true);
     _createBooking();
   }
+
+  /// Cuenta de empresa o pago personal. Solo aparece si el usuario pertenece
+  /// a una empresa activa; el resto de pasajeros no ve nada nuevo.
+  Widget _corporateChoice() => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('¿QUIÉN PAGA?',
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextTertiary,
+                  letterSpacing: 2.0)),
+          const SizedBox(height: 12),
+          _PayOption(
+            icon: Icons.apartment_outlined,
+            label: 'Cuenta de empresa · ${_company!.name}',
+            selected: _corporate,
+            onTap: () => setState(() => _corporate = true),
+          ),
+          if (_corporate)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: TextField(
+                controller: _costCenter,
+                maxLength: 60,
+                decoration: const InputDecoration(
+                  labelText: 'Centro de coste o motivo (opcional)',
+                  counterText: '',
+                  isDense: true,
+                ),
+              ),
+            ),
+          _PayOption(
+            icon: Icons.person_outline_rounded,
+            label: 'Pago personal',
+            selected: !_corporate,
+            onTap: () => setState(() => _corporate = false),
+          ),
+        ],
+      );
 
   /// Autoriza la tarjeta para la reserva recién creada.
   void _authorizeCard(Booking booking) {
@@ -396,6 +489,12 @@ class _BookingScreenState extends State<BookingScreen> {
               ? ServiceArea.airportFor(_formData!.origin)?.iata
               : null,
           hours: _service == ServiceType.byTheHour ? _hours : null,
+          paymentMethod:
+              _corporate ? 'corporate' : (_payByCard ? 'card' : 'cash'),
+          companyId: _corporate ? _company?.id : null,
+          costCenter: _corporate && _costCenter.text.trim().isNotEmpty
+              ? _costCenter.text.trim()
+              : null,
         ));
   }
 
@@ -440,6 +539,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // La sesión puede resolverse después de abrir la pantalla (recarga):
+    // se vuelve a mirar la empresa del usuario cuando cambia.
+    context.watch<AuthBloc>();
+    _watchCompany();
     return MultiBlocListener(
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
@@ -1125,6 +1228,13 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
 
+        if (_corporateAvailable) ...[
+          const SizedBox(height: 20),
+          const Divider(color: _kDivider, height: 1),
+          const SizedBox(height: 20),
+          _corporateChoice(),
+        ],
+
         const SizedBox(height: 20),
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 16),
@@ -1459,7 +1569,11 @@ class _BookingScreenState extends State<BookingScreen> {
           ]),
         ),
         const SizedBox(height: 20),
-        if (!_cardsSupported)
+        if (_corporateAvailable) ...[
+          _corporateChoice(),
+          const SizedBox(height: 12),
+        ],
+        if (!_cardsSupported || _corporate)
           const SizedBox.shrink()
         else if (_savedCards.isEmpty)
           _OutlinedBtn(
@@ -3260,4 +3374,51 @@ class _SummaryAddressRow extends StatelessWidget {
       ],
     );
   }
+}
+
+class _PayOption extends StatelessWidget {
+  const _PayOption({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: GestureDetector(
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: _kCardBg,
+              borderRadius: BorderRadius.circular(_kMobileRadius),
+              border: Border.all(
+                  color: selected ? LuxColors.sapphire : _kBorder,
+                  width: selected ? 1.5 : 1),
+            ),
+            child: Row(children: [
+              Icon(icon,
+                  size: 20, color: selected ? LuxColors.sapphire : _kTextSub),
+              const SizedBox(width: 12),
+              Expanded(
+                  child: Text(label,
+                      style: const TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: _kTextPrimary))),
+              if (selected)
+                const Icon(Icons.check_circle,
+                    size: 18, color: LuxColors.sapphire),
+            ]),
+          ),
+        ),
+      );
 }

@@ -31,6 +31,17 @@ final _driverProfile = DriverProfile(
   isAvailable: false,
 );
 
+final _unverifiedProfile = DriverProfile(
+  userId: 'driver-1',
+  licenseNumber: 'DL-001',
+  licenseExpiry: DateTime(2027),
+  vehicleId: 'vehicle-1',
+  documentsVerified: false,
+  rating: 0,
+  totalRides: 0,
+  isAvailable: false,
+);
+
 final _driverUser = User(
   id: 'driver-1',
   email: 'driver@luxelane.com',
@@ -160,6 +171,45 @@ void main() {
               userId: 'driver-1',
               isAvailable: true,
             )).called(1);
+      },
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'sin verificar no se conecta: avisa y no escribe nada',
+      build: () => bloc()
+        ..emit(DriverLoaded(
+          user: _driverUser,
+          profile: _unverifiedProfile,
+          isAvailable: false,
+          bookings: const [],
+        )),
+      act: (bloc) => bloc.add(const DriverAvailabilityToggled(
+        userId: 'driver-1',
+        isAvailable: true,
+      )),
+      expect: () => [
+        isA<DriverLoaded>()
+            .having((s) => s.isAvailable, 'isAvailable', false)
+            .having((s) => s.notice, 'notice', contains('verifique')),
+      ],
+      verify: (_) {
+        verifyNever(() => userRepo.setDriverAvailability(
+              userId: any(named: 'userId'),
+              isAvailable: any(named: 'isAvailable'),
+            ));
+      },
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'sin verificar no escucha las solicitudes pendientes',
+      build: () {
+        when(() => userRepo.getDriverProfile(any()))
+            .thenAnswer((_) async => Right(_unverifiedProfile));
+        return bloc();
+      },
+      act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
+      verify: (_) {
+        verifyNever(() => bookingRepo.streamPendingBookings());
       },
     );
 

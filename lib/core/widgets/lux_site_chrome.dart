@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/home/presentation/pages/home_design.dart';
 import '../../features/notifications/presentation/widgets/notification_bell.dart';
+import '../../features/special/presentation/widgets/special_services_sheet.dart';
 import '../design/lux_promise.dart';
 import 'components.dart';
 
@@ -246,6 +247,21 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
                           context.go(s.$2);
                         },
                       ),
+                    // Extras bajo cotización: separados y sin protagonismo.
+                    Container(
+                      height: 1,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 6),
+                      color: const Color(0xFF1A2B40),
+                    ),
+                    _DropItem(
+                      label: 'Servicios especiales',
+                      icon: Icons.more_horiz_rounded,
+                      onTap: () {
+                        _portal.hide();
+                        showSpecialServices(context);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -517,6 +533,11 @@ class _MobileMenu extends StatelessWidget {
               const SizedBox(height: 8),
               for (final s in LuxServiceRoutes.all)
                 item(s.$1, () => context.go(s.$2), icon: s.$3),
+              item('Servicios especiales', () {
+                final nav = Navigator.of(context, rootNavigator: true);
+                nav.pop();
+                showSpecialServices(nav.context);
+              }, icon: Icons.more_horiz_rounded),
               const SizedBox(height: 24),
               Divider(color: Colors.white.withAlpha(25)),
               item('Flota', onFleet ?? () => context.go('/')),
