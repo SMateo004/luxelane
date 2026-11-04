@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../config/env.dart';
 import '../enums/enums.dart';
+import '../notifications/push_permission.dart';
 import '../repositories/repositories.dart';
 
 /// Quién registra el token de push. En móvil, todos. En web solo el admin
@@ -31,6 +32,10 @@ class NotificationService {
   String? _initializedFor;
   bool _listening = false;
 
+  /// Explicación propia antes de la petición del sistema (C4). La pone la
+  /// app cuando tiene un contexto con navegador.
+  Future<bool> Function()? beforePermission;
+
   Future<void> init({
     required String userId,
     UserRole role = UserRole.rider,
@@ -46,7 +51,17 @@ class NotificationService {
     // listeners, una sola vez.
     _initializedFor = userId;
 
-    await _messaging.requestPermission();
+    // En la web lo decide el navegador; en el móvil, primero la explicación.
+    if (kIsWeb) {
+      await _messaging.requestPermission();
+    } else {
+      await PushPermissionGate(
+        status: () async =>
+            (await _messaging.getNotificationSettings()).authorizationStatus,
+        request: () => _messaging.requestPermission(),
+        explain: beforePermission,
+      ).run();
+    }
 
     try {
       final token = kIsWeb

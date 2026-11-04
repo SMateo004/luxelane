@@ -260,6 +260,11 @@ describe('DEPLOY.md: recordatorios', () => {
     const index = readFileSync(join(root, 'functions', 'src', 'index.ts'), 'utf8');
     expect(index).toMatch(/remindersJob = onSchedule\('every 5 minutes'/);
   });
+  it('pasos manuales de los push: clave APNs y capacidad en el App ID', () => {
+    expect(section).toMatch(/Clave APNs/);
+    expect(section).toMatch(/Capacidad Push Notifications/);
+    expect(section).toContain('Runner.entitlements');
+  });
   it.each(['reminderOffsetsMinutes', 'unassignedAlertMinutes', 'tripShareGraceMinutes'])('%s y qué pasa si falta', (k) => {
     const line = section.split('\n- ').find((b) => b.includes(k)) ?? '';
     expect(line).toMatch(/Si falta/);

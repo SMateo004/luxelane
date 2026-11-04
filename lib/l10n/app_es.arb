@@ -5727,6 +5727,22 @@
       }
     }
   },
+  "pushPermissionTitle": "Avisos de tus viajes",
+  "@pushPermissionTitle": {
+    "description": "Permiso de avisos: título de la explicación previa a la petición del sistema."
+  },
+  "pushPermissionBody": "Los avisos te informan de los cambios de tus viajes y te recuerdan los próximos. Luego el teléfono te pedirá permiso; puedes cambiarlo cuando quieras en sus ajustes.",
+  "@pushPermissionBody": {
+    "description": "Permiso de avisos: para qué sirven y que se pueden cambiar. Sin promesas."
+  },
+  "pushPermissionContinue": "Continuar",
+  "@pushPermissionContinue": {
+    "description": "Permiso de avisos: seguir a la petición del sistema."
+  },
+  "pushPermissionNotNow": "Ahora no",
+  "@pushPermissionNotNow": {
+    "description": "Permiso de avisos: no pedir ahora."
+  },
   "paymentOurFault": "No pudimos completar el pago por un problema nuestro. Inténtalo de nuevo en unos minutos.",
   "@paymentOurFault": {
     "description": "Error de pago por un fallo del servidor; no culpa a la persona."

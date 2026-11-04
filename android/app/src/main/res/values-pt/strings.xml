@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_trips_name">Avisos das suas viagens</string>
+    <string name="notification_channel_trips_description">Mudanças das suas viagens e lembretes.</string>
+</resources>

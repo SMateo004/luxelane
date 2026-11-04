@@ -4294,6 +4294,19 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get pushPermissionTitle => 'Avisos das suas viagens';
+
+  @override
+  String get pushPermissionBody =>
+      'Os avisos informam as mudanças das suas viagens e lembram as próximas. Depois o telefone pedirá permissão; você pode mudar isso quando quiser nos ajustes.';
+
+  @override
+  String get pushPermissionContinue => 'Continuar';
+
+  @override
+  String get pushPermissionNotNow => 'Agora não';
+
+  @override
   String get paymentOurFault =>
       'Não foi possível concluir o pagamento por um problema nosso. Tente novamente em alguns minutos.';
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Canal por defecto de los avisos (Android 8+). Español: idioma base. -->
+    <string name="default_notification_channel_id" translatable="false">trips</string>
+    <string name="notification_channel_trips_name">Avisos de tus viajes</string>
+    <string name="notification_channel_trips_description">Cambios de tus viajes y recordatorios.</string>
+</resources>

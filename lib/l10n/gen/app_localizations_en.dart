@@ -4271,6 +4271,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pushPermissionTitle => 'Notifications about your trips';
+
+  @override
+  String get pushPermissionBody =>
+      'Notifications tell you about changes to your trips and remind you of upcoming ones. Your phone will then ask for permission; you can change it at any time in its settings.';
+
+  @override
+  String get pushPermissionContinue => 'Continue';
+
+  @override
+  String get pushPermissionNotNow => 'Not now';
+
+  @override
   String get paymentOurFault =>
       'We could not complete the payment due to an issue on our side. Please try again in a few minutes.';
 

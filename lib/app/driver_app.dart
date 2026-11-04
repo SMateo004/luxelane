@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../core/di/injection.dart';
+import '../core/notifications/push_permission.dart';
 import '../core/services/connection_status.dart';
 import '../core/services/locale_sync.dart';
 import '../core/services/notification_service.dart';
@@ -56,6 +58,14 @@ class _DriverAppState extends State<DriverApp> {
           serverSource: state.user.localeSource,
         );
         // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
+        // Explicación propia antes del permiso del sistema (C4).
+        sl<NotificationService>().beforePermission = () async {
+          final ctx =
+              (_router as GoRouter).routerDelegate.navigatorKey.currentContext;
+          return ctx == null || !ctx.mounted
+              ? true
+              : showPushPermissionExplainer(ctx);
+        };
         sl<NotificationService>().init(
           userId: state.user.id,
           role: state.user.role,

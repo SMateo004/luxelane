@@ -7522,6 +7522,30 @@ abstract class AppLocalizations {
   /// **'Hace {hours}h'**
   String notificationsHoursAgo(int hours);
 
+  /// Permiso de avisos: título de la explicación previa a la petición del sistema.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisos de tus viajes'**
+  String get pushPermissionTitle;
+
+  /// Permiso de avisos: para qué sirven y que se pueden cambiar. Sin promesas.
+  ///
+  /// In es, this message translates to:
+  /// **'Los avisos te informan de los cambios de tus viajes y te recuerdan los próximos. Luego el teléfono te pedirá permiso; puedes cambiarlo cuando quieras en sus ajustes.'**
+  String get pushPermissionBody;
+
+  /// Permiso de avisos: seguir a la petición del sistema.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar'**
+  String get pushPermissionContinue;
+
+  /// Permiso de avisos: no pedir ahora.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora no'**
+  String get pushPermissionNotNow;
+
   /// Error de pago por un fallo del servidor; no culpa a la persona.
   ///
   /// In es, this message translates to:

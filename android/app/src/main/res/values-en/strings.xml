@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_trips_name">Notifications about your trips</string>
+    <string name="notification_channel_trips_description">Changes to your trips and reminders.</string>
+</resources>

@@ -6,6 +6,7 @@ import '../core/di/injection.dart';
 import '../core/services/connection_status.dart';
 import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
+import '../core/notifications/push_permission.dart';
 import '../core/services/crash_service.dart';
 import '../core/services/locale_sync.dart';
 import '../core/widgets/lux_connection_banner.dart';
@@ -86,6 +87,14 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         );
         // Registra el dispositivo para los avisos de la reserva aunque el
         // pasajero no abra la pantalla del viaje.
+        // Explicación propia antes del permiso del sistema (C4).
+        sl<NotificationService>().beforePermission = () async {
+          final ctx =
+              (_router as GoRouter).routerDelegate.navigatorKey.currentContext;
+          return ctx == null || !ctx.mounted
+              ? true
+              : showPushPermissionExplainer(ctx);
+        };
         sl<NotificationService>().init(
           userId: state.user.id,
           role: state.user.role,

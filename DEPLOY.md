@@ -385,6 +385,21 @@ En **staging**, con un Android y un iPhone, y anotar el resultado:
 - `config/ops.tripShareGraceMinutes`: minutos que el enlace de seguimiento
   sigue abierto tras terminar el viaje. **Si falta**, caduca al terminar.
 
+### Push en iOS y Android (pasos manuales en tu cuenta; nada lo fija el código)
+- **Clave APNs**: en developer.apple.com (Certificates, IDs & Profiles →
+  Keys) crea una clave con «Apple Push Notifications service (APNs)» y súbela
+  en la consola de Firebase (Configuración del proyecto → Cloud Messaging →
+  app de iOS), con su Key ID y tu Team ID. Sin ella, ningún push llega a iOS.
+- **Capacidad Push Notifications** en el App ID `com.luxelane.app` (y en el de
+  la app del chófer si usa otro). Los perfiles de aprovisionamiento deben
+  regenerarse después.
+- El repositorio ya trae `ios/Runner/Runner.entitlements` con
+  `aps-environment` (`development`; al exportar para la App Store, Xcode lo
+  cambia según el perfil de distribución) enlazado en Debug, Release y
+  Profile. NO VERIFICADO que Xcode lo acepte: compílalo una vez en un Mac.
+- Android: el canal por defecto «Avisos de tus viajes» lo crea la app; no
+  hace falta nada en la consola.
+
 ## Ventana del chófer e historial (cierre/ventana-chofer, Partes A y B)
 
 El chófer asignado lee la reserva y sus subcolecciones (`events`,

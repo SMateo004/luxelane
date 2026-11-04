@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Push (APNs). «development» para depurar; al exportar para la App Store,
+	     Xcode lo cambia según el perfil de distribución. La clave APNs se
+	     sube en la consola de Firebase (DEPLOY.md). -->
+	<key>aps-environment</key>
+	<string>development</string>
+</dict>
+</plist>
