@@ -38,6 +38,7 @@ import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
+import { summaryDriver, writeDriverHistory } from './driver_history';
 import { fromCents, toCents } from './money';
 
 admin.initializeApp();
@@ -1269,6 +1270,22 @@ export const applyRiderRating = onDocumentUpdated('bookings/{bookingId}', async 
 // cierre (chófer, pasajero o admin), y que suma el viaje
 // a su contador. Si el pasajero cancela, avisa al chófer.
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Ventana del chófer (decisión 2): resumen del viaje en
+// driverHistory/{driverId}/trips/{bookingId} cuando la reserva con chófer
+// queda en un estado final, y cada vez que después cambia algo del resumen
+// (valoración, reparto, reembolso, ajuste del importe). Un disparador y no
+// cada camino: ver driver_history.ts. Idempotente y con reintentos.
+// ---------------------------------------------------------------------------
+
+export const writeDriverHistoryOnBooking = onDocumentUpdated({ document: 'bookings/{bookingId}', retry: true },
+  async (event) => {
+    const after = event.data?.after.data();
+    if (!summaryDriver(after)) return;
+    const result = await writeDriverHistory(db, event.params.bookingId);
+    logger.info('writeDriverHistory', result, { bookingId: event.params.bookingId });
+  });
 
 export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;
