@@ -56,6 +56,64 @@ const none = 'NNNNN';
 const allRoles = (v: string) =>
   Object.fromEntries(ROLES.map((r) => [r, v])) as Record<Role, string>;
 
+// Ventana del chófer (decisión 1): una fila por estado de la reserva para la
+// reserva y cada subcolección que lee el chófer asignado. Objetivo
+// est_<estado> (de ana, asignada a asig; bloqueado: est_<estado>_bloq,
+// asignada a él). «liberada» = pendiente otra vez, sin chófer, con asig en
+// releasedBy.
+export const WINDOW_STATES = ['confirmed', 'driver_arriving', 'driver_arrived', 'verified', 'in_progress'] as const;
+export const LIVE_STATES = ['driver_arriving', 'driver_arrived', 'verified', 'in_progress'] as const;
+export const STATE_ROWS = [...WINDOW_STATES, 'completed', 'cancelled', 'no_show', 'liberada'] as const;
+export type StateRow = (typeof STATE_ROWS)[number];
+export const stateDoc = (st: StateRow, r: Role) => `est_${st}${r === 'bloq' ? '_bloq' : ''}`;
+const inWindow = (st: StateRow) => (WINDOW_STATES as readonly string[]).includes(st);
+const isLive = (st: StateRow) => (LIVE_STATES as readonly string[]).includes(st);
+const wireStatus = (st: StateRow) => (st === 'liberada' ? 'pending' : st);
+export const WINDOW_SUBS = ['', 'events', 'tracking', 'driverContact', 'driverView'] as const;
+type Sub = (typeof WINDOW_SUBS)[number];
+const SUB_DOC: Record<Sub, string> = { '': '', events: 'e1', tracking: 'driver', driverContact: 'phone', driverView: 'preferences' };
+
+/** Nombre de la fila: «bookings/{id}/events · completed». */
+export const windowSpecName = (sub: Sub, st: StateRow) => `bookings/{id}${sub ? `/${sub}` : ''} · ${st}`;
+
+function windowSpec(sub: Sub, st: StateRow): Spec {
+  const path = (r: Role) => `bookings/${stateDoc(st, r)}${sub ? `/${sub}/${SUB_DOC[sub]}` : ''}`;
+  const asigReads = st !== 'liberada' && inWindow(st);
+  let ana = 'SSNNN';
+  let asig = asigReads ? 'SSNNN' : none;
+  if (sub === 'tracking') {
+    ana = isLive(st) ? 'SSNNN' : none;
+    asig = asigReads ? (isLive(st) ? 'SSSSN' : 'SSNNN') : none;
+  }
+  if (sub === 'driverContact') ana = isLive(st) ? 'SSNNN' : none;
+  return {
+    name: windowSpecName(sub, st),
+    covered: false,
+    target: (r) => path(r),
+    list: (db, r) => (sub
+      ? query(collection(db, 'bookings', stateDoc(st, r), sub))
+      : query(collection(db, 'bookings'),
+        r === 'asig' || r === 'bloq' ? where('driverId', '==', r) : where('riderId', '==', 'ana'),
+        where('status', '==', wireStatus(st)))),
+    prepareCreate: sub === 'tracking' ? (r) => path(r) : undefined,
+    create: (r) => (sub === 'tracking'
+      ? { path: path(r), data: { lat: -17.7, lng: -63.1, updatedAt: serverTimestamp() } }
+      : { path: `bookings/${stateDoc(st, r)}${sub ? `/${sub}/nuevo` : '_nueva'}`, data: { riderId: 'ana', status: 'pending' } }),
+    update: () => (sub === 'tracking'
+      ? { lat: -17.71, lng: -63.11, updatedAt: serverTimestamp() }
+      : { note: 'Cambio desde el cliente', updatedAt: Timestamp.now() }),
+    expect: { ...allRoles(none), ana, asig, admin: 'SSNNN' },
+    note: `Reserva en ${st === 'liberada' ? 'pending tras liberarla asig (driverId vacío, asig en releasedBy)' : st}` +
+      `${sub ? `, subcolección ${sub}` : ''}. Listar del chófer = sus reservas en ese estado. ` +
+      (asigReads ? 'Dentro de la ventana del chófer.' : 'Fuera de la ventana del chófer: no la lee (decisión 1).'),
+  };
+}
+
+export function windowSpecs(): Spec[] {
+  return WINDOW_SUBS.flatMap((sub) => STATE_ROWS.map((st) => windowSpec(sub, st)));
+}
+
+
 export const SPECS: Spec[] = [
   {
     name: 'users/{uid}',
@@ -259,6 +317,7 @@ export const SPECS: Spec[] = [
     expect: { ...allRoles(none), admin: 'SSNNN' },
     note: 'Estado de incidentes de la reserva: solo lo lee el admin.',
   },
+  ...windowSpecs(),
   {
     name: 'incidents/{id}',
     covered: true,
@@ -530,6 +589,17 @@ export const SPECS: Spec[] = [
     note: 'Auditoría inmutable: la escribe solo el servidor, en la transacción de cada cambio (Parte A), y los ' +
       'scripts (promote_admin, reset_mfa, migraciones) con el Admin SDK. Ningún cliente, ni el admin.',
   },
+  {
+    name: 'driverHistory/{uid}/trips',
+    covered: false,
+    target: (r) => `driverHistory/${r === 'bloq' ? 'bloq' : 'asig'}/trips/fin`,
+    list: (db, r) => query(collection(db, 'driverHistory', r === 'bloq' ? 'bloq' : 'asig', 'trips')),
+    create: (r) => ({ path: `driverHistory/${r === 'bloq' ? 'bloq' : 'asig'}/trips/nuevo`, data: { status: 'completed' } }),
+    update: () => ({ riderRating: 5 }),
+    expect: { ...allRoles(none), asig: 'SSNNN', bloq: 'SSNNN', admin: 'SSNNN' },
+    note: 'Resumen del viaje terminado de asig (bloqueado: el suyo), sin datos del pasajero. Lo escribe solo ' +
+      'el servidor (writeDriverHistory); lo leen el chófer dueño y el admin. Otro chófer (libre) no lo lee.',
+  },
 ];
 
 /** Documentos que la matriz necesita además de seed(). */
@@ -547,6 +617,23 @@ export async function seedMatrix(db: Firestore): Promise<void> {
     await put(`bookings/${b}/driverView/preferences`, {
       riderId: 'ana', conversation: 'quiet', note: 'Nota', preferredDriverLanguages: ['es'],
     });
+  }
+  // Ventana del chófer: una reserva por estado (y su copia del bloqueado).
+  for (const st of STATE_ROWS) {
+    for (const [id, driver] of [[stateDoc(st, 'asig'), 'asig'], [stateDoc(st, 'bloq'), 'bloq']] as const) {
+      await put(`bookings/${id}`, {
+        riderId: 'ana', status: wireStatus(st), driverId: st === 'liberada' ? null : driver,
+        releasedBy: st === 'liberada' ? [driver] : [], estimatedPrice: 100, notes: 'Nota del pasajero',
+        scheduledAt: Timestamp.fromMillis(Date.now() + 3_600_000),
+      });
+      await put(`bookings/${id}/events/e1`, { from: 'confirmed', to: wireStatus(st) });
+      await put(`bookings/${id}/tracking/driver`, { lat: -17.7, lng: -63.1, updatedAt: Timestamp.now() });
+      await put(`bookings/${id}/driverContact/phone`, { phone: '+59170000555' });
+      await put(`bookings/${id}/driverView/preferences`, { riderId: 'ana', conversation: 'quiet' });
+    }
+  }
+  for (const uid of ['asig', 'bloq']) {
+    await put(`driverHistory/${uid}/trips/fin`, { bookingId: 'fin', status: 'completed', endedAt: Timestamp.now() });
   }
   await put('bookings/activa/eventLocations/e1', { lat: -17.7, lng: -63.1 });
   await put('bookings/activa/eventDetails/e1', { reason: 'Motivo del admin', farFromPickup: true });

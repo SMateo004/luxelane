@@ -21,9 +21,18 @@ beforeEach(async () => {
 });
 afterAll(async () => { await env?.cleanup(); });
 
-const dbOf = (r: Role) => (r === 'anon'
-  ? env.unauthenticatedContext().firestore()
-  : env.authenticatedContext(r).firestore()) as unknown as Firestore;
+// Un contexto por rol, reutilizado: crear uno por celda (una app de Firebase
+// cada vez) agotaba la memoria de jest con las filas por estado de la
+// ventana del chófer.
+const dbs = new Map<string, Firestore>();
+const dbOf = (r: Role): Firestore => {
+  if (!dbs.has(r)) {
+    dbs.set(r, (r === 'anon'
+      ? env.unauthenticatedContext().firestore()
+      : env.authenticatedContext(r).firestore()) as unknown as Firestore);
+  }
+  return dbs.get(r)!;
+};
 
 /** true si la operación pasó; false si las reglas la denegaron. */
 async function attempt(fn: () => Promise<unknown>): Promise<boolean> {

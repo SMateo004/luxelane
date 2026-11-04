@@ -48,6 +48,51 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `bookings/{id}/eventLocations` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/eventDetails` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/adminOnly` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · confirmed` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · driver_arriving` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · driver_arrived` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · verified` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · in_progress` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · completed` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · cancelled` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · no_show` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id} · liberada` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · confirmed` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · driver_arriving` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · driver_arrived` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · verified` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · in_progress` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · completed` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · cancelled` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · no_show` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/events · liberada` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · confirmed` | nueva | · · · · · | · · · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · driver_arriving` | nueva | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · driver_arrived` | nueva | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · verified` | nueva | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · in_progress` | nueva | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · completed` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · cancelled` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · no_show` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/tracking · liberada` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · confirmed` | nueva | · · · · · | · · · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · driver_arriving` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · driver_arrived` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · verified` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · in_progress` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · completed` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · cancelled` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · no_show` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverContact · liberada` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · confirmed` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · driver_arriving` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · driver_arrived` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · verified` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · in_progress` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · completed` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · cancelled` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · no_show` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView · liberada` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `incidents/{id}` | sí | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · |
 | `incidents/{id}/locations` | sí | · · · · · | L Li C · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C · · | L Li · · · |
 | `incidents/{id}/events` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
@@ -72,6 +117,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `adminAlerts/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `driverDevices/{uid}/devices/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `admin_logs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `driverHistory/{uid}/trips` | nueva | · · · · · | · · · · · | · · · · · | L Li · · · | · · · · · | · · · · · | L Li · · · | L Li · · · |
 
 - `users/{uid}`: Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.
 - `users/{uid}/notifications`: Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.
@@ -90,6 +136,51 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `bookings/{id}/eventLocations`: Ubicación del chófer en cada evento: solo la lee el admin.
 - `bookings/{id}/eventDetails`: Motivo del admin al forzar la verificación y control de llegada (farFromPickup): solo el admin (A8.7).
 - `bookings/{id}/adminOnly`: Estado de incidentes de la reserva: solo lo lee el admin.
+- `bookings/{id} · confirmed`: Reserva en confirmed. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id} · driver_arriving`: Reserva en driver_arriving. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id} · driver_arrived`: Reserva en driver_arrived. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id} · verified`: Reserva en verified. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id} · in_progress`: Reserva en in_progress. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id} · completed`: Reserva en completed. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id} · cancelled`: Reserva en cancelled. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id} · no_show`: Reserva en no_show. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id} · liberada`: Reserva en pending tras liberarla asig (driverId vacío, asig en releasedBy). Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/events · confirmed`: Reserva en confirmed, subcolección events. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/events · driver_arriving`: Reserva en driver_arriving, subcolección events. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/events · driver_arrived`: Reserva en driver_arrived, subcolección events. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/events · verified`: Reserva en verified, subcolección events. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/events · in_progress`: Reserva en in_progress, subcolección events. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/events · completed`: Reserva en completed, subcolección events. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/events · cancelled`: Reserva en cancelled, subcolección events. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/events · no_show`: Reserva en no_show, subcolección events. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/events · liberada`: Reserva en pending tras liberarla asig (driverId vacío, asig en releasedBy), subcolección events. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/tracking · confirmed`: Reserva en confirmed, subcolección tracking. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/tracking · driver_arriving`: Reserva en driver_arriving, subcolección tracking. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/tracking · driver_arrived`: Reserva en driver_arrived, subcolección tracking. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/tracking · verified`: Reserva en verified, subcolección tracking. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/tracking · in_progress`: Reserva en in_progress, subcolección tracking. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/tracking · completed`: Reserva en completed, subcolección tracking. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/tracking · cancelled`: Reserva en cancelled, subcolección tracking. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/tracking · no_show`: Reserva en no_show, subcolección tracking. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/tracking · liberada`: Reserva en pending tras liberarla asig (driverId vacío, asig en releasedBy), subcolección tracking. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverContact · confirmed`: Reserva en confirmed, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverContact · driver_arriving`: Reserva en driver_arriving, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverContact · driver_arrived`: Reserva en driver_arrived, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverContact · verified`: Reserva en verified, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverContact · in_progress`: Reserva en in_progress, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverContact · completed`: Reserva en completed, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverContact · cancelled`: Reserva en cancelled, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverContact · no_show`: Reserva en no_show, subcolección driverContact. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverContact · liberada`: Reserva en pending tras liberarla asig (driverId vacío, asig en releasedBy), subcolección driverContact. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverView · confirmed`: Reserva en confirmed, subcolección driverView. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverView · driver_arriving`: Reserva en driver_arriving, subcolección driverView. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverView · driver_arrived`: Reserva en driver_arrived, subcolección driverView. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverView · verified`: Reserva en verified, subcolección driverView. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverView · in_progress`: Reserva en in_progress, subcolección driverView. Listar del chófer = sus reservas en ese estado. Dentro de la ventana del chófer.
+- `bookings/{id}/driverView · completed`: Reserva en completed, subcolección driverView. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverView · cancelled`: Reserva en cancelled, subcolección driverView. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverView · no_show`: Reserva en no_show, subcolección driverView. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
+- `bookings/{id}/driverView · liberada`: Reserva en pending tras liberarla asig (driverId vacío, asig en releasedBy), subcolección driverView. Listar del chófer = sus reservas en ese estado. Fuera de la ventana del chófer: no la lee (decisión 1).
 - `incidents/{id}`: Aviso SOS de ana en activa (bloqueado: el suyo en activaBloq). La contraparte (asig) no lo ve.
 - `incidents/{id}/locations`: Ubicación de quien pidió ayuda (tramo de 10 s). Un bloqueado también puede pedir ayuda.
 - `incidents/{id}/events`: Registro del incidente: solo el admin lo lee.
@@ -114,6 +205,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `adminAlerts/{id}`: Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.
 - `driverDevices/{uid}/devices/{id}`: Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ni el propio chófer. Alerta baja por dispositivo nuevo, y por el primero si ya está verificado (C2).
 - `admin_logs/{id}`: Auditoría inmutable: la escribe solo el servidor, en la transacción de cada cambio (Parte A), y los scripts (promote_admin, reset_mfa, migraciones) con el Admin SDK. Ningún cliente, ni el admin.
+- `driverHistory/{uid}/trips`: Resumen del viaje terminado de asig (bloqueado: el suyo), sin datos del pasajero. Lo escribe solo el servidor (writeDriverHistory); lo leen el chófer dueño y el admin. Otro chófer (libre) no lo lee.
 <!-- matriz:fin -->
 
 Pagos, Parte B: sin cambios de reglas. Las apps leen

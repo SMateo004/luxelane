@@ -314,14 +314,24 @@ class _IdlePanel extends StatelessWidget {
             child: IntrinsicHeight(
               child: Row(
                 children: [
+                  // Del historial (driverHistory, ventana del chófer B1):
+                  // mientras carga o si falló, «—» y no un cero engañoso.
                   _Metric(
-                    value: LuxFormat.money(state.todayEarnings),
+                    value: state.history == null
+                        ? '—'
+                        : LuxFormat.money(state.todayEarnings),
                     label: l10n.driverHomeNetEarnings,
                     big: true,
+                    semanticsValue:
+                        state.history == null && !state.historyFailed
+                            ? l10n.driverHistoryLoading
+                            : null,
                   ),
                   const LuxDivider(vertical: true),
                   _Metric(
-                    value: '${state.completedToday.length}',
+                    value: state.history == null
+                        ? '—'
+                        : '${state.completedToday.length}',
                     label: l10n.driverHomeTrips,
                   ),
                   const LuxDivider(vertical: true),
@@ -334,6 +344,28 @@ class _IdlePanel extends StatelessWidget {
             ),
           ),
         ),
+        if (state.historyFailed) ...[
+          const SizedBox(height: LuxSpacing.sm),
+          item(
+            Semantics(
+              liveRegion: true,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(l10n.driverHistoryLoadFailed,
+                        style: LuxTypography.bodyMedium),
+                  ),
+                  TextButton(
+                    onPressed: () => context
+                        .read<DriverBloc>()
+                        .add(DriverHistoryWatched(driverId: state.user.id)),
+                    child: Text(l10n.driverRetry),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
         if (upcoming.isNotEmpty) ...[
           const SizedBox(height: LuxSpacing.xl),
           item(SectionHeader(title: l10n.driverHomeUpcoming)),
@@ -560,31 +592,48 @@ class _GoControlState extends State<_GoControl>
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({required this.value, required this.label, this.big = false});
+  const _Metric({
+    required this.value,
+    required this.label,
+    this.big = false,
+    this.semanticsValue,
+  });
   final String value;
   final String label;
   final bool big;
 
+  /// Lo que lee el lector de pantalla en lugar de [value] (p. ej. cargando).
+  final String? semanticsValue;
+
   @override
   Widget build(BuildContext context) => Expanded(
         flex: big ? 4 : 3,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: LuxTypography.headlineLarge.copyWith(
-                  fontSize: big ? 28 : 24,
-                  color: LuxColors.ink,
-                ),
+        child: semanticsValue == null
+            ? _column()
+            : Semantics(
+                container: true,
+                label: '$label: $semanticsValue',
+                excludeSemantics: true,
+                child: _column(),
+              ),
+      );
+
+  Widget _column() => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: LuxTypography.headlineLarge.copyWith(
+                fontSize: big ? 28 : 24,
+                color: LuxColors.ink,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(label, style: LuxTypography.caption),
-          ],
-        ),
+          ),
+          const SizedBox(height: 2),
+          Text(label, style: LuxTypography.caption),
+        ],
       );
 }
 

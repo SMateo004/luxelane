@@ -1,0 +1,790 @@
+{
+  "generado": "2026-11-04T13:34:30.508Z",
+  "idiomas": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "capturas": [
+    {
+      "idioma": "es",
+      "estado": "w04-cierre-terminado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/w04-cierre-terminado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w04-cierre-terminado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/w04-cierre-terminado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w04-cierre-terminado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/w04-cierre-terminado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w04-cierre-terminado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/w04-cierre-terminado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w04-cierre-terminado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/w04-cierre-terminado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w04-cierre-terminado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/w04-cierre-terminado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w04-cierre-terminado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/w04-cierre-terminado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w04-cierre-terminado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/w04-cierre-terminado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w04-cierre-terminado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/w04-cierre-terminado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w04-cierre-terminado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/w04-cierre-terminado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w04-cierre-terminado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/w04-cierre-terminado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w04-cierre-terminado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/w04-cierre-terminado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/w05-cierre-cancelado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/w05-cierre-cancelado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/w05-cierre-cancelado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/w05-cierre-cancelado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/w05-cierre-cancelado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/w05-cierre-cancelado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/w05-cierre-cancelado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/w05-cierre-cancelado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/w05-cierre-cancelado_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/w05-cierre-cancelado_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/w05-cierre-cancelado_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w05-cierre-cancelado",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/w05-cierre-cancelado_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w01-ganancias",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/w01-ganancias_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w01-ganancias",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/w01-ganancias_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w01-ganancias",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/w01-ganancias_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w01-ganancias",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/w01-ganancias_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w01-ganancias",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/w01-ganancias_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w01-ganancias",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/w01-ganancias_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w01-ganancias",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/w01-ganancias_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w01-ganancias",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/w01-ganancias_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w01-ganancias",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/w01-ganancias_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w01-ganancias",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/w01-ganancias_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w01-ganancias",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/w01-ganancias_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w01-ganancias",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/w01-ganancias_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/w02-ganancias-vacio_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/w02-ganancias-vacio_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/w02-ganancias-vacio_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/w02-ganancias-vacio_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/w02-ganancias-vacio_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/w02-ganancias-vacio_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/w02-ganancias-vacio_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/w02-ganancias-vacio_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/w02-ganancias-vacio_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/w02-ganancias-vacio_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/w02-ganancias-vacio_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w02-ganancias-vacio",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/w02-ganancias-vacio_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w03-inicio-hoy",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "es/w03-inicio-hoy_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w03-inicio-hoy",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "es/w03-inicio-hoy_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w03-inicio-hoy",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "es/w03-inicio-hoy_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "w03-inicio-hoy",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "es/w03-inicio-hoy_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w03-inicio-hoy",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "en/w03-inicio-hoy_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w03-inicio-hoy",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "en/w03-inicio-hoy_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w03-inicio-hoy",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "en/w03-inicio-hoy_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "w03-inicio-hoy",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "en/w03-inicio-hoy_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w03-inicio-hoy",
+      "ancho": 390,
+      "escalaTexto": 1,
+      "archivo": "pt/w03-inicio-hoy_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w03-inicio-hoy",
+      "ancho": 768,
+      "escalaTexto": 1,
+      "archivo": "pt/w03-inicio-hoy_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w03-inicio-hoy",
+      "ancho": 1280,
+      "escalaTexto": 1,
+      "archivo": "pt/w03-inicio-hoy_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "pt",
+      "estado": "w03-inicio-hoy",
+      "ancho": 390,
+      "escalaTexto": 2,
+      "archivo": "pt/w03-inicio-hoy_390_x2.png",
+      "resultado": "ok",
+      "motivo": ""
+    }
+  ],
+  "semantica": [
+    {
+      "idioma": "es",
+      "estado": "w04-cierre-terminado",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Lo verás en tu historial.",
+        "Volver a solicitudes Volver a solicitudes"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "w04-cierre-terminado",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "You will see it in your history.",
+        "Back to requests Back to requests"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "w04-cierre-terminado",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Você vai vê-la no seu histórico.",
+        "Voltar às solicitações Voltar às solicitações"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "w05-cierre-cancelado",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Ya no tienes que ir a la recogida.",
+        "Volver a solicitudes Volver a solicitudes"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "w05-cierre-cancelado",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "You no longer need to go to the pickup.",
+        "Back to requests Back to requests"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "w05-cierre-cancelado",
+      "interactivos": 1,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Você não precisa mais ir ao embarque.",
+        "Voltar às solicitações Voltar às solicitações"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "w01-ganancias",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Ganancias",
+        "TUS GANANCIAS NETAS Bs 412 4 viajes completados Tarifas de tus viajes Bs 515 Comisión Luxelane − Bs 103 Los viajes provisionales se calculan con una comisión del 20 % hasta que se confirme su liquidación.",
+        "VIAJES COMPLETADOS",
+        "Santa Cruz de la Sierra Hoy · 08:58 · tarifa Bs 95 · 20 % Bs 76 Provisional Santa Cruz de la Sierra Hoy · 07:58 · tarifa Bs 120 · 20 % Bs 96 Por horas · Aeropuerto mar 3 nov · 07:28 · tarifa Bs 300 · 20 % Bs 240 Santa Cruz de la Sierra dom 1 nov · 09:28 · reembolsado Bs 0",
+        "Conducir Pestaña 1 de 4",
+        "Solicitudes Pestaña 2 de 4",
+        "Ganancias Pestaña 3 de 4",
+        "Perfil Pestaña 4 de 4"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "w01-ganancias",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Earnings",
+        "YOUR NET EARNINGS Bs 412 4 completed trips Fares for your trips Bs 515 Luxelane commission − Bs 103 Provisional trips are calculated with a 20 % commission until their settlement is confirmed.",
+        "COMPLETED TRIPS",
+        "Santa Cruz de la Sierra Today · 8:58 AM · fare Bs 95 · 20 % Bs 76 Provisional Santa Cruz de la Sierra Today · 7:58 AM · fare Bs 120 · 20 % Bs 96 By the hour · Aeropuerto Tue 3 Nov · 7:28 AM · fare Bs 300 · 20 % Bs 240 Santa Cruz de la Sierra Sun 1 Nov · 9:28 AM · refunded Bs 0",
+        "Drive Tab 1 of 4",
+        "Requests Tab 2 of 4",
+        "Profile Tab 4 of 4"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "w01-ganancias",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Ganhos",
+        "SEUS GANHOS LÍQUIDOS Bs 412 4 viagens concluídas Tarifas das suas viagens Bs 515 Comissão Luxelane − Bs 103 As viagens provisórias são calculadas com uma comissão de 20 % até que a liquidação seja confirmada.",
+        "VIAGENS CONCLUÍDAS",
+        "Santa Cruz de la Sierra Hoje · 08:58 · tarifa Bs 95 · 20 % Bs 76 Provisório Santa Cruz de la Sierra Hoje · 07:58 · tarifa Bs 120 · 20 % Bs 96 Por hora · Aeropuerto ter. 3 nov. · 07:28 · tarifa Bs 300 · 20 % Bs 240 Santa Cruz de la Sierra dom. 1 nov. · 09:28 · reembolsado Bs 0",
+        "Dirigir Guia 1 de 4",
+        "Solicitações Guia 2 de 4",
+        "Perfil Guia 4 de 4"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "w02-ganancias-vacio",
+      "interactivos": 4,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Ganancias",
+        "TUS GANANCIAS NETAS Bs 0 0 viajes completados Tarifas de tus viajes Bs 0 Comisión Luxelane − Bs 0",
+        "VIAJES COMPLETADOS",
+        "Tu primer viaje aparecerá aquí.",
+        "Conducir Pestaña 1 de 4",
+        "Solicitudes Pestaña 2 de 4",
+        "Ganancias Pestaña 3 de 4",
+        "Perfil Pestaña 4 de 4"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "w02-ganancias-vacio",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Earnings",
+        "YOUR NET EARNINGS Bs 0 0 completed trips Fares for your trips Bs 0 Luxelane commission − Bs 0",
+        "COMPLETED TRIPS",
+        "Your first trip will appear here.",
+        "Drive Tab 1 of 4",
+        "Requests Tab 2 of 4",
+        "Profile Tab 4 of 4"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "w02-ganancias-vacio",
+      "interactivos": 3,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Ganhos",
+        "SEUS GANHOS LÍQUIDOS Bs 0 1 viagem concluída Tarifas das suas viagens Bs 0 Comissão Luxelane − Bs 0",
+        "VIAGENS CONCLUÍDAS",
+        "Sua primeira viagem aparecerá aqui.",
+        "Dirigir Guia 1 de 4",
+        "Solicitações Guia 2 de 4",
+        "Perfil Guia 4 de 4"
+      ]
+    },
+    {
+      "idioma": "es",
+      "estado": "w03-inicio-hoy",
+      "interactivos": 8,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Activa la verificación en dos pasos Pronto será obligatoria para entrar. Tarda un minuto.",
+        "Notificaciones",
+        "Desconectarme",
+        "HOY",
+        "Bs 172 Ganancias netas 2 Viajes ★ 4.9 Valoración",
+        "Conducir Pestaña 1 de 4",
+        "Solicitudes Pestaña 2 de 4",
+        "Ganancias Pestaña 3 de 4",
+        "Perfil Pestaña 4 de 4"
+      ]
+    },
+    {
+      "idioma": "en",
+      "estado": "w03-inicio-hoy",
+      "interactivos": 7,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Turn on two-step verification It will soon be required to sign in. It takes a minute.",
+        "Notifications",
+        "Go offline",
+        "TODAY",
+        "Bs 172 Net earnings 2 Trips ★ 4.9 Rating",
+        "Drive Tab 1 of 4",
+        "Requests Tab 2 of 4",
+        "Earnings",
+        "Profile Tab 4 of 4"
+      ]
+    },
+    {
+      "idioma": "pt",
+      "estado": "w03-inicio-hoy",
+      "interactivos": 7,
+      "sinEtiqueta": 0,
+      "sinEtiquetaDetalle": [],
+      "pequenos": [],
+      "textos": [
+        "Ative a verificação em duas etapas Em breve será obrigatória para entrar. Leva um minuto.",
+        "Notificações",
+        "Ficar offline",
+        "HOJE",
+        "Bs 172 Ganhos líquidos 2 Viagens ★ 4.9 Avaliação",
+        "Dirigir Guia 1 de 4",
+        "Solicitações Guia 2 de 4",
+        "Ganhos",
+        "Perfil Guia 4 de 4"
+      ]
+    }
+  ]
+}

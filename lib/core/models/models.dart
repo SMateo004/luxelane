@@ -307,6 +307,16 @@ const kBusyLead = Duration(minutes: 60);
 ///
 /// Lo fija el servidor (Cloud Function `settleBooking`) con la comisión
 /// vigente al completar el viaje; la app solo lo lee.
+/// Estados en los que el chófer asignado lee la reserva (ventana del
+/// chófer, decisión 1; la misma lista que inDriverWindow en firestore.rules).
+const kDriverWindowStatuses = <BookingStatus>[
+  BookingStatus.confirmed,
+  BookingStatus.driverArriving,
+  BookingStatus.driverArrived,
+  BookingStatus.verified,
+  BookingStatus.inProgress,
+];
+
 class BookingSettlement {
   const BookingSettlement({
     required this.amount,

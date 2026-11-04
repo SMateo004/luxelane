@@ -19,6 +19,7 @@ import '../../features/booking/data/repositories/booking_repository_impl.dart';
 import '../../features/booking/data/repositories/vehicle_repository_impl.dart';
 import '../../features/booking/domain/usecases/booking_usecases.dart';
 import '../../features/booking/presentation/bloc/booking_bloc.dart';
+import '../../features/driver/data/driver_history_repository.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/incidents/data/incident_repository_impl.dart';
 import '../../features/notifications/presentation/bloc/notification_bloc.dart';
@@ -112,6 +113,9 @@ void _registerRepositories() {
   sl.registerLazySingleton<VehicleRepository>(
     () => VehicleRepositoryImpl(firestore: sl()),
   );
+  sl.registerLazySingleton<DriverHistoryRepository>(
+    () => FirestoreDriverHistoryRepository(sl()),
+  );
   sl.registerLazySingleton<AirportRepository>(
     () => FirestoreAirportRepository(sl()),
   );
@@ -190,6 +194,7 @@ void _registerBlocs() {
       vehicleRepository: sl(),
       mapsService: sl(),
       registrationRepository: sl(),
+      historyRepository: sl(),
     ),
   );
 }

@@ -136,8 +136,16 @@ class BookingRepositoryImpl implements BookingRepository {
       });
 
   @override
-  Stream<List<Booking>> watchDriverBookings(String driverId) =>
-      _col.where('driverId', isEqualTo: driverId).snapshots().map((snap) {
+  Stream<List<Booking>> watchDriverBookings(String driverId) => _col
+      .where('driverId', isEqualTo: driverId)
+      // Ventana del chófer (decisión 1): las reglas solo le dejan leer
+      // sus reservas entre confirmed e in_progress; sin este filtro la
+      // consulta entera se rechaza. Las terminadas salen de la lista y
+      // su historial está en driverHistory.
+      .where('status',
+          whereIn: [for (final s in kDriverWindowStatuses) s.label])
+      .snapshots()
+      .map((snap) {
         final list = snap.docs
             .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
             .toList();

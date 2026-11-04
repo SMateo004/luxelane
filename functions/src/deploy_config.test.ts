@@ -4,6 +4,7 @@
  * sin preguntar) y las funciones retiradas tienen su borrado documentado.
  */
 import { describe, it, expect } from '@jest/globals';
+import { execFileSync } from 'child_process';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -77,6 +78,17 @@ describe('docs/AUDITORIA_LUXLANE.md', () => {
     expect(audit).toContain('airports_parity.test.ts');
     expect(audit).toMatch(/PENDIENTE: Prompt 15C \(fuente de la ATT\)/);
     expect(audit).toMatch(/PENDIENTE ANTES DEL PILOTO[^\n]*lee la reserva entera/);
+  });
+
+  it('ventana del chófer: qué se guarda, quién lo lee y las preguntas para el abogado', () => {
+    const i = audit.indexOf('## O. Ventana del chófer');
+    const o = i < 0 ? '' : audit.slice(i, audit.indexOf('\n## ', i + 5));
+    expect(o).not.toBe('');
+    expect(o).toContain('driverHistory/{uid}/trips/{bookingId}');
+    expect(o).toContain('SUMMARY_FIELDS');
+    expect(o).toMatch(/PREGUNTAS PARA EL ABOGADO/);
+    expect(o).toMatch(/Retención del resumen/);
+    expect(o).toMatch(/deleteAccount/);
   });
 });
 
@@ -179,5 +191,32 @@ describe('DEPLOY.md: vuelos', () => {
   });
   it('dice qué ve una app anterior', () => {
     expect(section).toContain('### Qué ve una app anterior');
+  });
+});
+
+describe('DEPLOY.md: ventana del chófer', () => {
+  const i = deploy.indexOf('## Ventana del chófer');
+  const section = i < 0 ? '' : deploy.slice(i, deploy.indexOf('\n## ', i + 5));
+  it('orden: functions, app del chófer, minDriverAppVersion y reglas al final', () => {
+    expect(section).not.toBe('');
+    const at = (s: string) => section.indexOf(s);
+    expect(at('1. **Functions')).toBeGreaterThan(-1);
+    expect(at('1. **Functions')).toBeLessThan(at('2. **App del chófer**'));
+    expect(at('2. **App del chófer**')).toBeLessThan(at('3. **`minDriverAppVersion`**'));
+    expect(at('3. **`minDriverAppVersion`**')).toBeLessThan(at('4. **Reglas al final'));
+  });
+  it('dice qué ve una app anterior del chófer y que los viajes ya cerrados no tienen resumen', () => {
+    expect(section).toContain('### Qué ve una app anterior del chófer');
+    expect(section).toMatch(/no ve ni el viaje en curso/);
+    expect(section).toMatch(/no tienen resumen/);
+    expect(section).toContain('writeDriverHistoryOnBooking');
+    expect(section).toMatch(/no lee `driverHistory`/);
+  });
+});
+
+describe('repositorio limpio', () => {
+  it('ningún node_modules versionado (ni como enlace simbólico)', () => {
+    const files = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n');
+    expect(files.filter((f) => /(^|\/)node_modules(\/|$)/.test(f))).toEqual([]);
   });
 });

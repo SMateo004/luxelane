@@ -78,3 +78,7 @@ tools/experiencia/node_modules/
 # tools/experiencia/capturas.cjs (se suben las hojas de contacto y los JSON).
 docs/capturas/**/*.png
 !docs/capturas/antes-despues/**/*.png
+
+# node_modules también como enlace simbólico (los worktrees lo enlazan): sin
+# barra final, para que tampoco se versione el enlace.
+**/node_modules

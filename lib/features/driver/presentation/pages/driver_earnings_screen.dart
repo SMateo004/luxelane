@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/models/driver_trip.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
@@ -23,16 +24,39 @@ class DriverEarningsScreen extends StatelessWidget {
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) return const LuxSkeletonList();
-
-          final completed = [...state.completedBookings]
-            ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+          final l10n = context.l10n;
+          // Historial (driverHistory, ventana del chófer B1): cargando,
+          // error con reintento, vacío o la lista.
+          if (state.history == null && state.historyFailed) {
+            return EmptyState(
+              icon: Icons.cloud_off_outlined,
+              message: l10n.driverHistoryLoadFailed,
+              actionLabel: l10n.driverRetry,
+              onAction: () => context
+                  .read<DriverBloc>()
+                  .add(DriverHistoryWatched(driverId: state.user.id)),
+            );
+          }
+          if (state.history == null) {
+            return Semantics(
+              container: true,
+              excludeSemantics: true,
+              label: l10n.driverHistoryLoading,
+              child: const LuxSkeletonList(),
+            );
+          }
+          final completed = state.completedTrips;
 
           return ListView(
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
+              if (state.historyFailed) ...[
+                _HistoryErrorBanner(driverId: state.user.id),
+                const SizedBox(height: LuxSpacing.md),
+              ],
               LuxFadeIn(child: _EarningsSummary(state: state)),
               const SizedBox(height: LuxSpacing.lg),
-              SectionHeader(title: context.l10n.driverEarningsCompleted),
+              SectionHeader(title: l10n.driverEarningsCompleted),
               const SizedBox(height: LuxSpacing.sm + 2),
               if (completed.isEmpty)
                 const _EmptyEarnings()
@@ -41,8 +65,8 @@ class DriverEarningsScreen extends StatelessWidget {
                   index: 1,
                   child: LuxGroup(
                     children: [
-                      for (final b in completed)
-                        _EarningsCard(booking: b, split: state.earningsOf(b)),
+                      for (final t in completed)
+                        _EarningsCard(trip: t, split: state.earningsOf(t)),
                     ],
                   ),
                 ),
@@ -54,13 +78,42 @@ class DriverEarningsScreen extends StatelessWidget {
   }
 }
 
+/// El historial ya cargado dejó de actualizarse: se avisa sin tapar lo que
+/// ya se ve, con reintento.
+class _HistoryErrorBanner extends StatelessWidget {
+  const _HistoryErrorBanner({required this.driverId});
+  final String driverId;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Semantics(
+      liveRegion: true,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(l10n.driverHistoryLoadFailed,
+                style: LuxTypography.bodyMedium),
+          ),
+          TextButton(
+            onPressed: () => context
+                .read<DriverBloc>()
+                .add(DriverHistoryWatched(driverId: driverId)),
+            child: Text(l10n.driverRetry),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _EarningsSummary extends StatelessWidget {
   const _EarningsSummary({required this.state});
   final DriverLoaded state;
 
   @override
   Widget build(BuildContext context) {
-    final rides = state.completedBookings.length;
+    final rides = state.completedTrips.length;
     final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.fromLTRB(
@@ -139,14 +192,20 @@ class _Line extends StatelessWidget {
 }
 
 class _EarningsCard extends StatelessWidget {
-  const _EarningsCard({required this.booking, required this.split});
-  final Booking booking;
+  const _EarningsCard({required this.trip, required this.split});
+  final DriverTripSummary trip;
   final BookingSettlement split;
 
   @override
   Widget build(BuildContext context) {
-    final provisional = booking.settlement == null && !booking.refunded;
-    final hourly = booking.serviceType == ServiceType.byTheHour;
+    final l10n = context.l10n;
+    final provisional = trip.settlement == null && !trip.refunded;
+    final hourly = trip.serviceType == ServiceType.byTheHour;
+    // Solo la zona (sin dirección exacta): el resumen no tiene más.
+    final area = (hourly ? trip.pickupArea : trip.dropoffArea) ??
+        trip.pickupArea ??
+        l10n.driverEarningsAreaUnknown;
+    final date = trip.endedAt == null ? '—' : LuxFormat.dateTime(trip.endedAt!);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 13, 16, 13),
       child: Row(
@@ -156,24 +215,17 @@ class _EarningsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  hourly
-                      ? context.l10n.driverHourlyFrom(
-                          booking.hours ?? 2,
-                          booking.origin.displayName,
-                        )
-                      : booking.destination.displayName,
+                  hourly ? l10n.driverEarningsTripArea(area) : area,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  booking.refunded
-                      ? context.l10n.driverEarningsRefunded(
-                          LuxFormat.dateTime(booking.scheduledAt),
-                        )
-                      : context.l10n.driverEarningsFareLine(
-                          LuxFormat.dateTime(booking.scheduledAt),
+                  trip.refunded
+                      ? l10n.driverEarningsRefunded(date)
+                      : l10n.driverEarningsFareLine(
+                          date,
                           _bs(split.amount),
                           _pct(split.commissionPct),
                         ),
@@ -194,7 +246,7 @@ class _EarningsCard extends StatelessWidget {
               ),
               if (provisional)
                 Text(
-                  context.l10n.driverEarningsProvisional,
+                  l10n.driverEarningsProvisional,
                   style: LuxTypography.caption.copyWith(
                     color: LuxColors.warning,
                     fontSize: 11,

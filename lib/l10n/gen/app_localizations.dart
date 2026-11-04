@@ -5896,6 +5896,84 @@ abstract class AppLocalizations {
   /// **'Van'**
   String get regBodyVan;
 
+  /// Ventana del chófer: cierre del viaje terminado.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje terminado'**
+  String get driverTripClosedCompletedTitle;
+
+  /// Ventana del chófer: dónde verá el viaje terminado.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo verás en tu historial.'**
+  String get driverTripClosedCompletedBody;
+
+  /// Ventana del chófer: cierre tras marcar que el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcaste que el pasajero no se presentó'**
+  String get driverTripClosedNoShowTitle;
+
+  /// Ventana del chófer: qué pasa tras «no se presentó».
+  ///
+  /// In es, this message translates to:
+  /// **'Central revisará el viaje.'**
+  String get driverTripClosedNoShowBody;
+
+  /// Ventana del chófer: el viaje se canceló mientras el chófer lo tenía abierto.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje se canceló'**
+  String get driverTripClosedCancelledTitle;
+
+  /// Ventana del chófer: tras la cancelación.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya no tienes que ir a la recogida.'**
+  String get driverTripClosedCancelledBody;
+
+  /// Ventana del chófer: el viaje dejó de estar a cargo del chófer y no se sabe aún cómo terminó.
+  ///
+  /// In es, this message translates to:
+  /// **'Este viaje ya no está a tu cargo'**
+  String get driverTripClosedOtherTitle;
+
+  /// Ventana del chófer: qué hacer si no sabe por qué.
+  ///
+  /// In es, this message translates to:
+  /// **'Si tienes dudas, consulta con central.'**
+  String get driverTripClosedOtherBody;
+
+  /// Ventana del chófer: botón para volver a las solicitudes.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a solicitudes'**
+  String get driverTripClosedBack;
+
+  /// Historial del chófer: no se pudieron leer los viajes terminados.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar tus viajes terminados.'**
+  String get driverHistoryLoadFailed;
+
+  /// Historial del chófer: lectura en curso (lector de pantalla).
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando tus viajes terminados'**
+  String get driverHistoryLoading;
+
+  /// Ganancias: viaje por horas, con la zona de recogida (sin dirección exacta).
+  ///
+  /// In es, this message translates to:
+  /// **'Por horas · {area}'**
+  String driverEarningsTripArea(String area);
+
+  /// Ganancias: viaje sin zona registrada.
+  ///
+  /// In es, this message translates to:
+  /// **'Zona sin registrar'**
+  String get driverEarningsAreaUnknown;
+
   /// Error: el servidor o Firebase limitó los intentos.
   ///
   /// In es, this message translates to:

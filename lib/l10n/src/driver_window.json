@@ -1,0 +1,85 @@
+{
+  "driverTripClosedCompletedTitle": {
+    "description": "Ventana del chófer: cierre del viaje terminado.",
+    "es": "Viaje terminado",
+    "en": "Trip completed",
+    "pt": "Viagem concluída"
+  },
+  "driverTripClosedCompletedBody": {
+    "description": "Ventana del chófer: dónde verá el viaje terminado.",
+    "es": "Lo verás en tu historial.",
+    "en": "You will see it in your history.",
+    "pt": "Você vai vê-la no seu histórico."
+  },
+  "driverTripClosedNoShowTitle": {
+    "description": "Ventana del chófer: cierre tras marcar que el pasajero no se presentó.",
+    "es": "Marcaste que el pasajero no se presentó",
+    "en": "You marked the passenger as a no-show",
+    "pt": "Você marcou que o passageiro não compareceu"
+  },
+  "driverTripClosedNoShowBody": {
+    "description": "Ventana del chófer: qué pasa tras «no se presentó».",
+    "es": "Central revisará el viaje.",
+    "en": "Our team will review the trip.",
+    "pt": "A central vai revisar a viagem."
+  },
+  "driverTripClosedCancelledTitle": {
+    "description": "Ventana del chófer: el viaje se canceló mientras el chófer lo tenía abierto.",
+    "es": "El viaje se canceló",
+    "en": "The trip was cancelled",
+    "pt": "A viagem foi cancelada"
+  },
+  "driverTripClosedCancelledBody": {
+    "description": "Ventana del chófer: tras la cancelación.",
+    "es": "Ya no tienes que ir a la recogida.",
+    "en": "You no longer need to go to the pickup.",
+    "pt": "Você não precisa mais ir ao embarque."
+  },
+  "driverTripClosedOtherTitle": {
+    "description": "Ventana del chófer: el viaje dejó de estar a cargo del chófer y no se sabe aún cómo terminó.",
+    "es": "Este viaje ya no está a tu cargo",
+    "en": "This trip is no longer assigned to you",
+    "pt": "Esta viagem não está mais com você"
+  },
+  "driverTripClosedOtherBody": {
+    "description": "Ventana del chófer: qué hacer si no sabe por qué.",
+    "es": "Si tienes dudas, consulta con central.",
+    "en": "If in doubt, check with our team.",
+    "pt": "Em caso de dúvida, consulte a central."
+  },
+  "driverTripClosedBack": {
+    "description": "Ventana del chófer: botón para volver a las solicitudes.",
+    "es": "Volver a solicitudes",
+    "en": "Back to requests",
+    "pt": "Voltar às solicitações"
+  },
+  "driverHistoryLoadFailed": {
+    "description": "Historial del chófer: no se pudieron leer los viajes terminados.",
+    "es": "No se pudieron cargar tus viajes terminados.",
+    "en": "We couldn't load your completed trips.",
+    "pt": "Não foi possível carregar suas viagens concluídas."
+  },
+  "driverHistoryLoading": {
+    "description": "Historial del chófer: lectura en curso (lector de pantalla).",
+    "es": "Cargando tus viajes terminados",
+    "en": "Loading your completed trips",
+    "pt": "Carregando suas viagens concluídas"
+  },
+  "driverEarningsTripArea": {
+    "description": "Ganancias: viaje por horas, con la zona de recogida (sin dirección exacta).",
+    "es": "Por horas · {area}",
+    "en": "By the hour · {area}",
+    "pt": "Por hora · {area}",
+    "placeholders": {
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsAreaUnknown": {
+    "description": "Ganancias: viaje sin zona registrada.",
+    "es": "Zona sin registrar",
+    "en": "Area not recorded",
+    "pt": "Zona não registrada"
+  }
+}
