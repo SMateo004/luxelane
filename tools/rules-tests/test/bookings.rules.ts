@@ -184,6 +184,7 @@ describe('reglas de /users', () => {
       id: 'nuevo',
       role: 'admin',
       isActive: true,
+      displayName: 'Nuevo',
     }));
   });
 

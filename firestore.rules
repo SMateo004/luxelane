@@ -91,15 +91,24 @@ service cloud.firestore {
     // desde el cliente (el alta la sigue trayendo con los valores por
     // defecto; el servidor solo lee de ahí valores de la lista cerrada).
     // locale y localeSource: idioma de la cuenta, solo updatePreferences.
+    // email y createdAt: se fijan en el alta y no cambian después.
+    // companyId y companyRole: pertenencia a una empresa, solo el servidor.
     function privilegedUserFields() {
       return ['role', 'isActive', 'stripeCustomerId', 'isVerified',
         'phoneVerified', 'emailVerifiedAt', 'terms', 'tripPreferences',
-        'ridePreferences', 'locale', 'localeSource', 'localeUpdatedAt'];
+        'ridePreferences', 'locale', 'localeSource', 'localeUpdatedAt',
+        'email', 'createdAt', 'companyId', 'companyRole'];
+    }
+
+    // Nombre visible: texto de 1 a 80 caracteres.
+    function isValidDisplayName(v) {
+      return v is string && v.size() >= 1 && v.size() <= 80;
     }
 
     // A self-created profile is always an active rider with no Stripe link,
     // sin correo ni teléfono verificados: eso lo escribe el servidor (H6).
     // La aceptación de los términos también (acceptTerms, decisión 7).
+    // Sin empresa (la asigna el servidor) y con un nombre válido.
     function isValidSelfSignup(uid) {
       let d = request.resource.data;
       return d.role == 'rider' &&
@@ -110,8 +119,10 @@ service cloud.firestore {
         !('terms' in d) &&
         !('tripPreferences' in d) &&
         !('locale' in d) && !('localeSource' in d) &&
+        !('companyId' in d) && !('companyRole' in d) &&
         d.get('stripeCustomerId', null) == null &&
-        d.get('id', uid) == uid;
+        d.get('id', uid) == uid &&
+        isValidDisplayName(d.get('displayName', null));
     }
 
     match /users/{uid} {
@@ -123,9 +134,13 @@ service cloud.firestore {
       // setUserBlocked). El admin solo lee (Parte A).
       // Con la cuenta bloqueada solo puede quitar tokens de push (al cerrar
       // sesión): ni nombre, ni teléfono, ni tokens nuevos (D1).
+      // Si cambia el nombre, el nuevo también va de 1 a 80 caracteres.
       allow update: if isOwner(uid) &&
         !request.resource.data.diff(resource.data).affectedKeys()
           .hasAny(privilegedUserFields()) &&
+        (!request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['displayName']) ||
+          isValidDisplayName(request.resource.data.get('displayName', null))) &&
         (resource.data.get('isActive', true) == true || onlyRemovingTokens());
       allow delete: if false;
     }
@@ -572,8 +587,11 @@ service cloud.firestore {
       // Lo registra el chófer en su alta; el panel no crea vehículos (A8.2).
       // El aspirante sin verificar (A10) registra su vehículo con
       // saveDriverStep (placa única, colores de la lista), no desde aquí.
+      // Desde el cliente, uno por chófer y con id fijo v_<uid>; los que crea
+      // el servidor (saveDriverStep) usan ids propios y no pasan por aquí.
       allow create: if (isDriver() && isActiveUser() && isVerifiedDriver() &&
           isOwner(request.resource.data.driverId) &&
+          vehicleId == 'v_' + request.auth.uid &&
           request.resource.data.isActive == false);
       // Activar o desactivar un vehículo es decisión del admin. Placa,
       // clase, marca, modelo y año los cambia solo el admin (H4): el chófer,

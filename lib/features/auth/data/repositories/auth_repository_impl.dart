@@ -15,6 +15,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/utils/display_name.dart';
 import '../../../../l10n/l10n.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -208,13 +209,11 @@ class AuthRepositoryImpl implements AuthRepository {
     final ref = _db.collection('users').doc(fbUser.uid);
     final doc = await ref.get();
     if (doc.exists) return User.fromJson({'id': doc.id, ...doc.data()!});
-    final email = (fbUser.email ?? '').toLowerCase();
-    final name = (fbUser.displayName ?? '').trim();
     final user = User(
       id: fbUser.uid,
       email: fbUser.email ?? '',
       phone: fbUser.phoneNumber ?? '',
-      displayName: name.isNotEmpty ? name : email.split('@').first,
+      displayName: profileDisplayName(fbUser.displayName, fbUser.email ?? ''),
       photoUrl: fbUser.photoURL,
       // Roles are granted server-side only (see firestore.rules).
       role: UserRole.rider,

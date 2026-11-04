@@ -67,9 +67,9 @@ describe('casos fuera de la tabla', () => {
   test('alta propia: un usuario nuevo crea su perfil como pasajero activo', async () => {
     dirty = true;
     expect(await attempt(() => setDoc(doc(dbOf('nuevaCuenta' as Role), 'users', 'nuevaCuenta'),
-      { id: 'nuevaCuenta', role: 'rider', isActive: true }))).toBe(true);
+      { id: 'nuevaCuenta', role: 'rider', isActive: true, displayName: 'Nueva' }))).toBe(true);
     expect(await attempt(() => setDoc(doc(dbOf('otraCuenta' as Role), 'users', 'otraCuenta'),
-      { id: 'otraCuenta', role: 'driver', isActive: true }))).toBe(false);
+      { id: 'otraCuenta', role: 'driver', isActive: true, displayName: 'Otra' }))).toBe(false);
   });
 
   test('H2: el dueño no se marca isVerified a sí mismo', async () => {
