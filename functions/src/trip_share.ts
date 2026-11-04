@@ -321,7 +321,7 @@ a{color:inherit;display:inline-block;min-height:48px;line-height:48px}
 <main>
 <h1>${esc(tx.title)}</h1>
 <noscript><p class="card">${esc(tx.noScript)}</p></noscript>
-<section id="loading" class="card" aria-live="polite">${esc(tx.loading)}</section>
+<section id="loading" class="card" aria-live="polite" hidden>${esc(tx.loading)}</section>
 <section id="gone" class="card" hidden><h2 class="status">${esc(tx.unavailableTitle)}</h2><p>${esc(tx.unavailableBody)}</p></section>
 <section id="busy" class="card" hidden><p>${esc(tx.tooMany)}</p></section>
 <section id="trip" hidden>
@@ -358,7 +358,7 @@ else{put('position',T.noPosition);$('map').hidden=true}
 $('finished').hidden=d.state!=='finished';show('trip');if(d.state==='active')later()})
 .catch(later)}
 function later(){setTimeout(tick,${POLL_SECONDS * 1000})}
-if(!token){show('gone')}else{tick()}
+if(!token){show('gone')}else{show('loading');tick()}
 })();
 </script>
 </body>

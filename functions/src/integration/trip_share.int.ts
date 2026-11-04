@@ -209,6 +209,17 @@ describe('lectura pública', () => {
     expect(page.body).toContain('Acompanhamento da viagem');
   });
 
+  it.each([['es', 'activa JavaScript'], ['en', 'turn on JavaScript'], ['pt', 'ative o JavaScript']])(
+    'sin JavaScript (%s): un aviso visible, no una página vacía ni «cargando» eterno', async (lang, text) => {
+      const page = await handleSharedTrip({ ...deps(), salt: SALT }, { method: 'GET', ip: '1.1.1.1', acceptLanguage: lang });
+      const noscript = /<noscript>([\s\S]*?)<\/noscript>/.exec(page.body)?.[1] ?? '';
+      expect(noscript).toContain(text);
+      // Lo único visible sin script: el título y ese aviso.
+      for (const id of ['loading', 'gone', 'busy', 'trip']) {
+        expect(page.body).toMatch(new RegExp(`id="${id}"[^>]*hidden`));
+      }
+    });
+
   it('cabeceras: no-store, noindex, no-referrer y CSP estricta con nonce', async () => {
     const page = await handleSharedTrip({ ...deps(), salt: SALT }, { method: 'GET', ip: '1.1.1.1' });
     expect(page.headers).toMatchObject({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow',
