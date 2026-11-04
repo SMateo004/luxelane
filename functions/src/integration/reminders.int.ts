@@ -7,8 +7,10 @@ import { describe, it, expect, beforeEach, afterAll } from '@jest/globals';
 import * as admin from 'firebase-admin';
 import { adminUpdateBooking } from '../admin_ops';
 import { cancelBooking, releaseBooking } from '../cancellation';
-import { adminSetFlightInfo } from '../flight';
-import { rescheduleRemindersOnBooking, rescheduleRemindersOnPayment } from '../index';
+import { adminForceNoShow, adminSetFlightInfo } from '../flight';
+import { rescheduleRemindersOnBooking, rescheduleRemindersOnPayment, scheduledCleanup } from '../index';
+import { applyWebhookEvent } from '../payment_card';
+import { expirePayments } from '../payment_expiry';
 import { adminConfirmPayment } from '../payment_manual';
 import { readState, rescheduleReminders, runReminders } from '../reminders';
 import { advanceBooking } from '../trip_flow';
@@ -323,3 +325,56 @@ describe('A3: caminos que recalculan nextAt', () => {
     expect((await state('b1')).nextAt).toBeNull();
   });
 });
+
+describe('A3: caminos que antes solo cubría el disparador', () => {
+  it('11. adminForceNoShow: tras «no se presentó», nada pendiente', async () => {
+    await db.doc('config/ops').set({ ...OPS, cancellationPolicy: { stages: [{ fromStatus: 'no_show', percent: 0 }],
+      noShowWaitMinutes: 15 } });
+    await booking('b1', { driverId: 'luis', status: 'confirmed' });
+    expect((await state('b1')).nextAt).not.toBeNull();
+    await db.doc('bookings/b1').update({ status: 'driver_arrived', arrivedAt: ts(clock) });
+    await adminForceNoShow(deps(), JEFA, { bookingId: 'b1', reason: REASON });
+    await sync('b1');
+    expect((await db.doc('bookings/b1').get()).data()!.status).toBe('no_show');
+    expect((await state('b1')).nextAt).toBeNull();
+    await at(ANCHOR - 10 * MIN);
+    expect(pushes).toEqual([]);
+  });
+
+  it('12. scheduledCleanup: la pagada sin chófer que vence se cancela y su alerta pendiente desaparece', async () => {
+    const past = Date.now() - 2 * 60 * MIN;
+    clock = past - 5 * 60 * MIN;
+    await booking('b1', { scheduledAt: ts(past) });
+    expect((await state('b1')).nextAt).not.toBeNull();
+    await (scheduledCleanup as unknown as Runnable).run({});
+    clock = Date.now();
+    await sync('b1');
+    expect((await db.doc('bookings/b1').get()).data()!.status).toBe('cancelled');
+    expect((await state('b1')).nextAt).toBeNull();
+  });
+
+  it('13. expirePayments: la reserva sin pagar que vence queda cancelada y sin nada pendiente', async () => {
+    await db.doc('config/ops').set({ ...OPS, paymentWindowMinutes: 30 });
+    await booking('b1', {}, false);
+    await db.doc('bookings/b1/payment/state').update({ paymentDeadline: ts(clock - MIN) });
+    expect((await expirePayments(deps())).expired).toEqual(['b1']);
+    await (rescheduleRemindersOnPayment as unknown as Runnable).run({ data: {}, params: { bookingId: 'b1' } });
+    await sync('b1');
+    expect((await db.doc('bookings/b1').get()).data()!.status).toBe('cancelled');
+    expect((await state('b1')).nextAt).toBeNull();
+  });
+
+  it('14. pago con tarjeta (webhook del proveedor): se programan los del pasajero', async () => {
+    await db.doc('config/ops').set({ ...OPS, paymentMethods: { card: true },
+      paymentInstructions: { card: { provider: 'stripe' } } });
+    await booking('b1', {}, false);
+    await db.doc('bookings/b1/payment/state').update({ paymentMethod: 'card', providerChargeRef: 'ch_ficticio' });
+    expect((await state('b1')).nextAt).toBeNull();
+    const r = await applyWebhookEvent(deps(), { type: 'charge.succeeded', bookingId: 'b1', amount: 10000,
+      externalRef: 'ch_ficticio' });
+    expect(r).toMatchObject({ applied: true, paymentStatus: 'paid' });
+    await (rescheduleRemindersOnPayment as unknown as Runnable).run({ data: {}, params: { bookingId: 'b1' } });
+    expect((await state('b1')).nextAt).toBe(ANCHOR - 120 * MIN);
+  });
+});
+
