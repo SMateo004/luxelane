@@ -116,6 +116,11 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),
   acceptBooking: per10min(30),
+  // Viaje compartido (Prompt 18, B): crear y revocar pocas veces por reserva.
+  createTripShare: per10min(10),
+  revokeTripShare: per10min(20),
+  getTripShare: per10min(60),
+  adminRevokeTripShare: per10min(30),
 };
 
 export interface RateResult { allowed: boolean; remaining: number; resetAt: number }

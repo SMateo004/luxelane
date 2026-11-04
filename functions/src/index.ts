@@ -40,6 +40,7 @@ import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { summaryDriver, writeDriverHistory } from './driver_history';
 import * as reminders from './reminders';
+import * as tripShare from './trip_share';
 import { fromCents, toCents } from './money';
 
 admin.initializeApp();
@@ -130,6 +131,50 @@ const RATE_LIMIT_SALT = defineSecret('RATE_LIMIT_SALT');
 // Diagnóstico temporal de x-forwarded-for (0.4): apagado por defecto.
 // Encender y apagar: DEPLOY.md, «Diagnóstico de x-forwarded-for».
 const XFF_DIAGNOSTIC = defineBoolean('XFF_DIAGNOSTIC', { default: false });
+
+// ---------------------------------------------------------------------------
+// Viaje compartido (Prompt 18, Parte B). TRIP_SHARE_SECRET: HMAC del token
+// (se guarda solo el hash). Sin el secreto no se crean ni se leen enlaces.
+// ---------------------------------------------------------------------------
+
+const TRIP_SHARE_SECRET = defineSecret('TRIP_SHARE_SECRET');
+const shareDeps = (): tripShare.ShareDeps => ({ db, secret: TRIP_SHARE_SECRET.value() });
+
+export const createTripShare = secureCallable('createTripShare', { secrets: [TRIP_SHARE_SECRET] }, (req) =>
+  tripShare.createTripShare(shareDeps(), req.auth?.uid, req.data));
+
+export const revokeTripShare = secureCallable('revokeTripShare', { secrets: [TRIP_SHARE_SECRET] }, (req) =>
+  tripShare.revokeTripShare(shareDeps(), req.auth?.uid, req.data));
+
+/** Si la reserva tiene un enlace activo (sin el token): su pasajero o un admin. */
+export const getTripShare = secureCallable('getTripShare', {}, async (req) => {
+  const uid = requireAuth(req);
+  const { bookingId } = parseInput(tripShare.bookingSchema, req.data);
+  const b = (await db.collection('bookings').doc(bookingId).get()).data();
+  if (b?.riderId !== uid) await requireAdmin(req);
+  return tripShare.tripShareStatus(db, bookingId);
+});
+
+export const adminRevokeTripShare = secureCallable('adminRevokeTripShare', {}, async (req) =>
+  tripShare.adminRevokeTripShare({ db }, await adminActor(req), req.data),
+{ role: 'admin', requireMfa: true, recentAuthSeconds: RECENT_AUTH_SECONDS });
+
+/**
+ * Página pública /t (hosting del pasajero, rewrite a esta función): GET la
+ * página, POST {token} el estado. Sin sesión; límite por IP con hash.
+ */
+export const sharedTrip = onRequest({ secrets: [TRIP_SHARE_SECRET, RATE_LIMIT_SALT] }, async (req, res) => {
+  const out = await tripShare.handleSharedTrip(
+    { db, secret: TRIP_SHARE_SECRET.value(), salt: RATE_LIMIT_SALT.value() },
+    {
+      method: req.method,
+      ip: businessLeads.clientIp({ data: null, rawRequest: { ip: req.ip, headers: req.headers as Record<string, string> } }),
+      acceptLanguage: req.get('accept-language') ?? undefined,
+      body: req.body,
+    },
+  );
+  res.status(out.status).set(out.headers).send(req.method === 'HEAD' ? '' : out.body);
+});
 
 export const submitBusinessLead = secureCallable('submitBusinessLead', { secrets: [RATE_LIMIT_SALT] }, (req) =>
   businessLeads.submitBusinessLead(

@@ -505,6 +505,14 @@ service cloud.firestore {
     // hora, precio, zona aproximada. La escribe y borra el servidor.
     // -------------------------------------------------------------------------
 
+    // Viaje compartido (Prompt 18, B): enlaces de seguimiento, guardados por
+    // el hash del token. Ningún cliente los lee ni los escribe, tampoco el
+    // admin: van por createTripShare, revokeTripShare, getTripShare,
+    // adminRevokeTripShare y la página pública sharedTrip.
+    match /tripShares/{hash} {
+      allow read, write: if false;
+    }
+
     // Historial del chófer (ventana del chófer, decisiones 2 y 3): resumen
     // sin datos personales que escribe el servidor al cerrar la reserva
     // (writeDriverHistory). Lo lee el chófer dueño (también bloqueado: es

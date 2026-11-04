@@ -28,6 +28,7 @@ import {
   decideSchema, docUrlSchema, expiriesSchema, overrideSchema as allowOnlineSchema, purgeSchema, reviewSchema, stepSchema, uploadSchema,
 } from './driver_application';
 import { clearLockSchema, forceNoShowSchema, setFlightSchema, upsertAirportSchema } from './flight';
+import { adminRevokeSchema, bookingSchema as shareBookingSchema } from './trip_share';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -271,6 +272,22 @@ const CASES: Record<string, Case> = {
   adminForceNoShow: {
     schema: forceNoShowSchema, valid: { bookingId: ID, reason: 'Esperó 40 min y llamó dos veces (prueba)' },
     wrongType: { bookingId: ID, reason: 12 }, extreme: [{ bookingId: LONG_ID, reason: 'Esperó 40 min y llamó dos veces' }],
+  },
+  createTripShare: {
+    schema: shareBookingSchema, valid: { bookingId: ID }, wrongType: { bookingId: 12 },
+    extreme: [{ bookingId: LONG_ID }, { bookingId: ID, extra: 1 }],
+  },
+  revokeTripShare: {
+    schema: shareBookingSchema, valid: { bookingId: ID }, wrongType: { bookingId: 12 },
+    extreme: [{ bookingId: LONG_ID }, { bookingId: ID, extra: 1 }],
+  },
+  getTripShare: {
+    schema: shareBookingSchema, valid: { bookingId: ID }, wrongType: { bookingId: 12 },
+    extreme: [{ bookingId: LONG_ID }],
+  },
+  adminRevokeTripShare: {
+    schema: adminRevokeSchema, valid: { bookingId: ID, reason: 'Pedido por el pasajero por teléfono (prueba)' },
+    wrongType: { bookingId: ID, reason: 12 }, extreme: [{ bookingId: ID, reason: 'corto' }],
   },
   adminUpsertAirport: {
     schema: upsertAirportSchema,

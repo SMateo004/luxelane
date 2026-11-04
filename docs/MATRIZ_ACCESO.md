@@ -118,6 +118,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `driverDevices/{uid}/devices/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `admin_logs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `driverHistory/{uid}/trips` | nueva | · · · · · | · · · · · | · · · · · | L Li · · · | · · · · · | · · · · · | L Li · · · | L Li · · · |
+| `tripShares/{hash}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 
 - `users/{uid}`: Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.
 - `users/{uid}/notifications`: Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.
@@ -206,6 +207,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `driverDevices/{uid}/devices/{id}`: Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ni el propio chófer. Alerta baja por dispositivo nuevo, y por el primero si ya está verificado (C2).
 - `admin_logs/{id}`: Auditoría inmutable: la escribe solo el servidor, en la transacción de cada cambio (Parte A), y los scripts (promote_admin, reset_mfa, migraciones) con el Admin SDK. Ningún cliente, ni el admin.
 - `driverHistory/{uid}/trips`: Resumen del viaje terminado de asig (bloqueado: el suyo), sin datos del pasajero. Lo escribe solo el servidor (writeDriverHistory); lo leen el chófer dueño y el admin. Otro chófer (libre) no lo lee.
+- `tripShares/{hash}`: Enlaces de seguimiento del viaje compartido (Prompt 18, B), por el hash del token: solo el servidor (createTripShare, revokeTripShare, getTripShare, adminRevokeTripShare, sharedTrip). Ni el pasajero dueño ni el admin.
 <!-- matriz:fin -->
 
 Pagos, Parte B: sin cambios de reglas. Las apps leen

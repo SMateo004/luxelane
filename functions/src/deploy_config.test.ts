@@ -220,3 +220,22 @@ describe('repositorio limpio', () => {
     expect(files.filter((f) => /(^|\/)node_modules(\/|$)/.test(f))).toEqual([]);
   });
 });
+
+describe('hosting del pasajero: viaje compartido', () => {
+  const fb = JSON.parse(readFileSync(join(root, 'firebase.json'), 'utf8'));
+  const rider = fb.hosting.find((h: { target?: string }) => h.target === 'rider');
+  it('/t y /t/** van a sharedTrip antes del comodín de la app', () => {
+    const rw = rider.rewrites as Array<{ source: string; function?: { functionId: string }; destination?: string }>;
+    const at = (src: string) => rw.findIndex((r) => r.source === src);
+    expect(rw[at('/t')].function?.functionId).toBe('sharedTrip');
+    expect(rw[at('/t/**')].function?.functionId).toBe('sharedTrip');
+    expect(at('/t')).toBeLessThan(at('**'));
+    expect(at('/t/**')).toBeLessThan(at('**'));
+  });
+  it('/t sin caché, sin indexar y sin referer; la CSP de la app no se relaja', () => {
+    const t = rider.headers.find((h: { source: string }) => h.source === '/t{,/**}');
+    const hv = Object.fromEntries(t.headers.map((h: { key: string; value: string }) => [h.key, h.value]));
+    expect(hv).toEqual({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow', 'Referrer-Policy': 'no-referrer' });
+    expect(JSON.stringify(t)).not.toMatch(/Content-Security-Policy/);
+  });
+});

@@ -1203,4 +1203,8 @@ Ninguna celda permitida.
 
 - leer: soporte y operación.
 - listar: soporte y operación.
+
+## `tripShares/{hash}`
+
+Ninguna celda permitida.
 <!-- permitidos:fin -->

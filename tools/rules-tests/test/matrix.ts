@@ -600,6 +600,17 @@ export const SPECS: Spec[] = [
     note: 'Resumen del viaje terminado de asig (bloqueado: el suyo), sin datos del pasajero. Lo escribe solo ' +
       'el servidor (writeDriverHistory); lo leen el chófer dueño y el admin. Otro chófer (libre) no lo lee.',
   },
+  {
+    name: 'tripShares/{hash}',
+    covered: false,
+    target: () => 'tripShares/h1',
+    list: (db) => query(collection(db, 'tripShares'), where('bookingId', '==', 'activa')),
+    create: (r) => ({ path: 'tripShares/nuevo', data: { bookingId: 'activa', riderId: uidOf(r) ?? 'ana', active: true } }),
+    update: () => ({ active: false }),
+    expect: allRoles(none),
+    note: 'Enlaces de seguimiento del viaje compartido (Prompt 18, B), por el hash del token: solo el servidor ' +
+      '(createTripShare, revokeTripShare, getTripShare, adminRevokeTripShare, sharedTrip). Ni el pasajero dueño ni el admin.',
+  },
 ];
 
 /** Documentos que la matriz necesita además de seed(). */
@@ -632,6 +643,7 @@ export async function seedMatrix(db: Firestore): Promise<void> {
       await put(`bookings/${id}/driverView/preferences`, { riderId: 'ana', conversation: 'quiet' });
     }
   }
+  await put('tripShares/h1', { bookingId: 'activa', riderId: 'ana', active: true, createdAt: Timestamp.now() });
   for (const uid of ['asig', 'bloq']) {
     await put(`driverHistory/${uid}/trips/fin`, { bookingId: 'fin', status: 'completed', endedAt: Timestamp.now() });
   }

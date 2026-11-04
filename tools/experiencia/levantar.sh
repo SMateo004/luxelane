@@ -22,6 +22,7 @@ STRIPE_SECRET_KEY=sk_test_ficticio_emulador
 MAPS_SERVER_KEY=
 PICKUP_CODE_SECRET=secreto-ficticio-del-emulador
 RATE_LIMIT_SALT=sal-ficticia-del-emulador
+TRIP_SHARE_SECRET=secreto-ficticio-del-emulador
 SECRETS
 
 (cd functions && npm run build >/dev/null)
