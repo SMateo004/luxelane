@@ -37,6 +37,46 @@ Test Suites: 30 passed, 30 total
 Tests:       3875 passed, 3875 total
 ```
 
+## cierre/avisos-compartir, Parte C (C1–C6, commits 5e9d639 y ce36c5b, 2026-11-04)
+
+Suite completa sobre 5e9d639, con los emuladores de Firestore, Storage y Auth
+en `demo-luxelane`. Reglas e integración corren sin las variables de proxy de
+la sesión. Desfases, minutos, secreto, sal, límites y datos de las pruebas
+son FICTICIOS.
+
+En esa suite, el análisis dio 110 avisos informativos. Los dos nuevos venían
+de `test/admin/trip_share_admin_test.dart`: un flujo sin cerrar y un argumento
+redundante. ce36c5b los corrige. Sobre ce36c5b se volvieron a correr
+`flutter analyze` (108 avisos, igual que en la base), `dart format` y ese
+archivo de test (6/6). ce36c5b solo toca ese archivo de test.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos (ce36c5b)    pasa           108 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           348 archivos, 0 cambiados       0
+flutter test                                  pasa           1115/1115                       0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           805/805 (36 de 36 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (Firestore+Storage)        pasa           3875/3875 (30 de 30 suites)     0
+npm run test:integration (demo-luxelane)      pasa           556/556 (55 de 55 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+capturas_compartir.cjs (emulador)             pasa           72/72 capturas                  0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+### Reglas anteriores con los tests nuevos
+
+Se probó el `firestore.rules` de bcc8d8c con los tests de ce36c5b: código de
+salida 0. Las Partes A y C no cambian ningún permiso. El único cambio en las
+reglas es el `match /tripShares/{hash}`, que deniega todo y solo deja escrito
+lo que ya hacía la regla por defecto.
+
+```
+Test Suites: 30 passed, 30 total
+Tests:       3875 passed, 3875 total
+```
+
 ## cierre/integracion tras fusionar cierre/ventana-chofer (commit ac23fad, 2026-11-04)
 
 `git merge --no-ff cierre/ventana-chofer` sobre c3854f8 con el worktree
