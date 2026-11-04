@@ -12,6 +12,7 @@ import '../bloc/driver_bloc.dart';
 import '../widgets/driver_preferences_card.dart';
 import '../widgets/driver_step_action.dart';
 import '../widgets/driver_trip_closed_view.dart';
+import '../widgets/driver_trip_share_notice.dart';
 import '../widgets/flight_info_card.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
@@ -291,6 +292,9 @@ class _RideInfoRow extends StatelessWidget {
             const SizedBox(height: LuxSpacing.md),
             FlightInfoCard(booking: booking),
           ],
+          // Viaje compartido (Prompt 18, C2): que no sea una sorpresa.
+          const SizedBox(height: LuxSpacing.md),
+          const DriverTripShareNotice(),
           const SizedBox(height: LuxSpacing.md),
           Container(
             padding: const EdgeInsets.all(LuxSpacing.sm),
