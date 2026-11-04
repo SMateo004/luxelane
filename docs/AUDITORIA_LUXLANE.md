@@ -308,6 +308,7 @@ Decisiones del responsable (2026-11-04): el chófer asignado y activo lee la res
 - **App anterior del chófer**: su consulta de reservas no lleva filtro de estado; con las reglas nuevas se rechaza entera y deja de ver también el viaje en curso. Por eso las reglas van al final, tras publicar la app nueva y subir `minDriverAppVersion` (DEPLOY.md, Parte B).
 - **Parte B (app y panel)**: «Ganancias de hoy» del inicio y la pantalla de ganancias del chófer leen solo `driverHistory` (completados, del más reciente al más antiguo); cada viaje muestra la zona, no la dirección exacta. Estados de carga, error con reintento y vacío. La X del detalle de la reserva del panel tiene nombre para el lector de pantalla.
 - **Viajes cerrados antes del despliegue**: no tienen resumen (el disparador solo escribe al cambiar la reserva); sin una carga inicial, el historial de la app nueva empieza en el despliegue. Decisión pendiente del responsable.
+- **Pendiente para el prompt de ganancias** (decisión del responsable, 2026-11-04): el recuento «N viajes completados» de la pantalla de ganancias incluye los viajes reembolsados (que suman 0 Bs), como antes de esta rama.
 - **PREGUNTAS PARA EL ABOGADO**:
   1. Retención del resumen `driverHistory`: cuánto tiempo se guarda. No se programa ningún borrado ni se fija plazo.
   2. Borrado de cuenta del chófer: `deleteAccount` hoy no toca `driverHistory` (el resumen queda). ¿Se borra, se conserva por obligación contable (lleva importes del reparto) o se anonimiza?
