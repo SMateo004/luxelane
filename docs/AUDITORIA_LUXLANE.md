@@ -306,6 +306,8 @@ Decisiones del responsable (2026-11-04): el chófer asignado y activo lee la res
 - **Cómo se escribe**: un disparador sobre `bookings` (no cada camino) cubre todos los caminos que cierran una reserva con chófer y los datos que llegan después (valoración, reparto, corrección del importe, reembolso). Idempotente: si el resumen ya es igual no se escribe. Los caminos sin chófer (liberar, limpieza programada, cancelar una pendiente) no dejan resumen.
 - **Registros**: el disparador solo registra el id de la reserva y si escribió; el resumen no va a los registros.
 - **App anterior del chófer**: su consulta de reservas no lleva filtro de estado; con las reglas nuevas se rechaza entera y deja de ver también el viaje en curso. Por eso las reglas van al final, tras publicar la app nueva y subir `minDriverAppVersion` (DEPLOY.md, Parte B).
+- **Parte B (app y panel)**: «Ganancias de hoy» del inicio y la pantalla de ganancias del chófer leen solo `driverHistory` (completados, del más reciente al más antiguo); cada viaje muestra la zona, no la dirección exacta. Estados de carga, error con reintento y vacío. La X del detalle de la reserva del panel tiene nombre para el lector de pantalla.
+- **Viajes cerrados antes del despliegue**: no tienen resumen (el disparador solo escribe al cambiar la reserva); sin una carga inicial, el historial de la app nueva empieza en el despliegue. Decisión pendiente del responsable.
 - **PREGUNTAS PARA EL ABOGADO**:
   1. Retención del resumen `driverHistory`: cuánto tiempo se guarda. No se programa ningún borrado ni se fija plazo.
   2. Borrado de cuenta del chófer: `deleteAccount` hoy no toca `driverHistory` (el resumen queda). ¿Se borra, se conserva por obligación contable (lleva importes del reparto) o se anonimiza?

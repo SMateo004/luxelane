@@ -369,6 +369,53 @@ En **staging**, con un Android y un iPhone, y anotar el resultado:
 5. **Web**: el registro deja completar datos y vehículo, y no ofrece subir
    documentos ni la foto en vivo.
 
+## Ventana del chófer e historial (cierre/ventana-chofer, Partes A y B)
+
+El chófer asignado lee la reserva y sus subcolecciones (`events`,
+`tracking`, `driverContact`, `driverView`) solo entre `confirmed` e
+`in_progress`; su historial y sus ganancias salen de
+`driverHistory/{uid}/trips`, que escribe el servidor sin datos del pasajero.
+**Las reglas de esta rama no se despliegan hasta publicar la app del chófer
+y subir `minDriverAppVersion`**: con ellas, la consulta de reservas de la app
+anterior se rechaza entera.
+
+### Pasos manuales previos (responsable; nada de esto lo fija el código)
+- Retención de `driverHistory` y qué hace `deleteAccount` con él: pendiente
+  del abogado (auditoría, sección O). No hay borrado programado.
+- Viajes cerrados antes de desplegar: el disparador solo escribe cuando una
+  reserva cambia, así que **los viajes ya terminados no tienen resumen** y no
+  salen en el historial ni en las ganancias de la app nueva. Una carga
+  inicial de resúmenes es una decisión del responsable (no hay script en
+  esta rama).
+
+### Orden
+1. **Functions e índices** (`deploy --only functions,firestore:indexes`): el
+   disparador `writeDriverHistoryOnBooking` y el índice de `trips`
+   (`status` + `endedAt` descendente). Desde aquí cada reserva que se cierra
+   con chófer deja su resumen. Una app anterior sigue funcionando.
+2. **App del chófer** publicada (lee sus reservas con el filtro de la
+   ventana y el historial de `driverHistory`). El panel, con la X del detalle
+   etiquetada, cuando se publique.
+3. **`minDriverAppVersion`** a la versión de este paso.
+4. **Reglas al final, a mano** (`deploy --only firestore:rules`).
+
+### Qué ve una app anterior del chófer
+- **Antes de las reglas**: todo como hasta ahora (lee sus reservas, también
+  las terminadas, y calcula las ganancias con ellas).
+- **Después de las reglas**: su consulta de reservas (sin filtro de estado)
+  se rechaza entera: **no ve ni el viaje en curso**, ni el historial, ni las
+  ganancias, y muestra el aviso de que no se pudieron cargar los viajes. Por
+  eso `minDriverAppVersion` va antes de las reglas y las reglas no esperan
+  mucho tras el paso 3.
+- **La app nueva antes de las reglas**: sus viajes en curso funcionan (la
+  consulta con el filtro de estado también la permiten las reglas
+  anteriores), pero **no lee `driverHistory`** (las reglas anteriores no lo
+  tienen): las ganancias y el historial muestran «No se pudieron cargar tus
+  viajes terminados» con «Reintentar», y el cierre de un viaje cerrado por
+  otro sale como «Este viaje ya no está a tu cargo». Se arregla al desplegar
+  las reglas (paso 4): por eso ese hueco tiene que ser corto.
+- **Pasajero y panel**: nada cambia para ellos.
+
 ## Vuelos (cierre/vuelos, Partes A y B)
 
 Recogida en aeropuerto con vuelo: el servidor calcula `readyAt` (llegada

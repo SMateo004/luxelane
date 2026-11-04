@@ -192,3 +192,23 @@ describe('DEPLOY.md: vuelos', () => {
     expect(section).toContain('### Qué ve una app anterior');
   });
 });
+
+describe('DEPLOY.md: ventana del chófer', () => {
+  const i = deploy.indexOf('## Ventana del chófer');
+  const section = i < 0 ? '' : deploy.slice(i, deploy.indexOf('\n## ', i + 5));
+  it('orden: functions, app del chófer, minDriverAppVersion y reglas al final', () => {
+    expect(section).not.toBe('');
+    const at = (s: string) => section.indexOf(s);
+    expect(at('1. **Functions')).toBeGreaterThan(-1);
+    expect(at('1. **Functions')).toBeLessThan(at('2. **App del chófer**'));
+    expect(at('2. **App del chófer**')).toBeLessThan(at('3. **`minDriverAppVersion`**'));
+    expect(at('3. **`minDriverAppVersion`**')).toBeLessThan(at('4. **Reglas al final'));
+  });
+  it('dice qué ve una app anterior del chófer y que los viajes ya cerrados no tienen resumen', () => {
+    expect(section).toContain('### Qué ve una app anterior del chófer');
+    expect(section).toMatch(/no ve ni el viaje en curso/);
+    expect(section).toMatch(/no tienen resumen/);
+    expect(section).toContain('writeDriverHistoryOnBooking');
+    expect(section).toMatch(/no lee `driverHistory`/);
+  });
+});
