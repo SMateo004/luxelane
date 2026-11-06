@@ -132,13 +132,13 @@ class DefaultFirebaseOptions {
   // ---------------------------------------------------------------------------
 
   static const _stagingPlaceholder = 'REEMPLAZAR_PROYECTO_STAGING';
-  static const _stagingProjectId = _stagingPlaceholder;
-  static const _stagingApiKey = 'REEMPLAZAR_API_KEY_STAGING';
-  static const _stagingSenderId = 'REEMPLAZAR_SENDER_ID_STAGING';
+  static const _stagingProjectId = 'luxelane-staging';
+  static const _stagingApiKey = 'AIzaSyCg6DvIxLYRkn06oEuyNF5f7XqDFLsEO-w';
+  static const _stagingSenderId = '215796019388';
 
   static const FirebaseOptions stagingWeb = FirebaseOptions(
     apiKey: _stagingApiKey,
-    appId: 'REEMPLAZAR_WEB_APP_ID_STAGING',
+    appId: '1:215796019388:web:ce5cf445ddd1f0cb4260b9',
     messagingSenderId: _stagingSenderId,
     projectId: _stagingProjectId,
     authDomain: '$_stagingProjectId.firebaseapp.com',

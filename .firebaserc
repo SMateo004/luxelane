@@ -1,6 +1,6 @@
 {
   "projects": {
-    "staging": "REEMPLAZAR_PROYECTO_STAGING",
+    "staging": "luxelane-staging",
     "production": "luxelane-4e7ae"
   },
   "targets": {
@@ -11,6 +11,16 @@
         ],
         "driver": [
           "luxelane-driver"
+        ]
+      }
+    },
+    "luxelane-staging": {
+      "hosting": {
+        "rider": [
+          "luxelane-staging"
+        ],
+        "driver": [
+          "luxelane-staging-driver"
         ]
       }
     }
