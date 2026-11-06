@@ -1,6 +1,6 @@
 {
   "projects": {
-    "staging": "REEMPLAZAR_PROYECTO_STAGING",
+    "staging": "luxelane-staging",
     "production": "luxelane-4e7ae"
   },
   "targets": {
